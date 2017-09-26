@@ -1,8 +1,8 @@
-/' vallng function '/
+/' valulng function '/
 
 #include "fb.bi"
 
-function fb_hStr2Longint FBCALL ( src as ubyte ptr, _len as ssize_t ) as longint
+function fb_hStr2ULongint FBCALL ( src as ubyte ptr, _len as ssize_t ) as ulongint
     dim as ubyte ptr p
 	dim as integer radix, skip
 
@@ -13,8 +13,12 @@ function fb_hStr2Longint FBCALL ( src as ubyte ptr, _len as ssize_t ) as longint
 	if ( _len < 1 ) then
 		return 0
 	end if
+	
 	radix = 10
-	if ( (_len >= 2) and (p[0] = 32) ) then '&
+	if ( _len < 1 ) then
+		return 0
+	elseif ( (_len >= 2) and (p[0] = 32) ) then '&
+		radix = 0
 		skip = 2
 		select case p[1]
 			case 72 or 104: 'h or H
@@ -33,22 +37,23 @@ function fb_hStr2Longint FBCALL ( src as ubyte ptr, _len as ssize_t ) as longint
 		end if
 	end if
 
-	/' strtoll() saturates values outside [-2^63, 2^63)
-	so use strtoull() instead '/
-	return cast(longint, strtoull( p, NULL, radix ))
+	return strtoull( p, NULL, radix )
 end function
 
-function fb_VALLNG FBCALL ( _str as FBSTRING ptr ) as longint
-    dim as longint _val
+/':::::'/
+function fb_VALULNG FBCALL ( _str as FBSTRING ptr ) as ulongint
+    dim as ulongint _val
 
 	if ( _str = NULL ) then
 	    return 0
 	end if
+
 	if ( (_str->_data = NULL) or (FB_STRSIZE( _str ) = 0) ) then
 		_val = 0
 	else
-		_val = fb_hStr2Longint( _str->_data, FB_STRSIZE( _str ) )
+		_val = fb_hStr2ULongint( _str->_data, FB_STRSIZE( _str ) )
 	end if
+
 	/' del if temp '/
 	fb_hStrDelTemp( _str )
 

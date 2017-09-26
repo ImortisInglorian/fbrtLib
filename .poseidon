@@ -23,9 +23,16 @@
     <Name>str_comp.bas</Name>
     <Name>str_concat.bas</Name>
     <Name>str_concatassign.bas</Name>
+    <Name>str_convfrom.bas</Name>
+    <Name>str_convfrom_bool.bas</Name>
+    <Name>str_convfrom_int.bas</Name>
+    <Name>str_convfrom_lng.bas</Name>
+    <Name>str_convfrom_rad.bas</Name>
+    <Name>str_convfrom_radlng.bas</Name>
     <Name>strw_rtrim.bas</Name>
     <Name>strw_rtrimany.bas</Name>
-    <Name>str_convfrom.bas</Name>
+    <Name>str_convfrom_uint.bas</Name>
+    <Name>str_convfrom_ulng.bas</Name>
   </Sources>
   <Includes>
     <Name>fb.bi</Name>
