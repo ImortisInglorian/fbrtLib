@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Project>
+  <ProjectName>fb rtlib</ProjectName>
+  <Type>2</Type>
+  <MainFile>F:/Projects/rtlib/static/fbrt0.bas</MainFile>
+  <TargetName>fbrt0</TargetName>
+  <CompilerArgs/>
+  <CompilerOption/>
+  <Comment/>
+  <CompilerPath/>
+  <IncludeDirs/>
+  <LibDirs/>
+  <Sources>
+    <Name>init.bas</Name>
+    <Name>static/fbrt0.bas</Name>
+    <Name>str_asc.bas</Name>
+    <Name>str_assign.bas</Name>
+    <Name>str_base.bas</Name>
+    <Name>str_bin.bas</Name>
+    <Name>str_bin_lng.bas</Name>
+    <Name>str_bin_ptr.bas</Name>
+    <Name>str_chr.bas</Name>
+    <Name>str_comp.bas</Name>
+    <Name>str_concat.bas</Name>
+    <Name>str_concatassign.bas</Name>
+    <Name>strw_rtrim.bas</Name>
+    <Name>strw_rtrimany.bas</Name>
+    <Name>str_convfrom.bas</Name>
+  </Sources>
+  <Includes>
+    <Name>fb.bi</Name>
+    <Name>fb_config.bi</Name>
+    <Name>fb_string.bi</Name>
+    <Name>fb_system.bi</Name>
+    <Name>fb_unicode.bi</Name>
+    <Name>win32/fb_win32.bi</Name>
+  </Includes>
+  <Others/>
+</Project>
