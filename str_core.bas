@@ -52,7 +52,7 @@ function fb_hStrDelTempDesc FBCALL( _str as FBSTRING ptr ) as integer
     dim as FB_STR_TMPDESC ptr item = cast(FB_STR_TMPDESC ptr, ( cast(ubyte ptr, _str - offsetof( FB_STR_TMPDESC, desc ) )))
 
     /' is this really a temp descriptor? '/
-	if( (item < @fb_tmpdsTB(0) + 0) or (item > @fb_tmpdsTB(0) + FB_STR_TMPDESCRIPTORS - 1) )
+	if ( (item < @fb_tmpdsTB(0)) or (item > @fb_tmpdsTB(FB_STR_TMPDESCRIPTORS - 1)) ) then
 		return -1
 	end if
 
