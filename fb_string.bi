@@ -197,8 +197,8 @@ declare function fb_hStrAlloc 				FBCALL ( _str as FBSTRING ptr, size as ssize_t
 declare function fb_hStrRealloc 			FBCALL ( _str as FBSTRING ptr, size as ssize_t, _preserve as integer ) as FBSTRING ptr
 declare function fb_hStrAllocTemp 			FBCALL ( _str as FBSTRING ptr, size as ssize_t ) as FBSTRING ptr
 declare function fb_hStrAllocTemp_NoLock 	FBCALL ( _str as FBSTRING ptr, size as ssize_t ) as FBSTRING ptr
-declare function fb_hStrDelTemp 			FBCALL ( _str as FBSTRING ptr ) as long
-declare function fb_hStrDelTemp_NoLock  	FBCALL ( _str as FBSTRING ptr ) as long
+declare function fb_hStrDelTemp 			FBCALL ( _str as FBSTRING ptr ) as integer
+declare function fb_hStrDelTemp_NoLock  	FBCALL ( _str as FBSTRING ptr ) as integer
 declare sub 	 fb_hStrCopy 				FBCALL ( dst as ubyte ptr, src as ubyte const ptr , bytes as ssize_t )
 declare function fb_hStrSkipChar 			FBCALL ( s as ubyte ptr, _len as ssize_t, c as integer ) as ubyte ptr
 declare function fb_hStrSkipCharRev 		FBCALL ( s as ubyte ptr, _len as ssize_t, c as integer ) as ubyte ptr
@@ -222,9 +222,9 @@ declare function fb_StrLen 					FBCALL ( _str as any ptr, str_size as ssize_t ) 
 
 declare function fb_hBoolToStr 				FBCALL ( num as ubyte ) as ubyte ptr
 declare function fb_BoolToStr 				FBCALL ( num as ubyte ) as FBSTRING ptr
-declare function fb_IntToStr 				FBCALL ( num as long ) as FBSTRING ptr
+declare function fb_IntToStr 				FBCALL ( num as integer ) as FBSTRING ptr
 declare function fb_IntToStrQB 				FBCALL ( num as long ) as FBSTRING ptr
-declare function fb_UIntToStr 				FBCALL ( num as ulong ) as FBSTRING ptr
+declare function fb_UIntToStr 				FBCALL ( num as uinteger ) as FBSTRING ptr
 declare function fb_UIntToStrQB 			FBCALL ( num as ulong ) as FBSTRING ptr
 declare function fb_LongintToStr 			FBCALL ( num as longint ) as FBSTRING ptr
 declare function fb_LongintToStrQB 			FBCALL ( num as longint ) as FBSTRING ptr
