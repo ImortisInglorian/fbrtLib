@@ -12,6 +12,12 @@
   <LibDirs/>
   <Sources>
     <Name>init.bas</Name>
+    <Name>math_cvn.bas</Name>
+    <Name>math_fix.bas</Name>
+    <Name>math_frac.bas</Name>
+    <Name>math_log10.bas</Name>
+    <Name>math_rnd.bas</Name>
+    <Name>math_sgn.bas</Name>
     <Name>static/fbrt0.bas</Name>
     <Name>str_asc.bas</Name>
     <Name>str_assign.bas</Name>
@@ -36,16 +42,23 @@
     <Name>str_convto_flt.bas</Name>
     <Name>str_convto_lng.bas</Name>
     <Name>str_core.bas</Name>
+    <Name>str_cvmk.bas</Name>
+    <Name>str_del.bas</Name>
+    <Name>str_fill.bas</Name>
+    <Name>str_format.bas</Name>
     <Name>strw_rtrim.bas</Name>
     <Name>strw_rtrimany.bas</Name>
+    <Name>win32/time_timer.bas</Name>
   </Sources>
   <Includes>
     <Name>fb.bi</Name>
     <Name>fb_config.bi</Name>
+    <Name>fb_math.bi</Name>
     <Name>fb_string.bi</Name>
     <Name>fb_system.bi</Name>
     <Name>fb_unicode.bi</Name>
     <Name>win32/fb_win32.bi</Name>
+    <Name>fb_datetime.bi</Name>
   </Includes>
   <Others/>
 </Project>

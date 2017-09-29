@@ -17,7 +17,7 @@
 
 Dim shared as FB_LIST tmpdsList = Type( 0, NULL, NULL, NULL )
 
-Dim shared as FB_STR_TMPDESC fb_tmpdsTB(FB_STR_TMPDESCRIPTORS) '????????
+Dim shared as FB_STR_TMPDESC fb_tmpdsTB( 0 to FB_STR_TMPDESCRIPTORS - 1)
 
 function fb_hStrAllocTmpDesc FBCALL ( ) as FBSTRING ptr
 	dim as FB_STR_TMPDESC ptr dsc

@@ -77,9 +77,8 @@
 	   getkey() returns the same but in a little-endian integer: &h49FF
 	   where &hFF is the FB_EXT_CHAR  '/
 	#define FB_MAKE_EXT_KEY(ch) (cast(long, (cast(ulong ,(cast(ubyte,ch)) shl 8)) + (cast(ulong, (cast(ubyte ,FB_EXT_CHAR))))))
-
-	#define MIN(a,b)		(iif((a) < (b), (a), (b)))
-	#define MAX(a,b)		(iif((a) > (b), (a), (b)))
+	#define _MIN(a,b)		(iif((a) < (b), (a), (b)))
+	#define _MAX(a,b)		(iif((a) > (b), (a), (b)))
 	#define _MID(a,b,c)		(MIN(MAX((a), (b)), (c)))
 	#define _CINT(x)		(iif((x) > 0.0 ,cast(long, x)+ 0.5,cast(long,(x - 0.5))))
 
@@ -173,23 +172,23 @@
 
 	/'  Include as added.'/
 	#include "fb_unicode.bi"
-	/'#include "fb_error.h"'/
+	/'#include "fb_error.bi"'/
 	#include "fb_string.bi"
-	/'#include "fb_array.h"'/
+	/'#include "fb_array.bi"'/
 	#include "fb_system.bi"
-	/'#include "fb_math.h"
-	#include "fb_data.h"
-	#include "fb_console.h"
-	#include "fb_file.h"
-	#include "fb_print.h"
-	#include "fb_device.h"
-	#include "fb_serial.h"
-	#include "fb_printer.h"
-	#include "fb_datetime.h"
-	#include "fb_thread.h"
-	#include "fb_hook.h"
-	#include "fb_oop.h"
-	#include "fb_legacy.h"
+	#include "fb_math.bi"
+	/'#include "fb_data.bi"
+	#include "fb_console.bi"
+	#include "fb_file.bi"
+	#include "fb_print.bi"
+	#include "fb_device.bi"
+	#include "fb_serial.bi"
+	#include "fb_printer.bi"'/
+	#include "fb_datetime.bi"
+	/'#include "fb_thread.bi"
+	#include "fb_hook.bi"
+	#include "fb_oop.bi"
+	#include "fb_legacy.bi"
 	'/
 	/' DOS keyboard scancodes '/
 	#define SC_ESCAPE		&h01
