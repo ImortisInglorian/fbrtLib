@@ -6,11 +6,13 @@
 	#define strcasecmp(x,y) _stricmp(x,y)
 #endif
 
-/'* convert string to boolean value
+/'' convert string to boolean value
  *  
  * return value must be 0|1
  *
  '/
+ 
+ extern "C"
 function fb_hStr2Bool FBCALL ( src as ubyte ptr, _len as ssize_t ) as ubyte
 	dim as double _val
 
@@ -30,7 +32,7 @@ end function
 
 /':::::'/
 function fb_VALBOOL FBCALL ( _str as FBSTRING ptr ) as ubyte
-    dim as integer _val
+    dim as long _val
 
 	if ( _str = NULL ) then
 	    return 0
@@ -45,3 +47,4 @@ function fb_VALBOOL FBCALL ( _str as FBSTRING ptr ) as ubyte
 
 	return _val
 end function
+end extern

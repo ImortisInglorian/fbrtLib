@@ -12,18 +12,20 @@
 	end if
 #endmacro
 
+extern "C"
 function fb_CVDFROMLONGINT FBCALL ( ll as longint ) as double
 	hDoCVn( ll, double, 8 )
 end function
 
-function fb_CVSFROML FBCALL ( l as integer ) as single
+function fb_CVSFROML FBCALL ( l as long ) as single
 	hDoCVn( l, single, 4 )
 end function
 
-function fb_CVLFROMS FBCALL ( f as single ) as integer
-	hDoCVn( f, integer, 4 )
+function fb_CVLFROMS FBCALL ( f as single ) as long
+	hDoCVn( f, long, 4 )
 end function
 
 function fb_CVLONGINTFROMD FBCALL ( d as double ) as longint
 	hDoCVn( d, longint, 8 )
 end function
+end extern

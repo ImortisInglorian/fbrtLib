@@ -21,6 +21,7 @@
 #define MAX_STATE		624
 #define PERIOD			397
 
+extern "C"
 declare function hRnd_Startup cdecl ( n as single ) as double
 declare function hRnd_CRT cdecl ( n as single ) as double
 declare function hRnd_QB cdecl ( n as single ) as double
@@ -80,7 +81,7 @@ function hRnd_MTWIST cdecl ( n as single ) as double
 			state(i) = state(i + PERIOD) xor ( v shr 1 ) xor xor_mask(v and &h1)
 		next
 		
-		for j as integer =i to MAX_STATE - 1
+		for j as long =i to MAX_STATE - 1
 			v = ( state(i) and &h80000000 ) or ( state(i + 1) and &h7FFFFFFF )
 			state(i) = state(i + PERIOD - MAX_STATE) xor ( v shr 1 ) xor xor_mask(v and &h1)
 		next
@@ -138,7 +139,7 @@ function hGetRealRndNumber cdecl ( ) as uinteger
 	end if
 
 #elseif defined (HOST_LINUX)
-	dim as integer urandom = _open( "/dev/urandom", O_RDONLY )
+	dim as long urandom = _open( "/dev/urandom", O_RDONLY )
 	if ( urandom <> -1 ) then
 		if ( _read( urandom, @number.b[0], sizeof(number) ) <> sizeof(number) ) then
 			number.i = 0
@@ -184,8 +185,8 @@ function fb_Rnd FBCALL ( n as single ) as double
 	return last_num
 end function
 
-sub fb_Randomize FBCALL ( seed as double, algorithm as integer )
-	dim as integer i
+sub fb_Randomize FBCALL ( seed as double, algorithm as long )
+	dim as long i
 
 	union _dtoi
 		as double d
@@ -207,7 +208,7 @@ sub fb_Randomize FBCALL ( seed as double, algorithm as integer )
 
 	if ( seed = -1.0 ) then
 		/' Take value of Timer to ensure a non-constant seed.  The seeding
-		algorithms (with the exception of the QB one) take the integer value
+		algorithms (with the exception of the QB one) take the long value
 		of the seed, so make a value that will change more than once a second '/
 
 		dtoi.d = fb_Timer( )
@@ -250,3 +251,4 @@ sub fb_Randomize FBCALL ( seed as double, algorithm as integer )
 			p = @state(0) + MAX_STATE
 	end select
 end sub
+end extern

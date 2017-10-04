@@ -2,6 +2,7 @@
 
 #include "fb.bi"
 
+extern "C"
 sub hCV cdecl ( _str as FBSTRING ptr, _len as ssize_t, num as any ptr )
 	dim as ssize_t i
 
@@ -38,15 +39,15 @@ function fb_CVSHORT FBCALL ( _str as FBSTRING ptr ) as short
 end function
 
 /' 32bit legacy, fbc after 64bit port always calls fb_CVL() or fb_CVLONGINT() '/
-function fb_CVI FBCALL ( _str as FBSTRING ptr ) as integer
-	dim as integer num = 0
-	hCV( _str, sizeof( integer ), @num )
+function fb_CVI FBCALL ( _str as FBSTRING ptr ) as long
+	dim as long num = 0
+	hCV( _str, sizeof( long ), @num )
 	return num
 end function
 
-function fb_CVL FBCALL ( _str as FBSTRING ptr ) as integer
-	dim as integer num = 0
-	hCV( _str, sizeof( integer ), @num )
+function fb_CVL FBCALL ( _str as FBSTRING ptr ) as long
+	dim as long num = 0
+	hCV( _str, sizeof( long ), @num )
 	return num
 end function
 
@@ -99,3 +100,4 @@ end function
 function fb_MKLONGINT FBCALL ( num as longint ) as FBSTRING ptr
 	return hMK( sizeof( longint ), @num )
 end function
+end extern

@@ -6,7 +6,7 @@
 
 #include "fb.bi"
 
-
+extern "C"
 /':::::'/
 function fb_LongintToStr FBCALL ( num as longint ) as FBSTRING ptr
 	dim as FBSTRING ptr dst
@@ -42,3 +42,4 @@ function fb_ULongintToStr FBCALL ( num as ulongint ) as FBSTRING ptr
 	
 	return dst
 end function
+end extern

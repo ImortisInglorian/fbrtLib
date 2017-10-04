@@ -6,8 +6,9 @@
 #ifndef __fb_ctx
 dim shared __fb_ctx as FB_RTLIB_CTX
 #endif
-dim shared __fb_is_inicnt as integer = 0
+dim shared __fb_is_inicnt as long = 0
 
+extern "C"
 /' called from fbrt0 '/
 sub fb_hRtInit cdecl ( )
 	/' already initialized? '/
@@ -104,7 +105,7 @@ sub fb_hRtExit cdecl ( )
 end sub
 
 /' called by FB program '/
-sub fb_Init FBCALL( argc as integer, argv as ubyte ptr ptr, lang as integer )
+sub fb_Init FBCALL( argc as long, argv as ubyte ptr ptr, lang as long )
 	__fb_ctx.argc = argc
 	__fb_ctx.argv = argv
 	__fb_ctx.lang = lang
@@ -112,9 +113,10 @@ end sub
 
 /' called by FB program,
    or fb_Die() in case of assert() failure or runtime error '/
-sub fb_End( errlevel as integer )
+sub fb_End( errlevel as long )
 	if( __fb_ctx.exit_gfxlib2 ) then
 		'__fb_ctx.exit_gfxlib2( )
 	end if
 	'exit( errlevel )
 end sub
+end extern

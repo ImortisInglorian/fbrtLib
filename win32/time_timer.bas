@@ -7,9 +7,10 @@
 #define TIMER_NONE    0
 #define TIMER_NORMAL  1
 #define TIMER_HIGHRES 2
-dim shared as integer _timer = TIMER_NONE
+dim shared as long _timer = TIMER_NONE
 dim shared as double frequency
 
+extern "C"
 function fb_Timer FBCALL ( ) as double
 	dim as LARGE_INTEGER count
 
@@ -29,3 +30,4 @@ function fb_Timer FBCALL ( ) as double
 		return cast(double, count.QuadPart) * frequency
 	end if
 end function
+end extern

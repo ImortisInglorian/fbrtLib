@@ -1,7 +1,8 @@
 #include "fb.bi"
 
-function fb_hStrRadix2Int FBCALL ( src as ubyte ptr, _len as ssize_t, radix as integer ) as Integer
-	dim as integer c, v
+extern "C"
+function fb_hStrRadix2Int FBCALL ( src as ubyte ptr, _len as ssize_t, radix as long ) as long
+	dim as long c, v
 
 	v = 0
 
@@ -51,3 +52,4 @@ function fb_hStrRadix2Int FBCALL ( src as ubyte ptr, _len as ssize_t, radix as i
 
 	return v
 end function
+end extern

@@ -1,10 +1,10 @@
 /' valulng function '/
 
 #include "fb.bi"
-
+extern "C"
 function fb_hStr2ULongint FBCALL ( src as ubyte ptr, _len as ssize_t ) as ulongint
     dim as ubyte ptr p
-	dim as integer radix, skip
+	dim as long radix, skip
 
 	/' skip white spc '/
 	p = fb_hStrSkipChar( src, _len, 32 )
@@ -59,3 +59,4 @@ function fb_VALULNG FBCALL ( _str as FBSTRING ptr ) as ulongint
 
 	return _val
 end function
+end extern

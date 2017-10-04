@@ -2,9 +2,10 @@
 
 #include "fb.bi"
 
-function fb_BINEx_l FBCALL ( num as ulongint, digits as integer ) as FBSTRING ptr
+extern "C"
+function fb_BINEx_l FBCALL ( num as ulongint, digits as long ) as FBSTRING ptr
 	dim s as FBSTRING ptr
-	dim i as integer
+	dim i as long
 	dim num2 as ulongint
 
 	if ( digits <= 0 ) then
@@ -40,3 +41,4 @@ end function
 function fb_BIN_l FBCALL ( num as ulongint ) as FBSTRING ptr
 	return fb_BINEx_l( num, 0 )
 end function
+end extern

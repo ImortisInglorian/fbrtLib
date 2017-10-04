@@ -1,5 +1,6 @@
 /' Unicode definitions '/
 
+extern "C"
 type UTF_32 as ulong
 type UTF_16 as ushort
 type UTF_8 as ubyte
@@ -48,7 +49,7 @@ type UTF_8 as ubyte
 			return count
 		end function
 		
-		function swprintf(buffer as FB_WCHAR ptr, n as ssize_t, _format as FB_WCHAR conts ptr, ...) as integer
+		function swprintf(buffer as FB_WCHAR ptr, n as ssize_t, _format as FB_WCHAR conts ptr, ...) as long
 			dim result as long
 			dim ap as va_list
 			va_start(ap, _format)
@@ -113,7 +114,7 @@ type UTF_8 as ubyte
 
 /' Calculate the number of characters between two pointers. '/
 function fb_wstr_CalcDiff( ini as FB_WCHAR const ptr, _end as FB_WCHAR const ptr ) as ssize_t
-	return (cast(ulong, _end) - cast(ulong, ini)) / sizeof( FB_WCHAR )
+	return (cast(ssize_t, _end) - cast(ssize_t, ini)) / sizeof( FB_WCHAR )
 end function
 
 function fb_wstr_AllocTemp( chars as ssize_t ) as FB_WCHAR ptr
@@ -134,11 +135,11 @@ end function
 declare function fb_wstr_ConvFromA( dst as FB_WCHAR ptr, dst_chars as ssize_t, src as ubyte const ptr ) as ssize_t
 declare function fb_wstr_ConvToA( dst as ubyte ptr, dst_chars as ssize_t, src as FB_WCHAR const ptr ) as ssize_t
 
-function fb_wstr_IsLower( c as FB_WCHAR ) as integer
+function fb_wstr_IsLower( c as FB_WCHAR ) as long
 	return iswlower( c )
 end function
 
-function fb_wstr_IsUpper( c as FB_WCHAR ) as integer
+function fb_wstr_IsUpper( c as FB_WCHAR ) as long
 	return iswupper( c )
 end function
 
@@ -218,6 +219,7 @@ function fb_wstr_InstrAny( s as FB_WCHAR const ptr, sset as FB_WCHAR const ptr )
 	return wcscspn( s, sset )
 end function
 
-function fb_wstr_Compare( str1 as FB_WCHAR const ptr, str2 as FB_WCHAR const ptr, chars as ssize_t ) as integer
+function fb_wstr_Compare( str1 as FB_WCHAR const ptr, str2 as FB_WCHAR const ptr, chars as ssize_t ) as long
 	return wcsncmp( str1, str2, chars )
 end function
+end extern

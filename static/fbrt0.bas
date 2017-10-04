@@ -23,6 +23,7 @@
 		fb_hRtExit( );
 	}'/
 #else
+	extern "C"
 	sub fb_hDoInit( )
 		fb_hRtInit( )
 	end sub
@@ -30,7 +31,7 @@
 	sub fb_hDoExit( )
 		fb_hRtExit( )
 	end sub
-
+	end extern
 	/' This puts the init/exit global ctor/dtor for the rtlib in the sorted
 	   ctors/dtors section. A named section of .?tors.65435 = Priority(100).
 	   (65535 - 100 = 65435)

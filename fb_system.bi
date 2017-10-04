@@ -11,7 +11,7 @@
 	#undef fb_Command
 #endif
 
-
+extern "C"
 
 declare function fb_CpuDetect 			cdecl  ( ) as unsigned integer
 declare sub 	 fb_Init 				FBCALL ( argc as integer, argv as ubyte ptr ptr, lang as integer )
@@ -62,3 +62,4 @@ declare function fb_Wait 				FBCALL ( port as ushort, val_and as integer, val_xo
 
 declare sub 	 fb_hRtInit 			cdecl  ( )
 declare sub 	 fb_hRtExit 			cdecl  ( )
+end extern

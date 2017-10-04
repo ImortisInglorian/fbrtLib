@@ -100,6 +100,7 @@
 	#undef fb_WstrAssignMid
 #endif
 
+extern "C"
 
 /' Flag to identify a string as a temporary string.
  *
@@ -442,3 +443,5 @@ declare function fb_VALINT 					FBCALL ( _str as FBSTRING ptr ) as integer
 declare function fb_VALLNG 					FBCALL ( _str as FBSTRING ptr ) as longint
 declare function fb_VALUINT 				FBCALL ( _str as FBSTRING ptr ) as uinteger
 declare function fb_VALULNG 				FBCALL ( _str as FBSTRING ptr ) as ulongint
+
+end extern

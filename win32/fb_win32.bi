@@ -38,6 +38,7 @@ type fb_off_t as longint
 #define FB_COLOR_YELLOW   (FOREGROUND_RED or FOREGROUND_GREEN or FOREGROUND_INTENSITY)
 #define FB_COLOR_BWHITE   (FOREGROUND_RED or FOREGROUND_GREEN or FOREGROUND_BLUE or FOREGROUND_INTENSITY)
 
+extern "C"
 #ifdef ENABLE_MT
 	declare sub fb_MtLock FBCALL( )
 	declare sub fb_MtUnlock FBCALL( )
@@ -47,3 +48,4 @@ type fb_off_t as longint
 	#define FB_MTLOCK()
 	#define FB_MTUNLOCK()
 #endif
+end extern

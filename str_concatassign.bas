@@ -2,7 +2,8 @@
 
 #include "fb.bi"
 
-function fb_StrConcatAssign FBCALL ( dst as any ptr, dst_size as ssize_t, src as any ptr, src_size as ssize_t, fillrem as integer ) as any ptr
+extern "C"
+function fb_StrConcatAssign FBCALL ( dst as any ptr, dst_size as ssize_t, src as any ptr, src_size as ssize_t, fillrem as long ) as any ptr
 	dim dstr as FBSTRING ptr
 	dim src_ptr as ubyte ptr
 	dim as ssize_t src_len, dst_len
@@ -60,3 +61,4 @@ function fb_StrConcatAssign FBCALL ( dst as any ptr, dst_size as ssize_t, src as
 	end if
 	return dst
 end function
+end extern

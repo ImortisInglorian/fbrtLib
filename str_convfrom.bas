@@ -2,9 +2,10 @@
 
 #include "fb.bi"
 
+extern "C"
 function fb_hStr2Double FBCALL ( src as ubyte ptr, _len as ssize_t ) as double
 	dim as ubyte ptr p, q, c
-	dim as integer radix, i, skip
+	dim as long radix, i, skip
 	dim as double ret
 
 	/' skip white spc '/
@@ -76,3 +77,4 @@ function fb_VAL FBCALL ( _str as FBSTRING ptr ) as double
 
 	return _val
 end function
+end extern

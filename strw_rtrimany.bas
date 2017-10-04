@@ -2,6 +2,7 @@
 
 #include "fb.bi"
 
+extern "C"
 function fb_WstrRTrimAny FBCALL ( src as FB_WCHAR const ptr, pattern as FB_WCHAR const ptr ) as FB_WCHAR ptr
 	dim pachText as FB_WCHAR ptr
 	dim dst as FB_WCHAR ptr
@@ -42,3 +43,4 @@ function fb_WstrRTrimAny FBCALL ( src as FB_WCHAR const ptr, pattern as FB_WCHAR
 	end if
 	return dst
 end function
+end extern

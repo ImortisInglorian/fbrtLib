@@ -2,7 +2,7 @@
 
 #include "fb.bi"
 
-
+extern "C"
 /':::::'/
 function fb_IntLog10_32 FBCALL ( x as uinteger ) as integer
 	if ( x >= cast(uinteger, 1.E + 9) ) then return 9
@@ -36,3 +36,4 @@ function fb_IntLog10_64 FBCALL ( x as ulongint ) as integer
 		return fb_IntLog10_32( cast(uinteger, x) )
 	end if
 end function
+end extern

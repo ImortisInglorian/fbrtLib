@@ -2,7 +2,8 @@
 
 #include "fb.bi"
 
-function fb_StrFill1 FBCALL ( cnt as ssize_t, fchar as integer ) as FBSTRING ptr
+extern "C"
+function fb_StrFill1 FBCALL ( cnt as ssize_t, fchar as long ) as FBSTRING ptr
 	dim as FBSTRING ptr dst
 
 	if ( cnt > 0 ) then
@@ -25,7 +26,7 @@ end function
 
 function fb_StrFill2 FBCALL ( cnt as ssize_t, src as FBSTRING ptr ) as FBSTRING ptr
 	dim as FBSTRING ptr dst
-	dim as integer fchar
+	dim as long fchar
 
 	if ( (cnt > 0) and (src <> NULL) and (src->_data <> NULL) and (FB_STRSIZE( src ) > 0) ) then
 		fchar = src->_data[0]
@@ -38,3 +39,4 @@ function fb_StrFill2 FBCALL ( cnt as ssize_t, src as FBSTRING ptr ) as FBSTRING 
 
 	return dst
 end function
+end extern

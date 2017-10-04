@@ -2,11 +2,12 @@
 
 #include "fb.bi"
 
-function fb_CHR cdecl ( args as integer, ... ) as FBSTRING ptr
+extern "C"
+function fb_CHR cdecl ( args as long, ... ) as FBSTRING ptr
 	dim dst as FBSTRING ptr
 	dim ap as any ptr
 	dim num as uinteger
-	dim i as integer
+	dim i as long
 
 	if ( args <= 0 ) then
 		return @__fb_ctx.null_desc
@@ -31,3 +32,4 @@ function fb_CHR cdecl ( args as integer, ... ) as FBSTRING ptr
 
 	return dst
 end function
+end extern

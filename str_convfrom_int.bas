@@ -2,9 +2,10 @@
 
 #include "fb.bi"
 
-function fb_hStr2Int FBCALL ( src as ubyte ptr, _len as ssize_t ) as integer
+extern "C"
+function fb_hStr2Int FBCALL ( src as ubyte ptr, _len as ssize_t ) as long
     dim as ubyte ptr p
-	dim as integer radix, skip
+	dim as long radix, skip
 
 	/' skip white spc '/
 	p = fb_hStrSkipChar( src, _len, 32 )
@@ -37,8 +38,8 @@ function fb_hStr2Int FBCALL ( src as ubyte ptr, _len as ssize_t ) as integer
 	return strtoul( p, NULL, 10 )
 end function
 
-function fb_VALINT FBCALL ( _str as FBSTRING ptr ) as integer
-    dim as integer _val
+function fb_VALINT FBCALL ( _str as FBSTRING ptr ) as long
+    dim as long _val
 
 	if ( _str = NULL ) then
 	    return 0
@@ -54,3 +55,4 @@ function fb_VALINT FBCALL ( _str as FBSTRING ptr ) as integer
 
 	return _val
 end function
+end extern

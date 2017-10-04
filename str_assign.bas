@@ -2,7 +2,8 @@
 
 #include "fb.bi"
 
-function fb_StrAssignEx FBCALL ( dst as any ptr, dst_size as ssize_t, src as any ptr, src_size as ssize_t, fill_rem as integer, is_init as integer ) as any ptr
+extern "C"
+function fb_StrAssignEx FBCALL ( dst as any ptr, dst_size as ssize_t, src as any ptr, src_size as ssize_t, fill_rem as long, is_init as long ) as any ptr
 	dim dstr as FBSTRING ptr
 	dim src_ptr as ubyte ptr
 	dim src_len as ssize_t
@@ -106,10 +107,11 @@ function fb_StrAssignEx FBCALL ( dst as any ptr, dst_size as ssize_t, src as any
 	return dst
 end function
 
-function fb_StrAssign FBCALL ( dst as any ptr, dst_size as ssize_t, src as any ptr, src_size as ssize_t, fill_rem as integer ) as any ptr
+function fb_StrAssign FBCALL ( dst as any ptr, dst_size as ssize_t, src as any ptr, src_size as ssize_t, fill_rem as long ) as any ptr
 	return fb_StrAssignEx( dst, dst_size, src, src_size, fill_rem, FB_FALSE )
 end function
 
-function fb_StrInit FBCALL ( dst as any ptr, dst_size as ssize_t, src as any ptr, src_size as ssize_t, fill_rem as integer ) as any ptr
+function fb_StrInit FBCALL ( dst as any ptr, dst_size as ssize_t, src as any ptr, src_size as ssize_t, fill_rem as long ) as any ptr
 	return fb_StrAssignEx( dst, dst_size, src, src_size, fill_rem, FB_TRUE )
 end function
+end extern

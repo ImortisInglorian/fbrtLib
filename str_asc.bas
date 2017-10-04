@@ -2,6 +2,7 @@
 
 #include "fb.bi"
 
+extern "C"
 function fb_ASC FBCALL ( _str as FBSTRING ptr, _pos as ssize_t ) as uinteger
     dim a as uinteger
 	dim _len as ssize_t
@@ -23,3 +24,4 @@ function fb_ASC FBCALL ( _str as FBSTRING ptr, _pos as ssize_t ) as uinteger
 
 	return a
 end function
+end extern

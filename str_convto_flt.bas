@@ -6,7 +6,7 @@
 
 #include "fb.bi"
 
-
+extern "C"
 /':::::'/
 function fb_FloatToStr FBCALL ( num as single ) as FBSTRING ptr
 	dim as FBSTRING ptr dst
@@ -66,3 +66,4 @@ function fb_DoubleToStr FBCALL ( num as double) as FBSTRING ptr
 	
 	return dst
 end function
+end extern

@@ -74,7 +74,7 @@
 
 	/' Build an extended 2 byte key code like those returned by getkey()
 	   (inkey() returns a string like &hFF &h49 [page up key code],
-	   getkey() returns the same but in a little-endian integer: &h49FF
+	   getkey() returns the same but in a little-endian long: &h49FF
 	   where &hFF is the FB_EXT_CHAR  '/
 	#define FB_MAKE_EXT_KEY(ch) (cast(long, (cast(ulong ,(cast(ubyte,ch)) shl 8)) + (cast(ulong, (cast(ubyte ,FB_EXT_CHAR))))))
 	#define _MIN(a,b)		(iif((a) < (b), (a), (b)))
@@ -98,7 +98,7 @@
 		#undef alloca
 		#define alloca(x) __builtin_alloca(x)
 	#endif
-
+	extern "C"
 	#if defined (ENABLE_MT) And Not(defined (HOST_DOS)) And Not(defined (HOST_XBOX))
 		Declare Sub fb_Lock FBCALL( Any )
 		Declare Sub fb_Unlock FBCALL( Any )
@@ -172,22 +172,22 @@
 
 	/'  Include as added.'/
 	#include "fb_unicode.bi"
-	/'#include "fb_error.bi"'/
+	#include "fb_error.bi"
 	#include "fb_string.bi"
 	/'#include "fb_array.bi"'/
 	#include "fb_system.bi"
 	#include "fb_math.bi"
 	/'#include "fb_data.bi"
-	#include "fb_console.bi"
+	#include "fb_console.bi"'/
 	#include "fb_file.bi"
-	#include "fb_print.bi"
+	/'#include "fb_print.bi"
 	#include "fb_device.bi"
 	#include "fb_serial.bi"
 	#include "fb_printer.bi"'/
 	#include "fb_datetime.bi"
-	/'#include "fb_thread.bi"
+	#include "fb_thread.bi"
 	#include "fb_hook.bi"
-	#include "fb_oop.bi"
+	/'#include "fb_oop.bi"
 	#include "fb_legacy.bi"
 	'/
 	/' DOS keyboard scancodes '/
@@ -307,7 +307,7 @@
 	#define KEY_DEL         FB_MAKE_EXT_KEY( "S" )
 	#define KEY_QUIT        FB_MAKE_EXT_KEY( "k" )
 
-	declare function fb_hMakeInkeyStr( ch as integer ) as FBSTRING ptr
+	declare function fb_hMakeInkeyStr( ch as long ) as FBSTRING ptr
 	declare function fb_hScancodeToExtendedKey( scancode as long ) as long
 
 	/' This should match fbc's lang enum '/
@@ -324,14 +324,14 @@
 		as ubyte ptr ptr argv
 		as FBSTRING null_desc
 		as ubyte ptr errmsg
-		'as FB_HOOKSTB hooks
-		'as FB_FILE fileTB(FB_MAX_FILES)
+		as FB_HOOKSTB hooks
+		as FB_FILE fileTB(0 to FB_MAX_FILES - 1)
 		as long do_file_reset
 		as long lang
 		as Sub ptr exit_gfxlib2
 	end type
 
 	dim shared as FB_RTLIB_CTX __fb_ctx
-
+	end extern
 #endif
 /'__FB_BI__'/

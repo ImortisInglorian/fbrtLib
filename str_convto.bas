@@ -6,13 +6,13 @@
 
 #include "fb.bi"
 
-
+extern "C"
 /':::::'/
-function fb_IntToStr FBCALL ( num as integer ) as FBSTRING ptr
+function fb_IntToStr FBCALL ( num as long ) as FBSTRING ptr
 	dim as FBSTRING ptr dst
 
 	/' alloc temp string '/
-	dst = fb_hStrAllocTemp( NULL, sizeof( integer ) * 3 )
+	dst = fb_hStrAllocTemp( NULL, sizeof( long ) * 3 )
 	if ( dst <> NULL ) then
 		/' convert '/
 		sprintf( dst->_data, "%d", num )
@@ -30,7 +30,7 @@ function fb_UIntToStr FBCALL ( num as uinteger ) as FBSTRING ptr
 	dim as FBSTRING ptr dst
 
 	/' alloc temp string '/
-	dst = fb_hStrAllocTemp( NULL, sizeof( integer ) * 3 )
+	dst = fb_hStrAllocTemp( NULL, sizeof( long ) * 3 )
 	if ( dst <> NULL ) then
 		/' convert '/
 		sprintf( dst->_data, "%u", num )
@@ -41,3 +41,4 @@ function fb_UIntToStr FBCALL ( num as uinteger ) as FBSTRING ptr
 
 	return dst
 end function
+end extern

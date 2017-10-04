@@ -2,6 +2,7 @@
 
 #include "fb.bi"
 
+extern "C"
 function fb_WstrRTrim FBCALL ( src as FB_WCHAR const ptr ) as FB_WCHAR ptr
 	dim dst as FB_WCHAR ptr
 	dim p as FB_WCHAR ptr
@@ -31,3 +32,4 @@ function fb_WstrRTrim FBCALL ( src as FB_WCHAR const ptr ) as FB_WCHAR ptr
 
 	return dst
 end function
+end extern

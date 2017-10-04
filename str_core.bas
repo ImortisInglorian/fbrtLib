@@ -19,6 +19,7 @@ Dim shared as FB_LIST tmpdsList = Type( 0, NULL, NULL, NULL )
 
 Dim shared as FB_STR_TMPDESC fb_tmpdsTB( 0 to FB_STR_TMPDESCRIPTORS - 1)
 
+extern "C"
 function fb_hStrAllocTmpDesc FBCALL ( ) as FBSTRING ptr
 	dim as FB_STR_TMPDESC ptr dsc
 
@@ -48,7 +49,7 @@ sub fb_hStrFreeTmpDesc cdecl ( dsc as FB_STR_TMPDESC ptr )
 	dsc->desc.size = 0
 end sub
 
-function fb_hStrDelTempDesc FBCALL( _str as FBSTRING ptr ) as integer
+function fb_hStrDelTempDesc FBCALL( _str as FBSTRING ptr ) as long
     dim as FB_STR_TMPDESC ptr item = cast(FB_STR_TMPDESC ptr, ( cast(ubyte ptr, _str - offsetof( FB_STR_TMPDESC, desc ) )))
 
     /' is this really a temp descriptor? '/
@@ -88,7 +89,7 @@ function fb_hStrAlloc FBCALL ( _str as FBSTRING ptr, size as ssize_t ) as FBSTRI
     return _str
 end function
 
-function fb_hStrRealloc FBCALL ( _str as FBSTRING ptr, size as ssize_t, _preserve as integer ) as FBSTRING ptr
+function fb_hStrRealloc FBCALL ( _str as FBSTRING ptr, size as ssize_t, _preserve as long ) as FBSTRING ptr
 	dim as ssize_t newsize = hStrRoundSize( size )
 	/' plus 12.5% more '/
 	newsize += (newsize shr 3)
@@ -132,7 +133,7 @@ function fb_hStrRealloc FBCALL ( _str as FBSTRING ptr, size as ssize_t, _preserv
 end function
 
 function fb_hStrAllocTemp_NoLock FBCALL ( _str as FBSTRING ptr, size as ssize_t ) as FBSTRING ptr
-	dim as integer try_alloc = (_str = NULL)
+	dim as long try_alloc = (_str = NULL)
 
     if ( try_alloc ) then
         _str = fb_hStrAllocTmpDesc( )
@@ -165,7 +166,7 @@ function fb_hStrAllocTemp FBCALL ( _str as FBSTRING ptr, size as ssize_t ) as FB
     return res
 end function
 
-function fb_hStrDelTemp_NoLock FBCALL ( _str as FBSTRING ptr ) as integer
+function fb_hStrDelTemp_NoLock FBCALL ( _str as FBSTRING ptr ) as long
 	if ( _str = NULL ) then
 		return -1
 	end if
@@ -179,8 +180,8 @@ function fb_hStrDelTemp_NoLock FBCALL ( _str as FBSTRING ptr ) as integer
     return fb_hStrDelTempDesc( _str )
 end function
 
-function fb_hStrDelTemp FBCALL ( _str as FBSTRING ptr ) as integer
-	dim as integer res
+function fb_hStrDelTemp FBCALL ( _str as FBSTRING ptr ) as long
+	dim as long res
 
 	FB_STRLOCK( )
 
@@ -199,3 +200,4 @@ sub fb_hStrCopy FBCALL ( dst as ubyte ptr, src as ubyte const ptr, bytes as ssiz
     /' add the null-term '/
     dst = 0
 end sub
+end extern

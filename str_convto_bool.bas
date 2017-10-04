@@ -7,6 +7,7 @@
 static shared false_string as ubyte ptr = sadd("false")
 static shared true_string as ubyte ptr = sadd("true")
 
+extern "C"
 /':::::'/
 function fb_hBoolToStr FBCALL ( num as ubyte ) as ubyte ptr
 	return iif(num, true_string, false_string)
@@ -27,3 +28,4 @@ function fb_BoolToStr FBCALL ( num as ubyte ) as FBSTRING ptr
 
 	return dst
 end function
+end extern
