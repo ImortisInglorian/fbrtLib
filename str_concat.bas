@@ -26,7 +26,7 @@ function fb_StrConcat FBCALL ( dst as FBSTRING ptr, str1 as any ptr, str1_size a
 		DBG_ASSERT( dst )
 
 		/' do the concatenation '/
-		fb_hStrConcat( dst->_data, str1_ptr, str1_len, str2_ptr, str2_len )
+		fb_hStrConcat( dst->data, str1_ptr, str1_len, str2_ptr, str2_len )
 	end if
 
 	FB_STRLOCK()

@@ -1,5 +1,9 @@
 /' null pointer checking function '/
 
+#ifdef fb_NullPtrChk
+	#undef fb_NullPtrChk
+#endif
+
 #include "fb.bi"
 
 extern "C"

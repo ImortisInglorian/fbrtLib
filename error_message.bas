@@ -2,4 +2,4 @@
 
 #include "fb.bi"
 
-dim as ubyte __fb_errmsg[FB_ERRMSG_SIZE] = 0
+dim as ubyte __fb_errmsg(0 to FB_ERRMSG_SIZE - 1)

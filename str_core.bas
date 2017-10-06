@@ -33,8 +33,8 @@ function fb_hStrAllocTmpDesc FBCALL ( ) as FBSTRING ptr
 	end if
 
 	/'  '/
-	dsc->desc._data = NULL
-	dsc->desc._len  = 0
+	dsc->desc.data = NULL
+	dsc->desc.len  = 0
 	dsc->desc.size = 0
 
 	return @dsc->desc
@@ -44,8 +44,8 @@ sub fb_hStrFreeTmpDesc cdecl ( dsc as FB_STR_TMPDESC ptr )
 	fb_hListFreeElem( @tmpdsList,  @dsc->elem )
 
 	/'  '/
-	dsc->desc._data = NULL
-	dsc->desc._len  = 0
+	dsc->desc.data = NULL
+	dsc->desc.len  = 0
 	dsc->desc.size = 0
 end sub
 
@@ -71,12 +71,12 @@ end function
 function fb_hStrAlloc FBCALL ( _str as FBSTRING ptr, size as ssize_t ) as FBSTRING ptr
 	dim as ssize_t newsize = hStrRoundSize( size )
 
-	_str->_data = cast(ubyte ptr, malloc( newsize + 1 ))
+	_str->data = cast(ubyte ptr, malloc( newsize + 1 ))
 	/' failed? try the original request '/
-	if ( _str->_data = NULL ) then
-		_str->_data = cast(ubyte ptr, malloc( size + 1 ))
-		if ( _str->_data = NULL ) then
-            _str->_len = _str->size = 0
+	if ( _str->data = NULL ) then
+		_str->data = cast(ubyte ptr, malloc( size + 1 ))
+		if ( _str->data = NULL ) then
+            _str->len = _str->size = 0
 			return NULL
 		end if
 
@@ -84,7 +84,7 @@ function fb_hStrAlloc FBCALL ( _str as FBSTRING ptr, size as ssize_t ) as FBSTRI
 	end if
 
 	_str->size = newsize
-	_str->_len = size
+	_str->len = size
 
     return _str
 end function
@@ -94,33 +94,33 @@ function fb_hStrRealloc FBCALL ( _str as FBSTRING ptr, size as ssize_t, _preserv
 	/' plus 12.5% more '/
 	newsize += (newsize shr 3)
 
-	if ( (_str->_data = NULL) or (size > _str->size) or (newsize < (_str->size - (_str->size shr 3))) ) then
+	if ( (_str->data = NULL) or (size > _str->size) or (newsize < (_str->size - (_str->size shr 3))) ) then
 		if ( _preserve = FB_FALSE ) then
 			fb_StrDelete( _str )
 
-			_str->_data = cast(ubyte ptr, malloc( newsize + 1 ))
+			_str->data = cast(ubyte ptr, malloc( newsize + 1 ))
 			/' failed? try the original request '/
-			if ( _str->_data = NULL ) then
-				_str->_data = cast(ubyte ptr, malloc( size + 1 ))
+			if ( _str->data = NULL ) then
+				_str->data = cast(ubyte ptr, malloc( size + 1 ))
 				newsize = size
 			end if
 		else
-            dim as ubyte ptr pszOld = _str->_data
-			_str->_data = cast(ubyte ptr, realloc( pszOld, newsize + 1 ))
+            dim as ubyte ptr pszOld = _str->data
+			_str->data = cast(ubyte ptr, realloc( pszOld, newsize + 1 ))
 			/' failed? try the original request '/
-			if ( _str->_data = NULL ) then
-				_str->_data = cast(ubyte ptr, realloc( pszOld, size + 1 ))
+			if ( _str->data = NULL ) then
+				_str->data = cast(ubyte ptr, realloc( pszOld, size + 1 ))
 				newsize = size
-                if ( _str->_data = NULL ) then
+                if ( _str->data = NULL ) then
                     /' restore the old memory block '/
-                    _str->_data = pszOld
+                    _str->data = pszOld
                     return NULL
                 end if
             end if
 		end if
 
-		if ( _str->_data = NULL ) then
-            _str->_len = _str->size = 0
+		if ( _str->data = NULL ) then
+            _str->len = _str->size = 0
 			return NULL
 		end if
 
@@ -148,7 +148,7 @@ function fb_hStrAllocTemp_NoLock FBCALL ( _str as FBSTRING ptr, size as ssize_t 
 		end if
         return NULL
     else
-        _str->_len or= FB_TEMPSTRBIT
+        _str->len or= FB_TEMPSTRBIT
 	end if
 
     return _str

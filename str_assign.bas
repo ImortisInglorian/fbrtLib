@@ -32,8 +32,8 @@ function fb_StrAssignEx FBCALL ( dst as any ptr, dst_size as ssize_t, src as any
 			if ( is_init = FB_FALSE ) then
 				fb_StrDelete( dstr )
 			else
-				dstr->_data = NULL
-				dstr->_len = 0
+				dstr->data = NULL
+				dstr->len = 0
 				dstr->size = 0
 			end if
 		else
@@ -43,12 +43,12 @@ function fb_StrAssignEx FBCALL ( dst as any ptr, dst_size as ssize_t, src as any
 					fb_StrDelete( dstr )
 				end if
 				
-				dstr->_data = cast(ubyte ptr, src_ptr)
-				dstr->_len = src_len
+				dstr->data = cast(ubyte ptr, src_ptr)
+				dstr->len = src_len
 				dstr->size = cast(FBSTRING ptr, src)->size
 
-				cast(FBSTRING ptr, src)->_data = NULL
-				cast(FBSTRING ptr, src)->_len = 0
+				cast(FBSTRING ptr, src)->data = NULL
+				cast(FBSTRING ptr, src)->len = 0
 				cast(FBSTRING ptr, src)->size = 0
 
 				fb_hStrDelTempDesc( cast(FBSTRING ptr, src) )
@@ -67,7 +67,7 @@ function fb_StrAssignEx FBCALL ( dst as any ptr, dst_size as ssize_t, src as any
 				fb_hStrAlloc( dstr, src_len )
         	end if
 
-			fb_hStrCopy( dstr->_data, src_ptr, src_len )
+			fb_hStrCopy( dstr->data, src_ptr, src_len )
 		end if
 	/' fixed-len or zstring.. '/
 	else

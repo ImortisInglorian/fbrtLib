@@ -45,10 +45,10 @@ function fb_VALLNG FBCALL ( _str as FBSTRING ptr ) as longint
 	if ( _str = NULL ) then
 	    return 0
 	end if
-	if ( (_str->_data = NULL) or (FB_STRSIZE( _str ) = 0) ) then
+	if ( (_str->data = NULL) or (FB_STRSIZE( _str ) = 0) ) then
 		_val = 0
 	else
-		_val = fb_hStr2Longint( _str->_data, FB_STRSIZE( _str ) )
+		_val = fb_hStr2Longint( _str->data, FB_STRSIZE( _str ) )
 	end if
 	/' del if temp '/
 	fb_hStrDelTemp( _str )

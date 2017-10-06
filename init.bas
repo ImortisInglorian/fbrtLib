@@ -113,7 +113,7 @@ end sub
 
 /' called by FB program,
    or fb_Die() in case of assert() failure or runtime error '/
-sub fb_End( errlevel as long )
+sub fb_End FBCALL ( errlevel as long )
 	if( __fb_ctx.exit_gfxlib2 ) then
 		'__fb_ctx.exit_gfxlib2( )
 	end if

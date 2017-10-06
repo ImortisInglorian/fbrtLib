@@ -21,10 +21,10 @@ function fb_CHR cdecl ( args as long, ... ) as FBSTRING ptr
 		/' convert '/
 		for i = 0 to args
 			num = va_arg( ap, uinteger )
-			dst->_data[i] = cast(ubyte, num)
+			dst->data[i] = cast(ubyte, num)
 			ap = va_next(ap, uinteger)
 		next
-		dst->_data[args] = 0
+		dst->data[args] = 0
 	else
 		dst = @__fb_ctx.null_desc
 	end if

@@ -28,7 +28,7 @@ function fb_StrConcatAssign FBCALL ( dst as any ptr, dst_size as ssize_t, src as
 
 			fb_hStrRealloc( dstr, dst_len + src_len, FB_TRUE )
 
-			fb_hStrCopy( @dstr->_data[dst_len], src_ptr, src_len )
+			fb_hStrCopy( @dstr->data[dst_len], src_ptr, src_len )
 		else
 			dst_len = strlen( cast(ubyte ptr, dst) )
 

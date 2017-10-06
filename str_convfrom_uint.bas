@@ -3,7 +3,7 @@
 #include "fb.bi"
 
 extern "C"
-function fb_hStr2UInt FBCALL ( src as ubyte ptr, _len as ssize_t ) as uinteger
+function fb_hStr2UInt FBCALL ( src as ubyte ptr, _len as ssize_t ) as ulong
     dim as ubyte ptr p
 	dim as long radix, skip
 
@@ -41,16 +41,16 @@ function fb_hStr2UInt FBCALL ( src as ubyte ptr, _len as ssize_t ) as uinteger
 	return strtoul( p, NULL, radix )
 end function
 
-function fb_VALUINT FBCALL ( _str as FBSTRING ptr ) as uinteger
+function fb_VALUINT FBCALL ( _str as FBSTRING ptr ) as ulong
     dim as uinteger _val
 
 	if ( _str = NULL ) then
 	    return 0
 	end if
-	if ( (_str->_data = NULL) or (FB_STRSIZE( _str ) = 0) ) then
+	if ( (_str->data = NULL) or (FB_STRSIZE( _str ) = 0) ) then
 		_val = 0
 	else
-		_val = fb_hStr2UInt( _str->_data, FB_STRSIZE( _str ) )
+		_val = fb_hStr2UInt( _str->data, FB_STRSIZE( _str ) )
 	end if
 	
 	/' del if temp '/

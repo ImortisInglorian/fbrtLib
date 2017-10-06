@@ -174,7 +174,7 @@
 	#include "fb_unicode.bi"
 	#include "fb_error.bi"
 	#include "fb_string.bi"
-	/'#include "fb_array.bi"'/
+	#include "fb_array.bi"
 	#include "fb_system.bi"
 	#include "fb_math.bi"
 	/'#include "fb_data.bi"

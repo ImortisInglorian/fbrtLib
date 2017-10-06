@@ -17,14 +17,14 @@ function fb_FloatToStr FBCALL ( num as single ) as FBSTRING ptr
 		dim as size_t tmp_len
 
 		/' convert '/
-		sprintf( dst->_data, "%.7g", num )
+		sprintf( dst->data, "%.7g", num )
 
-		tmp_len = strlen( dst->_data )				/' fake len '/
+		tmp_len = strlen( dst->data )				/' fake len '/
 
 		/' skip the dot at end if any '/
 		if ( tmp_len > 0 ) then
-			if ( dst->_data[tmp_len-1] = sadd(".") ) then
-				dst->_data[tmp_len-1] = 0
+			if ( dst->data[tmp_len-1] = sadd(".") ) then
+				dst->data[tmp_len-1] = 0
 				tmp_len -= 1
 			end if
 		end if
@@ -47,14 +47,14 @@ function fb_DoubleToStr FBCALL ( num as double) as FBSTRING ptr
 		dim as size_t tmp_len
 
 		/' convert '/
-		sprintf( dst->_data, "%.16g", num )
+		sprintf( dst->data, "%.16g", num )
 
-		tmp_len = strlen( dst->_data )				/' fake len '/
+		tmp_len = strlen( dst->data )				/' fake len '/
 
 		/' skip the dot at end if any '/
 		if ( tmp_len > 0 ) then
-			if ( dst->_data[tmp_len-1] = sadd(".") ) then
-				dst->_data[tmp_len-1] = 0
+			if ( dst->data[tmp_len-1] = sadd(".") ) then
+				dst->data[tmp_len-1] = 0
 				tmp_len -= 1
 			end if
 		end if

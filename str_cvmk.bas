@@ -10,9 +10,9 @@ sub hCV cdecl ( _str as FBSTRING ptr, _len as ssize_t, num as any ptr )
 		return
 	end if
 	
-	if ( (_str->_data <> NULL) and (FB_STRSIZE( _str ) >= _len) ) then
+	if ( (_str->data <> NULL) and (FB_STRSIZE( _str ) >= _len) ) then
 		for i = 0 to _len
-			(cast(ubyte ptr, num)[i]) = _str->_data[i]
+			(cast(ubyte ptr, num)[i]) = _str->data[i]
 		next
 	end if
 
@@ -66,10 +66,10 @@ function hMK cdecl ( _len as ssize_t, num as any ptr ) as FBSTRING ptr
 	if ( dst <> NULL ) then
 		/' convert '/
 		for i = 0 to _len
-			dst->_data[i] = (cast(ubyte ptr, num))[i]
+			dst->data[i] = (cast(ubyte ptr, num))[i]
 		next
 		
-		dst->_data[_len] = 0
+		dst->data[_len] = 0
 	else
 		dst = @__fb_ctx.null_desc
 	end if

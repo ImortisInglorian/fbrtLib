@@ -15,9 +15,9 @@ function fb_LongintToStr FBCALL ( num as longint ) as FBSTRING ptr
 	dst = fb_hStrAllocTemp( NULL, sizeof( longint ) * 3 )
 	if ( dst <> NULL ) then
 		/' convert '/
-		sprintf( dst->_data, "%lld", num )
+		sprintf( dst->data, "%lld", num )
 
-		fb_hStrSetLength( dst, strlen( dst->_data ) )
+		fb_hStrSetLength( dst, strlen( dst->data ) )
 	else
 		dst = @__fb_ctx.null_desc
 	end if
@@ -33,9 +33,9 @@ function fb_ULongintToStr FBCALL ( num as ulongint ) as FBSTRING ptr
 	dst = fb_hStrAllocTemp( NULL, sizeof( longint ) * 3 )
 	if ( dst <> NULL ) then
 		/' convert '/
-		sprintf( dst->_data, "%llu", num )
+		sprintf( dst->data, "%llu", num )
 
-		fb_hStrSetLength( dst, strlen( dst->_data ) )
+		fb_hStrSetLength( dst, strlen( dst->data ) )
 	else
 		dst = @__fb_ctx.null_desc
 	end if

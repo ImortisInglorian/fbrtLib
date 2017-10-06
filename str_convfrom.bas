@@ -67,10 +67,10 @@ function fb_VAL FBCALL ( _str as FBSTRING ptr ) as double
 	if ( _str = NULL ) then
 	    return 0.0
 	end if
-	if ( (_str->_data = NULL) or (FB_STRSIZE( _str ) = 0) ) then
+	if ( (_str->data = NULL) or (FB_STRSIZE( _str ) = 0) ) then
 		_val = 0.0
 	else
-		_val = fb_hStr2Double( _str->_data, FB_STRSIZE( _str ) )
+		_val = fb_hStr2Double( _str->data, FB_STRSIZE( _str ) )
 	end if
 	/' del if temp '/
 	fb_hStrDelTemp( _str )

@@ -54,21 +54,23 @@
     <Name>str_format.bas</Name>
     <Name>strw_rtrim.bas</Name>
     <Name>strw_rtrimany.bas</Name>
+    <Name>win32/thread_cond.bas</Name>
     <Name>win32/time_timer.bas</Name>
-	<Name>win32/thread_cond.bas</Name>
   </Sources>
   <Includes>
     <Name>fb.bi</Name>
     <Name>fb_config.bi</Name>
     <Name>fb_datetime.bi</Name>
     <Name>fb_error.bi</Name>
+    <Name>fb_file.bi</Name>
+    <Name>fb_hook.bi</Name>
     <Name>fb_math.bi</Name>
+    <Name>fb_private_thread.bi</Name>
     <Name>fb_string.bi</Name>
     <Name>fb_system.bi</Name>
+    <Name>fb_thread.bi</Name>
     <Name>fb_unicode.bi</Name>
     <Name>win32/fb_win32.bi</Name>
-    <Name>fb_private_thread.bi</Name>
-    <Name>fb_thread.bi</Name>
   </Includes>
   <Others/>
 </Project>

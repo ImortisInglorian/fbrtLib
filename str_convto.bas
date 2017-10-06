@@ -15,9 +15,9 @@ function fb_IntToStr FBCALL ( num as long ) as FBSTRING ptr
 	dst = fb_hStrAllocTemp( NULL, sizeof( long ) * 3 )
 	if ( dst <> NULL ) then
 		/' convert '/
-		sprintf( dst->_data, "%d", num )
+		sprintf( dst->data, "%d", num )
 
-		fb_hStrSetLength( dst, strlen( dst->_data ) )
+		fb_hStrSetLength( dst, strlen( dst->data ) )
 	else
 		dst = @__fb_ctx.null_desc
 	end if
@@ -26,15 +26,15 @@ function fb_IntToStr FBCALL ( num as long ) as FBSTRING ptr
 end function
 
 /':::::'/
-function fb_UIntToStr FBCALL ( num as uinteger ) as FBSTRING ptr
+function fb_UIntToStr FBCALL ( num as ulong ) as FBSTRING ptr
 	dim as FBSTRING ptr dst
 
 	/' alloc temp string '/
 	dst = fb_hStrAllocTemp( NULL, sizeof( long ) * 3 )
 	if ( dst <> NULL ) then
 		/' convert '/
-		sprintf( dst->_data, "%u", num )
-		fb_hStrSetLength( dst, strlen( dst->_data ) )
+		sprintf( dst->data, "%u", num )
+		fb_hStrSetLength( dst, strlen( dst->data ) )
 	else
 		dst = @__fb_ctx.null_desc
 	end if

@@ -130,14 +130,14 @@ function fb_hBuildDouble cdecl ( num as double, decimal_point as ubyte, thousand
     dst = fb_hStrAllocTemp_NoLock( NULL, LenTotal )
 	if ( dst <> NULL ) then
         if ( LenSign <> 0 ) then
-            dst->_data[0] = chSign
+            dst->data[0] = chSign
         end if
-        FB_MEMCPY( dst->_data + LenSign, @FixPart(0), LenFix )
+        FB_MEMCPY( dst->data + LenSign, @FixPart(0), LenFix )
         if ( LenDecPoint <> 0 ) then
-            dst->_data[LenSign + LenFix] = decimal_point
+            dst->data[LenSign + LenFix] = decimal_point
         end if
-        FB_MEMCPY( dst->_data + LenSign + LenFix + LenDecPoint, @FracPart(0), LenFrac )
-        dst->_data[LenTotal] = 0
+        FB_MEMCPY( dst->data + LenSign + LenFix + LenDecPoint, @FracPart(0), LenFrac )
+        dst->data[LenTotal] = 0
 	else
 		dst = @__fb_ctx.null_desc
 	end if
@@ -223,7 +223,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 			end if
             value /= pow( 10.0, pInfo->num_digits_omit )
         end if
-        pszOut = dst->_data
+        pszOut = dst->data
         LenOut = FB_STRSIZE( dst )
     end if
 
@@ -678,7 +678,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 								if ( not(do_output) ) then
 									pInfo->length_min += FB_STRSIZE(tmp)
 								else
-									pszAddFree = _strdup( tmp->_data )
+									pszAddFree = _strdup( tmp->data )
 									LenAdd = FB_STRSIZE( tmp )
 									do_add = TRUE
 								end if
@@ -706,7 +706,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 								if ( not(do_output) ) then
 									pInfo->length_min += FB_STRSIZE(tmp)
 								else
-									pszAddFree = _strdup( tmp->_data )
+									pszAddFree = _strdup( tmp->data )
 									LenAdd = FB_STRSIZE( tmp )
 									do_add = TRUE
 								end if
@@ -717,7 +717,8 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 									pInfo->length_min += 1
 									pInfo->length_opt += 1
 								else
-									LenAdd = sprintf( ((pszAdd = @FixPart(0)), @FixPart(0)),"%d", fb_Day( value ) )
+									pszAdd = @FixPart(0)
+									LenAdd = sprintf( @FixPart(0),"%d", fb_Day( value ) )
 									do_add = TRUE
 								end if
 							elseif ( chCurrent = 100 and count = 2 ) then
@@ -725,7 +726,8 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 								if ( not(do_output) ) then
 									pInfo->length_min += 2
 								else
-									LenAdd = sprintf( ((pszAdd = @FixPart(0)), @FixPart(0)), "%02d", fb_Day( value ) )
+									pszAdd = @FixPart(0)
+									LenAdd = sprintf( @FixPart(0), "%02d", fb_Day( value ) )
 									do_add = TRUE
 								end if
 							elseif ( chCurrent = 100 and (count = 3 or count = 4) ) then
@@ -735,7 +737,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 								if ( not(do_output) ) then
 									pInfo->length_min += FB_STRSIZE( tmp )
 								else
-									pszAddFree = _strdup( tmp->_data )
+									pszAddFree = _strdup( tmp->data )
 									LenAdd = 0
 									do_add = TRUE
 								end if
@@ -746,7 +748,8 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 									pInfo->length_min += 1
 									pInfo->length_opt += 1
 								else
-									LenAdd = sprintf( ((pszAdd = @FixPart(0)), @FixPart(0)), "%d", fb_Minute( value ) )
+									pszAdd = @FixPart(0)
+									LenAdd = sprintf( @FixPart(0), "%d", fb_Minute( value ) )
 									do_add = TRUE
 								end if
 							elseif ( (chCurrent = 109 or chCurrent = 110) and count = 2 ) then
@@ -754,7 +757,8 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 								if( not(do_output) ) then
 									pInfo->length_min += 2
 								else
-									LenAdd = sprintf( ((pszAdd = @FixPart(0)), @FixPart(0)), "%02d", fb_Minute( value ) )
+									pszAdd = @FixPart(0)
+									LenAdd = sprintf( @FixPart(0), "%02d", fb_Minute( value ) )
 									do_add = TRUE
 								end if
 							elseif ( (chCurrent = 104 or chCurrent = 72) and count = 1 ) then
@@ -771,7 +775,8 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 											_hour += 12
 										end if
 									end if
-									LenAdd = sprintf( ((pszAdd = @FixPart(0)), @FixPart(0)), "%d", _hour )
+									pszAdd = @FixPart(0)
+									LenAdd = sprintf( @FixPart(0), "%d", _hour )
 									do_add = TRUE
 								end if
 								did_hour = TRUE
@@ -788,7 +793,8 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 											_hour += 12
 										end if
 									end if
-									LenAdd = sprintf( ((pszAdd = @FixPart(0)), @FixPart(0)), "%02d", _hour )
+									pszAdd = @FixPart(0)
+									LenAdd = sprintf( @FixPart(0), "%02d", _hour )
 									do_add = TRUE
 								end if
 								did_hour = TRUE
@@ -798,7 +804,8 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 									pInfo->length_min += 1
 									pInfo->length_opt += 1
 								else
-									LenAdd = sprintf( ((pszAdd = @FixPart(0)), @FixPart(0)), "%d", fb_Second( value ) )
+									pszAdd = @FixPart(0)
+									LenAdd = sprintf( @FixPart(0), "%d", fb_Second( value ) )
 									do_add = TRUE
 								end if
 							elseif ( chCurrent = 115 and count = 2 ) then
@@ -806,7 +813,8 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 								if ( not(do_output) ) then
 									pInfo->length_min += 2
 								else
-									LenAdd = sprintf( ((pszAdd = @FixPart(0)), @FixPart(0)), "%02d", fb_Second( value ) )
+									pszAdd = @FixPart(0)
+									LenAdd = sprintf( @FixPart(0), "%02d", fb_Second( value ) )
 									do_add = TRUE
 								end if
 							elseif ( chCurrent = 77 and count = 1 ) then
@@ -815,7 +823,8 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 									pInfo->length_min += 1
 									pInfo->length_opt += 1
 								else
-									LenAdd = sprintf( ((pszAdd = @FixPart(0)), @FixPart(0)), "%d", fb_Month( value ) )
+									pszAdd = @FixPart(0)
+									LenAdd = sprintf( @FixPart(0), "%d", fb_Month( value ) )
 									do_add = TRUE
 								end if
 							elseif ( chCurrent = 77 and count = 2 ) then
@@ -823,7 +832,8 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 								if ( not(do_output) ) then
 									pInfo->length_min += 2
 								else
-									LenAdd = sprintf( ((pszAdd = @FixPart(0)), @FixPart(0)), "%02d", fb_Month( value ) )
+									pszAdd = @FixPart(0)
+									LenAdd = sprintf( @FixPart(0), "%02d", fb_Month( value ) )
 									do_add = TRUE
 								end if
 							elseif( chCurrent = 77 and (count = 3 or count = 4) ) then
@@ -833,7 +843,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 								if ( not(do_output) ) then
 									pInfo->length_min += FB_STRSIZE( tmp )
 								else
-									pszAddFree = strdup( tmp->_data )
+									pszAddFree = _strdup( tmp->data )
 									LenAdd = 0
 									do_add = TRUE
 								end if
@@ -843,7 +853,8 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 								if( not(do_output) ) then
 									pInfo->length_min += 2
 								else
-									LenAdd = sprintf( ((pszAdd = @FixPart(0)), @FixPart(0)), "%02d", fb_Year( value ) mod 100)
+									pszAdd = @FixPart(0)
+									LenAdd = sprintf( @FixPart(0), "%02d", fb_Year( value ) mod 100)
 									do_add = TRUE
 								end if
 							elseif ( chCurrent = 121 and count = 4 ) then
@@ -851,7 +862,8 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 								if ( not(do_output) ) then
 									pInfo->length_min += 4
 								else
-									LenAdd = sprintf( ((pszAdd = @FixPart(0)), @FixPart(0)), "%04d", fb_Year( value ))
+									pszAdd = @FixPart(0)
+									LenAdd = sprintf( @FixPart(0), "%04d", fb_Year( value ))
 									do_add = TRUE
 								end if
 							else
@@ -891,7 +903,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 					case 97, 65: ' a A
 						/' AM/PM or A/P (in any combination of cases) '/
 						if ( pInfo->mask_type = eMT_DateTime ) then
-							if ( (strncasecmp( mask+i, "AM/PM", 5 ) = 0) or (strncasecmp( mask+i, "A/P", 3 ) = 0) ) then
+							if ( (_strnicmp( mask+i, "AM/PM", 5 ) = 0) or _strnicmp( mask+i, "A/P", 3 ) = 0) then
 								if ( not(do_output) ) then
 									if ( pInfo->mask_type = eMT_Unknown ) then
 										pInfo->mask_type = eMT_DateTime
@@ -984,7 +996,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
     else
         DBG_ASSERT( LenOut>=0 )
         *pszOut = 0
-        fb_hStrSetLength( dst, pszOut - dst->_data )
+        fb_hStrSetLength( dst, pszOut - dst->data )
     end if
 
     return TRUE
@@ -1001,11 +1013,11 @@ function fb_hStrFormat FBCALL ( value as double, mask as ubyte const ptr, mask_l
     pszIntlResult = fb_IntlGet( eFIL_NumDecimalPoint, FALSE )
     chDecimalPoint = iif(( pszIntlResult = NULL ), 46, *pszIntlResult )
     pszIntlResult = fb_IntlGet( eFIL_NumThousandsSeparator, FALSE )
-    chThousandsSep = iif(( pszIntlResult==NULL ), 44, *pszIntlResult )
+    chThousandsSep = iif(( pszIntlResult = NULL ), 44, *pszIntlResult )
     pszIntlResult = fb_IntlGet( eFIL_DateDivider, FALSE )
-    chDateSep = iif(( pszIntlResult==NULL ), 47, *pszIntlResult )
+    chDateSep = iif(( pszIntlResult = NULL ), 47, *pszIntlResult )
     pszIntlResult = fb_IntlGet( eFIL_TimeDivider, FALSE )
-    chTimeSep = iif(( pszIntlResult==NULL ), 58, *pszIntlResult )
+    chTimeSep = iif(( pszIntlResult = NULL ), 58, *pszIntlResult )
     FB_UNLOCK()
     
     if ( chDecimalPoint = 0 ) then
@@ -1043,7 +1055,7 @@ end function
 function fb_StrFormat FBCALL ( value as double, mask as FBSTRING ptr ) as FBSTRING ptr
     dim as FBSTRING ptr dst
 
-    dst = fb_hStrFormat( value, mask->_data, FB_STRSIZE(mask) )
+    dst = fb_hStrFormat( value, mask->data, FB_STRSIZE(mask) )
 
 	/' del if temp '/
 	fb_hStrDelTemp( mask )
