@@ -52,10 +52,37 @@
     <Name>str_del.bas</Name>
     <Name>str_fill.bas</Name>
     <Name>str_format.bas</Name>
+    <Name>str_ftoa.bas</Name>
+    <Name>str_hex.bas</Name>
+    <Name>str_hex_lng.bas</Name>
+    <Name>str_hex_ptr.bas</Name>
+    <Name>str_hskip.bas</Name>
     <Name>strw_rtrim.bas</Name>
     <Name>strw_rtrimany.bas</Name>
     <Name>win32/thread_cond.bas</Name>
+    <Name>win32/thread_core.bas</Name>
+    <Name>win32/thread_detach.bas</Name>
+    <Name>win32/thread_mutex.bas</Name>
     <Name>win32/time_timer.bas</Name>
+    <Name>str_instr.bas</Name>
+    <Name>str_instrany.bas</Name>
+    <Name>str_instrrev.bas</Name>
+    <Name>str_instrrevany.bas</Name>
+    <Name>str_lcase.bas</Name>
+    <Name>str_left.bas</Name>
+    <Name>str_len.bas</Name>
+    <Name>str_ltrim.bas</Name>
+    <Name>str_ltrimany.bas</Name>
+    <Name>str_ltrimex.bas</Name>
+    <Name>str_mid.bas</Name>
+    <Name>str_midassign.bas</Name>
+    <Name>str_misc.bas</Name>
+    <Name>str_oct.bas</Name>
+    <Name>str_oct_lng.bas</Name>
+    <Name>str_oct_ptr.bas</Name>
+    <Name>str_right.bas</Name>
+    <Name>str_rtrim.bas</Name>
+    <Name>str_rtrimany.bas</Name>
   </Sources>
   <Includes>
     <Name>fb.bi</Name>

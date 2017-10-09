@@ -219,7 +219,7 @@ declare function fb_StrAllocTempDescF		FBCALL ( str as ubyte ptr, str_size as ss
 declare function fb_StrAllocTempDescV		FBCALL ( str as FBSTRING ptr ) as FBSTRING ptr
 declare function fb_StrAllocTempDescZEx 	FBCALL ( str as ubyte const ptr, len as ssize_t ) as FBSTRING ptr
 declare function fb_StrAllocTempDescZ 		FBCALL ( str as ubyte const ptr ) as FBSTRING ptr
-declare function fb_StrLen 					FBCALL ( str as any ptr, str_size as ssize_t ) as long
+declare function fb_StrLen 					FBCALL ( str as any ptr, str_size as ssize_t ) as ssize_t
 
 declare function fb_hBoolToStr 				FBCALL ( num as ubyte ) as ubyte ptr
 declare function fb_BoolToStr 				FBCALL ( num as ubyte ) as FBSTRING ptr
