@@ -89,7 +89,7 @@ sub fb_hRtExit cdecl ( )
 	'fb_DevScrnEnd( FB_HANDLE_SCREEN )
 
 	/' Free main thread's TLS contexts '/
-	'fb_TlsFreeCtxTb( )
+	fb_TlsFreeCtxTb( )
 
 #ifdef ENABLE_MT
 	fb_TlsExit( )
