@@ -87,7 +87,7 @@
 	#if defined(HOST_DOS)
 		#include "dos/fb_dos.h"
 	#elseif defined(HOST_UNIX)
-		#include "unix/fb_unix.h"
+		#include "unix/fb_unix.bi"
 	#elseif defined(HOST_WIN32)
 		#include "win32/fb_win32.bi"
 	#elseif defined(HOST_XBOX)

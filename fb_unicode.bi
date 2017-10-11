@@ -75,8 +75,11 @@ type UTF_8 as ubyte
 #else
 	#define __USE_ISOC99 1
 	#define __USE_ISOC95 1
-	#define FB_WCHAR wchar_t '?
-	/'#define _LC(c) !##c'/
+	#include "crt/wchar.bi"
+	'#include "crt/wctype.bi"
+	#include "crt_extra/wctype.bi"
+	#define FB_WCHAR wchar_t
+	#define _LC(c) L ## c
 	#define FB_WEOF ((FB_WCHAR)WEOF)
 #endif
 
