@@ -188,7 +188,7 @@ end type
 
 
 
-sub fb_hStrSetLength( _str as FBSTRING ptr, size as size_t )
+private sub fb_hStrSetLength( _str as FBSTRING ptr, size as size_t )
     _str->len = size or (_str->len and FB_TEMPSTRBIT)
 end sub
 

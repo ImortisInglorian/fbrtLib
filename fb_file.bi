@@ -176,7 +176,7 @@ end type
 #define FB_FILE_TO_HANDLE( index ) ( iif(index) = 0,(cast(FB_FILE ptr,FB_HANDLE_SCREEN)),iif( (index) = -1, ((FB_FILE *)FB_HANDLE_PRINTER), iif( FB_FILE_INDEX_VALID( (index) ), FB_FILE_TO_HANDLE_VALID( (index) ), (cast(FB_FILE ptr,(NULL))))))
 
 extern "C"
-function FB_HANDLE_DEREF( handle as FB_FILE ptr ) as FB_FILE ptr
+private function FB_HANDLE_DEREF( handle as FB_FILE ptr ) as FB_FILE ptr
 	if ( handle <> NULL ) then
 		FB_LOCK()
 		while ( handle->redirection_to <> NULL )

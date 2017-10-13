@@ -7,6 +7,7 @@
 	#include "win\wincrypt.bi"
 #elseif defined (HOST_LINUX)
 	#include "crt\fcntl.bi"
+	#include "crt\unistd.bi"
 #endif
 
 #define RND_AUTO		0
@@ -69,7 +70,7 @@ function hRnd_MTWIST cdecl ( n as single ) as double
 	
 	dim as uint32_t i, v, xor_mask(0 to 1) = { 0, &h9908B0DF }
 
-	if ( not(p) ) then
+	if ( p = NULL ) then
 		/' initialize state starting with an initial seed '/
 		fb_Randomize( INITIAL_SEED, RND_MTWIST )
 	end if
@@ -139,12 +140,12 @@ function hGetRealRndNumber cdecl ( ) as uinteger
 	end if
 
 #elseif defined (HOST_LINUX)
-	dim as long urandom = _open( "/dev/urandom", O_RDONLY )
+	dim as long urandom = open_( "/dev/urandom", O_RDONLY )
 	if ( urandom <> -1 ) then
-		if ( _read( urandom, @number.b[0], sizeof(number) ) <> sizeof(number) ) then
+		if ( read_( urandom, @number.b(0), sizeof(number) ) <> sizeof(number) ) then
 			number.i = 0
 		end if
-		_close( urandom )
+		close_( urandom )
 	end if
 #endif
 

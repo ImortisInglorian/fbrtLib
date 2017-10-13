@@ -4,9 +4,13 @@
 	/' Must be included before any system headers due to certain #defines '/
 	#include "fb_config.bi"
 
-	/' Minimum headers needed for fb.h alone, more in system-specific sections
+	/' Minimum headers needed for fb.bi alone, more in system-specific sections
 	   below. These can be relied upon and don't need to be #included again. '/
 	#include "crt.bi"
+
+	/' FB's CRT headers need some work. Any additions to them that aren't
+	   yet merged into FB are in these extra headers '/
+	#include "crt_extra/string.bi"
 
 	#define FB_TRUE (-1)
 	#define FB_FALSE 0
@@ -87,7 +91,7 @@
 	#if defined(HOST_DOS)
 		#include "dos/fb_dos.h"
 	#elseif defined(HOST_UNIX)
-		#include "unix/fb_unix.h"
+		#include "unix/fb_unix.bi"
 	#elseif defined(HOST_WIN32)
 		#include "win32/fb_win32.bi"
 	#elseif defined(HOST_XBOX)
@@ -123,12 +127,12 @@
 
 	/' We have to wrap memcpy here because our MEMCPYX should return the position
 	* after the destination string. '/
-	function FB_MEMCPYX( dest as any ptr, src as any const ptr, n as size_t ) as any ptr
+	private function FB_MEMCPYX( dest as any ptr, src as any const ptr, n as size_t ) as any ptr
 		memcpy(dest, src, n)
 		return (cast(ubyte ptr, dest))+n
 	end function
 
-	function FB_MEMLEN( s as any const ptr, c as long, n as size_t ) as size_t
+	private function FB_MEMLEN( s as any const ptr, c as long, n as size_t ) as size_t
 		Dim pachData as ubyte ptr = cast(ubyte const ptr, s)
 		while (n)
 			n-= 1
@@ -331,7 +335,7 @@
 		as Sub ptr exit_gfxlib2
 	end type
 
-	dim shared as FB_RTLIB_CTX __fb_ctx
+	extern as FB_RTLIB_CTX __fb_ctx
 	end extern
 #endif
 /'__FB_BI__'/
