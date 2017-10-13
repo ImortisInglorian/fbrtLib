@@ -70,7 +70,7 @@ function hRnd_MTWIST cdecl ( n as single ) as double
 	
 	dim as uint32_t i, v, xor_mask(0 to 1) = { 0, &h9908B0DF }
 
-	if ( not(p) ) then
+	if ( p = NULL ) then
 		/' initialize state starting with an initial seed '/
 		fb_Randomize( INITIAL_SEED, RND_MTWIST )
 	end if
