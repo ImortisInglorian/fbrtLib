@@ -11,6 +11,16 @@
   <IncludeDirs/>
   <LibDirs/>
   <Sources>
+    <Name>array_boundchk.bas</Name>
+    <Name>array_clear.bas</Name>
+    <Name>array_clearobj.bas</Name>
+    <Name>array_core.bas</Name>
+    <Name>array_destructobj.bas</Name>
+    <Name>array_destructstr.bas</Name>
+    <Name>array_erase.bas</Name>
+    <Name>array_eraseobj.bas</Name>
+    <Name>array_erasestr.bas</Name>
+    <Name>array_lbound.bas</Name>
     <Name>error.bas</Name>
     <Name>error_assert.bas</Name>
     <Name>error_assert_wstr.bas</Name>
@@ -93,9 +103,11 @@
     <Name>win32/thread_detach.bas</Name>
     <Name>win32/thread_mutex.bas</Name>
     <Name>win32/time_timer.bas</Name>
+    <Name>array_redim.bas</Name>
   </Sources>
   <Includes>
     <Name>fb.bi</Name>
+    <Name>fb_array.bi</Name>
     <Name>fb_config.bi</Name>
     <Name>fb_datetime.bi</Name>
     <Name>fb_error.bi</Name>

@@ -24,7 +24,7 @@ type FBARRAYDIM
 end type
 
 type FBARRAY
-	as any ptr           _data        /' ptr + diff, must be at ofs 0! '/
+	as any ptr           data        /' ptr + diff, must be at ofs 0! '/
 	as any ptr           _ptr
 	as size_t          size
 	as size_t          element_len
