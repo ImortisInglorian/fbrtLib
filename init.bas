@@ -3,12 +3,11 @@
 #include "fb.bi"
 #include "crt/locale.bi"
 
-#ifndef __fb_ctx
-dim shared __fb_ctx as FB_RTLIB_CTX
-#endif
+extern "C"
+
+dim __fb_ctx as FB_RTLIB_CTX
 dim shared __fb_is_inicnt as long = 0
 
-extern "C"
 /' called from fbrt0 '/
 sub fb_hRtInit cdecl ( )
 	/' already initialized? '/

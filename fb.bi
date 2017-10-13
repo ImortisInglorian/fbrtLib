@@ -335,7 +335,7 @@
 		as Sub ptr exit_gfxlib2
 	end type
 
-	dim shared as FB_RTLIB_CTX __fb_ctx
+	extern as FB_RTLIB_CTX __fb_ctx
 	end extern
 #endif
 /'__FB_BI__'/
