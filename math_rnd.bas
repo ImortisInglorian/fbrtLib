@@ -7,6 +7,7 @@
 	#include "win\wincrypt.bi"
 #elseif defined (HOST_LINUX)
 	#include "crt\fcntl.bi"
+	#include "crt\unistd.bi"
 #endif
 
 #define RND_AUTO		0
@@ -139,12 +140,12 @@ function hGetRealRndNumber cdecl ( ) as uinteger
 	end if
 
 #elseif defined (HOST_LINUX)
-	dim as long urandom = _open( "/dev/urandom", O_RDONLY )
+	dim as long urandom = open_( "/dev/urandom", O_RDONLY )
 	if ( urandom <> -1 ) then
-		if ( _read( urandom, @number.b[0], sizeof(number) ) <> sizeof(number) ) then
+		if ( read_( urandom, @number.b(0), sizeof(number) ) <> sizeof(number) ) then
 			number.i = 0
 		end if
-		_close( urandom )
+		close_( urandom )
 	end if
 #endif
 

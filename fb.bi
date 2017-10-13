@@ -4,9 +4,13 @@
 	/' Must be included before any system headers due to certain #defines '/
 	#include "fb_config.bi"
 
-	/' Minimum headers needed for fb.h alone, more in system-specific sections
+	/' Minimum headers needed for fb.bi alone, more in system-specific sections
 	   below. These can be relied upon and don't need to be #included again. '/
 	#include "crt.bi"
+
+	/' FB's CRT headers need some work. Any additions to them that aren't
+	   yet merged into FB are in these extra headers '/
+	#include "crt_extra/string.bi"
 
 	#define FB_TRUE (-1)
 	#define FB_FALSE 0

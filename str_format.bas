@@ -678,7 +678,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 								if ( not(do_output) ) then
 									pInfo->length_min += FB_STRSIZE(tmp)
 								else
-									pszAddFree = _strdup( tmp->data )
+									pszAddFree = strdup( tmp->data )
 									LenAdd = FB_STRSIZE( tmp )
 									do_add = TRUE
 								end if
@@ -706,7 +706,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 								if ( not(do_output) ) then
 									pInfo->length_min += FB_STRSIZE(tmp)
 								else
-									pszAddFree = _strdup( tmp->data )
+									pszAddFree = strdup( tmp->data )
 									LenAdd = FB_STRSIZE( tmp )
 									do_add = TRUE
 								end if
@@ -737,7 +737,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 								if ( not(do_output) ) then
 									pInfo->length_min += FB_STRSIZE( tmp )
 								else
-									pszAddFree = _strdup( tmp->data )
+									pszAddFree = strdup( tmp->data )
 									LenAdd = 0
 									do_add = TRUE
 								end if
@@ -843,7 +843,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 								if ( not(do_output) ) then
 									pInfo->length_min += FB_STRSIZE( tmp )
 								else
-									pszAddFree = _strdup( tmp->data )
+									pszAddFree = strdup( tmp->data )
 									LenAdd = 0
 									do_add = TRUE
 								end if
@@ -903,7 +903,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 					case 97, 65: ' a A
 						/' AM/PM or A/P (in any combination of cases) '/
 						if ( pInfo->mask_type = eMT_DateTime ) then
-							if ( (_strnicmp( mask+i, "AM/PM", 5 ) = 0) or _strnicmp( mask+i, "A/P", 3 ) = 0) then
+							if ( (strncasecmp( mask+i, "AM/PM", 5 ) = 0) or strncasecmp( mask+i, "A/P", 3 ) = 0) then
 								if ( not(do_output) ) then
 									if ( pInfo->mask_type = eMT_Unknown ) then
 										pInfo->mask_type = eMT_DateTime

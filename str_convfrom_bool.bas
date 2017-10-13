@@ -2,9 +2,6 @@
 
 #include "fb.bi"
 
-#ifdef __fb_win32__
-	#define strcasecmp(x,y) _stricmp(x,y)
-#endif
 
 /'' convert string to boolean value
  *  
