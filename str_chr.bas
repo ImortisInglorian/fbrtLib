@@ -6,7 +6,7 @@ extern "C"
 function fb_CHR cdecl ( args as long, ... ) as FBSTRING ptr
 	dim dst as FBSTRING ptr
 	dim ap as any ptr
-	dim num as uinteger
+	dim num as ulong
 	dim i as long
 
 	if ( args <= 0 ) then
@@ -20,9 +20,9 @@ function fb_CHR cdecl ( args as long, ... ) as FBSTRING ptr
 	if ( dst <> NULL ) then
 		/' convert '/
 		for i = 0 to args
-			num = va_arg( ap, uinteger )
+			num = va_arg( ap, ulong )
 			dst->data[i] = cast(ubyte, num)
-			ap = va_next(ap, uinteger)
+			ap = va_next(ap, ulong)
 		next
 		dst->data[args] = 0
 	else

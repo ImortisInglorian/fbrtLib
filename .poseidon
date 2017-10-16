@@ -1,125 +1,132 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<Project>
-  <ProjectName>fb rtlib</ProjectName>
-  <Type>2</Type>
-  <MainFile>F:/Projects/rtlib/static/fbrt0.bas</MainFile>
-  <TargetName>fbrt0</TargetName>
-  <CompilerArgs/>
-  <CompilerOption/>
-  <Comment/>
-  <CompilerPath/>
-  <IncludeDirs/>
-  <LibDirs/>
-  <Sources>
-    <Name>array_boundchk.bas</Name>
-    <Name>array_clear.bas</Name>
-    <Name>array_clearobj.bas</Name>
-    <Name>array_core.bas</Name>
-    <Name>array_destructobj.bas</Name>
-    <Name>array_destructstr.bas</Name>
-    <Name>array_erase.bas</Name>
-    <Name>array_eraseobj.bas</Name>
-    <Name>array_erasestr.bas</Name>
-    <Name>array_lbound.bas</Name>
-    <Name>error.bas</Name>
-    <Name>error_assert.bas</Name>
-    <Name>error_assert_wstr.bas</Name>
-    <Name>error_getset.bas</Name>
-    <Name>error_message.bas</Name>
-    <Name>error_ptrchk.bas</Name>
-    <Name>init.bas</Name>
-    <Name>math_cvn.bas</Name>
-    <Name>math_fix.bas</Name>
-    <Name>math_frac.bas</Name>
-    <Name>math_log10.bas</Name>
-    <Name>math_rnd.bas</Name>
-    <Name>math_sgn.bas</Name>
-    <Name>static/fbrt0.bas</Name>
-    <Name>str_asc.bas</Name>
-    <Name>str_assign.bas</Name>
-    <Name>str_base.bas</Name>
-    <Name>str_bin.bas</Name>
-    <Name>str_bin_lng.bas</Name>
-    <Name>str_bin_ptr.bas</Name>
-    <Name>str_chr.bas</Name>
-    <Name>str_comp.bas</Name>
-    <Name>str_concat.bas</Name>
-    <Name>str_concatassign.bas</Name>
-    <Name>str_convfrom.bas</Name>
-    <Name>str_convfrom_bool.bas</Name>
-    <Name>str_convfrom_int.bas</Name>
-    <Name>str_convfrom_lng.bas</Name>
-    <Name>str_convfrom_rad.bas</Name>
-    <Name>str_convfrom_radlng.bas</Name>
-    <Name>str_convfrom_uint.bas</Name>
-    <Name>str_convfrom_ulng.bas</Name>
-    <Name>str_convto.bas</Name>
-    <Name>str_convto_bool.bas</Name>
-    <Name>str_convto_flt.bas</Name>
-    <Name>str_convto_lng.bas</Name>
-    <Name>str_core.bas</Name>
-    <Name>str_cvmk.bas</Name>
-    <Name>str_del.bas</Name>
-    <Name>str_fill.bas</Name>
-    <Name>str_format.bas</Name>
-    <Name>str_ftoa.bas</Name>
-    <Name>str_hex.bas</Name>
-    <Name>str_hex_lng.bas</Name>
-    <Name>str_hex_ptr.bas</Name>
-    <Name>str_hskip.bas</Name>
-    <Name>str_instr.bas</Name>
-    <Name>str_instrany.bas</Name>
-    <Name>str_instrrev.bas</Name>
-    <Name>str_instrrevany.bas</Name>
-    <Name>str_lcase.bas</Name>
-    <Name>str_left.bas</Name>
-    <Name>str_len.bas</Name>
-    <Name>str_ltrim.bas</Name>
-    <Name>str_ltrimany.bas</Name>
-    <Name>str_ltrimex.bas</Name>
-    <Name>str_mid.bas</Name>
-    <Name>str_midassign.bas</Name>
-    <Name>str_misc.bas</Name>
-    <Name>str_oct.bas</Name>
-    <Name>str_oct_lng.bas</Name>
-    <Name>str_oct_ptr.bas</Name>
-    <Name>str_right.bas</Name>
-    <Name>str_rtrim.bas</Name>
-    <Name>str_rtrimany.bas</Name>
-    <Name>str_rtrimex.bas</Name>
-    <Name>str_set.bas</Name>
-    <Name>str_tempdescf.bas</Name>
-    <Name>str_tempdescv.bas</Name>
-    <Name>str_tempdescz.bas</Name>
-    <Name>str_tempres.bas</Name>
-    <Name>str_trim.bas</Name>
-    <Name>str_trimany.bas</Name>
-    <Name>str_trimex.bas</Name>
-    <Name>str_ucase.bas</Name>
-    <Name>strw_rtrim.bas</Name>
-    <Name>strw_rtrimany.bas</Name>
-    <Name>win32/thread_cond.bas</Name>
-    <Name>win32/thread_core.bas</Name>
-    <Name>win32/thread_detach.bas</Name>
-    <Name>win32/thread_mutex.bas</Name>
-    <Name>win32/time_timer.bas</Name>
-    <Name>array_redim.bas</Name>
-  </Sources>
-  <Includes>
-    <Name>fb.bi</Name>
-    <Name>fb_array.bi</Name>
-    <Name>fb_config.bi</Name>
-    <Name>fb_datetime.bi</Name>
-    <Name>fb_error.bi</Name>
-    <Name>fb_file.bi</Name>
-    <Name>fb_hook.bi</Name>
-    <Name>fb_math.bi</Name>
-    <Name>fb_private_thread.bi</Name>
-    <Name>fb_string.bi</Name>
-    <Name>fb_system.bi</Name>
-    <Name>fb_thread.bi</Name>
-    <Name>fb_unicode.bi</Name>
-    <Name>win32/fb_win32.bi</Name>
-  </Includes>
-  <Others/>
-</Project>
+﻿[Project]=
+ProjectName=fb rtlib
+Type=2
+MainFile=F:/Projects/rtlib/static/fbrt0.bas
+TargetName=fbrt0
+CompilerArgs=
+CompilerOption=
+Comment=
+CompilerPath=
+[IncludeDirs]=
+[LibDirs]=
+[Sources]=
+name=array_boundchk.bas
+name=array_clear.bas
+name=array_clearobj.bas
+name=array_core.bas
+name=array_destructobj.bas
+name=array_destructstr.bas
+name=array_erase.bas
+name=array_eraseobj.bas
+name=array_erasestr.bas
+name=array_lbound.bas
+name=array_redim.bas
+name=array_redim_obj.bas
+name=array_redimpresv.bas
+name=array_redimpresv_obj.bas
+name=array_redimto.bas
+name=array_resetdesc.bas
+name=array_setdesc.bas
+name=array_tempdesc.bas
+name=error.bas
+name=error_assert.bas
+name=error_assert_wstr.bas
+name=error_getset.bas
+name=error_message.bas
+name=error_ptrchk.bas
+name=init.bas
+name=math_cvn.bas
+name=math_fix.bas
+name=math_frac.bas
+name=math_log10.bas
+name=math_rnd.bas
+name=math_sgn.bas
+name=static/fbrt0.bas
+name=str_asc.bas
+name=str_assign.bas
+name=str_base.bas
+name=str_bin.bas
+name=str_bin_lng.bas
+name=str_bin_ptr.bas
+name=str_chr.bas
+name=str_comp.bas
+name=str_concat.bas
+name=str_concatassign.bas
+name=str_convfrom.bas
+name=str_convfrom_bool.bas
+name=str_convfrom_int.bas
+name=str_convfrom_lng.bas
+name=str_convfrom_rad.bas
+name=str_convfrom_radlng.bas
+name=str_convfrom_uint.bas
+name=str_convfrom_ulng.bas
+name=str_convto.bas
+name=str_convto_bool.bas
+name=str_convto_flt.bas
+name=str_convto_lng.bas
+name=str_core.bas
+name=str_cvmk.bas
+name=str_del.bas
+name=str_fill.bas
+name=str_format.bas
+name=str_ftoa.bas
+name=str_hex.bas
+name=str_hex_lng.bas
+name=str_hex_ptr.bas
+name=str_hskip.bas
+name=str_instr.bas
+name=str_instrany.bas
+name=str_instrrev.bas
+name=str_instrrevany.bas
+name=str_lcase.bas
+name=str_left.bas
+name=str_len.bas
+name=str_ltrim.bas
+name=str_ltrimany.bas
+name=str_ltrimex.bas
+name=str_mid.bas
+name=str_midassign.bas
+name=str_misc.bas
+name=str_oct.bas
+name=str_oct_lng.bas
+name=str_oct_ptr.bas
+name=str_right.bas
+name=str_rtrim.bas
+name=str_rtrimany.bas
+name=str_rtrimex.bas
+name=str_set.bas
+name=str_tempdescf.bas
+name=str_tempdescv.bas
+name=str_tempdescz.bas
+name=str_tempres.bas
+name=str_trim.bas
+name=str_trimany.bas
+name=str_trimex.bas
+name=str_ucase.bas
+name=strw_rtrim.bas
+name=strw_rtrimany.bas
+name=win32/thread_cond.bas
+name=win32/thread_core.bas
+name=win32/thread_detach.bas
+name=win32/thread_mutex.bas
+name=win32/time_timer.bas
+name=array_ubound.bas
+[Includes]=
+name=crt_extra/string.bi
+name=crt_extra/wctype.bi
+name=fb.bi
+name=fb_array.bi
+name=fb_config.bi
+name=fb_datetime.bi
+name=fb_error.bi
+name=fb_file.bi
+name=fb_hook.bi
+name=fb_math.bi
+name=fb_private_thread.bi
+name=fb_string.bi
+name=fb_system.bi
+name=fb_thread.bi
+name=fb_unicode.bi
+name=unix/fb_unix.bi
+name=win32/fb_win32.bi
+[Others]=
