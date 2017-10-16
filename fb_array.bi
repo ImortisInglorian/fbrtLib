@@ -32,14 +32,14 @@ type FBARRAY
 	as FBARRAYDIM      dimTB(0)    /' dimtb[dimensions] '/
 end type
 
-/'!!!REMOVEME!!!'/
+/' !!!REMOVEME!!! '/
 type FB_ARRAY_TMPDESC
     as FB_LISTELEM     elem
 
     as FBARRAY         array
     as FBARRAYDIM      dimTB(0 to FB_MAXDIMENSIONS-1)
 end type
-/'!!!REMOVEME!!!'/
+/' !!!REMOVEME!!! '/
 
 type FB_DEFCTOR as sub ( this_ as any ptr )
 type FB_DTORMULT as sub ( array as FBARRAY ptr, dtor as FB_DEFCTOR, base_idx as size_t )
