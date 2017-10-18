@@ -181,8 +181,8 @@
 	#include "fb_array.bi"
 	#include "fb_system.bi"
 	#include "fb_math.bi"
-	/'#include "fb_data.bi"
-	#include "fb_console.bi"'/
+	/'#include "fb_data.bi"'/
+	#include "fb_console.bi"
 	#include "fb_file.bi"
 	/'#include "fb_print.bi"
 	#include "fb_device.bi"

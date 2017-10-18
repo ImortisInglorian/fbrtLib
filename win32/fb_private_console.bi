@@ -8,7 +8,7 @@ type FB_CONSOLE_CTX
 	as long				active, visible
 	as SMALL_RECT 		window
 	as long 			setByUser
-	as log 			scrollWasOff
+	as long 			scrollWasOff
 	as fb_FnProcessMouseEvent mouseEventHook
 end type
 

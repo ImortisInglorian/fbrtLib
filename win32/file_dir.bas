@@ -7,8 +7,8 @@
 type FB_DIRCTX
 	as long in_use
 	as long attrib
-	as _finddata_t data
-	as long handle
+	as WIN32_FIND_DATA data
+	as HANDLE handle
 end type
 
 extern "C"
@@ -27,7 +27,7 @@ private function find_next cdecl ( attrib as long ptr ) as ubyte ptr
             _name = NULL
             exit do
         end if
-        _name = ctx->data.cFileName
+        _name = sadd(ctx->data.cFileName)
     loop while ( ctx->data.dwFileAttributes and not(ctx->attrib) )
 
     *attrib = ctx->data.dwFileAttributes and not(&hFFFFFF00)
@@ -49,7 +49,7 @@ function fb_Dir FBCALL ( filespec as FBSTRING ptr, attrib as long, out_attrib as
 	_len = FB_STRSIZE( filespec )
 	_name = NULL
 
-	ctx = FB_TLSGETCTX( DIR )
+	ctx = _FB_TLSGETCTX( DIR )
 
 	if ( _len > 0 ) then
 		/' findfirst '/
@@ -71,7 +71,7 @@ function fb_Dir FBCALL ( filespec as FBSTRING ptr, attrib as long, out_attrib as
 			if ( ctx->data.dwFileAttributes and not(ctx->attrib) ) then
 				_name = find_next( out_attrib )
 			else
-                _name = ctx->data.cFileName
+                _name = sadd(ctx->data.cFileName)
                 *out_attrib = ctx->data.dwFileAttributes and not(&hFFFFFF00)
             end if
 			
