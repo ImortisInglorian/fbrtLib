@@ -130,7 +130,7 @@ end function
 private function GetPrinters( pCount as long ptr ) as PRINTER_INFO_2 ptr
     dim as DWORD dwNeeded = 0, dwReturned = 0
     dim as PRINTER_INFO_2 ptr result = NULL
-    dim DWORD dwFlags = PRINTER_ENUM_LOCAL or PRINTER_ENUM_CONNECTIONS
+    dim as DWORD dwFlags = PRINTER_ENUM_LOCAL or PRINTER_ENUM_CONNECTIONS
 
     DBG_ASSERT(pCount <> NULL)
 
@@ -163,12 +163,12 @@ private function GetDefaultPrinterName( ) as ubyte ptr
     dim as long count
     dim as PRINTER_INFO_5 ptr printers = GetDefaultPrinters(@count)
     if ( count = 0 ) then
-        dim as HMODULE hMod = LoadLibrary(TEXT("winspool.drv")) '?????????
+        dim as HMODULE hMod = LoadLibrary(__TEXT("winspool.drv")) '?????????
         if (hMod <> NULL) then
 #ifdef UNICODE
-            dim as LPCTSTR pszPrinterId = TEXT("GetDefaultPrinterW")
+            dim as LPCTSTR pszPrinterId = __TEXT("GetDefaultPrinterW")
 #else
-            dim as LPCTSTR pszPrinterId = TEXT("GetDefaultPrinterA")
+            dim as LPCTSTR pszPrinterId = __TEXT("GetDefaultPrinterA")
 #endif
             FnGetDefaultPrinter pfnGetDefaultPrinter = cast(FnGetDefaultPrinter, GetProcAddress(hMod, pszPrinterId))
             if (pfnGetDefaultPrinter <> NULL) then

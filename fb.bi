@@ -28,7 +28,7 @@
 
 	/' Defines the ASCII code that indicates a two-byte key code.
 	   A two-byte key code will be returned by GET on SCRN: or INKEY$. '/
-	#define FB_EXT_CHAR           (cast(ubyte,255))
+	#define FB_EXT_CHAR           (cast(ubyte ,255))
 
 	/' Maximum number of temporary string descriptors. '/
 	#define FB_STR_TMPDESCRIPTORS 256
@@ -80,7 +80,7 @@
 	   (inkey() returns a string like &hFF &h49 [page up key code],
 	   getkey() returns the same but in a little-endian long: &h49FF
 	   where &hFF is the FB_EXT_CHAR  '/
-	#define FB_MAKE_EXT_KEY(ch) (cast(long, (cast(ulong ,(cast(ubyte,ch)) shl 8)) + (cast(ulong, (cast(ubyte ,FB_EXT_CHAR))))))
+	#define FB_MAKE_EXT_KEY(ch) (cast(long, (cast(ulong ,(cast(ubyte,ch)) shl 8)) + (cast(ulong, FB_EXT_CHAR))))
 	#define _MIN(a,b)		(iif((a) < (b), (a), (b)))
 	#define _MAX(a,b)		(iif((a) > (b), (a), (b)))
 	#define _MID(a,b,c)		(MIN(MAX((a), (b)), (c)))

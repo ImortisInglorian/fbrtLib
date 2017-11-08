@@ -191,7 +191,7 @@ private function fb_hConsoleGetKeyEx( full as long, allow_remove as long ) as lo
         if ( key > 255 ) then
             if ( not(full) ) then
                 key_buffer(key_head) = (key shr 8)
-                key = cast(long, cast(ubyte, FB_EXT_CHAR))
+                key = cast(long, FB_EXT_CHAR)
                 do_remove = FALSE
             end if
         end if
