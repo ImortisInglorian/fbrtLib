@@ -1,4 +1,4 @@
-﻿[Project]=
+﻿[Project]
 ProjectName=fb rtlib
 Type=2
 MainFile=F:/Projects/rtlib/static/fbrt0.bas
@@ -7,9 +7,9 @@ CompilerArgs=
 CompilerOption=
 Comment=
 CompilerPath=
-[IncludeDirs]=
-[LibDirs]=
-[Sources]=
+[IncludeDirs]
+[LibDirs]
+[Sources]
 name=array_boundchk.bas
 name=array_clear.bas
 name=array_clearobj.bas
@@ -137,12 +137,25 @@ name=win32/io_pcopy.bas
 name=win32/io_printbuff.bas
 name=win32/io_printbuff_wstr.bas
 name=win32/io_printer.bas
+name=win32/io_readstr.bas
+name=win32/io_readxy.bas
+name=win32/io_screensize.bas
+name=win32/io_scroll.bas
+name=win32/io_serial.bas
+name=win32/io_viewupdate.bas
+name=win32/io_width.bas
+name=win32/io_window.bas
+name=win32/sys_beep.bas
+name=win32/sys_delay.bas
+name=win32/sys_dylib.bas
+name=win32/sys_execex.bas
 name=win32/thread_cond.bas
 name=win32/thread_core.bas
 name=win32/thread_detach.bas
 name=win32/thread_mutex.bas
 name=win32/time_timer.bas
-[Includes]=
+name=win32/sys_fmem.bas
+[Includes]
 name=crt_extra/string.bi
 name=crt_extra/wctype.bi
 name=fb.bi
@@ -154,11 +167,15 @@ name=fb_error.bi
 name=fb_file.bi
 name=fb_hook.bi
 name=fb_math.bi
+name=fb_print.bi
+name=fb_printer.bi
 name=fb_private_thread.bi
+name=fb_serial.bi
 name=fb_string.bi
 name=fb_system.bi
 name=fb_thread.bi
 name=fb_unicode.bi
+name=io_serial_private.bi
 name=unix/fb_unix.bi
 name=win32/fb_private_console.bi
 name=win32/fb_private_intl.bi
@@ -166,4 +183,4 @@ name=win32/fb_win32.bi
 name=win32/fbportio.bi
 name=win32/fbportio_inline.bi
 name=win32/io_printer_private.bi
-[Others]=
+[Others]

@@ -14,9 +14,9 @@ function fb_ConsolePageCopy( src as long, dst as long ) as long
 
 	/' not allocated yet? '/
 	if ( __fb_con.pgHandleTb(src) = NULL ) then
-    	dim as HANDLE hnd = fb_hConsoleCreateBuffer( )
-        if ( hnd = NULL ) then
-           	return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
+		dim as HANDLE hnd = fb_hConsoleCreateBuffer( )
+		if ( hnd = NULL ) then
+			return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 		else
 			__fb_con.pgHandleTb(src) = hnd
 		end if
@@ -33,9 +33,9 @@ function fb_ConsolePageCopy( src as long, dst as long ) as long
 
 	/' not allocated yet? '/
 	if ( __fb_con.pgHandleTb(dst) = NULL ) then
-    	dim as HANDLE hnd = fb_hConsoleCreateBuffer( )
-        if ( hnd = NULL ) then
-           	return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
+		dim as HANDLE hnd = fb_hConsoleCreateBuffer( )
+		if ( hnd = NULL ) then
+			return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 		else
 			__fb_con.pgHandleTb(dst) = hnd
 		end if

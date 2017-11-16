@@ -11,8 +11,8 @@ function fb_RIGHT FBCALL ( src as FBSTRING ptr, chars as ssize_t ) as FBSTRING p
 		return @__fb_ctx.null_desc
 	end if
 
-   	FB_STRLOCK()
-
+   FB_STRLOCK()
+	
 	src_len = FB_STRSIZE( src )
 	if ( (src->data <> NULL) and (chars > 0) and (src_len > 0) ) then
 		if ( chars > src_len ) then
@@ -20,9 +20,9 @@ function fb_RIGHT FBCALL ( src as FBSTRING ptr, chars as ssize_t ) as FBSTRING p
 		else
 			_len = chars
 		end if
-
+		
 		/' alloc temp string '/
-        dst = fb_hStrAllocTemp_NoLock( NULL, _len )
+      dst = fb_hStrAllocTemp_NoLock( NULL, _len )
 		if ( dst <> NULL ) then
 			/' simple rev copy '/
 			fb_hStrCopy( dst->data, src->data + src_len - _len, _len )
@@ -30,14 +30,14 @@ function fb_RIGHT FBCALL ( src as FBSTRING ptr, chars as ssize_t ) as FBSTRING p
 			dst = @__fb_ctx.null_desc
 		end if
 	else
-        dst = @__fb_ctx.null_desc
+      dst = @__fb_ctx.null_desc
 	end if
-
+	
 	/' del if temp '/
 	fb_hStrDelTemp_NoLock( src )
-
-   	FB_STRUNLOCK()
-
+	
+   FB_STRUNLOCK()
+	
 	return dst
 end function
 end extern

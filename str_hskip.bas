@@ -23,13 +23,13 @@ function fb_hStrSkipCharRev FBCALL ( s as ubyte ptr, _len as ssize_t, c as long 
 
 	p = @s[_len-1]
 
-    /' fixed-len's are filled with null's as in PB, strip them too '/
+	/' fixed-len's are filled with null's as in PB, strip them too '/
 	_len -= 1
-    while ( (_len >= 0) and ((cast(long, *p) = c) or (cast(long, *p) = 0) ) )
+	while ( (_len >= 0) and ((cast(long, *p) = c) or (cast(long, *p) = 0) ) )
 		p -= 1
 		_len -= 1
 	wend
-	
-    return p
+
+	return p
 end function
 end extern

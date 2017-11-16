@@ -10,9 +10,9 @@ function fb_RTRIM FBCALL( src as FBSTRING ptr ) as FBSTRING ptr
 	if ( src = NULL ) then
 		return @__fb_ctx.null_desc
 	end if
-
-   	FB_STRLOCK()
-
+	
+   FB_STRLOCK()
+	
 	_len = 0
 	if ( src->data <> NULL ) then
 		_len = FB_STRSIZE( src )
@@ -24,7 +24,7 @@ function fb_RTRIM FBCALL( src as FBSTRING ptr ) as FBSTRING ptr
 
 	if ( _len > 0 ) then
 		/' alloc temp string '/
-        dst = fb_hStrAllocTemp_NoLock( NULL, _len )
+      dst = fb_hStrAllocTemp_NoLock( NULL, _len )
 		if ( dst <> NULL ) then
 			/' simple copy '/
 			fb_hStrCopy( dst->data, src->data, _len )
@@ -38,7 +38,7 @@ function fb_RTRIM FBCALL( src as FBSTRING ptr ) as FBSTRING ptr
 	/' del if temp '/
 	fb_hStrDelTemp_NoLock( src )
 
-   	FB_STRUNLOCK()
+	FB_STRUNLOCK()
 
 	return dst
 end function

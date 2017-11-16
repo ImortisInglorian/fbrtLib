@@ -54,19 +54,19 @@ sub fb_Die ( err_num as long, line_num as long, mod_name as ubyte const ptr, fun
 end sub
 
 function fb_ErrorThrowEx cdecl ( err_num as long, line_num as long, mod_name as ubyte const ptr, res_label as any ptr, resnext_label as any ptr ) as FB_ERRHANDLER
-    dim as FB_ERRORCTX ptr ctx = _FB_TLSGETCTX( ERROR )
+	dim as FB_ERRORCTX ptr ctx = _FB_TLSGETCTX( ERROR )
 
-    if ( ctx->handler ) then
-    	ctx->err_num = err_num
-    	ctx->line_num = line_num
-    	if ( mod_name <> NULL ) then
-    		ctx->mod_name = mod_name
+	if ( ctx->handler ) then
+		ctx->err_num = err_num
+		ctx->line_num = line_num
+		if ( mod_name <> NULL ) then
+			ctx->mod_name = mod_name
 		end if
-    	ctx->res_lbl = res_label
-    	ctx->resnxt_lbl = resnext_label
+		ctx->res_lbl = res_label
+		ctx->resnxt_lbl = resnext_label
 
-    	return ctx->handler
-    end if
+		return ctx->handler
+	end if
 
 	/' if no user handler defined, die '/
 	fb_Die( err_num, line_num, iif(mod_name <> NULL, mod_name, ctx->mod_name), ctx->fun_name )
@@ -84,16 +84,16 @@ function fb_ErrorSetHandler FBCALL ( newhandler as FB_ERRHANDLER ) as FB_ERRHAND
 	dim as FB_ERRORCTX ptr ctx = _FB_TLSGETCTX( ERROR )
 	dim as FB_ERRHANDLER oldhandler
 
-    oldhandler = ctx->handler
+	oldhandler = ctx->handler
 
-    ctx->handler = newhandler
+	ctx->handler = newhandler
 
 	return oldhandler
 end function
 
 function fb_ErrorResume( ) as any ptr
-    dim as FB_ERRORCTX ptr ctx = _FB_TLSGETCTX( ERROR )
-    dim as any ptr label = ctx->res_lbl
+	dim as FB_ERRORCTX ptr ctx = _FB_TLSGETCTX( ERROR )
+	dim as any ptr label = ctx->res_lbl
 
 	/' not defined? die '/
 	if ( label = NULL ) then
@@ -108,8 +108,8 @@ function fb_ErrorResume( ) as any ptr
 end function
 
 function fb_ErrorResumeNext( ) as any ptr
-    dim as FB_ERRORCTX ptr ctx = _FB_TLSGETCTX( ERROR )
-    dim as any ptr label = ctx->resnxt_lbl
+	dim as FB_ERRORCTX ptr ctx = _FB_TLSGETCTX( ERROR )
+	dim as any ptr label = ctx->resnxt_lbl
 
 	/' not defined? die '/
 	if ( label = NULL ) then

@@ -8,13 +8,13 @@ function fb_StrAllocTempDescZEx FBCALL ( _str as ubyte const ptr, _len as ssize_
 
 	FB_STRLOCK()
 
- 	/' alloc a temporary descriptor '/
- 	dsc = fb_hStrAllocTmpDesc( )
+	/' alloc a temporary descriptor '/
+	dsc = fb_hStrAllocTmpDesc( )
 
-    FB_STRUNLOCK()
+	FB_STRUNLOCK()
 
-    if ( dsc = NULL ) then
-    	return @__fb_ctx.null_desc
+	if ( dsc = NULL ) then
+		return @__fb_ctx.null_desc
 	end if
 
 	dsc->data = cast(ubyte ptr, _str)

@@ -14,9 +14,9 @@ function fb_StrAssignEx FBCALL ( dst as any ptr, dst_size as ssize_t, src as any
 		if( src_size = -1 ) then
 			fb_hStrDelTemp_NoLock( cast(FBSTRING ptr, src) )
 		end if
-
+      
 		FB_STRUNLOCK()
-
+      
 		return dst
 	end if
 
@@ -25,8 +25,8 @@ function fb_StrAssignEx FBCALL ( dst as any ptr, dst_size as ssize_t, src as any
 
 	/' is dst var-len? '/
 	if ( dst_size = -1 ) then
-        dstr = cast(FBSTRING ptr, dst)
-
+		dstr = cast(FBSTRING ptr, dst)
+      
 		/' src NULL? '/
 		if ( src_len = 0 ) then
 			if ( is_init = FB_FALSE ) then
@@ -46,18 +46,18 @@ function fb_StrAssignEx FBCALL ( dst as any ptr, dst_size as ssize_t, src as any
 				dstr->data = cast(ubyte ptr, src_ptr)
 				dstr->len = src_len
 				dstr->size = cast(FBSTRING ptr, src)->size
-
+            
 				cast(FBSTRING ptr, src)->data = NULL
 				cast(FBSTRING ptr, src)->len = 0
 				cast(FBSTRING ptr, src)->size = 0
-
+            
 				fb_hStrDelTempDesc( cast(FBSTRING ptr, src) )
-
+            
 				FB_STRUNLOCK()
-
+            
 				return dst
 			end if
-
+         
         	/' else, realloc dst if needed and copy src '/
         	if ( is_init = FB_FALSE ) then
 				if ( FB_STRSIZE( dst ) <> src_len ) then
@@ -66,7 +66,7 @@ function fb_StrAssignEx FBCALL ( dst as any ptr, dst_size as ssize_t, src as any
         	else
 				fb_hStrAlloc( dstr, src_len )
         	end if
-
+           
 			fb_hStrCopy( dstr->data, src_ptr, src_len )
 		end if
 	/' fixed-len or zstring.. '/
@@ -84,10 +84,10 @@ function fb_StrAssignEx FBCALL ( dst as any ptr, dst_size as ssize_t, src as any
 					src_len = dst_size
 				end if
 			end if
-
+         
 			fb_hStrCopy( cast(ubyte ptr, dst) , src_ptr, src_len )
 		end if
-
+      
 		/' fill reminder with null's '/
 		if ( fill_rem <> 0 ) then
 			dst_size -= src_len

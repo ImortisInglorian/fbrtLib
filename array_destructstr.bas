@@ -4,7 +4,7 @@
 
 extern "C"
 sub fb_hArrayDtorStr cdecl ( array as FBARRAY ptr, dtor as FB_DEFCTOR, base_idx as size_t )
-    dim as size_t i
+   dim as size_t i
 	dim as ssize_t elements
 	dim as FBARRAYDIM ptr _dim
 	dim as FBSTRING ptr this_
@@ -13,11 +13,11 @@ sub fb_hArrayDtorStr cdecl ( array as FBARRAY ptr, dtor as FB_DEFCTOR, base_idx 
 		exit sub
 	end if
 
-    _dim = @array->dimTB(0)
-    elements = _dim->elements - base_idx
-    _dim += 1
+   _dim = @array->dimTB(0)
+   elements = _dim->elements - base_idx
+   _dim += 1
 
-    for i = 1 to  array->dimensions
+   for i = 1 to  array->dimensions
     	elements *= _dim->elements
 		_dim += 1
 	next

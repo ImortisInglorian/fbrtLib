@@ -9,9 +9,9 @@ function fb_ArrayRedimPresvObj cdecl ( array as FBARRAY ptr, element_len as size
 
 	'va_start( ap, dimensions )
 	ap = va_first()
-	
+
 	/' Have to assume doclear=TRUE, because we have no doclear parameter here,
-	   and don't know what to do, so better be safe. '/
+	and don't know what to do, so better be safe. '/
 
 	/' new? '/
 	if ( array->_ptr = NULL ) then
@@ -22,8 +22,8 @@ function fb_ArrayRedimPresvObj cdecl ( array as FBARRAY ptr, element_len as size
 		res = fb_hArrayRealloc( array, element_len, TRUE, ctor, dtor_mult, dtor, dimensions, ap )
 	end if
 
-    'va_end( ap )
-    
-    return res
+	'va_end( ap )
+
+	return res
 end function
 end extern

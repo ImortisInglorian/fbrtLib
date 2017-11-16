@@ -8,13 +8,13 @@ function fb_StrAllocTempDescV FBCALL ( _str as FBSTRING ptr ) as FBSTRING ptr
 
 	FB_STRLOCK()
 
- 	/' alloc a temporary descriptor '/
- 	dsc = fb_hStrAllocTmpDesc( )
+	/' alloc a temporary descriptor '/
+	dsc = fb_hStrAllocTmpDesc( )
 
-    FB_STRUNLOCK()
+	FB_STRUNLOCK()
 
-    if ( dsc = NULL ) then
-    	return @__fb_ctx.null_desc
+	if ( dsc = NULL ) then
+		return @__fb_ctx.null_desc
 	end if
 
 	dsc->data = _str->data

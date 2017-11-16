@@ -62,10 +62,10 @@ function fb_hStr2Double FBCALL ( src as ubyte ptr, _len as ssize_t ) as double
 end function
 
 function fb_VAL FBCALL ( _str as FBSTRING ptr ) as double
-    dim as double _val
+	dim as double _val
 
 	if ( _str = NULL ) then
-	    return 0.0
+		return 0.0
 	end if
 	if ( (_str->data = NULL) or (FB_STRSIZE( _str ) = 0) ) then
 		_val = 0.0

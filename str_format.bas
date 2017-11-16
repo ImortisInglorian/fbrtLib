@@ -4,30 +4,30 @@
 #include "crt/math.bi"
 
 enum eMaskType
-    eMT_Unknown = 0
-    eMT_Number
-    eMT_DateTime
+	eMT_Unknown = 0
+	eMT_Number
+	eMT_DateTime
 end enum
 
 type FormatMaskInfo
-    as eMaskType mask_type
+	as eMaskType mask_type
 
-    as long has_decimal_point
-    as long has_thousand_sep
-    as long has_percent
-    as long has_exponent
-    as long exponent_add_plus
-    as long has_sign
-    as long sign_add_plus
-    as long num_digits_fix
-    as long num_digits_frac
-    as long num_digits_omit
-    as long exp_digits
+	as long has_decimal_point
+	as long has_thousand_sep
+	as long has_percent
+	as long has_exponent
+	as long exponent_add_plus
+	as long has_sign
+	as long sign_add_plus
+	as long num_digits_fix
+	as long num_digits_frac
+	as long num_digits_omit
+	as long exp_digits
 
-    as long has_ampm
+	as long has_ampm
 
-    as ssize_t length_min
-    as ssize_t length_opt
+	as ssize_t length_min
+	as ssize_t length_opt
 end type
 
 #define FB_MAXFIXLEN 19 /' floor( log10( pow( 2.0, 64 ) ) ) '/
@@ -42,106 +42,106 @@ end type
  
  extern "C"
 sub fb_hGetNumberParts cdecl ( number as double, pachFixPart as ubyte ptr, pcchLenFix as ssize_t ptr, pachFracPart as ubyte ptr, pcchLenFrac as ssize_t ptr, pchSign as ubyte ptr, chDecimalPoint as ubyte, precision as long )
-    dim as ubyte ptr pszFracStart, pszFracEnd
-    dim as ubyte chSign
-    dim as double dblFix
-    dim as double dblFrac = modf( number, @dblFix )
-    dim as long neg = (number < 0.0)
-    dim as ulongint ullFix = cast(ulongint, iif(neg, -dblFix , dblFix))
-    dim as ssize_t len_fix, len_frac
+	dim as ubyte ptr pszFracStart, pszFracEnd
+	dim as ubyte chSign
+	dim as double dblFix
+	dim as double dblFrac = modf( number, @dblFix )
+	dim as long neg = (number < 0.0)
+	dim as ulongint ullFix = cast(ulongint, iif(neg, -dblFix , dblFix))
+	dim as ssize_t len_fix, len_frac
 
-    /' make fractional part positive '/
-    if ( dblFrac < 0.0 ) then
-        dblFrac = -dblFrac
+	/' make fractional part positive '/
+	if ( dblFrac < 0.0 ) then
+		dblFrac = -dblFrac
 	end if
 
-    /' Store fractional part of number into buffer '/
-    len_frac = sprintf( pachFracPart, "%.*f", precision, dblFrac )
+	/' Store fractional part of number into buffer '/
+	len_frac = sprintf( pachFracPart, "%.*f", precision, dblFrac )
 
-    /' Remove trailing zeroes and - if it completely consists of zeroes -
-     * also remove the decimal point '/
-    pszFracStart = pachFracPart
-    if ( *pszFracStart = sadd("-") ) then
-        pszFracStart += 1       /' Required for -0.0 value '/
+	/' Remove trailing zeroes and - if it completely consists of zeroes -
+	* also remove the decimal point '/
+	pszFracStart = pachFracPart
+	if ( *pszFracStart = sadd("-") ) then
+		pszFracStart += 1       /' Required for -0.0 value '/
 	end if
-    pszFracStart += 1
-    pszFracEnd = pachFracPart + len_frac
-    while ( pszFracEnd <> pszFracStart )
-        pszFracEnd -= 1
-        if ( *pszFracEnd <> sadd("0") ) then
-            if ( *pszFracEnd <> chDecimalPoint ) then
-                pszFracStart += 1
-                pszFracEnd += 1
-            end if
-            exit while
-        end if
-    wend
+	pszFracStart += 1
+	pszFracEnd = pachFracPart + len_frac
+	while ( pszFracEnd <> pszFracStart )
+		pszFracEnd -= 1
+		if ( *pszFracEnd <> sadd("0") ) then
+			if ( *pszFracEnd <> chDecimalPoint ) then
+				pszFracStart += 1
+				pszFracEnd += 1
+			end if
+			exit while
+		end if
+	wend
 
-    /' Move usable fractional part of number to begin of buffer '/
-    len_frac = pszFracEnd - pszFracStart
-    memmove( pachFracPart, pszFracStart, len_frac )
-    pachFracPart[len_frac] = 0
+	/' Move usable fractional part of number to begin of buffer '/
+	len_frac = pszFracEnd - pszFracStart
+	memmove( pachFracPart, pszFracStart, len_frac )
+	pachFracPart[len_frac] = 0
 
-    /' Store fix part of the number into buffer '/
-    if ( ullFix=0 and neg ) then
-        pachFixPart[0] = 0
-        len_fix = 0
-        chSign = 45
-    elseif ( ullFix=0 and number > 0.0 ) then
-        pachFixPart[0] = 0
-        len_fix = 0
-        chSign = 43
-    else
-        if ( neg ) then
-            chSign = 45
-        elseif ( ullFix > 0 ) then
-            chSign = 43
-        else
-            chSign = 0
-        end if
-        len_fix = sprintf( pachFixPart, "%" FB_LL_FMTMOD "u", ullFix )
-    end if
-
-    if ( pcchLenFix <> NULL ) then
-        *pcchLenFix = len_fix
+	/' Store fix part of the number into buffer '/
+	if ( ullFix=0 and neg ) then
+		pachFixPart[0] = 0
+		len_fix = 0
+		chSign = 45
+	elseif ( ullFix=0 and number > 0.0 ) then
+		pachFixPart[0] = 0
+		len_fix = 0
+		chSign = 43
+	else
+	if ( neg ) then
+		chSign = 45
+	elseif ( ullFix > 0 ) then
+		chSign = 43
+	else
+		chSign = 0
 	end if
-	
-    if ( pcchLenFrac <> NULL ) then
-        *pcchLenFrac = len_frac
+		len_fix = sprintf( pachFixPart, "%" FB_LL_FMTMOD "u", ullFix )
 	end if
-	
-    if ( pchSign <> NULL ) then
-        *pchSign = chSign
+
+	if ( pcchLenFix <> NULL ) then
+		*pcchLenFix = len_fix
+	end if
+
+	if ( pcchLenFrac <> NULL ) then
+		*pcchLenFrac = len_frac
+	end if
+
+	if ( pchSign <> NULL ) then
+		*pchSign = chSign
 	end if
 end sub
 
 function fb_hBuildDouble cdecl ( num as double, decimal_point as ubyte, thousands_separator as ubyte ) as FBSTRING ptr
-    dim as ubyte FixPart(0 to 127), FracPart(0 to 127), chSign
-    dim as ssize_t LenFix, LenFrac, LenSign, LenDecPoint, LenTotal
-    dim as FBSTRING ptr dst
+	dim as ubyte FixPart(0 to 127), FracPart(0 to 127), chSign
+	dim as ssize_t LenFix, LenFrac, LenSign, LenDecPoint, LenTotal
+	dim as FBSTRING ptr dst
 
-    fb_hGetNumberParts( num, @FixPart(0), @LenFix, @FracPart(0), @LenFrac, @chSign, 46, 11 )
+	fb_hGetNumberParts( num, @FixPart(0), @LenFix, @FracPart(0), @LenFrac, @chSign, 46, 11 )
 
-    LenSign = iif( chSign = 45, 1, 0 )
-    LenDecPoint = iif( LenFrac <> 0, 1, 0 )
-    LenTotal = LenSign + LenFix + LenDecPoint + LenFrac
+	LenSign = iif( chSign = 45, 1, 0 )
+	LenDecPoint = iif( LenFrac <> 0, 1, 0 )
+	LenTotal = LenSign + LenFix + LenDecPoint + LenFrac
 
 	/' alloc temp string '/
-    dst = fb_hStrAllocTemp_NoLock( NULL, LenTotal )
+	dst = fb_hStrAllocTemp_NoLock( NULL, LenTotal )
 	if ( dst <> NULL ) then
-        if ( LenSign <> 0 ) then
-            dst->data[0] = chSign
-        end if
-        FB_MEMCPY( dst->data + LenSign, @FixPart(0), LenFix )
-        if ( LenDecPoint <> 0 ) then
-            dst->data[LenSign + LenFix] = decimal_point
-        end if
-        FB_MEMCPY( dst->data + LenSign + LenFix + LenDecPoint, @FracPart(0), LenFrac )
-        dst->data[LenTotal] = 0
+		if ( LenSign <> 0 ) then
+			dst->data[0] = chSign
+		end if
+		FB_MEMCPY( dst->data + LenSign, @FixPart(0), LenFix )
+		if ( LenDecPoint <> 0 ) then
+			dst->data[LenSign + LenFix] = decimal_point
+		end if
+		FB_MEMCPY( dst->data + LenSign + LenFix + LenDecPoint, @FracPart(0), LenFrac )
+		dst->data[LenTotal] = 0
 	else
 		dst = @__fb_ctx.null_desc
 	end if
-	
+
 	return dst
 end function
 
@@ -198,34 +198,34 @@ end function
  * queries of do_output will be removed.
  '/
 function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, mask_length as ssize_t, value as double, pInfo as FormatMaskInfo ptr, chThousandsSep as ubyte, chDecimalPoint as ubyte, chDateSep as ubyte, chTimeSep as ubyte ) as long
-    dim as ubyte FixPart(0 to 127), FracPart(0 to 127), ExpPart(0 to 127), chSign = 0
-    dim as ssize_t LenFix, LenFrac, LenExp = 0, IndexFix, IndexFrac, IndexExp = 0
-    dim as ssize_t ExpValue, ExpAdjust = 0, NumSkipFix = 0, NumSkipExp = 0
-    dim as long do_skip = FALSE, do_exp = FALSE, do_string = FALSE
-    dim as long did_sign = FALSE, did_exp = FALSE, did_hour = FALSE, did_thousandsep = FALSE
-    dim as long do_num_frac = FALSE, last_was_comma = FALSE, was_k_div = FALSE
-    dim as long do_output = (dst <> NULL)
-    dim as long do_add = FALSE
-    dim as ssize_t LenOut
-    dim as ubyte ptr pszOut
-    dim as ssize_t i
+	dim as ubyte FixPart(0 to 127), FracPart(0 to 127), ExpPart(0 to 127), chSign = 0
+	dim as ssize_t LenFix, LenFrac, LenExp = 0, IndexFix, IndexFrac, IndexExp = 0
+	dim as ssize_t ExpValue, ExpAdjust = 0, NumSkipFix = 0, NumSkipExp = 0
+	dim as long do_skip = FALSE, do_exp = FALSE, do_string = FALSE
+	dim as long did_sign = FALSE, did_exp = FALSE, did_hour = FALSE, did_thousandsep = FALSE
+	dim as long do_num_frac = FALSE, last_was_comma = FALSE, was_k_div = FALSE
+	dim as long do_output = (dst <> NULL)
+	dim as long do_add = FALSE
+	dim as ssize_t LenOut
+	dim as ubyte ptr pszOut
+	dim as ssize_t i
 
-    DBG_ASSERT( pInfo <> NULL )
+	DBG_ASSERT( pInfo <> NULL )
 
-    if ( not(do_output) ) then
-        memset( pInfo, 0, sizeof(FormatMaskInfo) )
-        pszOut = NULL
-        LenOut = 0
-    else
-        if ( pInfo->mask_type = eMT_Number ) then
-            if ( pInfo->has_percent ) then
-                value *= 100.0
+	if ( not(do_output) ) then
+		memset( pInfo, 0, sizeof(FormatMaskInfo) )
+		pszOut = NULL
+		LenOut = 0
+	else
+		if ( pInfo->mask_type = eMT_Number ) then
+			if ( pInfo->has_percent ) then
+				value *= 100.0
 			end if
-            value /= pow( 10.0, pInfo->num_digits_omit )
-        end if
-        pszOut = dst->data
-        LenOut = FB_STRSIZE( dst )
-    end if
+			value /= pow( 10.0, pInfo->num_digits_omit )
+		end if
+		pszOut = dst->data
+		LenOut = FB_STRSIZE( dst )
+	end if
 
 	if ( value <> 0.0 ) then
 		ExpValue = cast(long ,floor( log10( fabs( value ) ) ) + 1)
@@ -233,12 +233,12 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 		ExpValue = 0
 	end if
 	
-    if ( do_output ) then
-        if ( pInfo->mask_type = eMT_Number ) then
-            /' When output of exponent is required, shift value to the
-             * left (* 10^n) as far as possible. "As far as possible" depends
-             * on the number of digits required by the number as a textual
-             * representation. '/
+	if ( do_output ) then
+		if ( pInfo->mask_type = eMT_Number ) then
+			/' When output of exponent is required, shift value to the
+			 * left (* 10^n) as far as possible. "As far as possible" depends
+			 * on the number of digits required by the number as a textual
+			 * representation. '/
 
 			if ( pInfo->has_exponent ) then
 				/' exponent too big? scale (up or down) '/
@@ -271,7 +271,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 
 				LenExp = sprintf( @ExpPart(0), "%d", cast(long, ExpValue) )
 
-	            if ( ExpValue < 0 ) then
+				if ( ExpValue < 0 ) then
 					IndexExp = ExpAdjust = 1
 				else
 					IndexExp = ExpAdjust = 0
@@ -302,7 +302,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 					value *= pow( 10.0, -ExpValue )
 				else
 					ExpValue = 0
-				endif 
+				end if 
 			end if
 
 			value = hRound( value, pInfo )
@@ -336,66 +336,66 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 			end if
 
 			/' Number of digits to skip on output '/
-            NumSkipFix = pInfo->num_digits_fix - LenFix
+			NumSkipFix = pInfo->num_digits_fix - LenFix
 
-        end if
-    else
+		end if
+	else
 		/' just assume the max possible '/
 		LenFix = iif(ExpValue > FB_MAXFIXLEN, ExpValue, FB_MAXFIXLEN)
 		LenFrac = 0
-    end if
+	end if
 
-    IndexFix = (IndexFrac = 0)
-    for i = 0 to mask_length - 1
-        dim as ubyte ptr pszAdd = mask + i
-        dim as ubyte ptr pszAddFree = NULL
-        dim as long LenAdd = 1
-        dim as ubyte chCurrent = *pszAdd
-        if ( do_skip ) then
-            do_skip = FALSE
-            if ( not(do_output) ) then
-                pInfo->length_min += 1
-            else
-                do_add = TRUE
-            end if
-        elseif ( do_exp ) then
-            if ( not(do_output) ) then
-                pInfo->has_exponent = TRUE
-                select case chCurrent
+	IndexFix = (IndexFrac = 0)
+	for i = 0 to mask_length - 1
+		dim as ubyte ptr pszAdd = mask + i
+		dim as ubyte ptr pszAddFree = NULL
+		dim as long LenAdd = 1
+		dim as ubyte chCurrent = *pszAdd
+		if ( do_skip ) then
+			do_skip = FALSE
+			if ( not(do_output) ) then
+				pInfo->length_min += 1
+			else
+				do_add = TRUE
+			end if
+		elseif ( do_exp ) then
+			if ( not(do_output) ) then
+				pInfo->has_exponent = TRUE
+				select case chCurrent
 					case 45: ' -
 						pInfo->exponent_add_plus = FALSE
 						pInfo->length_opt += 1
 					case 43: ' +
 						pInfo->exponent_add_plus = TRUE
-                    pInfo->length_min += 1
+						pInfo->length_min += 1
 					case else:
 						fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 						return FALSE
-                end select
-            else
-                if ( pInfo->exponent_add_plus or ExpValue < 0 ) then
-                    if ( ExpValue < 0 ) then
-                        pszAdd = sadd("+")
-                    else
-                        pszAdd = sadd("+")
-                    end if
-                    do_add = TRUE
-                end if
-            end if
-            do_exp = FALSE
-            did_exp = TRUE
-            do_num_frac = FALSE
-        elseif ( do_string ) then
-            if ( chCurrent = 34 ) then
-                do_string = FALSE
-            elseif ( not(do_output) ) then
-                pInfo->length_min += 1
-            else
-                do_add = TRUE
-            end if
-        else
-            if ( do_output ) then
-                select case chCurrent
+				end select
+			else
+				if ( pInfo->exponent_add_plus or ExpValue < 0 ) then
+					if ( ExpValue < 0 ) then
+						pszAdd = sadd("+")
+					else
+						pszAdd = sadd("+")
+					end if
+					do_add = TRUE
+				end if
+			end if
+			do_exp = FALSE
+			did_exp = TRUE
+			do_num_frac = FALSE
+		elseif ( do_string ) then
+			if ( chCurrent = 34 ) then
+				do_string = FALSE
+			elseif ( not(do_output) ) then
+				pInfo->length_min += 1
+			else
+				do_add = TRUE
+			end if
+		else
+			if ( do_output ) then
+				select case chCurrent
 					case 46, 35, 0: ' . # NULL
 						if ( not(pInfo->has_sign) and not(did_sign) ) then
 							did_sign = TRUE
@@ -434,14 +434,14 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 								NumSkipFix += LenAdd
 							end if
 						end if
-                end select
-                if ( do_add ) then
-                    i -= 1
+				end select
+				if ( do_add ) then
+					i -= 1
 				end if
-            end if
+			end if
 
-            if ( not(do_add) ) then
-                select case chCurrent
+			if ( not(do_add) ) then
+				select case chCurrent
 					case 37, 44, 35, 0, 43, 69, 101: ' % , # NULL + E e
 						if ( pInfo->mask_type = eMT_Unknown ) then
 							pInfo->mask_type = eMT_Number
@@ -464,11 +464,11 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 							return FALSE
 						'/
 						end if
-                end select
+				end select
 
 
-                /' Here comes the real interpretation '/
-                select case chCurrent
+				/' Here comes the real interpretation '/
+				select case chCurrent
 					case 37: '%
 						if ( not(do_output) ) then
 							if ( pInfo->mask_type = eMT_Number ) then
@@ -945,121 +945,121 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 						else
 							do_add = TRUE
 						end if
-                end select
-            end if
-        end if
-        if ( last_was_comma and (chCurrent <> 44 or i = (mask_length - 1)) ) then
-            if( not(do_output) and not(was_k_div) ) then
-                pInfo->has_thousand_sep = TRUE
-            end if
-            last_was_comma = FALSE
-            was_k_div = FALSE
-        end if
-        if ( do_add ) then
-            do_add = FALSE
-            DBG_ASSERT(do_output)
-            DBG_ASSERT(pszOut <> NULL)
-            if ( pszAddFree <> NULL ) then
-                pszAdd = pszAddFree
+				end select
 			end if
-            if ( LenAdd = 0 ) then
-                LenAdd = strlen( pszAdd )
+		end if
+		if ( last_was_comma and (chCurrent <> 44 or i = (mask_length - 1)) ) then
+			if( not(do_output) and not(was_k_div) ) then
+				pInfo->has_thousand_sep = TRUE
 			end if
-            DBG_ASSERT(LenOut>=LenAdd)
-            FB_MEMCPY( pszOut, pszAdd, LenAdd )
-            pszOut += LenAdd
-            LenOut -= LenAdd
-            if ( pszAddFree <> NULL ) then
+			last_was_comma = FALSE
+			was_k_div = FALSE
+		end if
+		if ( do_add ) then
+			do_add = FALSE
+			DBG_ASSERT(do_output)
+			DBG_ASSERT(pszOut <> NULL)
+			if ( pszAddFree <> NULL ) then
+				pszAdd = pszAddFree
+			end if
+			if ( LenAdd = 0 ) then
+				LenAdd = strlen( pszAdd )
+			end if
+			DBG_ASSERT(LenOut>=LenAdd)
+			FB_MEMCPY( pszOut, pszAdd, LenAdd )
+			pszOut += LenAdd
+			LenOut -= LenAdd
+			if ( pszAddFree <> NULL ) then
 				free( pszAddFree )
-            end if
-        end if
-    next
+			end if
+		end if
+	next
 
-    if ( not(do_output) ) then
-        if ( not(pInfo->has_decimal_point) ) then
-            if ( pInfo->num_digits_omit <> 0 ) then
-                pInfo->num_digits_omit += 3
-            end if
-        end if
-        if ( pInfo->has_thousand_sep ) then
-            pInfo->length_min += (pInfo->num_digits_fix - 1) / 3
-        end if
-        if ( LenFix > pInfo->num_digits_fix ) then
-            pInfo->length_min += LenFix - pInfo->num_digits_fix
+	if ( not(do_output) ) then
+		if ( not(pInfo->has_decimal_point) ) then
+			if ( pInfo->num_digits_omit <> 0 ) then
+				pInfo->num_digits_omit += 3
+			end if
 		end if
-        if ( pInfo->exp_digits < 5 ) then
-            pInfo->length_opt += 5 - pInfo->exp_digits
+		if ( pInfo->has_thousand_sep ) then
+			pInfo->length_min += (pInfo->num_digits_fix - 1) / 3
 		end if
-        if ( not(pInfo->has_sign) ) then
-            pInfo->length_min += 1
+		if ( LenFix > pInfo->num_digits_fix ) then
+			pInfo->length_min += LenFix - pInfo->num_digits_fix
 		end if
-    else
-        DBG_ASSERT( LenOut>=0 )
-        *pszOut = 0
-        fb_hStrSetLength( dst, pszOut - dst->data )
-    end if
+		if ( pInfo->exp_digits < 5 ) then
+			pInfo->length_opt += 5 - pInfo->exp_digits
+		end if
+		if ( not(pInfo->has_sign) ) then
+			pInfo->length_min += 1
+		end if
+	else
+		DBG_ASSERT( LenOut>=0 )
+		*pszOut = 0
+		fb_hStrSetLength( dst, pszOut - dst->data )
+	end if
 
-    return TRUE
+	return TRUE
 end function
 
 function fb_hStrFormat FBCALL ( value as double, mask as ubyte const ptr, mask_length as size_t ) as FBSTRING ptr
-    dim as FBSTRING ptr dst = @__fb_ctx.null_desc
-    dim as ubyte ptr pszIntlResult
-    dim as ubyte chDecimalPoint, chThousandsSep, chDateSep, chTimeSep
+	dim as FBSTRING ptr dst = @__fb_ctx.null_desc
+	dim as ubyte ptr pszIntlResult
+	dim as ubyte chDecimalPoint, chThousandsSep, chDateSep, chTimeSep
 
-    fb_ErrorSetNum( FB_RTERROR_OK )
+	fb_ErrorSetNum( FB_RTERROR_OK )
 
-    FB_LOCK()
-    pszIntlResult = fb_IntlGet( eFIL_NumDecimalPoint, FALSE )
-    chDecimalPoint = iif(( pszIntlResult = NULL ), 46, *pszIntlResult )
-    pszIntlResult = fb_IntlGet( eFIL_NumThousandsSeparator, FALSE )
-    chThousandsSep = iif(( pszIntlResult = NULL ), 44, *pszIntlResult )
-    pszIntlResult = fb_IntlGet( eFIL_DateDivider, FALSE )
-    chDateSep = iif(( pszIntlResult = NULL ), 47, *pszIntlResult )
-    pszIntlResult = fb_IntlGet( eFIL_TimeDivider, FALSE )
-    chTimeSep = iif(( pszIntlResult = NULL ), 58, *pszIntlResult )
-    FB_UNLOCK()
-    
-    if ( chDecimalPoint = 0 ) then
-        chDecimalPoint = 46
+	FB_LOCK()
+	pszIntlResult = fb_IntlGet( eFIL_NumDecimalPoint, FALSE )
+	chDecimalPoint = iif(( pszIntlResult = NULL ), 46, *pszIntlResult )
+	pszIntlResult = fb_IntlGet( eFIL_NumThousandsSeparator, FALSE )
+	chThousandsSep = iif(( pszIntlResult = NULL ), 44, *pszIntlResult )
+	pszIntlResult = fb_IntlGet( eFIL_DateDivider, FALSE )
+	chDateSep = iif(( pszIntlResult = NULL ), 47, *pszIntlResult )
+	pszIntlResult = fb_IntlGet( eFIL_TimeDivider, FALSE )
+	chTimeSep = iif(( pszIntlResult = NULL ), 58, *pszIntlResult )
+	FB_UNLOCK()
+
+	if ( chDecimalPoint = 0 ) then
+		chDecimalPoint = 46
 	end if
-    if ( chThousandsSep = 0 ) then
-        chThousandsSep = 44
+	if ( chThousandsSep = 0 ) then
+		chThousandsSep = 44
 	end if
-	
-    FB_STRLOCK()
 
-    if ( mask = NULL or mask_length = 0 ) then
-        dst = fb_hBuildDouble( value, chDecimalPoint, 0 )
-    else 
-        dim as FormatMaskInfo info
+	FB_STRLOCK()
 
-        /' Extract all information from the mask string '/
-        if ( fb_hProcessMask( NULL, mask, mask_length, value, @info, chThousandsSep, chDecimalPoint, chDateSep, chTimeSep ) ) then
-            dst = fb_hStrAllocTemp_NoLock( NULL, info.length_min + info.length_opt )
-            if ( dst = NULL ) then
-                fb_ErrorSetNum( FB_RTERROR_OUTOFMEM )
-                dst = @__fb_ctx.null_desc
-		    else
-                /' Build the new string according to the mask '/
-                fb_hProcessMask( dst, mask, mask_length, value, @info, chThousandsSep, chDecimalPoint, chDateSep, chTimeSep )
-            end if
-        end if
-    end if
+	if ( mask = NULL or mask_length = 0 ) then
+		dst = fb_hBuildDouble( value, chDecimalPoint, 0 )
+	else 
+		dim as FormatMaskInfo info
 
-    FB_STRUNLOCK()
+		/' Extract all information from the mask string '/
+		if ( fb_hProcessMask( NULL, mask, mask_length, value, @info, chThousandsSep, chDecimalPoint, chDateSep, chTimeSep ) ) then
+			dst = fb_hStrAllocTemp_NoLock( NULL, info.length_min + info.length_opt )
+			if ( dst = NULL ) then
+				fb_ErrorSetNum( FB_RTERROR_OUTOFMEM )
+				dst = @__fb_ctx.null_desc
+			else
+				/' Build the new string according to the mask '/
+				fb_hProcessMask( dst, mask, mask_length, value, @info, chThousandsSep, chDecimalPoint, chDateSep, chTimeSep )
+			end if
+		end if
+	end if
 
-    return dst
+	FB_STRUNLOCK()
+
+	return dst
 end function
 
 function fb_StrFormat FBCALL ( value as double, mask as FBSTRING ptr ) as FBSTRING ptr
-    dim as FBSTRING ptr dst
+	dim as FBSTRING ptr dst
 
-    dst = fb_hStrFormat( value, mask->data, FB_STRSIZE(mask) )
+	dst = fb_hStrFormat( value, mask->data, FB_STRSIZE(mask) )
 
 	/' del if temp '/
 	fb_hStrDelTemp( mask )
 
-    return dst
+	return dst
 end function
 end extern

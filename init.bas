@@ -80,7 +80,7 @@ sub fb_hRtExit cdecl ( )
 	   and it depends on the platform (e.g. GNU/Linux vs MinGW-w64).
 	   Thus it can't be used reliably. '/
 
-	'fb_FileReset( )
+	fb_FileReset( )
 
 	/' os-dep termination '/
 	fb_hEnd( 0 )
@@ -114,8 +114,10 @@ end sub
    or fb_Die() in case of assert() failure or runtime error '/
 sub fb_End FBCALL ( errlevel as long )
 	if( __fb_ctx.exit_gfxlib2 ) then
+		'TODO: Fix this with GFXlib
 		'__fb_ctx.exit_gfxlib2( )
 	end if
+   'TODO: Fix Exit command
 	'exit( errlevel )
 end sub
 end extern

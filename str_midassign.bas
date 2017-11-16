@@ -8,19 +8,19 @@ sub fb_StrAssignMid FBCALL ( dst as FBSTRING ptr, start as ssize_t, _len as ssiz
 
 	FB_STRLOCK()
 
-    if ( (dst = NULL) or (dst->data = NULL) or (FB_STRSIZE( dst ) = 0) ) then
-    	fb_hStrDelTemp_NoLock( src )
-    	fb_hStrDelTemp_NoLock( dst )
-    	FB_STRUNLOCK()
-    	exit sub
-    end if
+	if ( (dst = NULL) or (dst->data = NULL) or (FB_STRSIZE( dst ) = 0) ) then
+		fb_hStrDelTemp_NoLock( src )
+		fb_hStrDelTemp_NoLock( dst )
+		FB_STRUNLOCK()
+		exit sub
+	end if
 
-    if ( (src = NULL) or (src->data = NULL) or (FB_STRSIZE( src ) = 0) ) then
-        fb_hStrDelTemp_NoLock( src )
-    	fb_hStrDelTemp_NoLock( dst )
-    	FB_STRUNLOCK()
-    	exit sub 
-    end if
+	if ( (src = NULL) or (src->data = NULL) or (FB_STRSIZE( src ) = 0) ) then
+		fb_hStrDelTemp_NoLock( src )
+		fb_hStrDelTemp_NoLock( dst )
+		FB_STRUNLOCK()
+		exit sub 
+	end if
 
 	src_len = FB_STRSIZE( src )
 	dst_len = FB_STRSIZE( dst )
@@ -35,14 +35,14 @@ sub fb_StrAssignMid FBCALL ( dst as FBSTRING ptr, start as ssize_t, _len as ssiz
         if ( start + _len > dst_len ) then
         	_len = (dst_len - start)
 		end if
-
+		
 		memcpy( dst->data + start, src->data, _len )
-    end if
-
+   end if
+   
 	/' del if temp '/
 	fb_hStrDelTemp_NoLock( src )
-    fb_hStrDelTemp_NoLock( dst )
+   fb_hStrDelTemp_NoLock( dst )
 
-   	FB_STRUNLOCK()
+   FB_STRUNLOCK()
 end sub
 end extern

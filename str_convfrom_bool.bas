@@ -29,10 +29,10 @@ end function
 
 /':::::'/
 function fb_VALBOOL FBCALL ( _str as FBSTRING ptr ) as ubyte
-    dim as long _val
+	dim as long _val
 
 	if ( _str = NULL ) then
-	    return 0
+		return 0
 	end if
 	if ( (_str->data = NULL) or (FB_STRSIZE( _str ) = 0) ) then
 		_val = 0

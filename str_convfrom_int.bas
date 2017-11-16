@@ -4,7 +4,7 @@
 
 extern "C"
 function fb_hStr2Int FBCALL ( src as ubyte ptr, _len as ssize_t ) as long
-    dim as ubyte ptr p
+	dim as ubyte ptr p
 	dim as long radix, skip
 
 	/' skip white spc '/
@@ -39,10 +39,10 @@ function fb_hStr2Int FBCALL ( src as ubyte ptr, _len as ssize_t ) as long
 end function
 
 function fb_VALINT FBCALL ( _str as FBSTRING ptr ) as long
-    dim as long _val
+	dim as long _val
 
 	if ( _str = NULL ) then
-	    return 0
+		return 0
 	end if
 	if ( (_str->data = NULL) or (FB_STRSIZE( _str ) = 0) ) then
 		_val = 0

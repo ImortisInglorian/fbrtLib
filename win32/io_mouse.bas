@@ -18,10 +18,10 @@ sub ProcessMouseEvent(pEvent as MOUSE_EVENT_RECORD const ptr)
 end sub
 
 function fb_ConsoleGetMouse( x as long ptr, y as long ptr, z as long ptr, buttons as long ptr, clip as long ptr ) as long
-#if 0
+	#if 0
 	dim as INPUT_RECORD ir
 	dim as DWORD dwRead
-#endif
+	#endif
 
 	dim as DWORD dwMode
 
@@ -31,9 +31,9 @@ function fb_ConsoleGetMouse( x as long ptr, y as long ptr, z as long ptr, button
 			GetConsoleMode( __fb_in_handle, @dwMode )
 			dwMode or= ENABLE_MOUSE_INPUT
 			SetConsoleMode( __fb_in_handle, dwMode )
-#if 1
-			__fb_con.mouseEventHook = @ProcessMouseEvent
-#endif
+			#if 1
+			__fb_con.mouseEventHook = cast(fb_FnProcessMouseEvent, @ProcessMouseEvent)
+			#endif
 			last_x = 1
 			last_y = 1
 			fb_hConvertToConsole( @last_x, @last_y, NULL, NULL )
@@ -56,7 +56,7 @@ function fb_ConsoleGetMouse( x as long ptr, y as long ptr, z as long ptr, button
 		end if
 	end if
 
-#if 0
+	#if 0
 	if ( PeekConsoleInput( __fb_in_handle, @ir, 1, @dwRead ) ) then
 		if( dwRead > 0 ) then
 			ReadConsoleInput( __fb_in_handle, @ir, 1, @dwRead )
@@ -65,9 +65,9 @@ function fb_ConsoleGetMouse( x as long ptr, y as long ptr, z as long ptr, button
 			end if
 		end if
 	end if
-#else
+	#else
 	fb_ConsoleProcessEvents( )
-#endif
+	#endif
 
 	*x = last_x - 1
 	*y = last_y - 1

@@ -25,24 +25,24 @@ function fb_StrConcatAssign FBCALL ( dst as any ptr, dst_size as ssize_t, src as
 		if ( dst_size = -1 ) then
         	dstr = cast(FBSTRING ptr, dst)
         	dst_len = FB_STRSIZE( dst )
-
+           
 			fb_hStrRealloc( dstr, dst_len + src_len, FB_TRUE )
-
+         
 			fb_hStrCopy( @dstr->data[dst_len], src_ptr, src_len )
 		else
 			dst_len = strlen( cast(ubyte ptr, dst) )
-
+         
 			/' don't check byte ptr's '/
 			if ( dst_size > 0 ) then
 				dst_size -= 1							/' less the null-term '/
-
+            
 				if ( src_len > dst_size - dst_len ) then
 					src_len = dst_size - dst_len
 				end if
 			end if
-
+         
 			fb_hStrCopy( @((cast(ubyte ptr, dst))[dst_len]), src_ptr, src_len )
-
+         
 			/' don't check byte ptr's '/
 			if ( (fillrem <> 0) and (dst_size > 0) ) then
 				/' fill reminder with null's '/
@@ -53,7 +53,6 @@ function fb_StrConcatAssign FBCALL ( dst as any ptr, dst_size as ssize_t, src as
 			end if
 		end if
 	end if
-
 
 	/' delete temp? '/
 	if ( src_size = -1 ) then

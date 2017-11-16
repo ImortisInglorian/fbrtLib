@@ -106,11 +106,11 @@ function fb_StrInstrRev FBCALL ( src as FBSTRING ptr, patt as FBSTRING ptr, star
 			end if
 			
 			if ( start > 0 ) then
-#if 1
+				#if 1
 				r = fb_hFindNaive( start - 1, src->data, size_src,patt->data, size_patt )
-#else
+				#else
 				r = fb_hFindBM( start - 1, src->data, size_src, patt->data, size_patt )
-#endif
+				#endif
 			end if
 		end if
 	end if

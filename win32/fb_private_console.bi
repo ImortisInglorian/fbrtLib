@@ -16,30 +16,30 @@ extern as FB_CONSOLE_CTX __fb_con
 
 extern "C"
 declare function fb_hConsoleTranslateKey 		cdecl  ( AsciiChar as ubyte, wVsCode as WORD, wVkCode as WORD, dwControlKeyState as DWORD, bEnhancedKeysOnly as long ) as long
-declare function fb_hVirtualToScancode 			cdecl  ( vkey as long ) as long
-declare sub 	 fb_InitConsoleWindow 			cdecl  ( )
-declare sub 	 fb_hRestoreConsoleWindow 		FBCALL ( )
-declare sub 	 fb_hUpdateConsoleWindow 		FBCALL ( )
-declare sub 	 fb_hConvertToConsole 			FBCALL ( _left as long ptr, top as long ptr, _right as long ptr, bottom as long ptr )
-declare sub 	 fb_hConvertFromConsole 		FBCALL ( _left as long ptr, top as long ptr, _right as long ptr, bottom as long ptr )
-declare sub 	 fb_ConsoleLocateRaw 			FBCALL ( row as long, col as long, cursor as long )
-declare sub 	 fb_ConsoleGetScreenSize 		FBCALL ( cols as long ptr, rows as long ptr )
-declare sub 	 fb_ConsoleGetMaxWindowSize 	cdecl  ( cols as long ptr, rows as long ptr )
-declare sub 	 fb_ConsoleGetScreenSizeEx 		cdecl  ( hConsole as HANDLE, cols as long ptr, rows as long ptr )
+declare function fb_hVirtualToScancode 		cdecl  ( vkey as long ) as long
+declare sub 	  fb_InitConsoleWindow 			cdecl  ( )
+declare sub 	  fb_hRestoreConsoleWindow 	FBCALL ( )
+declare sub 	  fb_hUpdateConsoleWindow 		FBCALL ( )
+declare sub 	  fb_hConvertToConsole 			FBCALL ( _left as long ptr, top as long ptr, _right as long ptr, bottom as long ptr )
+declare sub 	  fb_hConvertFromConsole 		FBCALL ( _left as long ptr, top as long ptr, _right as long ptr, bottom as long ptr )
+declare sub 	  fb_ConsoleLocateRaw 			FBCALL ( row as long, col as long, cursor as long )
+declare sub 	  fb_ConsoleGetScreenSize 		FBCALL ( cols as long ptr, rows as long ptr )
+declare sub 	  fb_ConsoleGetMaxWindowSize 	cdecl  ( cols as long ptr, rows as long ptr )
+declare sub 	  fb_ConsoleGetScreenSizeEx 	cdecl  ( hConsole as HANDLE, cols as long ptr, rows as long ptr )
 declare function fb_ConsoleGetRawYEx 			cdecl  ( hConsole as HANDLE ) as long
 declare function fb_ConsoleGetRawXEx 			cdecl  ( hConsole as HANDLE ) as long
-declare sub 	 fb_ConsoleGetRawXYEx 			cdecl  ( hConsole as HANDLE, col as long ptr, row as long ptr )
-declare sub 	 fb_ConsoleLocateRawEx 			cdecl  ( hConsole as HANDLE, row as long, col as long, cursor as long )
+declare sub 	  fb_ConsoleGetRawXYEx 			cdecl  ( hConsole as HANDLE, col as long ptr, row as long ptr )
+declare sub 	  fb_ConsoleLocateRawEx 		cdecl  ( hConsole as HANDLE, row as long, col as long, cursor as long )
 declare function fb_ConsoleGetColorAttEx 		cdecl  ( hConsole as HANDLE ) as long
-declare sub 	 fb_ConsoleColorEx 				cdecl  ( hConsole as HANDLE, fc as long, bc as long )
-declare sub 	 fb_ConsoleClearViewRawEx 		cdecl  ( hConsole as HANDLE, x1 as long, y1 as long, x2 as long, y2 as long )
-declare sub 	 fb_hConsoleGetWindow 			cdecl  ( _left as long ptr, top as long ptr, cols as long ptr, rows as long ptr )
+declare sub 	  fb_ConsoleColorEx 				cdecl  ( hConsole as HANDLE, fc as long, bc as long )
+declare sub 	  fb_ConsoleClearViewRawEx 	cdecl  ( hConsole as HANDLE, x1 as long, y1 as long, x2 as long, y2 as long )
+declare sub 	  fb_hConsoleGetWindow 			cdecl  ( _left as long ptr, top as long ptr, cols as long ptr, rows as long ptr )
 declare function fb_ConsoleProcessEvents 		cdecl  ( ) as long
 declare function fb_hConsoleGetKey 				cdecl  ( full as long ) as long
 declare function fb_hConsolePeekKey 			cdecl  ( full as long ) as long
-declare sub 	 fb_hConsolePutBackEvents 		cdecl  ( )
+declare sub 	  fb_hConsolePutBackEvents 	cdecl  ( )
 declare function fb_hConsoleGetHandle 			cdecl  ( is_input as long ) as HANDLE
-declare sub 	 fb_hConsoleResetHandles 		cdecl  ( )
+declare sub 	  fb_hConsoleResetHandles 		cdecl  ( )
 declare function fb_ConsoleGetRawX 				cdecl  ( ) as long
 declare function fb_ConsoleGetRawY 				cdecl  ( ) as long
 declare function fb_hConsoleCreateBuffer 		cdecl  ( ) as HANDLE
@@ -49,9 +49,9 @@ end extern
 #define __fb_out_handle fb_hConsoleGetHandle( FALSE )
 
 #macro FB_CON_CORRECT_POSITION()
-		if ( __fb_con.scrollWasOff ) then
-			fb_ConsolePrintBufferEx( NULL, 0, FB_PRINT_FORCE_ADJUST )
-		end if
+	if ( __fb_con.scrollWasOff ) then
+		fb_ConsolePrintBufferEx( NULL, 0, FB_PRINT_FORCE_ADJUST )
+	end if
 #endmacro
 
 #macro FB_CONSOLE_WINDOW_EMPTY()

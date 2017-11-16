@@ -10,6 +10,7 @@
 		 same function '/
 
 #ifdef HOST_DARWIN
+	'TODO: these need to be fixed.  Not sure how.
 	/' It seems like __attribute__((constructor(priority))) (or in general, ordering
 	   ctors/dtors across modules) isn't supported on Darwin/MacOSX, so we just use
 	   plain __attribute__((constructor)). '/
@@ -44,6 +45,7 @@
 	    __attribute__((constructor(priority))) now (instead of
 	   .ctors.<65535 - priority>), but .ctors.* still works, so it's probably ok to
 	   keep using it. '/
+   'TODO: These need to be fixed as well
 	'static void * priorityhDoInit __attribute__((section(".ctors.65435"), used)) = fb_hDoInit;
 	'static void * priorityhDoExit __attribute__((section(".dtors.65435"), used)) = fb_hDoExit;
 #endif

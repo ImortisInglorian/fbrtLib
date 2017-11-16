@@ -4,8 +4,8 @@
 
 extern "C"
 sub fb_hStrConcat ( dst as ubyte ptr, str1 as ubyte const ptr, len1 as ssize_t, str2 as ubyte const ptr, len2 as ssize_t )
-    dst = cast(ubyte ptr, FB_MEMCPYX( dst, str1, len1 ))
-    dst = cast(ubyte ptr, FB_MEMCPYX( dst, str2, len2 ))
+   dst = cast(ubyte ptr, FB_MEMCPYX( dst, str1, len1 ))
+   dst = cast(ubyte ptr, FB_MEMCPYX( dst, str2, len2 ))
 	*dst = 0
 end sub
 

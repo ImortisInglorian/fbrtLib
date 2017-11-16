@@ -29,16 +29,16 @@ end type
    a void*, because pthread_t doesn't have to be an long or pointer, and
    furthermore, zero may be a valid value for it. '/
 type _FBTHREAD 
-#if defined (HOST_DOS)
+	#if defined (HOST_DOS)
 	as long id
 	as any ptr opaque
-#elseif defined (HOST_UNIX)
+	#elseif defined (HOST_UNIX)
 	as pthread_t id
-#elseif defined (HOST_WIN32)
+	#elseif defined (HOST_WIN32)
 	as HANDLE id
-#elseif defined (HOST_XBOX)
+	#elseif defined (HOST_XBOX)
 	as HANDLE id
-#else
-#error Unexpected target
-#endif
+	#else
+	#error Unexpected target
+	#endif
 end type

@@ -130,7 +130,7 @@ function hGetRealRndNumber cdecl ( ) as uinteger
 	dim number as _number
 	number.i = 0
 
-#if defined (HOST_WIN32)
+	#if defined (HOST_WIN32)
 	dim as HCRYPTPROV provider = 0
 	if ( CryptAcquireContext( @provider, NULL, 0, PROV_RSA_FULL, 0 ) = TRUE ) then
 		if ( CryptGenRandom( provider, sizeof(number), @number.b(0) ) = FALSE ) then
@@ -139,7 +139,7 @@ function hGetRealRndNumber cdecl ( ) as uinteger
 		CryptReleaseContext( provider, 0 )
 	end if
 
-#elseif defined (HOST_LINUX)
+	#elseif defined (HOST_LINUX)
 	dim as long urandom = open_( "/dev/urandom", O_RDONLY )
 	if ( urandom <> -1 ) then
 		if ( read_( urandom, @number.b(0), sizeof(number) ) <> sizeof(number) ) then
@@ -147,7 +147,7 @@ function hGetRealRndNumber cdecl ( ) as uinteger
 		end if
 		close_( urandom )
 	end if
-#endif
+	#endif
 
 	return number.i
 end function
@@ -234,7 +234,7 @@ sub fb_Randomize FBCALL ( seed as double, algorithm as long )
 			s = ( ( s and &hFFFF ) shl 8 ) or ( iseed and &hFF )
 			iseed = s
 
-#if defined (HOST_WIN32) or defined (HOST_LINUX)
+		#if defined (HOST_WIN32) or defined (HOST_LINUX)
 		case RND_REAL:
 			rnd_func = @hRnd_REAL
 			state(0) = cast(uinteger,seed)
@@ -242,7 +242,7 @@ sub fb_Randomize FBCALL ( seed as double, algorithm as long )
 				state(i) = ( state(i - 1) * 1664525 ) + 1013904223
 			next
 			p = @state(0) + MAX_STATE
-#endif
+		#endif
 		case RND_MTWIST:
 			rnd_func = @hRnd_MTWIST
 			state(0) = cast(uinteger, seed)

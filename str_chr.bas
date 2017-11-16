@@ -16,7 +16,7 @@ function fb_CHR cdecl ( args as long, ... ) as FBSTRING ptr
 	ap = va_first()
 
 	/' alloc temp string '/
-    dst = fb_hStrAllocTemp( NULL, args )
+   dst = fb_hStrAllocTemp( NULL, args )
 	if ( dst <> NULL ) then
 		/' convert '/
 		for i = 0 to args

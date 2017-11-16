@@ -41,6 +41,6 @@ end function
 
 /' Caller is expected to hold FB_LOCK() '/
 function fb_ConsoleKeyHit( ) as long
-    return fb_hConsolePeekKey( TRUE ) <> -1
+	return fb_hConsolePeekKey( TRUE ) <> -1
 end function
 end extern

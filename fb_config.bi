@@ -53,6 +53,7 @@
 	#define HOST_X86
 #endif
 
+'TODO: Remove if un-needed
 /' This may be un-needed.  Will leave here until sure.
 #ifdef HOST_MINGW
 	/' work around gcc bug 52991 '/

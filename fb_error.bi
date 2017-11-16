@@ -48,15 +48,15 @@ end type
 extern as ubyte __fb_errmsg(0 to FB_ERRMSG_SIZE -1)
 
 extern "C"
-declare sub 	 fb_Assert 				FBCALL ( filename as ubyte ptr, linenum as long, funcname as ubyte ptr, expression as ubyte ptr )
-declare sub 	 fb_AssertWarn 			FBCALL ( filename as ubyte ptr, linenum as long, funcname as ubyte ptr, expression as ubyte ptr )
-declare sub 	 fb_AssertW 			FBCALL ( filename as ubyte ptr, linenum as long, funcname as ubyte ptr, expression as FB_WCHAR ptr )
-declare sub 	 fb_AssertWarnW 		FBCALL ( filename as ubyte ptr, linenum as long, funcname as ubyte ptr, expression as FB_WCHAR ptr )
+declare sub 	  fb_Assert 				FBCALL ( filename as ubyte ptr, linenum as long, funcname as ubyte ptr, expression as ubyte ptr )
+declare sub 	  fb_AssertWarn 			FBCALL ( filename as ubyte ptr, linenum as long, funcname as ubyte ptr, expression as ubyte ptr )
+declare sub 	  fb_AssertW 				FBCALL ( filename as ubyte ptr, linenum as long, funcname as ubyte ptr, expression as FB_WCHAR ptr )
+declare sub 	  fb_AssertWarnW 			FBCALL ( filename as ubyte ptr, linenum as long, funcname as ubyte ptr, expression as FB_WCHAR ptr )
 declare function fb_ErrorThrowEx 		cdecl  ( errnum as long, linenum as long, fname as ubyte const ptr, res_label as any ptr, resnext_label as any ptr ) as FB_ERRHANDLER
 declare function fb_ErrorThrowAt 		cdecl  ( line_num as long, mod_name as ubyte const ptr, res_label as any ptr, resnext_label as any ptr ) as FB_ERRHANDLER
 declare function fb_ErrorSetHandler 	FBCALL ( newhandler as FB_ERRHANDLER ) as FB_ERRHANDLER
-declare function fb_ErrorGetNum 		FBCALL ( ) as long
-declare function fb_ErrorSetNum 		FBCALL ( errnum as long ) as long
+declare function fb_ErrorGetNum 			FBCALL ( ) as long
+declare function fb_ErrorSetNum 			FBCALL ( errnum as long ) as long
 declare function fb_ErrorResume     	cdecl  ( ) as any ptr
 declare function fb_ErrorResumeNext 	cdecl  ( ) as any ptr
 declare function fb_ErrorGetLineNum 	FBCALL ( ) as long

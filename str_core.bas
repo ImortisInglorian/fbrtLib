@@ -50,9 +50,9 @@ sub fb_hStrFreeTmpDesc cdecl ( dsc as FB_STR_TMPDESC ptr )
 end sub
 
 function fb_hStrDelTempDesc FBCALL( _str as FBSTRING ptr ) as long
-    dim as FB_STR_TMPDESC ptr item = cast(FB_STR_TMPDESC ptr, ( cast(ubyte ptr, _str - offsetof( FB_STR_TMPDESC, desc ) )))
+	dim as FB_STR_TMPDESC ptr item = cast(FB_STR_TMPDESC ptr, ( cast(ubyte ptr, _str - offsetof( FB_STR_TMPDESC, desc ) )))
 
-    /' is this really a temp descriptor? '/
+	/' is this really a temp descriptor? '/
 	if ( (item < @fb_tmpdsTB(0)) or (item > @fb_tmpdsTB(FB_STR_TMPDESCRIPTORS - 1)) ) then
 		return -1
 	end if
@@ -193,11 +193,11 @@ function fb_hStrDelTemp FBCALL ( _str as FBSTRING ptr ) as long
 end function
 
 sub fb_hStrCopy FBCALL ( dst as ubyte ptr, src as ubyte const ptr, bytes as ssize_t )
-    if ( (src <> NULL) and (bytes > 0) ) then
-        dst = cast(ubyte ptr, FB_MEMCPYX( dst, src, bytes ))
-    end if
+	if ( (src <> NULL) and (bytes > 0) ) then
+		dst = cast(ubyte ptr, FB_MEMCPYX( dst, src, bytes ))
+	end if
 
-    /' add the null-term '/
-    dst = 0
+	/' add the null-term '/
+	dst = 0
 end sub
 end extern
