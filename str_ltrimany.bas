@@ -23,14 +23,14 @@ function fb_LTrimAny FBCALL ( src as FBSTRING ptr, pattern as FBSTRING ptr ) as 
 		if ( len_pattern <> 0 ) then
 			while ( _len <> 0 )
 				dim as ssize_t i
-	         for i = 0 to len_pattern
-	            if ( FB_MEMCHR( pattern->data, *pachText, len_pattern ) <> NULL ) then
-	               exit for
+				for i = 0 to len_pattern
+					if ( FB_MEMCHR( pattern->data, *pachText, len_pattern ) <> NULL ) then
+						exit for
 					end if
-	         next
+				next
 	            
-	         if ( i = len_pattern ) then
-	            exit while
+				if ( i = len_pattern ) then
+					exit while
 				end if
             
 	         _len -= 1

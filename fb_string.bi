@@ -371,7 +371,7 @@ declare function fb_WstrAssignToA 			FBCALL ( dst as any ptr, dst_chars as ssize
 declare function fb_WstrAssignToAEx 		FBCALL ( dst as any ptr, dst_chars as ssize_t, src as FB_WCHAR ptr, fill_rem as long, is_init as long ) as any ptr
 declare function fb_WstrConcat 				FBCALL ( str1 as FB_WCHAR const ptr, str2 as FB_WCHAR const ptr )  as FB_WCHAR ptr
 declare function fb_WstrConcatWA 			FBCALL ( str1 as FB_WCHAR const ptr, str2 as any const ptr, str2_size as ssize_t ) as FB_WCHAR ptr
-declare function fb_WstrConcatAW 			FBCALL ( str1 as any const ptr, str1_size as ssize_t, str2 as FB_WCHAR ptr ) as FB_WCHAR ptr
+declare function fb_WstrConcatAW 			FBCALL ( str1 as any const ptr, str1_size as ssize_t, str2 as FB_WCHAR const ptr ) as FB_WCHAR ptr
 declare function fb_WstrConcatAssign 		FBCALL ( dst as FB_WCHAR ptr, dst_chars as ssize_t, src as FB_WCHAR const ptr ) as FB_WCHAR ptr
 
 declare function fb_WstrLen 					FBCALL ( str as FB_WCHAR ptr ) as ssize_t

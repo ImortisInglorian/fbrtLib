@@ -57,7 +57,7 @@ declare function fb_hGetExePath 			cdecl  ( dst as ubyte ptr, maxlen as ssize_t 
 declare function fb_hGetExeName 			cdecl  ( dst as ubyte ptr, maxlen as ssize_t ) as ubyte ptr
 
 declare function fb_hIn 					cdecl  ( port as ushort ) as long
-declare function fb_hOut 					cdecl  ( port as ushort, value as ubyte ) as long
+declare function fb_hOut 					cdecl  ( port as ushort, value as ubyte ptr ) as long
 declare function fb_Wait 					FBCALL ( port as ushort, val_and as long, val_xor as long ) as long
 
 declare sub 	  fb_hRtInit 				cdecl  ( )

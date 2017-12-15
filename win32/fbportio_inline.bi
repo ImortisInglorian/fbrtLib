@@ -1,5 +1,5 @@
 #define FBPORTIO_DRIVER_SIZE 5632
-dim shared as fbportio_driver(0 to FBPORTIO_DRIVER_SIZE - 1) = { _
+dim shared as ubyte fbportio_driver(0 to FBPORTIO_DRIVER_SIZE - 1) = { _
 	&h4D, &h5A, &h90, &h00, &h03, &h00, &h00, &h00, &h04, &h00, &h00, &h00, &hFF, &hFF, &h00, &h00, _
 	&hB8, &h00, &h00, &h00, &h00, &h00, &h00, &h00, &h40, &h00, &h00, &h00, &h00, &h00, &h00, &h00, _
 	&h00, &h00, &h00, &h00, &h00, &h00, &h00, &h00, &h00, &h00, &h00, &h00, &h00, &h00, &h00, &h00, _
