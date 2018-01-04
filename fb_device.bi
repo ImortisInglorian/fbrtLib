@@ -30,7 +30,7 @@ type fb_FnDevReadString as function ( buffer as ubyte ptr, count as size_t, fp a
 declare function fb_DevFileReadLineDumb  ( fp as FILE ptr, dst as FBSTRING ptr, pfnReadString as fb_FnDevReadString ) as long
 
 /' ENCOD '/
-declare function fb_DevFileOpenEncod     ( handle as FB_FILE ptr, filename as ubyte const ptr, fname_len as size_t ) as long
+declare function fb_DevFileOpenEncod     ( handle as FB_FILE ptr, filename as ubyte ptr, fname_len as size_t ) as long
 declare function fb_DevFileOpenUTF       ( handle as FB_FILE ptr, filename as ubyte const ptr, filename_len as size_t ) as long
 declare function fb_DevFileReadEncod     ( handle as FB_FILE ptr, dst as any ptr, max_chars as size_t ptr) as long
 declare function fb_DevFileReadEncodWstr ( handle as FB_FILE ptr, dst as FB_WCHAR ptr, max_chars as size_t ptr ) as long

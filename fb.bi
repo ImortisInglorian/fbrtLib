@@ -191,9 +191,9 @@
 	#include "fb_datetime.bi"
 	#include "fb_thread.bi"
 	#include "fb_hook.bi"
-	/'#include "fb_oop.bi"
+	#include "fb_oop.bi"
 	#include "fb_legacy.bi"
-	'/
+	
 	/' DOS keyboard scancodes '/
 	#define SC_ESCAPE		&h01
 	#define SC_1			&h02

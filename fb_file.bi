@@ -93,7 +93,7 @@ end enum
 #define FB_FILE_ENCOD_DEFAULT FB_FILE_ENCOD_ASCII
 
 
-#define FB_FILE_FROM_HANDLE(handle) ((handle) - __fb_ctx.fileTB) + 1 - FB_RESERVED_FILES)
+#define FB_FILE_FROM_HANDLE(handle) ((handle) - @__fb_ctx.fileTB(0)) + 1 - FB_RESERVED_FILES)
 #define FB_FILE_INDEX_VALID(index) ((index)>=1 and ((index)<=(FB_MAX_FILES-FB_RESERVED_FILES)))
 
 #define FB_INDEX_IS_SPECIAL(index) (((index) < 1) and (((index) > (-FB_RESERVED_FILES))
@@ -102,8 +102,8 @@ end enum
 
 #define FB_HANDLE_USED(handle) ((handle) <> NULL and ((handle)->hooks <> NULL))
 
-#define FB_HANDLE_SCREEN    __fb_ctx.fileTB
-#define FB_HANDLE_PRINTER   (__fb_ctx.fileTB + 1)
+#define FB_HANDLE_SCREEN    __fb_ctx.fileTB(0)
+#define FB_HANDLE_PRINTER   (__fb_ctx.fileTB(1))
 
 type _FB_FILE as FB_FILE
 
