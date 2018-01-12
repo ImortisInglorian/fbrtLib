@@ -181,6 +181,14 @@ ifndef FBTARGET
   FBTARGET := $(TARGET_OS)-$(TARGET_ARCH)
 endif
 
+# Try to determine whether fbc will use the GCC backend (yuck)
+ifneq ($(TARGET_ARCH),x86)
+  GCC_BACKEND := yes
+else ifeq ($(TARGET_OS),darwin)
+  GCC_BACKEND := yes
+else ifeq ($(filter gcc,$(ALLFBRTFLAGS)),gcc)
+  GCC_BACKEND := yes
+endif
 
 ###############################################################################
 # fbc and gcc arguments
@@ -246,8 +254,13 @@ endif
 # Where to search for dependencies
 VPATH = $(FBRTLIB_DIRS) $(RTLIB_DIRS)
 
+ifdef GCC_BACKEND
+  # These files use varargs and can't be compiled by the gcc backend
+  BLACKLIST := ./array_redim.bas ./array_redim_obj.bas ./array_tempdesc.bas ./array_redimpresv.bas ./array_redimpresv_obj.bas ./array_setdesc.bas ./str_chr.bas ./strw_chr.bas
+endif
+
 LIBFB_BI := $(sort $(foreach i,$(FBRTLIB_DIRS),$(wildcard $(i)/*.bi)))
-LIBFB_BAS := $(sort $(foreach i,$(FBRTLIB_DIRS),$(patsubst $(i)/%.bas,$(libfbobjdir)/%.o,$(wildcard $(i)/*.bas))))
+LIBFB_BAS := $(sort $(foreach i,$(FBRTLIB_DIRS),$(patsubst $(i)/%.bas,$(libfbobjdir)/%.o,$(filter-out $(BLACKLIST),$(wildcard $(i)/*.bas)))))
 
 LIBFB_H := $(sort $(foreach i,$(RTLIB_DIRS),$(wildcard $(i)/*.h)))
 LIBFB_C := $(sort $(foreach i,$(RTLIB_DIRS),$(patsubst $(i)/%.c,$(libfbobjdir)/%.o,$(wildcard $(i)/*.c))))
