@@ -2,7 +2,8 @@
 # This makefile, adapted from FB's, creates a libfb archives combining fbrtlib .bas
 # files with rtlib .c files. Doesn't produce pic variants by default (see below)
 # Either edit FB_SRC_PATH below, or create a config.mk and define it there,
-# or pass it on the commandline or in an envvar.
+# or pass it on the commandline or in an envvar. See below for other options
+# you can put in your config.mk file.
 
 # Warning: if fbc defaults to 32 bit but gcc defaults to 64 bit, then you need
 # to specify MULTILIB=32 or MULTILIB=64 unless you specify TARGET instead.
@@ -35,6 +36,13 @@ prefix := /usr/local
 # Can define these to speed up compiles
 # DISABLE_MT := YesPlease
 DISABLE_PIC := YesPlease
+
+# To skip files, add them to BLACKLIST:
+# crt/stat.bi not supported on linux
+#BLACKLIST += ./file_attr.bas ./file_datetime.bas
+
+# Define this if libffi isn't installed
+#ALLCFLAGS += -DDISABLE_FFI
 
 -include config.mk
 
@@ -284,7 +292,7 @@ VPATH = $(FBRTLIB_DIRS) $(RTLIB_DIRS)
 
 ifdef GCC_BACKEND
   # These files use varargs and can't be compiled by the gcc backend
-  BLACKLIST := ./array_redim.bas ./array_redim_obj.bas ./array_tempdesc.bas ./array_redimpresv.bas ./array_redimpresv_obj.bas ./array_setdesc.bas ./str_chr.bas ./strw_chr.bas
+  BLACKLIST += ./array_redim.bas ./array_redim_obj.bas ./array_tempdesc.bas ./array_redimpresv.bas ./array_redimpresv_obj.bas ./array_setdesc.bas ./str_chr.bas ./strw_chr.bas
 endif
 
 LIBFB_BI := $(sort $(foreach i,$(FBRTLIB_DIRS),$(wildcard $(i)/*.bi)))
