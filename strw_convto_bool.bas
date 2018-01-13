@@ -3,12 +3,10 @@
 #include "fb.bi"
 
 extern "C"
-dim shared as FB_WCHAR ptr false_string = sadd("false")
-dim shared as FB_WCHAR ptr true_string =  sadd("true")
 
 /':::::'/
 function fb_hBoolToWstr FBCALL ( num as ubyte ) as FB_WCHAR ptr
-	return iif(num <> 0, true_string, false_string)
+	return iif(num <> 0, @wstr("true"), @wstr("false"))
 end function
 
 /':::::'/

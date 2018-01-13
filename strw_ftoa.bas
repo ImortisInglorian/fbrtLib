@@ -13,7 +13,7 @@ function fb_FloatExToWstr( _val as double, buffer as FB_WCHAR ptr, digits as lon
 		p = buffer
 	end if
 
-	swprintf( p, 16+8+1, sadd("%.*g"), digits, _val )
+	swprintf( p, 16+8+1, @wstr("%.*g"), digits, _val )
 
 	_len = fb_wstr_Len( p )
 
