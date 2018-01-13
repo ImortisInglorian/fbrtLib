@@ -42,10 +42,10 @@ extern "C"
 #ifdef ENABLE_MT
 	declare sub fb_MtLock FBCALL( )
 	declare sub fb_MtUnlock FBCALL( )
-	#define FB_MTLOCK()   fb_MtLock()
-	#define FB_MTUNLOCK() fb_MtUnlock()
+	#define FB_MT_LOCK()   fb_MtLock()
+	#define FB_MT_UNLOCK() fb_MtUnlock()
 #else
-	#define FB_MTLOCK()
-	#define FB_MTUNLOCK()
+	#define FB_MT_LOCK()
+	#define FB_MT_UNLOCK()
 #endif
 end extern
