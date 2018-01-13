@@ -61,14 +61,14 @@ sub fb_hGetNumberParts cdecl ( number as double, pachFixPart as ubyte ptr, pcchL
 	/' Remove trailing zeroes and - if it completely consists of zeroes -
 	* also remove the decimal point '/
 	pszFracStart = pachFracPart
-	if ( *pszFracStart = sadd("-") ) then
+	if ( *pszFracStart = asc("-") ) then
 		pszFracStart += 1       /' Required for -0.0 value '/
 	end if
 	pszFracStart += 1
 	pszFracEnd = pachFracPart + len_frac
 	while ( pszFracEnd <> pszFracStart )
 		pszFracEnd -= 1
-		if ( *pszFracEnd <> sadd("0") ) then
+		if ( *pszFracEnd <> asc("0") ) then
 			if ( *pszFracEnd <> chDecimalPoint ) then
 				pszFracStart += 1
 				pszFracEnd += 1

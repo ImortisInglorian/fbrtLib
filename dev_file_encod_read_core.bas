@@ -57,7 +57,7 @@ private function hReadUTF8ToChar( fp as FILE ptr, dst as ubyte ptr, max_chars as
 		wc -= __fb_utf8_offsetsTb(extbytes)
 
 		if ( wc > 255 ) then
-			wc = cast(UTF_32, sadd("?"))
+			wc = asc("?")
 		end if
 		dst += 1
 		*dst = wc

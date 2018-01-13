@@ -23,7 +23,7 @@ function fb_FloatToStr FBCALL ( num as single ) as FBSTRING ptr
 
 		/' skip the dot at end if any '/
 		if ( tmp_len > 0 ) then
-			if ( dst->data[tmp_len-1] = sadd(".") ) then
+			if ( dst->data[tmp_len-1] = asc(".") ) then
 				dst->data[tmp_len-1] = 0
 				tmp_len -= 1
 			end if
@@ -53,7 +53,7 @@ function fb_DoubleToStr FBCALL ( num as double) as FBSTRING ptr
 
 		/' skip the dot at end if any '/
 		if ( tmp_len > 0 ) then
-			if ( dst->data[tmp_len-1] = sadd(".") ) then
+			if ( dst->data[tmp_len-1] = asc(".") ) then
 				dst->data[tmp_len-1] = 0
 				tmp_len -= 1
 			end if
