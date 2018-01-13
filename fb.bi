@@ -106,12 +106,12 @@
 	#endif
 	extern "C"
 	#if defined (ENABLE_MT) And Not(defined (HOST_DOS)) And Not(defined (HOST_XBOX))
-		Declare Sub fb_Lock FBCALL( Any )
-		Declare Sub fb_Unlock FBCALL( Any )
-		Declare Sub fb_StrLock FBCALL( Any )
-		Declare Sub fb_StrUnlock FBCALL( Any )
-		Declare Sub fb_GraphicsLock FBCALL( Any )
-		Declare Sub fb_GraphicsUnlock FBCALL( Any )
+		Declare Sub fb_Lock FBCALL ()
+		Declare Sub fb_Unlock FBCALL ()
+		Declare Sub fb_StrLock FBCALL ()
+		Declare Sub fb_StrUnlock FBCALL ()
+		Declare Sub fb_GraphicsLock FBCALL ()
+		Declare Sub fb_GraphicsUnlock FBCALL ()
 	#else
 		#define FB_LOCK()
 		#define FB_UNLOCK()
