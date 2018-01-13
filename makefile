@@ -1,6 +1,6 @@
 #
-# This makefile, adapted from FB's, creates a libfb.a which combines fbrtlib .bas
-# files with rtlib .c files. Doesn't produce mt & pic variants.
+# This makefile, adapted from FB's, creates a libfb archives combining fbrtlib .bas
+# files with rtlib .c files. Doesn't produce pic variants by default (see below)
 # Either edit FB_SRC_PATH below, or create a config.mk and define it there,
 # or pass it on the commandline or in an envvar.
 
@@ -31,6 +31,10 @@ srcdir := .
 FBC := fbc
 
 prefix := /usr/local
+
+# Can define these to speed up compiles
+# DISABLE_MT := YesPlease
+DISABLE_PIC := YesPlease
 
 -include config.mk
 
@@ -158,6 +162,18 @@ else ifeq ($(MULTILIB),64)
   endif
 endif
 
+ifeq ($(TARGET_OS),dos)
+  #FBNAME := freebas$(ENABLE_SUFFIX)
+  #FB_LDSCRIPT := i386go32.x
+  DISABLE_MT := YesPlease
+endif
+
+# ENABLE_PIC for every system where we need separate
+# -fPIC versions of FB libs besides the normal ones
+ifneq ($(filter android freebsd linux netbsd openbsd solaris,$(TARGET_OS)),)
+  ENABLE_PIC := YesPlease
+endif
+
 #
 # Determine FB target name:
 # dos, win32, win64, xbox, linux-x86, linux-x86_64, ...
@@ -180,6 +196,15 @@ endif
 ifndef FBTARGET
   FBTARGET := $(TARGET_OS)-$(TARGET_ARCH)
 endif
+
+ifeq ($(TARGET_OS),xbox)
+  # Assume no libffi for now (does it work on Xbox?)
+  ALLCFLAGS += -DDISABLE_FFI
+
+  # -DENABLE_MT parts of rtlib XBox code aren't finished
+  DISABLE_MT := YesPlease
+endif
+
 
 # Try to determine whether fbc will use the GCC backend (yuck)
 ifneq ($(TARGET_ARCH),x86)
@@ -235,6 +260,9 @@ endif
 libfbobjdir := $(shell readlink -m obj/$(libsubdir))
 #libfbobjdir := $(shell realpath -m obj/$(libsubdir))
 #libfbobjdir := obj/$(libsubdir)
+libfbmtobjdir := $(libfbobjdir)/mt
+libfbpicobjdir := $(libfbobjdir)/pic
+libfbmtpicobjdir := $(libfbobjdir)/mtpic
 
 ###############################################################################
 # Source files
@@ -269,6 +297,13 @@ LIBFB_S := $(sort $(foreach i,$(RTLIB_DIRS),$(patsubst $(i)/%.s,$(libfbobjdir)/%
 # Remove all .o files that can be derived from a .bas file rather than a .c file
 LIBFB_C := $(filter-out $(LIBFB_BAS),$(LIBFB_C))
 
+# mt and pic variants
+LIBFBMT_BAS    := $(patsubst $(libfbobjdir)/%,$(libfbmtobjdir)/%,$(LIBFB_BAS))
+LIBFBPIC_BAS   := $(patsubst $(libfbobjdir)/%,$(libfbpicobjdir)/%,$(LIBFB_BAS))
+LIBFBMTPIC_BAS := $(patsubst $(libfbobjdir)/%,$(libfbmtpicobjdir)/%,$(LIBFB_BAS))
+LIBFBMT_C    := $(patsubst $(libfbobjdir)/%,$(libfbmtobjdir)/%,$(LIBFB_C))
+LIBFBPIC_C   := $(patsubst $(libfbobjdir)/%,$(libfbpicobjdir)/%,$(LIBFB_C))
+LIBFBMTPIC_C := $(patsubst $(libfbobjdir)/%,$(libfbmtpicobjdir)/%,$(LIBFB_C))
 
 ###############################################################################
 # Build rules
@@ -279,35 +314,77 @@ all: rtlib
 
 CC = $(TARGET_PREFIX)gcc
 
+# Rules to compile normal, mt, pic, and mtpic variants of .bas, .c and .s
+
 $(LIBFB_BAS): $(libfbobjdir)/%.o: %.bas $(LIBFB_BI) | $(libfbobjdir)
 	$(FBC) $(ALLFBRTFLAGS) -c $< -o $@
+$(LIBFBMT_BAS): $(libfbmtobjdir)/%.o: %.bas $(LIBFB_BI) | $(libfbmtobjdir)
+	$(FBC) -d ENABLE_MT $(ALLFBRTFLAGS) -c $< -o $@
+$(LIBFBPIC_BAS): $(libfbpicobjdir)/%.o: %.bas $(LIBFB_BI) | $(libfbpicobjdir)
+	$(FBC) -pic $(ALLFBRTFLAGS) -c $< -o $@
+$(LIBFBMTPIC_BAS): $(libfbmtpicobjdir)/%.o: %.bas $(LIBFB_BI) | $(libfbmtpicobjdir)
+	$(FBC) -pic $(ALLFBRTFLAGS) -c $< -o $@
+
 $(LIBFB_C): $(libfbobjdir)/%.o: %.c $(LIBFB_H) | $(libfbobjdir)
 	$(CC) $(ALLCFLAGS) -c $< -o $@
+$(LIBFBMT_C): $(libfbmtobjdir)/%.o: %.c $(LIBFB_H) | $(libfbmtobjdir)
+	$(CC) -DENABLE_MT $(ALLCFLAGS) -c $< -o $@
+$(LIBFBPIC_C): $(libfbpicobjdir)/%.o: %.c $(LIBFB_H) | $(libfbpicobjdir)
+	$(CC) -fPIC $(ALLCFLAGS) -c $< -o $@
+$(LIBFBMTPIC_C): $(libfbmtpicobjdir)/%.o: %.c $(LIBFB_H) | $(libfbmtpicobjdir)
+	$(CC) -DENABLE_MT -fPIC $(ALLCFLAGS) -c $< -o $@
+
 $(LIBFB_S): $(libfbobjdir)/%.o: %.s $(LIBFB_H) | $(libfbobjdir)
 	$(CC) -x assembler-with-cpp $(ALLCFLAGS) -c $< -o $@
+# FB's makefile compiles mt variants on .s files which aren't needed.
+
+# delete this later
+ifdef DISABLE_PIC
+  ENABLE_PIC :=
+endif
 
 RTL_LIBS := $(libdir)/fbrt0.o $(libdir)/libfb.a
 # RTL_LIBS += $(libdir)/$(FB_LDSCRIPT)
-# ifdef ENABLE_PIC
-#   RTL_LIBS += $(libdir)/fbrt0pic.o $(libdir)/libfbpic.a
-# endif
-# ifndef DISABLE_MT
-#   RTL_LIBS += $(libdir)/libfbmt.a
-#   ifdef ENABLE_PIC
-#     RTL_LIBS += $(libdir)/libfbmtpic.a
-#   endif
-# endif
+ifdef ENABLE_PIC
+  RTL_LIBS += $(libdir)/fbrt0pic.o $(libdir)/libfbpic.a
+endif
+ifndef DISABLE_MT
+  RTL_LIBS += $(libdir)/libfbmt.a
+  ifdef ENABLE_PIC
+    RTL_LIBS += $(libdir)/libfbmtpic.a
+  endif
+endif
 
 .PHONY: rtlib
 rtlib: $(RTL_LIBS)
 
-$(libfbobjdir) $(libdir):
+$(libfbobjdir) \
+$(libfbmtobjdir) \
+$(libfbpicobjdir) \
+$(libfbmtpicobjdir) \
+$(libdir):
 	mkdir -p $@
 
 $(libdir)/libfb.a: $(LIBFB_BAS) $(LIBFB_C) $(LIBFB_S) | $(libdir)
 	rm -f $@
 	@echo "AR $@"
 	@$(AR) rcs $@ $^
+
+$(libdir)/libfbmt.a: $(LIBFBMT_BAS) $(LIBFBMT_C) $(LIBFB_S) | $(libdir)
+	rm -f $@
+	@echo "AR $@"
+	@$(AR) rcs $@ $^
+
+$(libdir)/libfbpic.a: $(LIBFBPIC_BAS) $(LIBFBPIC_C) $(LIBFB_S) | $(libdir)
+	rm -f $@
+	@echo "AR $@"
+	@$(AR) rcs $@ $^
+
+$(libdir)/libfbmtpic.a: $(LIBFBMTPIC_BAS) $(LIBFBMTPIC_C) $(LIBFB_S) | $(libdir)
+	rm -f $@
+	@echo "AR $@"
+	@$(AR) rcs $@ $^
+
 
 $(libdir)/fbrt0.o: $(srcdir)/static/fbrt0.bas $(LIBFB_BI) | $(libdir)
 	$(FBC) $(ALLFBRTFLAGS) -c $< -o $@
