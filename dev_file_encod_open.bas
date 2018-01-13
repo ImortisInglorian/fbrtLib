@@ -8,7 +8,7 @@ dim shared as FB_FILE_HOOKS hooks_dev_file = ( _
     @fb_DevFileSeek, _
     @fb_DevFileTell, _
     @fb_DevFileReadEncod, _
-    @fb_DevFileReadEncodWstr, _ 'Fix warning
+    @fb_DevFileReadEncodWstr, _ 
     @fb_DevFileWriteEncod, _
     @fb_DevFileWriteEncodWstr, _
     @fb_DevFileLock, _

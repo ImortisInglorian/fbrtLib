@@ -14,8 +14,8 @@ end type
 
 type _fb_ConHooks as fb_ConHooks
 
-type fb_fnHookConScroll as sub ( _handle as _fb_ConHooks ptr, x1 as long, y1 as long, x2 as long, y2 as long, rows as long )
-type fb_fnHookConWrite as function ( _handle as _fb_ConHooks ptr, buffer as any const ptr, length as size_t ) as long
+type fb_fnHookConScroll as sub ( handle as _fb_ConHooks ptr, x1 as long, y1 as long, x2 as long, y2 as long, rows as long )
+type fb_fnHookConWrite as function ( handle as _fb_ConHooks ptr, buffer as any const ptr, length as size_t ) as long
 
 type fb_ConHooks
 	as any ptr 				Opaque
@@ -28,23 +28,23 @@ type fb_ConHooks
 end type
 
 extern "C"
-private function fb_hConCheckScroll( _handle as fb_ConHooks ptr ) as long
-	dim as fb_Rect ptr pBorder = @_handle->Border
-	dim as fb_Coord ptr pCoord = @_handle->Coord
+private function fb_hConCheckScroll( handle as fb_ConHooks ptr ) as long
+	dim as fb_Rect ptr pBorder = @handle->Border
+	dim as fb_Coord ptr pCoord = @handle->Coord
 	if ( pBorder->Bottom <> -1 ) then
 		if ( pCoord->Y > pBorder->Bottom ) then
 			dim as long nRows = pCoord->Y - pBorder->Bottom
-			_handle->Scroll( _handle, pBorder->Left, pBorder->Top, pBorder->Right, pBorder->Bottom, nRows )
+			handle->Scroll( handle, pBorder->Left, pBorder->Top, pBorder->Right, pBorder->Bottom, nRows )
 			return TRUE
 		end if
 	end if
 	return FALSE
 end function
 
-declare sub 	 fb_ConPrintRaw      			( _handle as fb_ConHooks ptr, pachText as ubyte const ptr, TextLength as size_t )
-declare sub 	 fb_ConPrintRawWstr  			( _handle as fb_ConHooks ptr, pachText as FB_WCHAR const ptr, TextLength as size_t )
-declare sub 	 fb_ConPrintTTY      			( _handle as fb_ConHooks ptr, pachText as ubyte const ptr, TextLength as size_t, is_text_mode as long )
-declare sub 	 fb_ConPrintTTYWstr  			( _handle as fb_ConHooks ptr, pachText as FB_WCHAR const ptr, TextLength as size_t, is_text_mode as long )
+declare sub 	 fb_ConPrintRaw      			( handle as fb_ConHooks ptr, pachText as ubyte ptr, TextLength as size_t )
+declare sub 	 fb_ConPrintRawWstr  			( handle as fb_ConHooks ptr, pachText as FB_WCHAR ptr, TextLength as size_t )
+declare sub 	 fb_ConPrintTTY      			( handle as fb_ConHooks ptr, pachText as ubyte ptr, TextLength as size_t, is_text_mode as long )
+declare sub 	 fb_ConPrintTTYWstr  			( handle as fb_ConHooks ptr, pachText as FB_WCHAR ptr, TextLength as size_t, is_text_mode as long )
 
 declare function fb_ConsoleWidth     			( cols as long, rows as long ) as long
 declare sub 	  fb_ConsoleClear     			( mode as long )

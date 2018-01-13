@@ -9,7 +9,7 @@ dim shared as FB_FILE_HOOKS hooks_dev_scrn = ( _
     NULL, _
     NULL, _
     @fb_DevScrnRead, _
-    @fb_DevScrnReadWstr, _ ' Warning here?
+    @fb_DevScrnReadWstr, _ 
     @fb_DevScrnWrite, _
     @fb_DevScrnWriteWstr, _
     NULL, _

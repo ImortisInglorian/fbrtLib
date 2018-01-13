@@ -31,8 +31,8 @@ function fb_DylibSymbol FBCALL ( library as any ptr, symbol as FBSTRING ptr ) as
 		if ( proc <> 0 and strchr( symbol->data, 64 ) <> 0 ) then
 			procname(1023) = 0
 			for i = 0 to 255 step 4
-				snprintf( @procname(0), 1023, "%s@%d", symbol->data, i )
-				proc = cast(any ptr, GetProcAddress( cast(HINSTANCE, library), @procname(0) ))
+				snprintf( procname(0), 1023, "%s@%d", symbol->data, i )
+				proc = cast(any ptr, GetProcAddress( cast(HINSTANCE, library), procname(0) ))
 				if ( proc ) then
 					exit for
 				end if

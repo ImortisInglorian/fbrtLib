@@ -17,9 +17,9 @@ function fb_ExecEx FBCALL ( program as FBSTRING ptr, args as FBSTRING ptr, do_fo
 		return -1
 	end if
 
-	fb_hGetShortPath( program->data, @buffer(0), cast(ssize_t, MAX_PATH) )
+	fb_hGetShortPath( program->data, buffer(0), cast(ssize_t, MAX_PATH) )
 
-	len_program = strlen( @buffer(0) )
+	len_program = strlen( buffer(0) )
 	len_arguments = iif( ( args=NULL ) , 0, FB_STRSIZE( args ) )
 
 	arguments = allocate( len_program + len_arguments + 2 )

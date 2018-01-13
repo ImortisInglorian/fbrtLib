@@ -326,15 +326,15 @@
 	end enum
 
 	type FB_RTLIB_CTX
-		as long argc
-		as ubyte ptr ptr argv
-		as FBSTRING null_desc
-		as ubyte ptr errmsg
-		as FB_HOOKSTB hooks
-		as FB_FILE fileTB(0 to FB_MAX_FILES - 1)
-		as long do_file_reset
-		as long lang
-		as Sub ptr exit_gfxlib2
+		as long 			argc
+		as ubyte ptr ptr 	argv
+		as FBSTRING 		null_desc
+		as ubyte ptr 		errmsg
+		as FB_HOOKSTB 		hooks
+		as FB_FILE 			fileTB(0 to FB_MAX_FILES - 1)
+		as long 			do_file_reset
+		as long 			lang
+		as Sub ptr 			exit_gfxlib2
 	end type
 
 	extern as FB_RTLIB_CTX __fb_ctx

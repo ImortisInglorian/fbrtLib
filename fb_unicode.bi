@@ -44,12 +44,12 @@ type UTF_8 as ubyte
 			return count
 		end function
 		
-		function __dos_wcstombs(mbstr as ubyte ptr, wcstr as FB_WCHAR conts ptr, count as ssize_t) as ssize_t
+		function __dos_wcstombs(mbstr as ubyte ptr, wcstr as FB_WCHAR const ptr, count as ssize_t) as ssize_t
 			memcpy(mbstr,wcstr,count)
 			return count
 		end function
 		
-		function swprintf(buffer as FB_WCHAR ptr, n as ssize_t, _format as FB_WCHAR conts ptr, ...) as long
+		function swprintf(buffer as FB_WCHAR ptr, n as ssize_t, _format as FB_WCHAR const ptr, ...) as long
 			dim result as long
 			dim ap as va_list
 			va_start(ap, _format)

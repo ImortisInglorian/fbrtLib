@@ -143,7 +143,7 @@ extern "C"
 #endmacro
 
 #macro FB_STRSETUP_DYN(s,size,_ptr,_len)
-	if( s == NULL ) then
+	if( s = NULL ) then
 		_ptr = NULL
 		_len = 0
 	else

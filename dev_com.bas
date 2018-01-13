@@ -101,7 +101,7 @@ dim shared as FB_FILE_HOOKS hooks_dev_com = ( _
     NULL, _
     @fb_DevComTell, _
     @fb_DevComRead, _
-    @fb_DevComReadWstr, _ ' Warning here
+    @fb_DevComReadWstr, _ 
     @fb_DevComWrite, _
     @fb_DevComWriteWstr, _
     NULL, _
@@ -125,10 +125,10 @@ function fb_DevComOpen( handle as FB_FILE ptr, filename as ubyte const ptr, file
 	end if
 
     if ( port > 0 ) then
-    	i = sprintf( @achDev(0), sadd("COM%u:"), cast(long, port) )
+    	i = sprintf( achDev(0), sadd("COM%u:"), cast(long, port) )
     else
     	i = strchr( filename, 58 ) - cast(zstring ptr, filename)
-    	strncpy( @achDev(0), filename, i )
+    	strncpy( achDev(0), filename, i )
     end if
     achDev(i) = 0
 
@@ -142,7 +142,7 @@ function fb_DevComOpen( handle as FB_FILE ptr, filename as ubyte const ptr, file
     /' Determine the port number and a normalized device name '/
     info = cast(DEV_COM_INFO ptr, calloc(1, sizeof(DEV_COM_INFO)))
     info->iPort = port
-    info->pszDevice = strdup( @achDev(0) )
+    info->pszDevice = strdup( achDev(0) )
 
     /' Set defaults '/
     info->Options.uiSpeed = 300
@@ -363,7 +363,7 @@ function fb_DevSerialSetWidth( pszDevice as ubyte const ptr, _width as long, def
         return 0
 	end if
 
-    i = sprintf( @achDev(0), sadd("COM%u:"), cast(long, port) )
+    i = sprintf( achDev(0), sadd("COM%u:"), cast(long, port) )
     achDev(i) = 0
 
     /' Test all printers. '/
@@ -371,7 +371,7 @@ function fb_DevSerialSetWidth( pszDevice as ubyte const ptr, _width as long, def
         dim as FB_FILE ptr tmp_handle = @__fb_ctx.fileTB(0) + i
         if ( tmp_handle->hooks = @hooks_dev_com and tmp_handle->redirection_to = NULL ) then
             dim as DEV_COM_INFO ptr tmp_info = cast(DEV_COM_INFO ptr, tmp_handle->opaque)
-            if ( strcmp(tmp_info->pszDevice, @achDev(0)) = 0 ) then
+            if ( strcmp(tmp_info->pszDevice, achDev(0)) = 0 ) then
                 if ( _width <> -1 ) then
                     tmp_handle->width = _width
 				end if
