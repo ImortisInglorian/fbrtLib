@@ -35,11 +35,11 @@ private function install_driver( manager as SC_HANDLE ) as SC_HANDLE
 
 	remove_driver( )
 
-	if ( GetSystemDirectory( @driver_filename(0), MAX_PATH ) ) then
-		strncat( @driver_filename(0), sadd("\\Drivers\\fbportio.sys"), MAX_PATH - strlen( @driver_filename(0) ) - 1 )
+	if ( GetSystemDirectory( driver_filename(0), MAX_PATH ) ) then
+		strncat( driver_filename(0), sadd("\\Drivers\\fbportio.sys"), MAX_PATH - strlen( driver_filename(0) ) - 1 )
 		driver_filename(MAX_PATH-1) = 0
 
-		dim as FILE ptr f = fopen( @driver_filename(0), sadd("wb") )
+		dim as FILE ptr f = fopen( driver_filename(0), sadd("wb") )
 		fwrite( @fbportio_driver(0), FBPORTIO_DRIVER_SIZE, 1, f )
 		fclose( f )
 

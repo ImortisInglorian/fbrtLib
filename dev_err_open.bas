@@ -8,7 +8,7 @@ dim shared as FB_FILE_HOOKS hooks_dev_err = ( _
     NULL, _
     NULL, _
     @fb_DevFileRead, _
-    @fb_DevFileReadWstr, _ 'Warning here
+    @fb_DevFileReadWstr, _ 
     @fb_DevFileWrite, _
     @fb_DevFileWriteWstr, _
     NULL, _
