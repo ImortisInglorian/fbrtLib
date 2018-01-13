@@ -27,7 +27,7 @@ private sub DoMove( x as long ptr, y as long ptr, dx as long, dy as long, cols a
     DoAdjust( x, y, dx, dy, cols, rows )
     if ( *y = (rows+1) and *x = 1 ) then
         fb_Locate( rows, cols, -1, 0, 0 )
-        fb_PrintBufferEx( cast(any const ptr, FB_NEWLINE), sizeof(FB_NEWLINE)-1, 0 )
+        fb_PrintBufferEx( cast(any const ptr, @FB_NEWLINE), sizeof(FB_NEWLINE)-1, 0 )
     else
         fb_Locate( *y, *x, -1, 0, 0 )
     end if
@@ -41,7 +41,7 @@ function fb_ConReadLine FBCALL ( soft_cursor as long ) as FBSTRING ptr
     dim as size_t _pos, _len, tmp_buffer_len = 0
     dim as long cursor_visible
     dim as long k
-    dim as ubyte ptr tmp_buffer(0 to 11)
+    dim as ubyte tmp_buffer(0 to 11)
 
     fb_GetSize(@cols, @rows)
 
@@ -151,7 +151,7 @@ function fb_ConReadLine FBCALL ( soft_cursor as long ) as FBSTRING ptr
 
 			case else:
 				if ( (k >= 32) and (k <= 255) ) then
-					tmp_buffer(0) = cast(ubyte ptr, k)
+					tmp_buffer(0) = cast(ubyte, k)
 					tmp_buffer_len = 1
 					add_char = TRUE
 					/' DoMove( &current_x, &current_y, 1, 0, cols ); '/

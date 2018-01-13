@@ -6,12 +6,12 @@
 #endif
 
 /' newline for console/file I/O '/
-#define FB_NEWLINE sadd("\r\n")
-#define FB_NEWLINE_WSTR _LC("\r\n")
+#define FB_NEWLINE "\r\n"
+#define FB_NEWLINE_WSTR wstr("\r\n")
 
 /' newline for printer I/O '/
 #define FB_BINARY_NEWLINE "\r\n"
-#define FB_BINARY_NEWLINE_WSTR _LC("\r\n")
+#define FB_BINARY_NEWLINE_WSTR wstr("\r\n")
 
 #define FB_LL_FMTMOD "I64"
 

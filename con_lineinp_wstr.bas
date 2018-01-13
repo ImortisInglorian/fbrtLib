@@ -49,7 +49,7 @@ end function
 
 function fb_ConsoleLineInputWstr( text as FB_WCHAR const ptr, dst as FB_WCHAR ptr, max_chars as ssize_t, addquestion as long, addnewline as long ) as long
 	dim as size_t _len
-	dim as res, old_x, old_y
+	dim as long res, old_x, old_y
 
     /' !!!FIXME!!! no support for unicode input '/
 
@@ -69,7 +69,7 @@ function fb_ConsoleLineInputWstr( text as FB_WCHAR const ptr, dst as FB_WCHAR pt
     scope
         dim as FBSTRING str_result = ( 0, 0, 0 )
 
-        res = fb_DevFileReadLineDumb( stdin, @str_result, hWrapper )
+        res = fb_DevFileReadLineDumb( stdin, @str_result, @hWrapper )
 
         _len = FB_STRSIZE(@str_result)
 
