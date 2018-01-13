@@ -84,35 +84,35 @@ type UTF_8 as ubyte
 #endif
 
 #ifndef FB_WSTR_FROM_INT
-#define FB_WSTR_FROM_INT( buffer, num ) swprintf( buffer, cast(wchar_t ptr, (sizeof( long ) * 3 + 1)), sadd("%d"), cast(long, num) )
+#define FB_WSTR_FROM_INT( buffer, num ) swprintf( buffer, sizeof( long ) * 3 + 1, sadd("%d"), cast(long, num) )
 #endif
 
 #ifndef FB_WSTR_FROM_UINT
-#define FB_WSTR_FROM_UINT( buffer, num ) swprintf( buffer, cast(wchar_t ptr, sizeof( ulong ) * 3 + 1), sadd("%u"), cast(ulong, num) )
+#define FB_WSTR_FROM_UINT( buffer, num ) swprintf( buffer, sizeof( ulong ) * 3 + 1, sadd("%u"), cast(ulong, num) )
 #endif
 
 #ifndef FB_WSTR_FROM_UINT_OCT
-#define FB_WSTR_FROM_UINT_OCT( buffer, num ) swprintf( buffer, cast(wchar_t ptr, sizeof( long ) * 4 + 1), sadd("%o"), cast(ulong, num) )
+#define FB_WSTR_FROM_UINT_OCT( buffer, num ) swprintf( buffer, sizeof( long ) * 4 + 1, sadd("%o"), cast(ulong, num) )
 #endif
 
 #ifndef FB_WSTR_FROM_INT64
-#define FB_WSTR_FROM_INT64( buffer, num ) swprintf( buffer, cast(wchar_t ptr, sizeof( longint ) * 3 + 1), sadd("%lld"), cast(longint, num) )
+#define FB_WSTR_FROM_INT64( buffer, num ) swprintf( buffer, sizeof( longint ) * 3 + 1, sadd("%lld"), cast(longint, num) )
 #endif
 
 #ifndef FB_WSTR_FROM_UINT64
-#define FB_WSTR_FROM_UINT64( buffer, num ) swprintf( buffer, cast(wchar_t ptr, sizeof( ulongint ) * 3 + 1), sadd("%llu"), cast(ulongint, num) )
+#define FB_WSTR_FROM_UINT64( buffer, num ) swprintf( buffer, sizeof( ulongint ) * 3 + 1, sadd("%llu"), cast(ulongint, num) )
 #endif
 
 #ifndef FB_WSTR_FROM_UINT64_OCT
-#define FB_WSTR_FROM_UINT64_OCT( buffer, num ) swprintf( buffer, cast(wchar_t ptr, sizeof( longint ) * 4 + 1), sadd("%llo"), cast(ulongint, num) )
+#define FB_WSTR_FROM_UINT64_OCT( buffer, num ) swprintf( buffer, sizeof( longint ) * 4 + 1, sadd("%llo"), cast(ulongint, num) )
 #endif
 
 #ifndef FB_WSTR_FROM_FLOAT
-#define FB_WSTR_FROM_FLOAT( buffer, num ) swprintf( buffer, cast(wchar_t ptr, 7+8 + 1), sadd("%.7g"), cast(double, num) )
+#define FB_WSTR_FROM_FLOAT( buffer, num ) swprintf( buffer, 7+8 + 1, sadd("%.7g"), cast(double, num) )
 #endif
 
 #ifndef FB_WSTR_FROM_DOUBLE
-#define FB_WSTR_FROM_DOUBLE( buffer, num ) swprintf( buffer, cast(wchar_t ptr, 16+8 + 1), sadd("%.16g"), cast(double, num) )
+#define FB_WSTR_FROM_DOUBLE( buffer, num ) swprintf( buffer, 16+8 + 1, sadd("%.16g"), cast(double, num) )
 #endif
 
 /' Calculate the number of characters between two pointers. '/

@@ -16,7 +16,7 @@ sub fb_DataReadWstr FBCALL ( dst as FB_WCHAR ptr, dst_size as ssize_t )
 		end if
 	else
 		/' no more DATA, return empty string '/
-		fb_WstrAssign( dst, dst_size, cast(FB_WCHAR ptr, sadd("")) )
+		fb_WstrAssign( dst, dst_size, sadd("") )
 	end if
 
 	fb_DataNext( )
