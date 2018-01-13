@@ -151,7 +151,7 @@ function fb_DevComOpen( handle as FB_FILE ptr, filename as ubyte const ptr, file
     info->Options.DurationCTS = 1000
     info->Options.DurationDSR = 1000
 
-    pchPos = strchr( filename, 58 )
+    pchPos = strchr( filename, asc(":") )
     DBG_ASSERT( pchPos <> NULL )
     pchPos += 1
 
@@ -163,7 +163,7 @@ function fb_DevComOpen( handle as FB_FILE ptr, filename as ubyte const ptr, file
         dim as ubyte ptr pszOption
 
         /' skip white spaces '/
-        while ( *pchPos = 32 or *pchPos = 9 )
+        while ( *pchPos = asc(" ") or *pchPos = asc(!"\t") )
             pchPos += 1
 		wend
 
@@ -171,7 +171,7 @@ function fb_DevComOpen( handle as FB_FILE ptr, filename as ubyte const ptr, file
             exit while
 		end if
 
-        if ( *pchPos = 44 ) then
+        if ( *pchPos = asc(",") ) then
             /' empty option ... ignore '/
 			uiOption += 1
             pchPos += 1
@@ -179,7 +179,7 @@ function fb_DevComOpen( handle as FB_FILE ptr, filename as ubyte const ptr, file
         end if
 
         /' Find end of option '/
-        pchPosNext = strchr( pchPos, 44 )
+        pchPosNext = strchr( pchPos, asc(",") )
         if ( pchPosNext = NULL ) then
             pchPosNext = filename + filename_len
             pchPosEnd = pchPosNext - 1
@@ -189,7 +189,7 @@ function fb_DevComOpen( handle as FB_FILE ptr, filename as ubyte const ptr, file
         end if
 
         /' skip white spaces '/
-        while( *pchPosEnd = 32 or *pchPosEnd = 9 )
+        while( *pchPosEnd = asc(" ") or *pchPosEnd = asc(!"\t") )
             pchPosEnd -= 1
 		wend
         pchPosEnd += 1

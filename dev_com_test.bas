@@ -23,14 +23,14 @@ function fb_DevComTestProtocolEx ( handle as FB_FILE ptr, filename as ubyte cons
 	end if
     
     if ( strncasecmp(filename, sadd("COM"), 3) <> 0 ) then
-    	return strchr( filename, 58 ) <> NULL
+    	return strchr( filename, asc(":") ) <> NULL
 	end if
 
     port = 0
     i = 3
     ch =  @filename[i]
-    while( ch >= 48 and ch <= 57 )
-        port = port * 10 + (*ch - 48)
+    while( ch >= asc("0") and ch <= asc("9") )
+        port = port * 10 + (*ch - asc("0"))
         ch = @filename[i + 1]
     wend
 
@@ -38,11 +38,11 @@ function fb_DevComTestProtocolEx ( handle as FB_FILE ptr, filename as ubyte cons
     if( port==0 )
         return FALSE;
 		'/
-    if ( ch <> 58 ) then
+    if ( ch <> asc(":") ) then
         return FALSE
 	end if
 
-    if ( pPort <> 0) then
+    if ( pPort <> 0 ) then
         *pPort = port
 	end if
 
