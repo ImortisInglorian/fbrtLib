@@ -4,6 +4,8 @@
 
 #include "fb.bi"
 
+extern "C"
+
 extern __fb_utf8_trailingTb(0 to 255) as ubyte ptr
 extern __fb_utf8_offsetsTb(0 to 5) as UTF_32
 
@@ -11,7 +13,6 @@ extern __fb_utf8_offsetsTb(0 to 5) as UTF_32
  * to char                                                                              *
  *::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::'/
 
-extern "C"
 private function hReadUTF8ToChar( fp as FILE ptr, dst as ubyte ptr, max_chars as ssize_t ) as ssize_t
 	dim as UTF_32 wc
 	dim as ubyte ptr c(0 to 6)
