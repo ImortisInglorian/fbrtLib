@@ -66,16 +66,16 @@ function fb_SerialOpen( handle as FB_FILE ptr, iPort as long, options as FB_SERI
 	pszDev = calloc(strlen( pszDevice ) + 5, 1)
 	if ( iPort = 0 ) then
 		iPort = 1
-		strcpy( pszDev, sadd("COM1:") )
+		strcpy( pszDev, "COM1:" )
 	else
 		if ( iPort > 9 ) then
-			strcpy(pszDev, sadd("\\\\.\\"))
+			strcpy(pszDev, "\\.\")
 		else
 			*pszDev = 0
 		end if
 
 		strcat(pszDev, pszDevice)
-		p = strchr( pszDev, 058) '  :
+		p = strchr( pszDev, asc(":"))
 		if ( p ) then
 			*p = 0
 		end if
