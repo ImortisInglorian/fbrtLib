@@ -11,6 +11,7 @@
 	/' FB's CRT headers need some work. Any additions to them that aren't
 	   yet merged into FB are in these extra headers '/
 	#include "crt_extra/string.bi"
+	#include "crt_extra/stdlib.bi"
 	#include "crt_extra/stdio.bi"
 
 	#define FB_TRUE (-1)
