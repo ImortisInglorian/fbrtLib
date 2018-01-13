@@ -115,7 +115,7 @@ type FnFileClose as function ( handle as _FB_FILE ptr ) as long
 type FnFileSeek as function ( handle as _FB_FILE ptr, offset as fb_off_t, whence as long ) as long
 type FnFileTell as function ( handle as _FB_FILE ptr, pOffset as fb_off_t ptr ) as long
 type FnFileRead as function ( handle as _FB_FILE ptr, value as any ptr, pValuelen as size_t ptr ) as long
-type FnFileReadWstr as function ( handle as _FB_FILE ptr, value as FB_WCHAR ptr, pValuelen as size_t ) as long
+type FnFileReadWstr as function ( handle as _FB_FILE ptr, value as FB_WCHAR ptr, pValuelen as size_t ptr ) as long
 type FnFileWrite as function ( handle as _FB_FILE ptr, value as any const ptr, valuelen as size_t ) as long
 type FnFileWriteWstr as function ( handle as _FB_FILE ptr, value as FB_WCHAR const ptr, valuelen as size_t ) as long
 type FnFileLock as function ( handle as _FB_FILE ptr, position as fb_off_t, size as fb_off_t ) as long

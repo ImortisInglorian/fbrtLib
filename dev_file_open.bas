@@ -8,7 +8,7 @@ dim shared as FB_FILE_HOOKS hooks_dev_file = ( _
     @fb_DevFileSeek, _
     @fb_DevFileTell, _
     @fb_DevFileRead, _
-    @fb_DevFileReadWstr, _ 'Worning here?
+    @fb_DevFileReadWstr, _
     @fb_DevFileWrite, _
     @fb_DevFileWriteWstr, _
     @fb_DevFileLock, _
