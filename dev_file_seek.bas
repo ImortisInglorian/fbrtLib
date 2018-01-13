@@ -1,7 +1,6 @@
 /' file device '/
 
 #include "fb.bi"
-#include "crt_extra/stdio.bi"
 
 extern "C"
 function fb_DevFileSeek( handle as FB_FILE ptr, offset as fb_off_t, whence as long ) as long

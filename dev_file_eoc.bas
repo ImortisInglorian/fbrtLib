@@ -1,7 +1,6 @@
 /' detects EOF for file device '/
 
 #include "fb.bi"
-#include "crt_extra/stdio.bi"
 
 extern "C"
 function fb_DevFileEof( handle as FB_FILE ptr ) as long

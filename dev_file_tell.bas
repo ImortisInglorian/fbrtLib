@@ -1,7 +1,6 @@
 /' file device '/
 
 #include "fb.bi"
-#include "crt_extra/stdio.bi"
 
 extern "C"
 function fb_DevFileTell( handle as FB_FILE ptr, pOffset as fb_off_t ptr ) as long

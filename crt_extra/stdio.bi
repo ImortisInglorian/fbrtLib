@@ -28,4 +28,17 @@ extern "C"
 
 #endif
 
+'msvcrt has swprintf/vswprintf functions which differ from POSIX, and FB's
+'stdio.bi header is based on mingw/msvcrt. IMO FB ought to try to hide these
+'sorts of platform deficiencies to make it easier to write cross-platform code.
+#undef swprintf
+#undef vswprintf
+#ifdef __FB_WIN32__
+	declare function swprintf alias "snwprintf" (byval s as wchar_t ptr, byval n as size_t, byval format as wchar_t ptr, ...) as long
+	declare function vswprintf  alias "vsnwprintf" (byval s as wchar_t ptr, byval n as size_t, byval format as wchar_t ptr, byval arg as va_list) as long
+#else
+	declare function swprintf (byval s as wchar_t ptr, byval n as size_t, byval format as wchar_t ptr, ...) as long
+	declare function vswprintf (byval s as wchar_t ptr, byval n as size_t, byval format as wchar_t ptr, byval arg as va_list) as long
+#endif
+
 end extern
