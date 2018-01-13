@@ -316,6 +316,10 @@ $(libdir)/fbrt0pic.o: $(srcdir)/static/fbrt0.bas $(LIBFB_BI) | $(libdir)
 	$(FBC) -pic $(ALLFBRTFLAGS) -c $< -o $@
 
 
+.PHONY: clean
+clean:
+	rm -rf $(RTL_LIBS) $(libfbobjdir)
+
 INSTALL_FILE := cp
 
 install: rtlib
