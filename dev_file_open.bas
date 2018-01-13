@@ -84,11 +84,11 @@ function fb_DevFileOpen( handle as FB_FILE ptr, filename as ubyte const ptr, fna
 				/' if file was not found and in READ/WRITE (or ANY) mode,
 				 * create it '/
 				if ( handle->access = FB_FILE_ACCESS_ANY or handle->access = FB_FILE_ACCESS_READWRITE ) then
-					fp = fopen( fname,  sadd("w+b") )
+					fp = fopen( fname, "w+b" )
 
 					/' if file could not be created and in ANY mode, try opening as read-only '/
 					if ( (fp = NULL) and (handle->access=FB_FILE_ACCESS_ANY) ) then
-						fp = fopen( fname,  sadd("rb") )
+						fp = fopen( fname, "rb" )
 						if (fp <> NULL) then
 							' don't forget to set the effective access mode ...
 							handle->access = FB_FILE_ACCESS_READ
@@ -109,7 +109,7 @@ function fb_DevFileOpen( handle as FB_FILE ptr, filename as ubyte const ptr, fna
 		   input because newlines must be converted, and EOF char (27) handled '/
 		case FB_FILE_MODE_INPUT:
 			/' try opening in binary mode '/
-			fp = fopen( fname, sadd("rb") )
+			fp = fopen( fname, "rb" )
 			if( fp = NULL ) then
 				FB_UNLOCK()
 				return fb_ErrorSetNum( FB_RTERROR_FILENOTFOUND )
@@ -126,7 +126,7 @@ function fb_DevFileOpen( handle as FB_FILE ptr, filename as ubyte const ptr, fna
 			end if
 
 			/' now reopen it in text-mode '/
-			fp = fopen( fname, sadd("rb") )
+			fp = fopen( fname, "rb" )
 			if ( fp = NULL ) then
 				FB_UNLOCK()
 				return fb_ErrorSetNum( FB_RTERROR_FILENOTFOUND )
@@ -164,7 +164,7 @@ function fb_DevFileOpen( handle as FB_FILE ptr, filename as ubyte const ptr, fna
 	end if
 
     /' We just need this for TAB(n) and SPC(n) '/
-    if ( strcasecmp( fname, sadd("CON") ) = 0 ) then
+    if ( strcasecmp( fname, "CON" ) = 0 ) then
         handle->type = FB_FILE_TYPE_CONSOLE
 	end if
 

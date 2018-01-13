@@ -11,7 +11,7 @@ function fb_DevComTestProtocolEx ( handle as FB_FILE ptr, filename as ubyte cons
         *pPort = 0
     end if
 
-    if ( strncasecmp(filename, sadd("SER:"), 4) = 0 ) then
+    if ( strncasecmp(filename, "SER:", 4) = 0 ) then
         if ( pPort ) then
             *pPort = 1
 		end if
@@ -22,7 +22,7 @@ function fb_DevComTestProtocolEx ( handle as FB_FILE ptr, filename as ubyte cons
         return FALSE
 	end if
     
-    if ( strncasecmp(filename, sadd("COM"), 3) <> 0 ) then
+    if ( strncasecmp(filename, "COM", 3) <> 0 ) then
     	return strchr( filename, asc(":") ) <> NULL
 	end if
 

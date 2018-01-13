@@ -47,7 +47,7 @@ function fb_DevPipeOpen( handle as FB_FILE ptr, filename as ubyte const ptr, fil
 				res = fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 			end if
 
-			strcpy( @openmask(0), sadd("r") )
+			strcpy( @openmask(0), "r" )
 
 		case FB_FILE_MODE_OUTPUT:
 			if ( handle->access = FB_FILE_ACCESS_ANY) then
@@ -58,14 +58,14 @@ function fb_DevPipeOpen( handle as FB_FILE ptr, filename as ubyte const ptr, fil
 				res = fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 			end if
 
-			strcpy( @openmask(0), sadd("w") )
+			strcpy( @openmask(0), "w" )
 
 		case FB_FILE_MODE_BINARY:
 			if ( handle->access = FB_FILE_ACCESS_ANY) then
 				handle->access = FB_FILE_ACCESS_WRITE
 			end if
 
-			strcpy( @openmask(0), iif(handle->access = FB_FILE_ACCESS_WRITE, sadd("wb"), sadd("rb")) )
+			strcpy( @openmask(0), iif(handle->access = FB_FILE_ACCESS_WRITE, @"wb", @"rb") )
 
 		case else:
 			res = fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )

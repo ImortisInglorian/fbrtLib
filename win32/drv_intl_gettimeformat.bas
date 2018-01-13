@@ -37,23 +37,23 @@ function fb_DrvIntlGetTimeFormat cdecl ( buffer as ubyte ptr, _len as size_t ) a
 	timemark_prefix = ( pszTimeMarkPos <> NULL and atoi( pszTimeMarkPos ) = 1 )
 
 	if ( use_timemark and timemark_prefix ) then
-		strcpy( @achFormat(0) + i, sadd("AM/PM ") )
+		strcpy( @achFormat(0) + i, "AM/PM " )
 		i += 6
 	end if
 
 	if ( pszHourZero <> NULL and atoi( pszHourZero ) = 1 ) then
 		if ( not(use_timemark) ) then
-			strcpy( @achFormat(0) + i, sadd("HH:") )
+			strcpy( @achFormat(0) + i, "HH:" )
 		else
-			strcpy( @achFormat(0) + i, sadd("hh:") )
+			strcpy( @achFormat(0) + i, "hh:" )
 		end if
 		i += 3
 	end if
-	strcpy( @achFormat(0) + i, sadd("mm:ss") )
+	strcpy( @achFormat(0) + i, "mm:ss" )
 	i += 5
 
 	if ( use_timemark and not(timemark_prefix) ) then
-		strcpy( @achFormat(0) + i, sadd(" AM/PM") )
+		strcpy( @achFormat(0) + i, " AM/PM" )
 		i += 6
 	end if
 

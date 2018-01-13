@@ -47,7 +47,7 @@ function fb_DevLptParseProtocol( lpt_proto_out as DEV_LPT_PROTOCOL ptr ptr, prot
 
 	/' "PRN:" '/
 
-	if ( strcasecmp( p, sadd("PRN:") ) = 0) then
+	if ( strcasecmp( p, "PRN:" ) = 0) then
 		if ( subst_prn <> 0 ) then
 			strcpy( p, "LPT1:" )
 		end if
@@ -59,7 +59,7 @@ function fb_DevLptParseProtocol( lpt_proto_out as DEV_LPT_PROTOCOL ptr ptr, prot
 
 	/' "LPTx:" '/
 	
-	if ( strncasecmp( p, sadd("LPT"), 3) <> 0) then
+	if ( strncasecmp( p, "LPT", 3) <> 0) then
 		return FALSE
 	end if
 
@@ -110,9 +110,9 @@ function fb_DevLptParseProtocol( lpt_proto_out as DEV_LPT_PROTOCOL ptr ptr, prot
 					pe[1] = 0
 				wend
 
-				if( strcasecmp( p, sadd("EMU") ) = 0) then
+				if( strcasecmp( p, "EMU" ) = 0) then
 					lpt_proto->emu = pe
-				elseif ( strcasecmp( p, sadd("TITLE") ) = 0) then
+				elseif ( strcasecmp( p, "TITLE" ) = 0) then
 					lpt_proto->title = pe
 				end if
 				/' just ignore options we don't understand to allow forward compatibility '/
@@ -121,7 +121,7 @@ function fb_DevLptParseProtocol( lpt_proto_out as DEV_LPT_PROTOCOL ptr ptr, prot
 			/' remove spaces before ',' or end '/
 			pt = iif(pc <> 0, pc, ptail)
 			pt -= 1
-			while( isspace( *pt ) <> 0 ) 
+			while( isspace( *pt ) <> 0 )
 				pt[-1] = 0
 			wend
 
