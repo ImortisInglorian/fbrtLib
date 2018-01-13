@@ -854,7 +854,8 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 									pInfo->length_min += 2
 								else
 									pszAdd = @FixPart(0)
-									LenAdd = sprintf( @FixPart(0), "%02d", fb_Year( value ) mod 100)
+									dim as long tmp = fb_Year( value ) mod 100  'See #874
+									LenAdd = sprintf( @FixPart(0), "%02d", tmp )
 									do_add = TRUE
 								end if
 							elseif ( chCurrent = 121 and count = 4 ) then
@@ -863,7 +864,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 									pInfo->length_min += 4
 								else
 									pszAdd = @FixPart(0)
-									LenAdd = sprintf( @FixPart(0), "%04d", fb_Year( value ))
+									LenAdd = sprintf( @FixPart(0), "%04d", fb_Year( value ) )
 									do_add = TRUE
 								end if
 							else
