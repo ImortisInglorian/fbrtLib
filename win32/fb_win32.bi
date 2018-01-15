@@ -6,12 +6,12 @@
 #endif
 
 /' newline for console/file I/O '/
-#define FB_NEWLINE sadd("\r\n")
-#define FB_NEWLINE_WSTR _LC("\r\n")
+#define FB_NEWLINE "\r\n"
+#define FB_NEWLINE_WSTR wstr("\r\n")
 
 /' newline for printer I/O '/
 #define FB_BINARY_NEWLINE "\r\n"
-#define FB_BINARY_NEWLINE_WSTR _LC("\r\n")
+#define FB_BINARY_NEWLINE_WSTR wstr("\r\n")
 
 #define FB_LL_FMTMOD "I64"
 
@@ -42,10 +42,10 @@ extern "C"
 #ifdef ENABLE_MT
 	declare sub fb_MtLock FBCALL( )
 	declare sub fb_MtUnlock FBCALL( )
-	#define FB_MTLOCK()   fb_MtLock()
-	#define FB_MTUNLOCK() fb_MtUnlock()
+	#define FB_MT_LOCK()   fb_MtLock()
+	#define FB_MT_UNLOCK() fb_MtUnlock()
 #else
-	#define FB_MTLOCK()
-	#define FB_MTUNLOCK()
+	#define FB_MT_LOCK()
+	#define FB_MT_UNLOCK()
 #endif
 end extern

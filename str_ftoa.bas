@@ -16,9 +16,9 @@ function fb_hFloat2Str( _val as double, buffer as ubyte ptr, digits as long, mas
 
 	select case digits
 		case 7:
-			fstr = cast(ubyte ptr, sadd("%.7g"))
+			fstr = @"%.7g"
 		case 16:
-			fstr = cast(ubyte ptr, sadd("%.16g"))
+			fstr = @"%.16g"
 		case else:
 			sprintf( @fmtstr(0), "%%.%dg", digits )
 			fstr = @fmtstr(0)

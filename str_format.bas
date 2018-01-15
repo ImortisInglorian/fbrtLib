@@ -61,14 +61,14 @@ sub fb_hGetNumberParts cdecl ( number as double, pachFixPart as ubyte ptr, pcchL
 	/' Remove trailing zeroes and - if it completely consists of zeroes -
 	* also remove the decimal point '/
 	pszFracStart = pachFracPart
-	if ( *pszFracStart = sadd("-") ) then
+	if ( *pszFracStart = asc("-") ) then
 		pszFracStart += 1       /' Required for -0.0 value '/
 	end if
 	pszFracStart += 1
 	pszFracEnd = pachFracPart + len_frac
 	while ( pszFracEnd <> pszFracStart )
 		pszFracEnd -= 1
-		if ( *pszFracEnd <> sadd("0") ) then
+		if ( *pszFracEnd <> asc("0") ) then
 			if ( *pszFracEnd <> chDecimalPoint ) then
 				pszFracStart += 1
 				pszFracEnd += 1
@@ -854,7 +854,8 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 									pInfo->length_min += 2
 								else
 									pszAdd = @FixPart(0)
-									LenAdd = sprintf( @FixPart(0), "%02d", fb_Year( value ) mod 100)
+									dim as long tmp = fb_Year( value ) mod 100  'See #874
+									LenAdd = sprintf( @FixPart(0), "%02d", tmp )
 									do_add = TRUE
 								end if
 							elseif ( chCurrent = 121 and count = 4 ) then
@@ -863,7 +864,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 									pInfo->length_min += 4
 								else
 									pszAdd = @FixPart(0)
-									LenAdd = sprintf( @FixPart(0), "%04d", fb_Year( value ))
+									LenAdd = sprintf( @FixPart(0), "%04d", fb_Year( value ) )
 									do_add = TRUE
 								end if
 							else

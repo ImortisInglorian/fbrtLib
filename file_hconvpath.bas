@@ -11,12 +11,12 @@ sub fb_hConvertPath( path as ubyte ptr )
 	_len = strlen( path )
 	for i = 0 to _len - 1
 #if defined( HOST_DOS ) or defined( HOST_XBOX )
-		if ( path[i] = 47 ) then
-			path[i] = sadd("\\")
+		if ( path[i] = asc("/") ) then
+			path[i] = asc("\")
 		end if
 #else
-		if ( path[i] = 92 and path[i + 1] = 92 ) then
-			path[i] = 47
+		if ( path[i] = asc("\") and path[i + 1] = asc("\") ) then
+			path[i] = asc("/")
 		end if
 #endif
 	next

@@ -19,7 +19,7 @@ private sub remove_driver( )
 
 	manager = OpenSCManager( NULL, NULL, GENERIC_ALL )
 	if ( manager <> NULL ) then
-		service = OpenService( manager, sadd("fbportio"), SERVICE_ALL_ACCESS )
+		service = OpenService( manager, "fbportio", SERVICE_ALL_ACCESS )
 		if ( service <> NULL ) then
 			ControlService( service, SERVICE_CONTROL_STOP, @status )
 			DeleteService( service )
@@ -36,16 +36,16 @@ private function install_driver( manager as SC_HANDLE ) as SC_HANDLE
 	remove_driver( )
 
 	if ( GetSystemDirectory( driver_filename(0), MAX_PATH ) ) then
-		strncat( driver_filename(0), sadd("\\Drivers\\fbportio.sys"), MAX_PATH - strlen( driver_filename(0) ) - 1 )
+		strncat( driver_filename(0), "\Drivers\fbportio.sys", MAX_PATH - strlen( driver_filename(0) ) - 1 )
 		driver_filename(MAX_PATH-1) = 0
 
-		dim as FILE ptr f = fopen( driver_filename(0), sadd("wb") )
+		dim as FILE ptr f = fopen( driver_filename(0), "wb" )
 		fwrite( @fbportio_driver(0), FBPORTIO_DRIVER_SIZE, 1, f )
 		fclose( f )
 
-		service = CreateService( manager, sadd("fbportio"), sadd("fbportio"), _
+		service = CreateService( manager, "fbportio", "fbportio", _
 			SERVICE_ALL_ACCESS, SERVICE_KERNEL_DRIVER, SERVICE_DEMAND_START, SERVICE_ERROR_NORMAL, _
-			sadd("System32\\Drivers\\fbportio.sys"), NULL, NULL, NULL, NULL, NULL )
+			"System32\Drivers\fbportio.sys", NULL, NULL, NULL, NULL, NULL )
 	end if
 	return service
 end function
@@ -58,7 +58,7 @@ private sub start_driver( )
 		manager = OpenSCManager( NULL, NULL, GENERIC_READ )
 	end if
 	if ( manager <> NULL ) then
-		service = OpenService( manager, sadd("fbportio"), SERVICE_ALL_ACCESS )
+		service = OpenService( manager, "fbportio", SERVICE_ALL_ACCESS )
 		if ( (service = NULL ) or (StartService( service, 0, NULL ) ) = NULL ) then
 			if ( service <> NULL ) then
 				CloseServiceHandle( service )
@@ -91,7 +91,7 @@ private function init_ports( ) as long
 		
 		case VER_PLATFORM_WIN32_NT:
 			while ( driver = INVALID_HANDLE_VALUE )
-				driver = CreateFile( sadd("\\\\.\\fbportio"), GENERIC_READ or GENERIC_WRITE, 0, NULL, _
+				driver = CreateFile( "\\.\fbportio", GENERIC_READ or GENERIC_WRITE, 0, NULL, _
 					OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL )
 				if ( driver = INVALID_HANDLE_VALUE ) then
 					if ( started = NULL ) then

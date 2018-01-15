@@ -4,13 +4,10 @@
 
 #include "fb.bi"
 
-static shared false_string as ubyte ptr = sadd("false")
-static shared true_string as ubyte ptr = sadd("true")
-
 extern "C"
 /':::::'/
 function fb_hBoolToStr FBCALL ( num as ubyte ) as ubyte ptr
-	return iif(num, true_string, false_string)
+	return iif(num, @"true", @"false")
 end function
 
 /':::::'/

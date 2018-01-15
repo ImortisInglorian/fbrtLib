@@ -64,10 +64,10 @@ dim shared as FBCONDOPS __condops
 sub fb_CondInit( )
 	/' If two threads get here at the same time, make sure only one of
 	   them does the initialization while the other one waits. '/
-	FB_MTLOCK()
+	FB_MT_LOCK()
 
 	if ( __inited ) then
-		FB_MTUNLOCK()
+		FB_MT_UNLOCK()
 		exit sub
 	end if
 
@@ -92,7 +92,7 @@ sub fb_CondInit( )
 
 	__inited = TRUE
 
-	FB_MTUNLOCK()
+	FB_MT_UNLOCK()
 end sub
 
 function fb_CondCreate FBCALL ( ) as FBCOND ptr

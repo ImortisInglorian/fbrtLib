@@ -1,4 +1,4 @@
-#ifdef fb_CpuDetect 
+#ifdef fb_Init
 	#undef fb_CpuDetect 
 	#undef fb_Init
 	#undef fb_End

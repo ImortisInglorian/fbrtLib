@@ -1,7 +1,6 @@
 /' file device size calc '/
 
 #include "fb.bi"
-#include "crt_extra/stdio.bi"
 
 extern "C"
 function fb_hDevFileSeekStart( fp as FILE ptr, mode as long, encod as FB_FILE_ENCOD, seek_zero as long ) as long

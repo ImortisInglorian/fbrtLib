@@ -30,7 +30,7 @@ private function fb_DevLptMakeDeviceName( lpt_proto as DEV_LPT_PROTOCOL ptr ) as
 	if ( lpt_proto <> 0 ) then
 		dim as ubyte ptr p = calloc( strlen(lpt_proto->proto) + strlen(lpt_proto->name) + 3, 1 )
 		strcpy( p, lpt_proto->proto )
-		strcat( p, sadd(":") )
+		strcat( p, ":" )
 		strcat( p, lpt_proto->name )
 		return p
 	end if

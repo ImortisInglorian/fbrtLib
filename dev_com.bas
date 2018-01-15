@@ -151,7 +151,7 @@ function fb_DevComOpen( handle as FB_FILE ptr, filename as ubyte const ptr, file
     info->Options.DurationCTS = 1000
     info->Options.DurationDSR = 1000
 
-    pchPos = strchr( filename, 58 )
+    pchPos = strchr( filename, asc(":") )
     DBG_ASSERT( pchPos <> NULL )
     pchPos += 1
 
@@ -163,7 +163,7 @@ function fb_DevComOpen( handle as FB_FILE ptr, filename as ubyte const ptr, file
         dim as ubyte ptr pszOption
 
         /' skip white spaces '/
-        while ( *pchPos = 32 or *pchPos = 9 )
+        while ( *pchPos = asc(" ") or *pchPos = asc(!"\t") )
             pchPos += 1
 		wend
 
@@ -171,7 +171,7 @@ function fb_DevComOpen( handle as FB_FILE ptr, filename as ubyte const ptr, file
             exit while
 		end if
 
-        if ( *pchPos = 44 ) then
+        if ( *pchPos = asc(",") ) then
             /' empty option ... ignore '/
 			uiOption += 1
             pchPos += 1
@@ -179,7 +179,7 @@ function fb_DevComOpen( handle as FB_FILE ptr, filename as ubyte const ptr, file
         end if
 
         /' Find end of option '/
-        pchPosNext = strchr( pchPos, 44 )
+        pchPosNext = strchr( pchPos, asc(",") )
         if ( pchPosNext = NULL ) then
             pchPosNext = filename + filename_len
             pchPosEnd = pchPosNext - 1
@@ -189,7 +189,7 @@ function fb_DevComOpen( handle as FB_FILE ptr, filename as ubyte const ptr, file
         end if
 
         /' skip white spaces '/
-        while( *pchPosEnd = 32 or *pchPosEnd = 9 )
+        while( *pchPosEnd = asc(" ") or *pchPosEnd = asc(!"\t") )
             pchPosEnd -= 1
 		wend
         pchPosEnd += 1
@@ -211,19 +211,19 @@ function fb_DevComOpen( handle as FB_FILE ptr, filename as ubyte const ptr, file
 
 			case 1:
 				/' parity '/
-				if ( strcasecmp( pszOption, sadd("N") ) = 0 ) then
+				if ( strcasecmp( pszOption, "N" ) = 0 ) then
 					info->Options.Parity = FB_SERIAL_PARITY_NONE
-				elseif ( strcasecmp( pszOption, sadd("E") ) = 0 ) then
+				elseif ( strcasecmp( pszOption, "E" ) = 0 ) then
 					info->Options.Parity = FB_SERIAL_PARITY_EVEN
-				elseif ( strcasecmp( pszOption, sadd("PE") ) = 0 ) then
+				elseif ( strcasecmp( pszOption, "PE" ) = 0 ) then
 					/' QB quirk '/
 					info->Options.CheckParity = TRUE
 					info->Options.Parity = FB_SERIAL_PARITY_EVEN
-				elseif ( strcasecmp( pszOption, sadd("O") )= 0 ) then
+				elseif ( strcasecmp( pszOption, "O" )= 0 ) then
 					info->Options.Parity = FB_SERIAL_PARITY_ODD
-				elseif ( strcasecmp( pszOption, sadd("S") ) = 0 ) then
+				elseif ( strcasecmp( pszOption, "S" ) = 0 ) then
 					info->Options.Parity = FB_SERIAL_PARITY_SPACE
-				elseif ( strcasecmp( pszOption, sadd("M") ) = 0 ) then
+				elseif ( strcasecmp( pszOption, "M" ) = 0 ) then
 					info->Options.Parity = FB_SERIAL_PARITY_MARK
 				else
 					res = fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
@@ -257,54 +257,54 @@ function fb_DevComOpen( handle as FB_FILE ptr, filename as ubyte const ptr, file
 
 			case else:
 				/' extended options '/
-				if ( strncasecmp( pszOption, sadd("CS"), 2 ) = 0 ) then
+				if ( strncasecmp( pszOption, "CS", 2 ) = 0 ) then
 					info->Options.DurationCTS = strtoul( pszOption+2, @pchPosTmp, 10 )
 					if ( *pchPosTmp <> 0 ) then
 						res = fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 					end if
-				elseif ( strncasecmp( pszOption, sadd("DS"), 2 ) = 0 ) then
+				elseif ( strncasecmp( pszOption, "DS", 2 ) = 0 ) then
 					info->Options.DurationDSR = strtoul( pszOption+2, @pchPosTmp, 10 )
 					if ( *pchPosTmp <> 0 ) then
 						res = fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 					end if
-				elseif ( strncasecmp( pszOption, sadd("CD"), 2 ) = 0 ) then
+				elseif ( strncasecmp( pszOption, "CD", 2 ) = 0 ) then
 					info->Options.DurationCD = strtoul( pszOption+2, @pchPosTmp, 10 )
 					if ( *pchPosTmp <> 0 ) then
 						res = fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 					end if
-				elseif ( strncasecmp( pszOption, sadd("OP"), 2 ) = 0 ) then
+				elseif ( strncasecmp( pszOption, "OP", 2 ) = 0 ) then
 					info->Options.OpenTimeout = strtoul( pszOption+2, @pchPosTmp, 10 )
 					if ( *pchPosTmp <> 0 ) then
 						res = fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 					end if
-				elseif ( strncasecmp( pszOption, sadd("TB"), 2 ) = 0 ) then
+				elseif ( strncasecmp( pszOption, "TB", 2 ) = 0 ) then
 					info->Options.TransmitBuffer = strtoul( pszOption+2, @pchPosTmp, 10 )
 					if ( *pchPosTmp <> 0 ) then
 						res = fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 					end if
-				elseif ( strncasecmp( pszOption, sadd("RB"), 2 ) = 0 ) then
+				elseif ( strncasecmp( pszOption, "RB", 2 ) = 0 ) then
 					info->Options.ReceiveBuffer = strtoul( pszOption+2, @pchPosTmp, 10 )
 					if ( *pchPosTmp <> 0 ) then
 						res = fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 					end if
-				elseif ( strcasecmp( pszOption, sadd("RS") ) = 0 ) then
+				elseif ( strcasecmp( pszOption, "RS" ) = 0 ) then
 					info->Options.SuppressRTS = TRUE
-				elseif ( strcasecmp( pszOption, sadd("LF") ) = 0 ) then
+				elseif ( strcasecmp( pszOption, "LF" ) = 0 ) then
 					/' PB compatible '/
 					info->Options.AddLF = TRUE
-				elseif ( strcasecmp( pszOption, sadd("ASC") ) = 0 ) then
+				elseif ( strcasecmp( pszOption, "ASC" ) = 0 ) then
 					info->Options.AddLF = TRUE
-				elseif ( strcasecmp( pszOption, sadd("BIN") ) = 0 ) then
+				elseif ( strcasecmp( pszOption, "BIN" ) = 0 ) then
 					info->Options.AddLF = FALSE
-				elseif ( strcasecmp( pszOption, sadd("PE") ) = 0 ) then
+				elseif ( strcasecmp( pszOption, "PE" ) = 0 ) then
 					info->Options.CheckParity = TRUE
-				elseif ( strcasecmp( pszOption, sadd("DT") ) = 0 ) then
+				elseif ( strcasecmp( pszOption, "DT" ) = 0 ) then
 					info->Options.KeepDTREnabled = TRUE
-				elseif ( strcasecmp( pszOption, sadd("FE") ) = 0 ) then
+				elseif ( strcasecmp( pszOption, "FE" ) = 0 ) then
 					info->Options.DiscardOnError = TRUE
-				elseif ( strcasecmp( pszOption, sadd("ME") ) = 0 ) then
+				elseif ( strcasecmp( pszOption, "ME" ) = 0 ) then
 					info->Options.IgnoreAllErrors = TRUE
-				elseif ( strncasecmp( pszOption, sadd("IR"), 2 ) = 0 ) then
+				elseif ( strncasecmp( pszOption, "IR", 2 ) = 0 ) then
 					info->Options.IRQNumber = strtoul( pszOption+2, @pchPosTmp, 10 )
 					if ( *pchPosTmp <> 0 ) then
 						res = fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )

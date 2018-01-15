@@ -2,25 +2,25 @@
 
 #include "fb.bi"
 
-dim shared messages(0 to 17) as ubyte ptr
-messages(0) = sadd("")                                      /' FB_RTERROR_OK '/
-messages(1) = sadd("illegal function call")                 /' FB_RTERROR_ILLEGALFUNCTIONCALL '/
-messages(2) = sadd("file not found")                        /' FB_RTERROR_FILENOTFOUND '/
-messages(3) = sadd("file I/O error")                        /' FB_RTERROR_FILEIO '/
-messages(4) = sadd("out of memory")                         /' FB_RTERROR_OUTOFMEM '/
-messages(5) = sadd("illegal resume")                        /' FB_RTERROR_ILLEGALRESUME '/
-messages(6) = sadd("out of bounds array access")            /' FB_RTERROR_OUTOFBOUNDS '/
-messages(7) = sadd("null pointer access")                   /' FB_RTERROR_NULLPTR '/
-messages(8) = sadd("no privileges")                         /' FB_RTERROR_NOPRIVILEGES '/
-messages(9) = sadd(!"\"interrupted\" signal")               /' FB_RTERROR_SIGINT '/
-messages(10) = sadd(!"\"illegal instruction\" signal")      /' FB_RTERROR_SIGILL '/
-messages(11) = sadd(!"\"floating point error\" signal")     /' FB_RTERROR_SIGFPE '/
-messages(12) = sadd(!"\"segmentation violation\" signal")   /' FB_RTERROR_SIGSEGV '/
-messages(13) = sadd(!"\"termination request\" signal")      /' FB_RTERROR_SIGTERM '/
-messages(14) = sadd(!"\"abnormal termination\" signal")     /' FB_RTERROR_SIGTERM '/
-messages(15) = sadd(!"\"quit request\" signal")             /' FB_RTERROR_SIGABRT '/
-messages(16) = sadd("return without gosub")                 /' FB_RTERROR_RETURNWITHOUTGOSUB '/
-messages(17) = sadd("end of file")                          /' FB_RTERROR_ENDOFFILE '/
+dim shared messages(0 to 17) as zstring ptr
+messages(0) = @""                                      /' FB_RTERROR_OK '/
+messages(1) = @"illegal function call"                 /' FB_RTERROR_ILLEGALFUNCTIONCALL '/
+messages(2) = @"file not found"                        /' FB_RTERROR_FILENOTFOUND '/
+messages(3) = @"file I/O error"                        /' FB_RTERROR_FILEIO '/
+messages(4) = @"out of memory"                         /' FB_RTERROR_OUTOFMEM '/
+messages(5) = @"illegal resume"                        /' FB_RTERROR_ILLEGALRESUME '/
+messages(6) = @"out of bounds array access"            /' FB_RTERROR_OUTOFBOUNDS '/
+messages(7) = @"null pointer access"                   /' FB_RTERROR_NULLPTR '/
+messages(8) = @"no privileges"                         /' FB_RTERROR_NOPRIVILEGES '/
+messages(9) = @!"\"interrupted\" signal"               /' FB_RTERROR_SIGINT '/
+messages(10) = @!"\"illegal instruction\" signal"      /' FB_RTERROR_SIGILL '/
+messages(11) = @!"\"floating point error\" signal"     /' FB_RTERROR_SIGFPE '/
+messages(12) = @!"\"segmentation violation\" signal"   /' FB_RTERROR_SIGSEGV '/
+messages(13) = @!"\"termination request\" signal"      /' FB_RTERROR_SIGTERM '/
+messages(14) = @!"\"abnormal termination\" signal"     /' FB_RTERROR_SIGTERM '/
+messages(15) = @!"\"quit request\" signal"             /' FB_RTERROR_SIGABRT '/
+messages(16) = @"return without gosub"                 /' FB_RTERROR_RETURNWITHOUTGOSUB '/
+messages(17) = @"end of file"                          /' FB_RTERROR_ENDOFFILE '/
 
 extern "C"
 
@@ -38,9 +38,9 @@ sub fb_Die ( err_num as long, line_num as long, mod_name as ubyte const ptr, fun
 
 	if ( mod_name <> NULL ) then
 		if( fun_name <> NULL ) then
-			_pos += snprintf( @__fb_errmsg(_pos), FB_ERRMSG_SIZE - _pos, " %s %s::%s()\n\n", cast(ubyte ptr,iif(line_num > 0, sadd("of"), sadd("in"))), cast(ubyte ptr, mod_name), cast(ubyte ptr, fun_name) )
+			_pos += snprintf( @__fb_errmsg(_pos), FB_ERRMSG_SIZE - _pos, " %s %s::%s()\n\n", iif(line_num > 0, @"of", @"in"), mod_name, fun_name )
 		else
-			_pos += snprintf( @__fb_errmsg(_pos), FB_ERRMSG_SIZE - _pos, " %s %s()\n\n", cast(ubyte ptr,iif(line_num > 0, sadd("of"), sadd("in"))), cast(ubyte ptr, mod_name) )
+			_pos += snprintf( @__fb_errmsg(_pos), FB_ERRMSG_SIZE - _pos, " %s %s()\n\n", iif(line_num > 0, @"of", @"in"), mod_name )
 		end if
 	else
 		_pos += snprintf( @__fb_errmsg(_pos), FB_ERRMSG_SIZE - _pos, "\n\n" )

@@ -11,6 +11,8 @@
 	/' FB's CRT headers need some work. Any additions to them that aren't
 	   yet merged into FB are in these extra headers '/
 	#include "crt_extra/string.bi"
+	#include "crt_extra/stdlib.bi"
+	#include "crt_extra/stdio.bi"
 
 	#define FB_TRUE (-1)
 	#define FB_FALSE 0
@@ -104,12 +106,12 @@
 	#endif
 	extern "C"
 	#if defined (ENABLE_MT) And Not(defined (HOST_DOS)) And Not(defined (HOST_XBOX))
-		Declare Sub fb_Lock FBCALL( Any )
-		Declare Sub fb_Unlock FBCALL( Any )
-		Declare Sub fb_StrLock FBCALL( Any )
-		Declare Sub fb_StrUnlock FBCALL( Any )
-		Declare Sub fb_GraphicsLock FBCALL( Any )
-		Declare Sub fb_GraphicsUnlock FBCALL( Any )
+		Declare Sub fb_Lock FBCALL ()
+		Declare Sub fb_Unlock FBCALL ()
+		Declare Sub fb_StrLock FBCALL ()
+		Declare Sub fb_StrUnlock FBCALL ()
+		Declare Sub fb_GraphicsLock FBCALL ()
+		Declare Sub fb_GraphicsUnlock FBCALL ()
 	#else
 		#define FB_LOCK()
 		#define FB_UNLOCK()
