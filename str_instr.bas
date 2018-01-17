@@ -87,7 +87,7 @@ function fb_hFindBM cdecl ( start as ssize_t, pachText as ubyte const ptr, len_t
 
 	/' create "bad character" shifts '/
 	memset(@bm_bc(0), -1, sizeof(bm_bc))
-	for i=0 to len_pattern
+	for i=0 to len_pattern - 1
 		bm_bc( FB_CHAR_TO_INT(pachPattern[i]) ) = i
 	next
 	
@@ -111,7 +111,7 @@ function fb_hFindBM cdecl ( start as ssize_t, pachText as ubyte const ptr, len_t
 
 	/' preprocessing for "good end strategy" case 2 '/
 	j = suffixes[0]
-	for  i=0 to len_pattern
+	for  i=0 to len_pattern - 1
 		if ( bm_gc[i] = 0 ) then
 			bm_gc[i] = j
 		end if

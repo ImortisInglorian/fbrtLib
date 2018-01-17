@@ -9,26 +9,26 @@ function fb_hFileStrToEncoding( _encoding as ubyte ptr ) as FB_FILE_ENCOD
 		return FB_FILE_ENCOD_DEFAULT
 	end if
 
-	if ( strncasecmp( _encoding, sadd("UTF"), 3 ) = 0 ) then
+	if ( strncasecmp( _encoding, "UTF", 3 ) = 0 ) then
 		_encoding += 3
 
-		if ( *_encoding = 45 ) then
+		if ( *_encoding = asc("-") ) then
 			_encoding += 1
 		end if
 		
-		if ( *_encoding = 56 ) then
+		if ( *_encoding = asc(":") ) then
 			return FB_FILE_ENCOD_UTF8
 		end if
 
-		if ( strcmp( _encoding, sadd("16") ) = 0 ) then
+		if ( strcmp( _encoding, "16" ) = 0 ) then
 			return FB_FILE_ENCOD_UTF16
 		end if
 
-		if ( strcmp( _encoding, sadd("32") ) = 0 ) then
+		if ( strcmp( _encoding, "32" ) = 0 ) then
 			return FB_FILE_ENCOD_UTF32
 		end if
 	else
-		if ( strncasecmp( _encoding, sadd("ASC"), 3 ) = 0 ) then
+		if ( strncasecmp( _encoding, "ASC", 3 ) = 0 ) then
 			return FB_FILE_ENCOD_ASCII
 		end if
 	end if

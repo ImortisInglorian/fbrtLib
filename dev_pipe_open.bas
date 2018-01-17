@@ -15,7 +15,7 @@ dim shared as FB_FILE_HOOKS hooks_dev_pipe = ( @fb_DevFileEof _
 											 , @fb_DevPipeClose _
 											 , NULL _
 											 , NULL _
-											 , @fb_DevFileRead _ 'Warning here?
+											 , @fb_DevFileRead _ 
 											 , @fb_DevFileReadWstr _
 											 , @fb_DevFileWrite _ 
 											 , @fb_DevFileWriteWstr _

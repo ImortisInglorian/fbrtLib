@@ -10,7 +10,8 @@ function fb_hStrRadix2Longint FBCALL ( src as ubyte ptr, _len as ssize_t, radix 
 	select case radix 
 		/' hex '/
 		case 16:
-			while ( _len - 1 >= 0 )
+			_len -= 1
+			while ( _len >= 0 )
 				c = *src + 1
 				if ( (c >= 97) and (c <= 102) ) then
 					c -= 87
@@ -23,21 +24,25 @@ function fb_hStrRadix2Longint FBCALL ( src as ubyte ptr, _len as ssize_t, radix 
 				end if
 				
 				v = (v * 16) + c
+				_len -= 1
 			wend
 
 		/' oct '/
 		case 8:
-			while ( _len - 1 >= 0 )
+			_len -= 1
+			while ( _len >= 0 )
 				c = *src + 1
 				if ( (c >= 48) and (c <= 55) ) then
 					v = (v * 8) + (c - 48)
 				else
 					exit while
 				end if
+				_len -= 1
 			wend
 
 		/' bin '/
 		case 2:
+			_len -= 1
 			while ( _len >= 0 )
 				c = *src + 1
 				if ( (c >= 48) and (c <= 49) ) then
@@ -45,6 +50,7 @@ function fb_hStrRadix2Longint FBCALL ( src as ubyte ptr, _len as ssize_t, radix 
 				else
 					exit while
 				end if
+				_len -= 1
 			wend
 
 		case else:

@@ -14,7 +14,7 @@ dim shared as FB_ARRAY_TMPDESC fb_tmpdsTB(0 to FB_ARRAY_TMPDESCRIPTORS - 1)
 
 extern "C"
 /':::::'/
-function fb_hArrayAllocTmpDesc cdecl( ) as FBARRAY ptr
+function fb_hArrayAllocTmpDesc( ) as FBARRAY ptr
 	dim as FB_ARRAY_TMPDESC ptr dsc
 
 	if ( (tmpdsList.fhead = NULL) and (tmpdsList.head = NULL) ) then
@@ -29,7 +29,7 @@ function fb_hArrayAllocTmpDesc cdecl( ) as FBARRAY ptr
 end function
 
 /':::::'/
-sub fb_hArrayFreeTmpDesc cdecl ( src as FBARRAY ptr )
+sub fb_hArrayFreeTmpDesc( src as FBARRAY ptr )
 	dim as FB_ARRAY_TMPDESC ptr dsc
 
 	dsc = cast(FB_ARRAY_TMPDESC ptr, (cast(ubyte ptr, src)- offsetof(FB_ARRAY_TMPDESC, array)))
@@ -37,7 +37,7 @@ sub fb_hArrayFreeTmpDesc cdecl ( src as FBARRAY ptr )
 	fb_hListFreeElem( @tmpdsList, cast(FB_LISTELEM ptr, dsc) )
 end sub
 
-function fb_ArrayAllocTempDesc cdecl ( pdesc as FBARRAY ptr ptr, arraydata as any ptr, element_len as size_t, dimensions as size_t, ... ) as FBARRAY ptr
+function fb_ArrayAllocTempDesc( pdesc as FBARRAY ptr ptr, arraydata as any ptr, element_len as size_t, dimensions as size_t, ... ) as FBARRAY ptr
 	dim as va_list ap
 	dim as size_t i, elements
 	dim as ssize_t diff
@@ -67,7 +67,7 @@ function fb_ArrayAllocTempDesc cdecl ( pdesc as FBARRAY ptr ptr, arraydata as an
 
 	_dim = @array->dimTB(0)
 
-	for i = 0 to dimensions
+	for i = 0 to dimensions - 1
 		lbTB(i) = cast(ssize_t, va_next( ap, ssize_t ))
 		ubTB(i) = cast(ssize_t, va_next( ap, ssize_t ))
       

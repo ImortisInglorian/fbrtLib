@@ -3,7 +3,7 @@
 #include "fb.bi"
 
 extern "C"
-sub fb_hArrayDtorObj cdecl ( array as FBARRAY ptr, dtor as FB_DEFCTOR, base_idx as size_t )
+sub fb_hArrayDtorObj ( array as FBARRAY ptr, dtor as FB_DEFCTOR, base_idx as size_t )
 	dim as size_t i, elements, element_len
 	dim as FBARRAYDIM ptr _dim
 	dim as ubyte ptr this_
@@ -16,14 +16,14 @@ sub fb_hArrayDtorObj cdecl ( array as FBARRAY ptr, dtor as FB_DEFCTOR, base_idx 
    elements = _dim->elements - base_idx
    _dim += 1
 
-   for i = 1 to array->dimensions
+   for i = 1 to array->dimensions - 1
 	   elements *= _dim->elements
 		_dim += 1
 	next
 
 	/' call dtors in the inverse order '/
 	element_len = array->element_len
-	this_ = cast(ubyte ptr, (array->_ptr) + ((base_idx + (elements-1)) * element_len))
+	this_ = cast(ubyte ptr, (array->_ptr) + ((base_idx + (elements - 1)) * element_len))
 
 	while( elements > 0 )
 		/' !!!FIXME!!! check exceptions (only if rewritten in C++) '/

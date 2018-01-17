@@ -18,11 +18,11 @@ function fb_hStr2Double FBCALL ( src as ubyte ptr, _len as ssize_t ) as double
 		if ( p[0] = 38 ) then '&
 			skip = 2
 			select case p[1]
-				case 72 or 104: 'h or H
+				case 72, 104: 'h or H
 					radix = 16
-				case 79 or 111: 'o or O
+				case 79, 111: 'o or O
 					radix = 8
-				case 66 or 98: 'b or B
+				case 66, 98: 'b or B
 					radix = 2
 				case else: /' assume octal '/
 					radix = 8
@@ -46,7 +46,7 @@ function fb_hStr2Double FBCALL ( src as ubyte ptr, _len as ssize_t ) as double
 	 * This would be bad for hex strings, but those should be handled above already.
 	 '/
 	q = malloc( _len + 1 )
-	for i = 0 to _len
+	for i = 0 to _len - 1
 		c = @p[i]
 		if ( c = 68 or c = 100 ) then 'd or D
 			c += 1

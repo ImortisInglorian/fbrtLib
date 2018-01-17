@@ -17,7 +17,7 @@ end sub
 sub fb_DevScrnMaybeUpdateWidth( )
 	/' Only if it was initialized (i.e. used) yet, otherwise we don't need
 	   to bother '/
-	if ( FB_HANDLE_SCREEN.hooks ) then
+	if ( FB_HANDLE_SCREEN.hooks <> 0 ) then
 		fb_DevScrnUpdateWidth( )
 	end if
 end sub
@@ -29,7 +29,7 @@ sub fb_DevScrnInit_Screen( )
 end sub
 
 sub fb_DevScrnEnd( handle as FB_FILE ptr )
-	if ( handle->opaque ) then
+	if ( handle->opaque <> 0 ) then
 		free( handle->opaque )
 		handle->opaque = NULL
 	end if

@@ -3,7 +3,7 @@
 #include "fb.bi"
 
 extern "C"
-function fb_ArrayRedimPresvObj cdecl ( array as FBARRAY ptr, element_len as size_t, ctor as FB_DEFCTOR, dtor as FB_DEFCTOR, dimensions as size_t, ... ) as long
+function fb_ArrayRedimPresvObj ( array as FBARRAY ptr, element_len as size_t, ctor as FB_DEFCTOR, dtor as FB_DEFCTOR, dimensions as size_t, ... ) as long
 	dim as va_list ap
 	dim as long res
 

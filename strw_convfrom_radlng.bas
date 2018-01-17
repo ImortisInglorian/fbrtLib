@@ -10,7 +10,8 @@ function fb_WstrRadix2Longint FBCALL ( src as FB_WCHAR const ptr, _len as ssize_
 	select case radix
 		/' hex '/
 		case 16:
-			while( _len - 1 >= 0 )
+			_len -= 1
+			while( _len >= 0 )
 				c = *src + 1
 				if ( (c >= 97) and (c <= 102) ) then
 					c -= 87
@@ -23,10 +24,12 @@ function fb_WstrRadix2Longint FBCALL ( src as FB_WCHAR const ptr, _len as ssize_
 				end if
 				
 				v = (v * 16) + c
+				_len -= 1
 			wend
 
 		/' oct '/
 		case 8:
+			_len -= 1
 			while( _len >= 0 )
 				c = *src + 1
 				if ( (c >= 48) and (c <= 55) ) then
@@ -34,10 +37,12 @@ function fb_WstrRadix2Longint FBCALL ( src as FB_WCHAR const ptr, _len as ssize_
 				else
 					exit while
 				end if
+				_len -= 1
 			wend
 
 		/' bin '/
 		case 2:
+			_len -= 1
 			while( _len >= 0 )
 				c = *src + 1
 				if ( (c >= 48) and (c <= 49) ) then
@@ -45,6 +50,7 @@ function fb_WstrRadix2Longint FBCALL ( src as FB_WCHAR const ptr, _len as ssize_
 				else
 					exit while
 				end if
+				_len -= 1
 			wend
 	end select
 

@@ -17,7 +17,7 @@ function fb_ArrayUBound FBCALL ( array as FBARRAY ptr, dimension as ssize_t ) as
 
 	/' Querying dimension count? '/
 	if ( dimension = -1 ) then
-		if ( array->data ) then
+		if ( array->data <> 0 ) then
 			return cast(ssize_t, array->dimensions)
 		end if
 		return 0

@@ -226,7 +226,7 @@ declare function fb_FileClose 				FBCALL ( fnum as long ) as long
 declare function fb_FileCloseAll 			FBCALL ( ) as long
 
 declare function fb_FilePut 				FBCALL ( fnum as long, pos as long, value as any ptr, valuelen as size_t ) as long
-declare function fb_FilePutLarge 			FBCALL ( fnum as long, pos as ulong, value as any ptr, valuelen as size_t ) as long
+declare function fb_FilePutLarge 			FBCALL ( fnum as long, pos as longint, value as any ptr, valuelen as size_t ) as long
 declare function fb_FilePutEx 				cdecl  ( handle as FB_FILE ptr, pos as fb_off_t, value as any ptr, valuelen as size_t ) as long
 declare function fb_FilePutStr 				FBCALL ( fnum as long, pos as long, str as any ptr, str_len as ssize_t ) as long
 declare function fb_FilePutStrLarge 		FBCALL ( fnum as long, pos as longint, str as any ptr, str_len as ssize_t ) as long
@@ -252,7 +252,7 @@ declare function fb_FileGetArrayLargeIOB 	FBCALL ( fnum as long, pos as longint,
 declare function fb_FileEof 				FBCALL ( fnum as long ) as long
 declare function fb_FileEofEx 				cdecl  ( handle as FB_FILE ptr ) as long
 declare function fb_FileTell 				FBCALL ( fnum as long ) as longint
-declare function fb_FileTellEx 				FBCALL ( handle as FB_FILE ptr ) as fb_off_t
+declare function fb_FileTellEx 				       ( handle as FB_FILE ptr ) as fb_off_t
 declare function fb_FileSeek 				FBCALL ( fnum as long, newpos as long )  as long
 declare function fb_FileSeekLarge 			FBCALL ( fnum as long, newpos as longint ) as long
 declare function fb_FileSeekEx 				cdecl  ( handle as FB_FILE ptr, newpos as fb_off_t ) as long
@@ -264,10 +264,10 @@ declare sub 	  fb_FileResetEx 			FBCALL ( streamno as long )
 declare function fb_hFileResetEx 			cdecl  ( streamno as long ) as long
 declare function fb_FileSize 				FBCALL ( fnum as long ) as longint
 declare function fb_FileSizeEx 				cdecl  ( handle as FB_FILE ptr ) as fb_off_t
-declare function fb_FilePutBack 			FBCALL ( fnum as long, data as any const ptr, length as size_t ) as long
+declare function fb_FilePutBack 			FBCALL ( fnum as long, _data as any const ptr, length as size_t ) as long
 declare function fb_FilePutBackWstr 		FBCALL ( fnum as long, src as FB_WCHAR const ptr, chars as size_t ) as long
-declare function fb_FilePutBackEx 			cdecl  ( handle as FB_FILE ptr, data as any const ptr, length as size_t ) as long
-declare function fb_FilePutBackWstrEx 		cdecl  ( handle as FB_FILE ptr, src as FB_WCHAR const ptr, chars as size_t ) as long
+declare function fb_FilePutBackEx 			cdecl  ( handle as FB_FILE ptr, _data as any const ptr, length as size_t ) as long
+declare function fb_FilePutBackWstrEx 		cdecl  ( handle as FB_FILE ptr, src as FB_WCHAR ptr, chars as size_t ) as long
 
 declare function fb_FileInput 				FBCALL ( fnum as long ) as long
 declare function fb_FileStrInput 			FBCALL ( bytes as ssize_t, fnum as long ) as FBSTRING ptr

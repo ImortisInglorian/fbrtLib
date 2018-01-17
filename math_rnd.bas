@@ -23,16 +23,16 @@
 #define PERIOD			397
 
 extern "C"
-declare function hRnd_Startup cdecl ( n as single ) as double
-declare function hRnd_CRT cdecl ( n as single ) as double
-declare function hRnd_QB cdecl ( n as single ) as double
-Dim shared rnd_func as function cdecl ( as single ) as double = @hRnd_Startup
+declare function hRnd_Startup ( n as single ) as double
+declare function hRnd_CRT ( n as single ) as double
+declare function hRnd_QB ( n as single ) as double
+Dim shared rnd_func as function ( as single ) as double = @hRnd_Startup
 dim shared as uint32_t iseed = INITIAL_SEED
 dim shared as uint32_t state(0 to MAX_STATE-1)
 dim shared as uint32_t ptr p = NULL
 dim shared as double last_num = 0.0
 
-function hRnd_Startup cdecl ( n as single ) as double	
+function hRnd_Startup ( n as single ) as double	
 	select case __fb_ctx.lang
 		case FB_LANG_QB:
 			rnd_func = @hRnd_QB
@@ -45,7 +45,7 @@ function hRnd_Startup cdecl ( n as single ) as double
 	return fb_Rnd( n )
 end function
 
-function hRnd_CRT cdecl ( n as single ) as double
+function hRnd_CRT ( n as single ) as double
 	if ( n = 0.0 ) then
 		return last_num
 	end if
@@ -53,7 +53,7 @@ function hRnd_CRT cdecl ( n as single ) as double
 	return cast(double,rand( )) * ( 1.0 / ( cast(double, RAND_MAX) + 1.0 ) )
 end function
 
-function hRnd_FAST cdecl ( n as single ) as double
+function hRnd_FAST ( n as single ) as double
 	/' return between 0 and 1 (but never 1) '/
 	/' Constants from 'Numerical recipes in C' chapter 7.1 '/
 	if ( n <> 0.0 ) then
@@ -63,7 +63,7 @@ function hRnd_FAST cdecl ( n as single ) as double
 	return cast(double, iseed) / cast(double,4294967296ULL)
 end function
 
-function hRnd_MTWIST cdecl ( n as single ) as double
+function hRnd_MTWIST ( n as single ) as double
 	if ( n = 0.0 ) then
 		return last_num
 	end if
@@ -100,7 +100,7 @@ function hRnd_MTWIST cdecl ( n as single ) as double
 	return cast(double, v) / cast(double, 4294967296ULL)
 end function
 
-function hRnd_QB cdecl ( n as single ) as double
+function hRnd_QB ( n as single ) as double
 	union ftoi
 		f as single
 		i as uint32_t
@@ -121,7 +121,7 @@ function hRnd_QB cdecl ( n as single ) as double
 end function
 
 #if defined (HOST_WIN32) or defined (HOST_LINUX)
-function hGetRealRndNumber cdecl ( ) as uinteger
+function hGetRealRndNumber ( ) as uinteger
 	union _number
 		as uinteger i
 		as ubyte b(sizeof(uinteger))
@@ -152,7 +152,7 @@ function hGetRealRndNumber cdecl ( ) as uinteger
 	return number.i
 end function
 
-function hRnd_REAL cdecl ( n as single ) as double
+function hRnd_REAL ( n as single ) as double
 	static as uinteger count = 0
 	static as uinteger v
 	dim as double mtwist

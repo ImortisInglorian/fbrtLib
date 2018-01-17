@@ -6,7 +6,7 @@ extern "C"
 private function fb_DevLptFindDeviceByName( iPort as long, filename as ubyte ptr, no_redir as long ) as FB_FILE ptr
 	dim as size_t i
 	/' Test if the printer is already open. '/
-	for i = 0 to FB_MAX_FILES
+	for i = 0 to FB_MAX_FILES - 1
 		dim as FB_FILE ptr handle = @__fb_ctx.fileTB(i)
 		if ( handle->type = FB_FILE_TYPE_PRINTER ) then
 			if( no_redir = FALSE or handle->redirection_to = NULL ) then
@@ -14,9 +14,9 @@ private function fb_DevLptFindDeviceByName( iPort as long, filename as ubyte ptr
 				if ( devInfo <> 0 ) then
 					if ( iPort = 0 or iPort = devInfo->iPort ) then
 						if ( strcmp(devInfo->pszDevice, filename) = 0 ) then
-								/' bugcheck '/
-								DBG_ASSERT( handle <> FB_HANDLE_PRINTER and handle <> FB_HANDLE_PRINTER )
-								return handle
+							/' bugcheck '/
+							DBG_ASSERT( handle <> FB_HANDLE_PRINTER and handle <> FB_HANDLE_PRINTER )
+							return handle
 						end if
 					end if
 				end if
@@ -110,7 +110,7 @@ function fb_DevLptOpen( handle as FB_FILE ptr, filename as ubyte const ptr, file
         handle->opaque = devInfo
 		handle->type = FB_FILE_TYPE_PRINTER
     else
-        if( devInfo->pszDevice ) then
+        if( devInfo->pszDevice <> 0 ) then
             free( devInfo->pszDevice )
 		end if
         free( devInfo )
@@ -132,7 +132,7 @@ function fb_DevPrinterSetWidth( pszDevice as ubyte const ptr, _width as long, de
 	dim as DEV_LPT_PROTOCOL ptr lpt_proto
 
     if (fb_DevLptParseProtocol( @lpt_proto, pszDevice, strlen(pszDevice), TRUE) = 0 ) then
-		if ( lpt_proto ) then
+		if ( lpt_proto <> 0 ) then
 			free( lpt_proto )
 		end if
 		return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )

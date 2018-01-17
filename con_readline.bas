@@ -70,7 +70,7 @@ function fb_ConReadLine FBCALL ( soft_cursor as long ) as FBSTRING ptr
 		wend
 
 		s = fb_Inkey( )
-		if ( s->data ) then
+		if ( s->data <> 0 ) then
 			if ( FB_STRSIZE( s ) = 2 ) then
 				k = FB_MAKE_EXT_KEY( FB_CHAR_TO_INT( s->data[1] ) )
 			else

@@ -25,7 +25,7 @@ function fb_DevFileReadLineEncod( handle as FB_FILE ptr, dst as FBSTRING ptr ) a
 	/' Read one byte at a time until CR and/or LF is found.
 	   The fb_FileGetDataEx() will handle the decoding. '/
 	while ( TRUE )
-		dim as ubyte ptr c(0 to 1)
+		dim as ubyte c(0 to 1)
 		dim as size_t _len
 
 		res = fb_FileGetDataEx( handle, 0, @c(0), 1, @_len, FALSE, FALSE )

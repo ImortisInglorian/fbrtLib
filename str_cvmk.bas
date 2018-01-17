@@ -11,7 +11,7 @@ sub hCV cdecl ( _str as FBSTRING ptr, _len as ssize_t, num as any ptr )
 	end if
 	
 	if ( (_str->data <> NULL) and (FB_STRSIZE( _str ) >= _len) ) then
-		for i = 0 to _len
+		for i = 0 to _len - 1
 			(cast(ubyte ptr, num)[i]) = _str->data[i]
 		next
 	end if
@@ -65,7 +65,7 @@ function hMK cdecl ( _len as ssize_t, num as any ptr ) as FBSTRING ptr
     dst = fb_hStrAllocTemp( NULL, _len )
 	if ( dst <> NULL ) then
 		/' convert '/
-		for i = 0 to _len
+		for i = 0 to _len - 1
 			dst->data[i] = (cast(ubyte ptr, num))[i]
 		next
 		

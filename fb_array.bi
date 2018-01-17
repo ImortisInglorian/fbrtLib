@@ -37,7 +37,7 @@ type FB_ARRAY_TMPDESC
     as FB_LISTELEM     elem
 
     as FBARRAY         array
-    as FBARRAYDIM      dimTB(0 to FB_MAXDIMENSIONS-1)
+    as FBARRAYDIM      dimTB(0 to FB_MAXDIMENSIONS-2)
 end type
 /' !!!REMOVEME!!! '/
 

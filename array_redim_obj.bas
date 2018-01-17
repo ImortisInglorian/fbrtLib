@@ -3,12 +3,12 @@
 #include "fb.bi"
 
 extern "C"
-function fb_ArrayRedimObj cdecl ( array as FBARRAY ptr, element_len as size_t, ctor as FB_DEFCTOR, dtor as FB_DEFCTOR,dimensions as size_t, ... ) as long
+function fb_ArrayRedimObj ( array as FBARRAY ptr, element_len as size_t, ctor as FB_DEFCTOR, dtor as FB_DEFCTOR,dimensions as size_t, ... ) as long
 	dim as va_list ap
 	dim as long res
 
 	/' free old '/
-	if ( dtor ) then
+	if ( dtor <> 0 ) then
 		fb_ArrayDestructObj( array, dtor )
 	end if
 	fb_ArrayErase( array, 0 )

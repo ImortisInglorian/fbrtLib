@@ -16,7 +16,7 @@ function fb_StrLcase2 FBCALL ( src as FBSTRING ptr, mode as long ) as FBSTRING p
 
 	FB_STRLOCK()
 
-	if ( src->data ) then
+	if ( src->data <> NULL ) then
 		_len = FB_STRSIZE( src )
 		/' alloc temp string '/
         dst = fb_hStrAllocTemp_NoLock( NULL, _len )
@@ -24,7 +24,7 @@ function fb_StrLcase2 FBCALL ( src as FBSTRING ptr, mode as long ) as FBSTRING p
 		dst = NULL
 	end if
 
-	if ( dst ) then
+	if ( dst <> NULL ) then
 		s = src->data
 		d = dst->data
 
@@ -38,7 +38,7 @@ function fb_StrLcase2 FBCALL ( src as FBSTRING ptr, mode as long ) as FBSTRING p
 				*d = c
 			next
 		else
-			for i = 0 to _len
+			for i = 0 to _len - 1
 				c = *s + 1
 				if ( isupper( c ) ) then
 					c = tolower( c )

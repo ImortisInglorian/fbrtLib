@@ -288,30 +288,30 @@
 
 	#define KEY_BACKSPACE   8
 	#define KEY_TAB         9 '  tab
-	#define KEY_F1          FB_MAKE_EXT_KEY( 059 ) '  ;
-	#define KEY_F2          FB_MAKE_EXT_KEY( 060 ) '  <
-	#define KEY_F3          FB_MAKE_EXT_KEY( 061 ) '  =
-	#define KEY_F4          FB_MAKE_EXT_KEY( 062 ) '  >
-	#define KEY_F5          FB_MAKE_EXT_KEY( 063 ) '  ?
-	#define KEY_F6          FB_MAKE_EXT_KEY( 064 ) '  @
-	#define KEY_F7          FB_MAKE_EXT_KEY( 065 ) '  A
-	#define KEY_F8          FB_MAKE_EXT_KEY( 066 ) '  B
-	#define KEY_F9          FB_MAKE_EXT_KEY( 067 ) '  C
-	#define KEY_F10         FB_MAKE_EXT_KEY( 068 ) '  D
-	#define KEY_F11         FB_MAKE_EXT_KEY( 069 ) '  E
-	#define KEY_F12         FB_MAKE_EXT_KEY( 070 ) '  F
-	#define KEY_HOME        FB_MAKE_EXT_KEY( 071 ) '  G
-	#define KEY_UP          FB_MAKE_EXT_KEY( 072 ) '  H
-	#define KEY_PAGE_UP     FB_MAKE_EXT_KEY( 073 ) '  I
-	#define KEY_LEFT        FB_MAKE_EXT_KEY( 075 ) '  K
-	#define KEY_CLEAR       FB_MAKE_EXT_KEY( 076 ) '  L
-	#define KEY_RIGHT       FB_MAKE_EXT_KEY( 077 ) '  M
-	#define KEY_END         FB_MAKE_EXT_KEY( 079 ) '  O
-	#define KEY_DOWN        FB_MAKE_EXT_KEY( 080 ) '  P
-	#define KEY_PAGE_DOWN   FB_MAKE_EXT_KEY( 081 ) '  Q
-	#define KEY_INS         FB_MAKE_EXT_KEY( 082 ) '  R
-	#define KEY_DEL         FB_MAKE_EXT_KEY( 083 ) '  S
-	#define KEY_QUIT        FB_MAKE_EXT_KEY( 107 ) '  k
+	#define KEY_F1          FB_MAKE_EXT_KEY( ";" ) '  ;
+	#define KEY_F2          FB_MAKE_EXT_KEY( "<" ) '  <
+	#define KEY_F3          FB_MAKE_EXT_KEY( "=" ) '  =
+	#define KEY_F4          FB_MAKE_EXT_KEY( ">" ) '  >
+	#define KEY_F5          FB_MAKE_EXT_KEY( "?" ) '  ?
+	#define KEY_F6          FB_MAKE_EXT_KEY( "@" ) '  @
+	#define KEY_F7          FB_MAKE_EXT_KEY( "A" ) '  A
+	#define KEY_F8          FB_MAKE_EXT_KEY( "B" ) '  B
+	#define KEY_F9          FB_MAKE_EXT_KEY( "C" ) '  C
+	#define KEY_F10         FB_MAKE_EXT_KEY( "D" ) '  D
+	#define KEY_F11         FB_MAKE_EXT_KEY( "E" ) '  E
+	#define KEY_F12         FB_MAKE_EXT_KEY( "F" ) '  F
+	#define KEY_HOME        FB_MAKE_EXT_KEY( "G" ) '  G
+	#define KEY_UP          FB_MAKE_EXT_KEY( "H" ) '  H
+	#define KEY_PAGE_UP     FB_MAKE_EXT_KEY( "I" ) '  I
+	#define KEY_LEFT        FB_MAKE_EXT_KEY( "K" ) '  K
+	#define KEY_CLEAR       FB_MAKE_EXT_KEY( "L" ) '  L
+	#define KEY_RIGHT       FB_MAKE_EXT_KEY( "M" ) '  M
+	#define KEY_END         FB_MAKE_EXT_KEY( "O" ) '  O
+	#define KEY_DOWN        FB_MAKE_EXT_KEY( "P" ) '  P
+	#define KEY_PAGE_DOWN   FB_MAKE_EXT_KEY( "Q" ) '  Q
+	#define KEY_INS         FB_MAKE_EXT_KEY( "R" ) '  R
+	#define KEY_DEL         FB_MAKE_EXT_KEY( "S" ) '  S
+	#define KEY_QUIT        FB_MAKE_EXT_KEY( "k" ) '  k
 
 	declare function fb_hMakeInkeyStr( ch as long ) as FBSTRING ptr
 	declare function fb_hScancodeToExtendedKey( scancode as long ) as long

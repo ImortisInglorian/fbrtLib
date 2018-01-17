@@ -6,7 +6,7 @@ extern "C"
 sub fb_DataReadShort FBCALL ( dst as short ptr )
 	FB_LOCK()
 
-	if ( __fb_data_ptr ) then
+	if ( __fb_data_ptr <> 0) then
 		if( __fb_data_ptr->len = FB_DATATYPE_OFS ) then
 			*dst = cast(size_t, __fb_data_ptr->ofs)
 		elseif ( __fb_data_ptr->len and FB_DATATYPE_WSTR ) then

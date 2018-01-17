@@ -3,7 +3,7 @@
 #include "fb.bi"
 
 extern "C"
-function fb_hArrayRealloc cdecl ( array as FBARRAY ptr, element_len as size_t, doclear as long, ctor as FB_DEFCTOR, dtor_mult as FB_DTORMULT, dtor as FB_DEFCTOR, dimensions as size_t, ap as va_list ) as long
+function fb_hArrayRealloc ( array as FBARRAY ptr, element_len as size_t, doclear as long, ctor as FB_DEFCTOR, dtor_mult as FB_DTORMULT, dtor as FB_DEFCTOR, dimensions as size_t, ap as va_list ) as long
 	dim as size_t i, elements, size
 	dim as ssize_t diff
 	dim as FBARRAYDIM ptr _dim
@@ -17,7 +17,7 @@ function fb_hArrayRealloc cdecl ( array as FBARRAY ptr, element_len as size_t, d
 	end if
 
 	/' load bounds '/
-	for i = 0 to dimensions
+	for i = 0 to dimensions - 1
 		lbTB(i) = cast(ssize_t, va_next( ap, ssize_t ))
 		ubTB(i) = cast(ssize_t, va_next( ap, ssize_t ))
 
@@ -76,7 +76,7 @@ function fb_hArrayRealloc cdecl ( array as FBARRAY ptr, element_len as size_t, d
 	array->element_len = element_len
 	array->dimensions = dimensions
 	_dim = @array->dimTB(0)
-	for i = 0 to dimensions
+	for i = 0 to dimensions - 1
 		_dim->elements = (ubTB(i) - lbTB(i)) + 1
 		_dim->lbound = lbTB(i)
 		_dim->ubound = ubTB(i)
@@ -86,7 +86,7 @@ function fb_hArrayRealloc cdecl ( array as FBARRAY ptr, element_len as size_t, d
 	return fb_ErrorSetNum( FB_RTERROR_OK )
 end function
 
-private function hRedim cdecl ( array as FBARRAY ptr, element_len as size_t, doclear as long, isvarlen as long, dimensions as size_t, ap as va_list ) as long
+private function hRedim ( array as FBARRAY ptr, element_len as size_t, doclear as long, isvarlen as long, dimensions as size_t, ap as va_list ) as long
 	dim as FB_DTORMULT dtor_mult
 
 	/' new? '/
@@ -95,7 +95,7 @@ private function hRedim cdecl ( array as FBARRAY ptr, element_len as size_t, doc
 	end if
 
 	/' realloc.. '/
-	if ( isvarlen ) then
+	if ( isvarlen <> 0 ) then
 		dtor_mult = @fb_hArrayDtorStr
 	else
 		dtor_mult = NULL

@@ -6,8 +6,8 @@ extern "C"
 function fb_ArrayErase FBCALL ( array as FBARRAY ptr, isvarlen as long ) as long /'isvarlen = legacy '/
 	/' ptr can be NULL, for global dynamic arrays that were never allocated,
 	   but will still be destroyed on program exit '/
-	if ( array->_ptr ) then
-		if ( isvarlen ) then
+	if ( array->_ptr <> 0 ) then
+		if ( isvarlen <> 0 ) then
 			fb_ArrayDestructStr( array )
 		end if
 		free( array->_ptr )

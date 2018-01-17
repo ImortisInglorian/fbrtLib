@@ -27,7 +27,7 @@ function fb_ArrayRedimTo FBCALL ( dest as FBARRAY ptr, source as FBARRAY const p
 	end if
 
 	/' free old '/
-	if ( dtor ) then
+	if ( dtor <> 0 ) then
 		fb_ArrayDestructObj( dest, dtor )
 	end if
 	fb_ArrayErase( dest, isvarlen )
@@ -62,7 +62,7 @@ function fb_ArrayRedimTo FBCALL ( dest as FBARRAY ptr, source as FBARRAY const p
 	dest->data = (cast(ubyte ptr, dest->_ptr)) + diff
 
 	/' Call ctor for each element '/
-	if ( ctor ) then
+	if ( ctor <> 0 ) then
 		this_ = dest->_ptr
 		limit = this_ + dest->size
 		while ( this_ < limit )

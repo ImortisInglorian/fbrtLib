@@ -11,12 +11,12 @@ function fb_CrtFileCopy FBCALL ( source as ubyte const ptr, destination as ubyte
 	dim as size_t bytesread
 
 	dst = NULL
-	src = fopen(source, sadd("rb"))
+	src = fopen(source, "rb")
 	if (src = 0) then
 		goto _err
 	end if
 
-	dst = fopen(destination, sadd("wb"))
+	dst = fopen(destination, "wb")
 	if (dst = 0) then
 		goto _err
 	end if

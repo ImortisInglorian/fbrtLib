@@ -19,7 +19,7 @@ function fb_CHR cdecl ( args as long, ... ) as FBSTRING ptr
    dst = fb_hStrAllocTemp( NULL, args )
 	if ( dst <> NULL ) then
 		/' convert '/
-		for i = 0 to args
+		for i = 0 to args - 1
 			num = va_arg( ap, ulong )
 			dst->data[i] = cast(ubyte, num)
 			ap = va_next(ap, ulong)

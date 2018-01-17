@@ -85,7 +85,7 @@ sub fb_hRtExit cdecl ( )
 	/' os-dep termination '/
 	fb_hEnd( 0 )
 
-	'fb_DevScrnEnd( FB_HANDLE_SCREEN )
+	fb_DevScrnEnd( @FB_HANDLE_SCREEN )
 
 	/' Free main thread's TLS contexts '/
 	fb_TlsFreeCtxTb( )
@@ -98,7 +98,7 @@ sub fb_hRtExit cdecl ( )
 	   cleaned up. At least the DOS gfxlib clears the console on exit,
 	   thus any error messages must be printed after that or they would
 	   not be visible. '/
-	if( __fb_ctx.errmsg ) then
+	if( __fb_ctx.errmsg <> NULL ) then
 		fputs( __fb_ctx.errmsg, stderr )
 	end if
 end sub
@@ -113,11 +113,11 @@ end sub
 /' called by FB program,
    or fb_Die() in case of assert() failure or runtime error '/
 sub fb_End FBCALL ( errlevel as long )
-	if( __fb_ctx.exit_gfxlib2 ) then
+	if( __fb_ctx.exit_gfxlib2 <> NULL ) then
 		'TODO: Fix this with GFXlib
 		'__fb_ctx.exit_gfxlib2( )
 	end if
-   'TODO: Fix Exit command
-	'exit( errlevel )
+
+	end( errlevel )
 end sub
 end extern

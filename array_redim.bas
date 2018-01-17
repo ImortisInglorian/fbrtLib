@@ -1,8 +1,8 @@
 /' redim function '/
 
 #include "fb.bi"
-
-function fb_hArrayAlloc cdecl ( array as FBARRAY ptr, element_len as size_t, doclear as long, ctor as FB_DEFCTOR, dimensions as size_t, ap as va_list ) as long
+extern "C"
+function fb_hArrayAlloc ( array as FBARRAY ptr, element_len as size_t, doclear as long, ctor as FB_DEFCTOR, dimensions as size_t, ap as va_list ) as long
 	dim as size_t i, elements, size
 	dim as ssize_t diff
 	dim as FBARRAYDIM ptr _dim
@@ -40,7 +40,7 @@ function fb_hArrayAlloc cdecl ( array as FBARRAY ptr, element_len as size_t, doc
 
 	/' load bounds '/
 	_dim = @array->dimTB(0)
-	for i = 0 to dimensions
+	for i = 0 to dimensions - 1
 		lbTB(i) = cast(ssize_t, va_next( ap, ssize_t ))
 		ubTB(i) = cast(ssize_t, va_next( ap, ssize_t ))
 		
@@ -62,7 +62,7 @@ function fb_hArrayAlloc cdecl ( array as FBARRAY ptr, element_len as size_t, doc
 	/' Allocte new buffer '/
 	/' Clearing is not needed if not requested, or if ctors will be called
 	(ctors take care of clearing themselves) '/
-	if ( doclear and (ctor = NULL) ) then
+	if ( doclear <> 0 and (ctor = NULL) ) then
 		array->_ptr = calloc( size, 1 )
 	else
 		array->_ptr = malloc( size )
@@ -73,7 +73,7 @@ function fb_hArrayAlloc cdecl ( array as FBARRAY ptr, element_len as size_t, doc
 	end if
 
 	/' call ctor for each element '/
-	if ( ctor ) then
+	if ( ctor <> 0 ) then
 		dim as ubyte ptr this_ = array->_ptr
 		while( elements > 0 )
 			/' !!!FIXME!!! check exceptions (only if rewritten in C++) '/
@@ -95,27 +95,27 @@ function fb_hArrayAlloc cdecl ( array as FBARRAY ptr, element_len as size_t, doc
 	return fb_ErrorSetNum( FB_RTERROR_OK )
 end function
 
-function hRedim cdecl ( array as FBARRAY ptr, element_len as size_t, doclear as long, isvarlen as long, dimensions as size_t, ap as va_list ) as long
+function hRedim ( array as FBARRAY ptr, element_len as size_t, doclear as long, isvarlen as long, dimensions as size_t, ap as va_list ) as long
 	/' free old '/
 	fb_ArrayErase( array, isvarlen )
 	
    return fb_hArrayAlloc( array, element_len, doclear, NULL, dimensions, ap )
 end function
 
-function fb_ArrayRedimEx cdecl ( array as FBARRAY ptr, element_len as size_t, doclear as long, isvarlen as long, dimensions as size_t, ... ) as long
+function fb_ArrayRedimEx ( array as FBARRAY ptr, element_len as size_t, doclear as long, isvarlen as long, dimensions as size_t, ... ) as long
 	dim as any ptr ap
 	dim as long res
 
 	'va_start( ap, dimensions )
 	ap = va_first()
-   res = hRedim( array, element_len, doclear, isvarlen, dimensions, ap )
-   'va_end( ap )
+	res = hRedim( array, element_len, doclear, isvarlen, dimensions, ap )
+	'va_end( ap )
 	
-   return res
+	return res
 end function 
 
 /' legacy '/
-function fb_ArrayRedim cdecl ( array as FBARRAY ptr, element_len as size_t, isvarlen as long, dimensions as size_t, ... ) as long
+function fb_ArrayRedim ( array as FBARRAY ptr, element_len as size_t, isvarlen as long, dimensions as size_t, ... ) as long
 	dim as any ptr ap
 	dim as long res
 
@@ -126,3 +126,4 @@ function fb_ArrayRedim cdecl ( array as FBARRAY ptr, element_len as size_t, isva
 
 	return res
 end function
+end extern

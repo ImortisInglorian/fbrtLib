@@ -4,7 +4,7 @@
 #include "fb.bi"
 
 extern "C"
-sub fb_ArraySetDesc cdecl ( array as FBARRAY ptr, _ptr as any ptr, element_len as size_t, dimensions as size_t, ... )
+sub fb_ArraySetDesc ( array as FBARRAY ptr, _ptr as any ptr, element_len as size_t, dimensions as size_t, ... )
 	dim as va_list ap
 	dim as size_t i, elements
 	dim as ssize_t diff
@@ -16,7 +16,7 @@ sub fb_ArraySetDesc cdecl ( array as FBARRAY ptr, _ptr as any ptr, element_len a
 	ap = va_first()
 	_dim = @array->dimTB(0)
 
-	for i = 0 to dimensions
+	for i = 0 to dimensions - 1
 		lbTB(i) = cast(ssize_t, va_next( ap, ssize_t ))
 		ubTB(i) = cast(ssize_t, va_next( ap, ssize_t ))
       

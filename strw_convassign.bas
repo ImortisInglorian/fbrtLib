@@ -78,7 +78,7 @@ function fb_WstrAssignToAEx FBCALL ( dst as any ptr, dst_chars as ssize_t, src a
 	else
 		/' src NULL? '/
 		if ( src_chars = 0 ) then
-			if ( fill_rem and dst_chars > 0 ) then
+			if ( fill_rem <> NULL and dst_chars > 0 ) then
 				memset( dst, 0, dst_chars )
 			else
 				*cast(ubyte ptr, dst) = 0

@@ -16,7 +16,7 @@ function fb_StrUcase2 FBCALL ( src as FBSTRING ptr, mode as long ) as FBSTRING p
 	
 	FB_STRLOCK()
 
-	if ( src->data ) then
+	if ( src->data <> NULL ) then
 		_len = FB_STRSIZE( src )
 
 		/' alloc temp string '/
@@ -39,7 +39,7 @@ function fb_StrUcase2 FBCALL ( src as FBSTRING ptr, mode as long ) as FBSTRING p
 				*d = c
 			next
 		else
-			for i = 0 to _len
+			for i = 0 to _len - 1
 				c = *s + 1
 				if ( islower( c ) ) then
 					c = toupper( c )
