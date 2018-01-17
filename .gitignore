@@ -2,3 +2,5 @@
 *.asm
 *.wfbe
 *.o
+/obj/
+/lib/
