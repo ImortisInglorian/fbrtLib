@@ -6,7 +6,7 @@
 extern "C"
 function fb_MutexCreate FBCALL ( ) as FBMUTEX ptr
 	dim as FBMUTEX ptr mutex = cast(FBMUTEX ptr,malloc( sizeof( FBMUTEX ) ))
-	if ( not(mutex) ) then
+	if ( mutex = NULL ) then
 		return NULL
 	end if
 
@@ -16,20 +16,20 @@ function fb_MutexCreate FBCALL ( ) as FBMUTEX ptr
 end function
 
 sub fb_MutexDestroy FBCALL ( mutex as FBMUTEX ptr )
-	if ( mutex ) then
+	if ( mutex <> NULL ) then
 		CloseHandle( mutex->id )
 		free( cast(any ptr,mutex) )
 	end if
 end sub
 
 sub fb_MutexLock FBCALL ( mutex as FBMUTEX ptr )
-	if ( mutex ) then
+	if ( mutex <> NULL ) then
 		WaitForSingleObject( mutex->id, INFINITE )
 	end if
 end sub
 
 sub fb_MutexUnlock FBCALL ( mutex as FBMUTEX ptr )
-	if ( mutex ) then
+	if ( mutex <> NULL ) then
 		ReleaseSemaphore( mutex->id, 1, NULL )
 	end if
 end sub

@@ -56,11 +56,11 @@ private function find_window() as HWND
 	dim as TCHAR title(0 to MAX_PATH - 1)
 	static as HWND _hwnd = NULL
 
-	if (_hwnd) then
+	if ( _hwnd <> NULL ) then
 		return _hwnd
 	end if
 
-	if (GetConsoleTitle(@old_title(0), MAX_PATH)) then
+	if ( GetConsoleTitle(@old_title(0), MAX_PATH) <> NULL ) then
 		sprintf(@title(0), "_fb_console_title %f", fb_Timer())
 		SetConsoleTitle(@title(0))
 		_hwnd = FindWindow(NULL, @title(0))

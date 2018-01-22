@@ -7,7 +7,7 @@ extern "C"
 function fb_FileLocationEx( handle as FB_FILE ptr ) as fb_off_t
     dim as fb_off_t _pos
 
-    if ( FB_HANDLE_USED(handle) = 0 ) then
+    if ( FB_HANDLE_USED(handle) = NULL ) then
 		return 0
 	end if
 

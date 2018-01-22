@@ -10,12 +10,12 @@ private function fb_hSerialWaitSignal( hDevice as HANDLE, dwMask as DWORD, dwRes
 	dim as DWORD dwStartTime = GET_MSEC_TIME()
 	dim as DWORD dwModemStatus = 0
 
-	if ( not(GetCommModemStatus( hDevice, @dwModemStatus )) ) then
+	if ( GetCommModemStatus( hDevice, @dwModemStatus ) = NULL ) then
 		return FALSE
 	end if
 
 	while ( ((GET_MSEC_TIME() - dwStartTime) <= dwTimeout) and ((dwModemStatus and dwMask) <> dwResult) )
-		if( not(GetCommModemStatus( hDevice, @dwModemStatus )) ) then
+		if( GetCommModemStatus( hDevice, @dwModemStatus ) = NULL ) then
 			return FALSE
 		end if
 	wend
@@ -76,7 +76,7 @@ function fb_SerialOpen( handle as FB_FILE ptr, iPort as long, options as FB_SERI
 
 		strcat(pszDev, pszDevice)
 		p = strchr( pszDev, asc(":"))
-		if ( p ) then
+		if ( p <> NULL ) then
 			*p = 0
 		end if
 	end if
@@ -84,7 +84,7 @@ function fb_SerialOpen( handle as FB_FILE ptr, iPort as long, options as FB_SERI
 	#if 0
 	/' FIXME: Use default COM properties by default '/
 	dim as COMMCONFIG cc
-	if ( not(GetDefaultCommConfig( pszDev, @cc, @dwSizeCC )) ) then
+	if ( GetDefaultCommConfig( pszDev, @cc, @dwSizeCC ) = NULL ) then
 		'Empty
    end if
 	#endif
@@ -101,30 +101,30 @@ function fb_SerialOpen( handle as FB_FILE ptr, iPort as long, options as FB_SERI
 	/' Set rx/tx buffer sizes '/
 	if ( res = FB_RTERROR_OK ) then
 		dim as COMMPROP prop
-		if ( not(GetCommProperties( hDevice, @prop )) ) then
+		if ( GetCommProperties( hDevice, @prop ) = NULL ) then
 			res = fb_ErrorSetNum( FB_RTERROR_NOPRIVILEGES )
 		else
-			if ( prop.dwCurrentTxQueue ) then
+			if ( prop.dwCurrentTxQueue <> NULL ) then
 				dwDefaultTxBufferSize = prop.dwCurrentTxQueue
-			elseif ( prop.dwMaxTxQueue ) then
+			elseif ( prop.dwMaxTxQueue <> NULL ) then
 				dwDefaultTxBufferSize = prop.dwMaxTxQueue
 			end if
 
-			if ( prop.dwCurrentRxQueue ) then
+			if ( prop.dwCurrentRxQueue <> NULL ) then
 				dwDefaultRxBufferSize = prop.dwCurrentRxQueue
-			elseif ( prop.dwMaxRxQueue ) then
+			elseif ( prop.dwMaxRxQueue <> NULL ) then
 				dwDefaultRxBufferSize = prop.dwMaxRxQueue
 			end if
 
-			if ( options->TransmitBuffer ) then
+			if ( options->TransmitBuffer <> NULL ) then
 				dwDefaultTxBufferSize = options->TransmitBuffer
 			end if
 
-			if ( options->ReceiveBuffer ) then
+			if ( options->ReceiveBuffer <> NULL ) then
 				dwDefaultRxBufferSize = options->ReceiveBuffer
 			end if
 
-			if ( not(SetupComm( hDevice, dwDefaultRxBufferSize, dwDefaultTxBufferSize )) ) then
+			if ( SetupComm( hDevice, dwDefaultRxBufferSize, dwDefaultTxBufferSize ) = NULL ) then
 				res = fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 			end if
 		end if
@@ -133,7 +133,7 @@ function fb_SerialOpen( handle as FB_FILE ptr, iPort as long, options as FB_SERI
 	/' set timeouts '/
 	if ( res = FB_RTERROR_OK ) then
 		dim as COMMTIMEOUTS timeouts
-		if ( not(GetCommTimeouts( hDevice, @timeouts )) ) then
+		if ( GetCommTimeouts( hDevice, @timeouts ) = NULL ) then
 			res = fb_ErrorSetNum( FB_RTERROR_NOPRIVILEGES )
 		else
 			if ( options->DurationCTS <> 0 ) then
@@ -141,7 +141,7 @@ function fb_SerialOpen( handle as FB_FILE ptr, iPort as long, options as FB_SERI
 				timeouts.ReadTotalTimeoutMultiplier = 0
 				timeouts.ReadTotalTimeoutConstant = 0
 			end if
-			if ( not(SetCommTimeouts( hDevice, @timeouts )) ) then
+			if ( SetCommTimeouts( hDevice, @timeouts ) = NULL ) then
 				res = fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 			end if
 		end if
@@ -151,7 +151,7 @@ function fb_SerialOpen( handle as FB_FILE ptr, iPort as long, options as FB_SERI
 	if ( res = FB_RTERROR_OK ) then
 		dim as DCB _dcb
 		_dcb.DCBlength = sizeof( _dcb )
-		if ( not(GetCommState( hDevice, @_dcb )) ) then
+		if ( GetCommState( hDevice, @_dcb ) = NULL ) then
 			res = fb_ErrorSetNum( FB_RTERROR_NOPRIVILEGES )
 		else
 			_dcb.BaudRate = options->uiSpeed
@@ -197,7 +197,7 @@ function fb_SerialOpen( handle as FB_FILE ptr, iPort as long, options as FB_SERI
 					_dcb.StopBits = TWOSTOPBITS
 			end select
 
-			if ( not(SetCommState( hDevice, @_dcb )) ) then
+			if ( SetCommState( hDevice, @_dcb ) = NULL ) then
 				res = fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 			else
 				EscapeCommFunction( hDevice, SETDTR )
@@ -205,7 +205,7 @@ function fb_SerialOpen( handle as FB_FILE ptr, iPort as long, options as FB_SERI
 		end if
 	end if
 
-	if ( not(fb_hSerialCheckLines( hDevice, options )) ) then
+	if ( fb_hSerialCheckLines( hDevice, options ) = NULL ) then
 		res = fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 	end if
 
@@ -227,10 +227,10 @@ function fb_SerialGetRemaining( handle as FB_FILE ptr, pvHandle as any ptr, pLen
 	dim as W32_SERIAL_INFO ptr pInfo = cast(W32_SERIAL_INFO ptr, pvHandle)
 	dim as DWORD dwErrors
 	dim as COMSTAT Status
-	if ( not(ClearCommError( pInfo->hDevice, @dwErrors, @Status )) ) then
+	if ( ClearCommError( pInfo->hDevice, @dwErrors, @Status ) = NULL ) then
 		return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 	end if
-	if ( pLength ) then
+	if ( pLength <> NULL ) then
 		*pLength = cast(long, Status.cbInQue)
 	end if
 	return fb_ErrorSetNum( FB_RTERROR_OK )
@@ -240,11 +240,11 @@ function fb_SerialWrite( handle as FB_FILE ptr, pvHandle as any ptr, _data as an
 	dim as W32_SERIAL_INFO ptr pInfo = cast(W32_SERIAL_INFO ptr, pvHandle)
 	dim as DWORD dwWriteCount
 
-	if ( not(fb_hSerialCheckLines( pInfo->hDevice, pInfo->pOptions )) ) then
+	if ( fb_hSerialCheckLines( pInfo->hDevice, pInfo->pOptions ) = NULL ) then
 		return fb_ErrorSetNum( FB_RTERROR_FILEIO )
 	end if
 
-	if ( not(WriteFile( pInfo->hDevice, _data, length, @dwWriteCount, NULL )) ) then
+	if ( WriteFile( pInfo->hDevice, _data, length, @dwWriteCount, NULL ) = NULL ) then
 		return fb_ErrorSetNum( FB_RTERROR_FILEIO )
 	end if
 
@@ -260,11 +260,11 @@ function fb_SerialRead( handle as FB_FILE ptr, pvHandle as any ptr, _data as any
 	dim as DWORD dwReadCount
 	DBG_ASSERT( pLength <> NULL )
 
-	if ( not(fb_hSerialCheckLines( pInfo->hDevice, pInfo->pOptions )) ) then
+	if ( fb_hSerialCheckLines( pInfo->hDevice, pInfo->pOptions ) = NULL ) then
 		return fb_ErrorSetNum( FB_RTERROR_FILEIO )
 	end if
 
-	if( not(ReadFile( pInfo->hDevice, _data, *pLength, @dwReadCount, NULL )) ) then
+	if( ReadFile( pInfo->hDevice, _data, *pLength, @dwReadCount, NULL ) = NULL ) then
 		return fb_ErrorSetNum( FB_RTERROR_FILEIO )
 	end if
 	*pLength = cast(size_t, dwReadCount)

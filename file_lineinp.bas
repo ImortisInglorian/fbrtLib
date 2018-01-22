@@ -16,7 +16,7 @@ private function fb_hFileLineInputEx( handle as FB_FILE ptr, dst as any ptr, dst
 	dim as ubyte buffer(0 to BUFFER_LEN - 1)
     dim as eInputMode  mode = eIM_Invalid
 
-    if ( FB_HANDLE_USED(handle) = 0 ) then
+    if ( FB_HANDLE_USED(handle) = NULL ) then
 		return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 	end if
 
@@ -32,20 +32,20 @@ private function fb_hFileLineInputEx( handle as FB_FILE ptr, dst as any ptr, dst
 		case eIM_Read:
 			/' This is the VFS-compatible way to read a line ... but it's slow '/
 			_len = readlen = 0
-			while (handle->hooks->pfnEof(handle) = 0)
+			while (handle->hooks->pfnEof(handle) = NULL)
 				dim as long do_add = FALSE, do_break = FALSE
 				dim as size_t read_len
 				dim as long res = fb_FileGetDataEx( handle, 0, @buffer(0) + _len, 1, @read_len, FALSE, FALSE )
 				if ( res = FB_RTERROR_OK and read_len = 1) then
 					dim as ubyte ch = buffer(_len)
-					if ( ch = 13 ) then
+					if ( ch = asc("!\r") ) then
 						res = fb_FileGetDataEx( handle, 0, @ch, 1, @read_len, FALSE, FALSE )
-						if ( res = FB_RTERROR_OK and ch <> 10 and read_len = 1) then
+						if ( res = FB_RTERROR_OK and ch <> asc(!"\n") and read_len = 1) then
 							fb_FilePutBackEx( handle, @ch, 1 )
 						end if
-						ch = 10
+						ch = asc(!"\n")
 					end if
-					if ( ch = 10 ) then
+					if ( ch = asc(!"\n") ) then
 						do_break = TRUE
 						do_add = TRUE
 					else
@@ -69,7 +69,7 @@ private function fb_hFileLineInputEx( handle as FB_FILE ptr, dst as any ptr, dst
 				else
 					_len += 1
 				end if
-				if ( res <> FB_RTERROR_OK or do_break ) then
+				if ( res <> FB_RTERROR_OK or do_break <> NULL ) then
 					exit while
 				end if
 			wend

@@ -314,7 +314,7 @@ function fb_PrinterOpen( devInfo as DEV_LPT_INFO ptr, iPort as long, pszDevice a
 	dim as ubyte ptr doc_title = NULL
 
 	dim as DEV_LPT_PROTOCOL ptr lpt_proto
-	if ( not(fb_DevLptParseProtocol( @lpt_proto, pszDevice, strlen(pszDevice), TRUE )) ) then
+	if ( fb_DevLptParseProtocol( @lpt_proto, pszDevice, strlen(pszDevice), TRUE ) = NULL ) then
 		if ( lpt_proto <> NULL ) then
 			free(lpt_proto)
 		end if
@@ -331,7 +331,7 @@ function fb_PrinterOpen( devInfo as DEV_LPT_INFO ptr, iPort as long, pszDevice a
 				exit for
 			end if
 		next
-		if ( not(pFoundEmu) ) then
+		if ( pFoundEmu = NULL ) then
 			if ( lpt_proto <> NULL ) then
 				free(lpt_proto)
 			end if	
@@ -341,7 +341,7 @@ function fb_PrinterOpen( devInfo as DEV_LPT_INFO ptr, iPort as long, pszDevice a
 
 	if ( iPort = 0 ) then
 		/' LPT:[PrinterName] '/
-		if ( *lpt_proto->name ) then
+		if ( *lpt_proto->name <> NULL ) then
 			printer_name = strdup( lpt_proto->name )
 		else
 			printer_name = GetDefaultPrinterName()
@@ -375,12 +375,12 @@ function fb_PrinterOpen( devInfo as DEV_LPT_INFO ptr, iPort as long, pszDevice a
 			/' User PRINTER directly '/
 			fResult = OpenPrinter(printer_name, @hPrinter, NULL)
 		end if
-		if ( not(fResult) ) then
+		if ( fResult = NULL ) then
 			result = fb_ErrorSetNum( FB_RTERROR_FILENOTFOUND )
 		end if
 	end if
 
-	if ( lpt_proto->title andalso *lpt_proto->title ) then
+	if ( lpt_proto->title <> NULL andalso *lpt_proto->title <> NULL ) then
 		doc_title = strdup( lpt_proto->title )
 	else
 		doc_title = strdup( "FreeBASIC document" )
@@ -519,7 +519,7 @@ private sub EmuUpdateInfo( pInfo as W32_PRINTER_INFO ptr )
 end sub
 
 private sub EmuPageStart( pInfo as W32_PRINTER_INFO ptr )
-	if ( pInfo->Emu.iPageStarted ) then
+	if ( pInfo->Emu.iPageStarted <> NULL ) then
 		exit sub
 	end if
 
@@ -533,8 +533,8 @@ private sub EmuPageStart( pInfo as W32_PRINTER_INFO ptr )
 end sub
 
 private sub EmuPrint_RAW( pInfo as W32_PRINTER_INFO ptr, pText as any ptr, uiLength as size_t, isunicode as long )
-	while( uiLength )
-		if ( not(isunicode) ) then
+	while( uiLength <> 0 )
+		if ( isunicode = 0 ) then
 			dim as ubyte ptr ch = cast(ubyte ptr, pText)
 			pText += sizeof(ch)
 
@@ -550,10 +550,10 @@ private sub EmuPrint_RAW( pInfo as W32_PRINTER_INFO ptr, pText as any ptr, uiLen
 
 		pInfo->Emu.dwCurrentX += pInfo->Emu.dwFontSizeX
 
-		if ( pInfo->Emu.dwCurrentX>=pInfo->Emu.dwSizeX ) then
+		if ( pInfo->Emu.dwCurrentX >= pInfo->Emu.dwSizeX ) then
 			pInfo->Emu.dwCurrentX = 0
 			pInfo->Emu.dwCurrentY += pInfo->Emu.dwFontSizeY
-			if ( pInfo->Emu.dwCurrentY>=pInfo->Emu.dwSizeY ) then
+			if ( pInfo->Emu.dwCurrentY >= pInfo->Emu.dwSizeY ) then
 				pInfo->Emu.dwCurrentY = 0
 				EndPage( pInfo->hDc )
 				pInfo->Emu.iPageStarted = FALSE
@@ -566,7 +566,7 @@ end sub
 private sub fb_hHookConPrinterScroll( handle as _fb_ConHooks ptr, x1 as long, y1 as long, x2 as long, y2 as long, rows as long)
 	dim as W32_PRINTER_INFO ptr pInfo = handle->Opaque
 	dim as long page_rows = (pInfo->Emu.dwSizeY + pInfo->Emu.dwFontSizeY - 1) / pInfo->Emu.dwFontSizeY
-	if ( not(pInfo->Emu.iPageStarted) ) then
+	if ( pInfo->Emu.iPageStarted = NULL ) then
 		StartPage( pInfo->hDc )
 	end if
 	EndPage( pInfo->hDc )
@@ -612,7 +612,7 @@ private sub EmuPrint_TTY( pInfo as W32_PRINTER_INFO ptr, pText as any ptr, uiLen
 	hooks.Coord.X = pInfo->Emu.dwCurrentX / pInfo->Emu.dwFontSizeX
 	hooks.Coord.Y = pInfo->Emu.dwCurrentY / pInfo->Emu.dwFontSizeY
 
-	if ( not(isunicode) ) then
+	if ( isunicode = NULL ) then
 		while( uiLength <> 0 )
 			dim as ubyte ptr chControl = 0
 			dim as ulong uiLengthTTY = uiLength, ui
@@ -625,7 +625,7 @@ private sub EmuPrint_TTY( pInfo as W32_PRINTER_INFO ptr, pText as any ptr, uiLen
 						/' FormFeed '/
 						iFound = TRUE
 				end select
-				if ( iFound ) then
+				if ( iFound <> NULL ) then
 					chControl = ch
 					uiLengthTTY = ui
 					exit for
@@ -659,7 +659,7 @@ private sub EmuPrint_TTY( pInfo as W32_PRINTER_INFO ptr, pText as any ptr, uiLen
 						/' FormFeed '/
 						iFound = TRUE
 				end select
-				if ( iFound ) then
+				if ( iFound <> NULL ) then
 					chControl = ch
 					uiLengthTTY = ui
 					exit for
@@ -699,9 +699,9 @@ function fb_PrinterWrite( devInfo as DEV_LPT_INFO ptr, _data as any const ptr, l
 	dim as W32_PRINTER_INFO ptr pInfo = cast(W32_PRINTER_INFO ptr, devInfo->driver_opaque)
 	dim as DWORD dwWritten
 
-	if ( not(pInfo->hPrinter) ) then
+	if ( pInfo->hPrinter = NULL ) then
 		pInfo->Emu.pfnPrint( pInfo, _data, length, FALSE )
-	elseif( not(WritePrinter( pInfo->hPrinter, cast(LPVOID, _data), length, @dwWritten )) ) then
+	elseif( WritePrinter( pInfo->hPrinter, cast(LPVOID, _data), length, @dwWritten ) = NULL ) then
 		return fb_ErrorSetNum( FB_RTERROR_FILEIO )
 	elseif ( dwWritten <> length ) then
 		return fb_ErrorSetNum( FB_RTERROR_FILEIO )
@@ -714,9 +714,9 @@ function fb_PrinterWriteWstr( devInfo as DEV_LPT_INFO ptr, _data as FB_WCHAR con
 	dim as W32_PRINTER_INFO ptr pInfo = cast(W32_PRINTER_INFO ptr, devInfo->driver_opaque)
 	dim as DWORD dwWritten
 
-	if ( not(pInfo->hPrinter) ) then
+	if ( pInfo->hPrinter = NULL ) then
 		pInfo->Emu.pfnPrint( pInfo, _data, length, TRUE)
-	elseif ( not(WritePrinter( pInfo->hPrinter, cast(LPVOID, _data), length * sizeof( FB_WCHAR ), @dwWritten )) ) then
+	elseif ( WritePrinter( pInfo->hPrinter, cast(LPVOID, _data), length * sizeof( FB_WCHAR ), @dwWritten ) = 0 ) then
 		return fb_ErrorSetNum( FB_RTERROR_FILEIO )
 	elseif ( dwWritten <> length * sizeof( FB_WCHAR )) then
 		return fb_ErrorSetNum( FB_RTERROR_FILEIO )
@@ -729,7 +729,7 @@ function fb_PrinterClose( devInfo as DEV_LPT_INFO ptr ) as long
 	dim as W32_PRINTER_INFO ptr pInfo = cast(W32_PRINTER_INFO ptr, devInfo->driver_opaque)
 
 	if ( pInfo->hDc <> NULL ) then
-		if ( pInfo->Emu.iPageStarted ) then
+		if ( pInfo->Emu.iPageStarted <> NULL ) then
 			EndPage( pInfo->hDc )
 		end if
 		EndDoc( pInfo->hDc )
@@ -739,7 +739,7 @@ function fb_PrinterClose( devInfo as DEV_LPT_INFO ptr ) as long
 		ClosePrinter( pInfo->hPrinter )
 	end if
 
-	if ( devInfo->driver_opaque ) then
+	if ( devInfo->driver_opaque <> NULL ) then
 		free(devInfo->driver_opaque)
 	end if
 

@@ -27,7 +27,7 @@ function fb_ArrayRedimTo FBCALL ( dest as FBARRAY ptr, source as FBARRAY const p
 	end if
 
 	/' free old '/
-	if ( dtor <> 0 ) then
+	if ( dtor <> NULL ) then
 		fb_ArrayDestructObj( dest, dtor )
 	end if
 	fb_ArrayErase( dest, isvarlen )
@@ -42,7 +42,7 @@ function fb_ArrayRedimTo FBCALL ( dest as FBARRAY ptr, source as FBARRAY const p
 	memcpy( @dest->dimTB(0), @source->dimTB(0), sizeof( FBARRAYDIM ) * dest->dimensions )
 
 	/' Empty/unallocated source array? '/
-	if ( dest->size = 0 ) then
+	if ( dest->size = NULL ) then
 		/' Destination will be empty/unallocated too '/
 		dest->_ptr = NULL
 		dest->data = NULL
@@ -62,7 +62,7 @@ function fb_ArrayRedimTo FBCALL ( dest as FBARRAY ptr, source as FBARRAY const p
 	dest->data = (cast(ubyte ptr, dest->_ptr)) + diff
 
 	/' Call ctor for each element '/
-	if ( ctor <> 0 ) then
+	if ( ctor <> NULL ) then
 		this_ = dest->_ptr
 		limit = this_ + dest->size
 		while ( this_ < limit )

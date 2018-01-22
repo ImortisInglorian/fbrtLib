@@ -54,7 +54,7 @@ function fb_hArrayRealloc ( array as FBARRAY ptr, element_len as size_t, doclear
 		/' Clearing is not needed if not requested, or if ctors will be called
 		   (ctors take care of clearing themselves) '/
 		this_ = (cast(ubyte ptr,array->_ptr)) + array->size
-		if ( ctor ) then
+		if ( ctor <> NULL ) then
 			dim as size_t objects = (size - array->size) / element_len
 			while ( objects > 0 )
 				/' !!!FIXME!!! check exceptions (only if rewritten in C++) '/
@@ -95,7 +95,7 @@ private function hRedim ( array as FBARRAY ptr, element_len as size_t, doclear a
 	end if
 
 	/' realloc.. '/
-	if ( isvarlen <> 0 ) then
+	if ( isvarlen <> NULL ) then
 		dtor_mult = @fb_hArrayDtorStr
 	else
 		dtor_mult = NULL

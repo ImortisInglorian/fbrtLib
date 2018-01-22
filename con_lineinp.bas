@@ -31,7 +31,7 @@ function fb_ConsoleLineInput( text as FBSTRING ptr, dst as any ptr, dst_len as s
 
     tmp_result = fb_ConReadLine( FALSE )
 
-    if ( addnewline ) then
+    if ( addnewline <> NULL ) then
 		fb_PrintVoid( 0, FB_PRINT_NEWLINE )
     end if
 

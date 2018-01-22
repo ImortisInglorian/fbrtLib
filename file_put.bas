@@ -14,7 +14,7 @@ function fb_FilePutDataEx _
 		is_unicode as long ) as long
 	dim as long res
 
-    if ( FB_HANDLE_USED(handle) = 0 ) then
+    if ( FB_HANDLE_USED(handle) = NULL ) then
 		return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 	end if
 
@@ -85,7 +85,7 @@ function fb_FilePutDataEx _
 				i -= 1
         		while (i)
             		dim as ubyte ch = pachText[i]
-            		if ( ch = 10 or ch = 13 ) then
+            		if ( ch = asc(!"\n") or ch = asc(!"\r") ) then
 	                	exit while
 					end if
 					i -= 1
@@ -97,7 +97,7 @@ function fb_FilePutDataEx _
 				i -= 1
         		while (i)
             		dim as FB_WCHAR ch = pachText[i]
-            		if (ch = 10 or ch = 13 ) then
+            		if ( ch = asc(!"\n") or ch = asc(!"\r") ) then
 	                	exit while
 					end if
         		wend

@@ -47,7 +47,7 @@ function fb_DevFileReadLineDumb ( fp as FILE ptr, dst as FBSTRING ptr, pfnReadSt
 		buffer_len -= 1
         while (buffer_len <> 0)
             dim as ubyte ptr ch = buffer(buffer_len)
-            if (ch = 13 or ch = 10) then
+            if (ch = asc(!"\n") or ch = asc(!"\r")) then
                 /' accept both CR and LF '/
                 found = TRUE
                 exit while
@@ -70,8 +70,8 @@ function fb_DevFileReadLineDumb ( fp as FILE ptr, dst as FBSTRING ptr, pfnReadSt
             tmp_buf_len = buffer_len + 1
 
             /' filter a (possibly valid) CR/LF sequence '/
-            if ( buffer(buffer_len) = 10 and buffer_len <> 0 ) then
-                if ( buffer(buffer_len-1) = 13 ) then
+            if ( buffer(buffer_len) = asc(!"\n") and buffer_len <> 0 ) then
+                if ( buffer(buffer_len-1) = asc(!"\r") ) then
                     buffer_len -= 1
                 end if
             end if

@@ -60,7 +60,7 @@ function fb_ExecEx FBCALL ( program as FBSTRING ptr, args as FBSTRING ptr, do_fo
 		else
          /' Release main thread handle - we're not interested in it '/
 			CloseHandle( ProcessInfo.hThread )
-			if ( do_fork ) then
+			if ( do_fork <> NULL ) then
 				dim as DWORD dwExitCode
 				WaitForSingleObject( ProcessInfo.hProcess, INFINITE )
 				if ( GetExitCodeProcess( ProcessInfo.hProcess, @dwExitCode ) <> 0 ) then

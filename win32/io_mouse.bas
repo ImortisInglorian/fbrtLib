@@ -27,7 +27,7 @@ function fb_ConsoleGetMouse( x as long ptr, y as long ptr, z as long ptr, button
 
 	if ( inited = -1 ) then
 		inited = GetSystemMetrics( SM_CMOUSEBUTTONS )
-		if ( inited ) then
+		if ( inited <> NULL ) then
 			GetConsoleMode( __fb_in_handle, @dwMode )
 			dwMode or= ENABLE_MOUSE_INPUT
 			SetConsoleMode( __fb_in_handle, dwMode )
@@ -57,7 +57,7 @@ function fb_ConsoleGetMouse( x as long ptr, y as long ptr, z as long ptr, button
 	end if
 
 	#if 0
-	if ( PeekConsoleInput( __fb_in_handle, @ir, 1, @dwRead ) ) then
+	if ( PeekConsoleInput( __fb_in_handle, @ir, 1, @dwRead ) <> NULL ) then
 		if( dwRead > 0 ) then
 			ReadConsoleInput( __fb_in_handle, @ir, 1, @dwRead )
 			if ( ir.EventType = MOUSE_EVENT ) then

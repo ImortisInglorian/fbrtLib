@@ -15,7 +15,7 @@ function fb_FileOpenShort FBCALL ( str_file_mode as FBSTRING ptr, _
     dim as size_t file_mode_len, access_mode_len, lock_mode_len
     dim as long error_code = FB_RTERROR_OK
 
-    if ( FB_FILE_INDEX_VALID( fnum ) = 0 ) then
+    if ( FB_FILE_INDEX_VALID( fnum ) = NULL ) then
     	return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 	end if
 
@@ -23,7 +23,7 @@ function fb_FileOpenShort FBCALL ( str_file_mode as FBSTRING ptr, _
     access_mode_len = FB_STRSIZE( str_access_mode )
     lock_mode_len = FB_STRSIZE( str_lock_mode )
 
-    if ( file_mode_len <> 1 or access_mode_len>2 or lock_mode_len>2 ) then
+    if ( file_mode_len <> 1 or access_mode_len > 2 or lock_mode_len > 2 ) then
 		error_code = fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
     end if
 

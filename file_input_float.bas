@@ -16,7 +16,7 @@ function fb_InputSingle FBCALL ( dst as single ptr ) as long
 		elseif ( _len <= FB_INPUT_MAXLONGLEN ) then
 			*dst = cast(single, fb_hStr2Longint( @buffer(0), _len ))
 		else
-			if ( buffer(0) = 38 ) then
+			if ( buffer(0) = asc("&") ) then
 				*dst = cast(single, fb_hStr2Longint( @buffer(0), _len ))
 			else
 				*dst = strtof( @buffer(0), NULL )
@@ -42,7 +42,7 @@ function fb_InputDouble FBCALL( dst as double ptr ) as long
 		elseif ( _len <= FB_INPUT_MAXLONGLEN ) then
 			*dst = cast(double, fb_hStr2Longint( @buffer(0), _len ))
 		else
-			if ( buffer(0) = 38 ) then
+			if ( buffer(0) = asc("&") ) then
 				*dst = cast(double, fb_hStr2Longint( @buffer(0), _len ))
 			else
 				*dst = strtod( @buffer(0), NULL )

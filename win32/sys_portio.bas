@@ -35,7 +35,7 @@ private function install_driver( manager as SC_HANDLE ) as SC_HANDLE
 
 	remove_driver( )
 
-	if ( GetSystemDirectory( driver_filename(0), MAX_PATH ) ) then
+	if ( GetSystemDirectory( driver_filename(0), MAX_PATH ) <> NULL ) then
 		strncat( driver_filename(0), "\Drivers\fbportio.sys", MAX_PATH - strlen( driver_filename(0) ) - 1 )
 		driver_filename(MAX_PATH-1) = 0
 

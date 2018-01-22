@@ -21,7 +21,7 @@ function fb_FileAttr FBCALL ( handle as long, returntype as long ) as ssize_t
 
 	file = FB_FILE_TO_HANDLE( handle )
 
-	if ( file <> 0 ) then
+	if ( file <> NULL ) then
 		ret = 0
 		_err = FB_RTERROR_ILLEGALFUNCTIONCALL
 	else
@@ -35,10 +35,10 @@ function fb_FileAttr FBCALL ( handle as long, returntype as long ) as ssize_t
 					case FB_FILE_TYPE_PRINTER:
 						scope
 							dim as DEV_LPT_INFO ptr lptinfo = file->opaque
-							if ( lptinfo <> 0 ) then
+							if ( lptinfo <> NULL ) then
 								#ifdef HOST_WIN32
 									dim as W32_PRINTER_INFO ptr printerinfo = lptinfo->driver_opaque
-									if ( printerinfo <> 0 ) then
+									if ( printerinfo <> NULL ) then
 										/' Win32: HANDLE '/
 										ret = cast(ssize_t, printerinfo->hPrinter)
 										_err = FB_RTERROR_OK
@@ -54,22 +54,22 @@ function fb_FileAttr FBCALL ( handle as long, returntype as long ) as ssize_t
 					case FB_FILE_TYPE_SERIAL:
 						scope
 							dim as DEV_COM_INFO ptr cominfo = file->opaque
-							if ( cominfo <> 0 ) then
+							if ( cominfo <> NULL ) then
 								#ifdef HOST_WIN32
 									dim as W32_SERIAL_INFO ptr serialinfo = cominfo->hSerial
-									if ( serialinfo <> 0 ) then
+									if ( serialinfo <> NULL ) then
 										ret = cast(ssize_t, serialinfo->hDevice)
 										_err = FB_RTERROR_OK
 									end if
 								#elseif defined (HOST_LINUX)
 									dim as LINUX_SERIAL_INFO ptr serialinfo = cominfo->hSerial
-									if ( serialinfo <> 0 ) then
+									if ( serialinfo <> NULL ) then
 										ret = serialinfo->sfd
 										_err = FB_RTERROR_OK
 									end if
 								#elseif defined (HOST_DOS)
 									dim as DOS_SERIAL_INFO ptr serialinfo = cominfo->hSerial
-									if ( serialinfo <> 0 ) then
+									if ( serialinfo <> NULL ) then
 										ret = serialinfo->com_num
 										_err = FB_RTERROR_OK
 									end if

@@ -10,7 +10,7 @@ function fb_FileInput FBCALL ( fnum as long ) as long
 	FB_LOCK()
 
     handle = FB_FILE_TO_HANDLE(fnum)
-    if ( FB_HANDLE_USED(handle) = 0 ) then
+    if ( FB_HANDLE_USED(handle) = NULL ) then
         FB_UNLOCK()
         return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
     end if

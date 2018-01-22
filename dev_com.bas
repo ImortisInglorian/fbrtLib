@@ -124,7 +124,7 @@ function fb_DevComOpen( handle as FB_FILE ptr, filename as ubyte const ptr, file
         return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 	end if
 
-    if ( port > 0 ) then
+    if ( port > NULL ) then
     	i = sprintf( achDev(0), sadd("COM%u:"), cast(long, port) )
     else
     	i = strchr( filename, 58 ) - cast(zstring ptr, filename)

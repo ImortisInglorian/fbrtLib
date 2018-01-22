@@ -15,7 +15,7 @@ dim shared as ubyte ptr pszPrinterDev = sadd("LPT:EMU=TTY")
 #elseif defined( HOST_LINUX )
 dim shared as ubyte ptr pszPrinterDev = sadd("LPT:")
 #else
-dim shared as ubyte const ptr pszPrinterDev = "LPT1:"
+dim shared as ubyte const ptr pszPrinterDev = sadd("LPT1:")
 #endif
 
 function fb_LPrintInit( ) as long
@@ -41,7 +41,7 @@ end function
 function fb_FileOpenLpt FBCALL ( str_filename as FBSTRING ptr, mode as ulong, _
 								 access_ as ulong, _lock as ulong, _
 								 fnum as long, _len as long, _encoding as ubyte const ptr ) as long
-    if ( FB_FILE_INDEX_VALID( fnum ) = 0 ) then
+    if ( FB_FILE_INDEX_VALID( fnum ) = NULL ) then
     	return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 	end if
 

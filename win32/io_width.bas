@@ -12,7 +12,7 @@ function fb_ConsoleWidth( cols as long, rows as long ) as long
 
 	fb_InitConsoleWindow( )
 
-	if ( FB_CONSOLE_WINDOW_EMPTY() ) then
+	if ( FB_CONSOLE_WINDOW_EMPTY() <> NULL ) then
 		return 0
 	end if
 
@@ -69,7 +69,7 @@ function fb_ConsoleWidth( cols as long, rows as long ) as long
 		end if
 	end if
 
-	if ( do_resize ) then
+	if ( do_resize <> NULL ) then
 		dim as long i
 		for i = 0 to FB_CONSOLE_MAXPAGES
 			if ( __fb_con.pgHandleTb(i) <> NULL ) then

@@ -40,7 +40,7 @@ function fb_DevFileGetSize( fp as FILE ptr, mode as long, encod as FB_FILE_ENCOD
 
 			size = ftello( fp )
 
-			if ( seek_back ) then
+			if ( seek_back <> NULL ) then
 				fb_hDevFileSeekStart( fp, mode, encod, TRUE )
 			end if
 

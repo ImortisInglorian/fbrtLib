@@ -28,7 +28,7 @@ function fb_ConsoleLineInputWstr( text as FB_WCHAR const ptr, dst as FB_WCHAR pt
 
     tmp_result = fb_ConReadLine( FALSE )
 
-    if ( addnewline ) then
+    if ( addnewline <> NULL ) then
 		fb_PrintVoid( 0, FB_PRINT_NEWLINE )
 	end if
 

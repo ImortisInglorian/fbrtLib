@@ -66,7 +66,7 @@ sub fb_CondInit( )
 	   them does the initialization while the other one waits. '/
 	FB_MT_LOCK()
 
-	if ( __inited ) then
+	if ( __inited <> NULL ) then
 		FB_MT_UNLOCK()
 		exit sub
 	end if
@@ -113,7 +113,7 @@ function fb_CondCreate FBCALL ( ) as FBCOND ptr
 end function
 
 sub fb_CondDestroy FBCALL ( cond as FBCOND ptr )
-	if ( not(cond) ) then
+	if ( cond = NULL ) then
 		exit sub
 	end if
 	DeleteCriticalSection( @cond->waiters_count_lock )
@@ -124,7 +124,7 @@ end sub
 sub fb_CondSignal FBCALL ( cond as FBCOND ptr )
 	dim as long has_waiters
 
-	if ( not(cond) ) then
+	if ( cond = NULL ) then
 		return
 	end if
 	
@@ -132,13 +132,13 @@ sub fb_CondSignal FBCALL ( cond as FBCOND ptr )
 	has_waiters = cond->waiters_count > 0
 	LeaveCriticalSection( @cond->waiters_count_lock )
 
-	if ( has_waiters ) then
+	if ( has_waiters <> NULL ) then
 		__condops.signal( cond )
 	end if
 end sub
 
 sub fb_CondBroadcast FBCALL ( cond as FBCOND ptr )
-	if ( cond ) then
+	if ( cond <> NULL ) then
 		__condops.broadcast( cond )
 	end if
 end sub
@@ -198,7 +198,7 @@ sub fb_CondWait_nt FBCALL ( cond as FBCOND ptr, mutex as FBMUTEX ptr )
 	LeaveCriticalSection( @cond->waiters_count_lock )
 
 	/' relock mutex '/
-	if ( last_waiter ) then
+	if ( last_waiter <> NULL ) then
 		pSignalObjectAndWait( cond->nt.waiters_done, mutex->id, INFINITE, FALSE )
 	else
 		WaitForSingleObject( mutex->id, INFINITE )
@@ -228,7 +228,7 @@ sub fb_CondBroadcast_9x FBCALL ( cond as FBCOND ptr )
 	has_waiters = (cond->waiters_count > 0)
 	LeaveCriticalSection( @cond->waiters_count_lock )
 
-	if ( has_waiters ) then
+	if ( has_waiters <> NULL ) then
 		SetEvent( cond->w9x.event(_BROADCAST) )
 	end if
 end sub
@@ -250,7 +250,7 @@ sub fb_CondWait_9x FBCALL ( cond as FBCOND ptr, mutex as FBMUTEX ptr )
 	last_waiter = (result = WAIT_OBJECT_0 + _BROADCAST) and (cond->waiters_count = 0)
 	LeaveCriticalSection( @cond->waiters_count_lock )
 
-	if ( last_waiter ) then
+	if ( last_waiter <> NULL ) then
 		ResetEvent( cond->w9x.event(_BROADCAST) )
 	end if
 

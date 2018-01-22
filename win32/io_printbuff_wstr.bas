@@ -20,7 +20,7 @@ private sub fb_hHookConScroll ( handle as fb_ConHooks ptr, x1 as long, y1 as lon
 	dim as SMALL_RECT srScroll
 	dim as COORD dwDest
 
-	if ( not(pInfo->fViewSet) ) then
+	if ( pInfo->fViewSet = NULL ) then
 		/' Try to move the window first ... '/
 		if ( (handle->Border.Bottom + 1) < pInfo->BufferSize.Y ) then
 			dim as long remaining = pInfo->BufferSize.Y - handle->Border.Bottom - 1
@@ -136,7 +136,7 @@ sub fb_ConsolePrintBufferWstrEx( buffer as FB_WCHAR const ptr, chars as size_t, 
 	FB_LOCK()
 
 	/' is the output redirected? '/
-	if ( FB_CONSOLE_WINDOW_EMPTY() ) then
+	if ( FB_CONSOLE_WINDOW_EMPTY() <> NULL ) then
 		dim as DWORD dwBytesWritten, bytes = chars * sizeof( FB_WCHAR )
 
 		while( bytes <> 0 )
@@ -173,7 +173,7 @@ sub fb_ConsolePrintBufferWstrEx( buffer as FB_WCHAR const ptr, chars as size_t, 
 	scope
 		dim as CONSOLE_SCREEN_BUFFER_INFO screen_info
 
-		if ( Not(GetConsoleScreenBufferInfo( __fb_out_handle, @screen_info )) ) then
+		if ( GetConsoleScreenBufferInfo( __fb_out_handle, @screen_info ) = NULL ) then
 			hooks.Coord.X = hooks.Border.Left
 			hooks.Coord.Y = hooks.Border.Top
 			info.BufferSize.X = FB_SCRN_DEFAULT_WIDTH
@@ -187,7 +187,7 @@ sub fb_ConsolePrintBufferWstrEx( buffer as FB_WCHAR const ptr, chars as size_t, 
 			info.wAttributes = screen_info.wAttributes
 		end if
 
-		if ( __fb_con.scrollWasOff ) then
+		if ( __fb_con.scrollWasOff <> NULL ) then
 			__fb_con.scrollWasOff = FALSE
 			hooks.Coord.Y += 1
 			hooks.Coord.X = hooks.Border.Left

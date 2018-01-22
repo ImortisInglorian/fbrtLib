@@ -30,7 +30,7 @@ function fb_DevScrnEof( handle as FB_FILE ptr ) as long
     info = cast(DEV_SCRN_INFO ptr, FB_HANDLE_DEREF(handle)->opaque)
     got_data = (info->length <> 0)
     FB_UNLOCK()
-    if ( got_data = 0 ) then
+    if ( got_data = NULL ) then
         FB_LOCK()
         fb_DevScrnFillInput( info )
         got_data = (info->length <> 0)

@@ -51,27 +51,27 @@ private function  hSkipWhiteSpc( ctx as FB_INPUTCTX ptr ) as FB_WCHAR
 		if ( c = FB_WEOF ) then
 			exit do
 		end if
-	loop while( (c = 32 ) or (c = 9) )
+	loop while( (c = asc(" ") ) or (c = asc(!"\t")) )
 
 	return c
 end function
 
 private sub hSkipDelimiter( ctx as FB_INPUTCTX ptr, c as FB_WCHAR )
 	/' skip white space '/
-	while ( (c = 32) or (c = 9) )
+	while ( c = asc(" ")  or c = asc(!"\t") )
 		c = hReadChar( ctx )
 	wend
 
 	select case ( c )
-		case 44, FB_WEOF:
+		case asc(","), FB_WEOF:
 			'nothing
 
-		case 10:
+		case asc(!"\n"):
 			'nothing
 
-		case 13:
+		case asc(!"\r"):
 			c = hReadChar( ctx )
-			if ( c <> 10 ) then
+			if ( c <> asc(!"\n") ) then
 				hUnreadChar( ctx, c )
 			end if
 
@@ -98,20 +98,20 @@ sub fb_FileInputNextTokenWstr( buffer as FB_WCHAR ptr, max_chars as ssize_t, is_
 
 	while( (c <> FB_WEOF) and (_len < max_chars) )
 		select case ( c )
-			case 10:
+			case asc(!"\n"):
 				skipdelim = FALSE
 				goto _exit_
 
-			case 13:
+			case asc(!"\r"):
 				c = hReadChar( ctx )
-				if ( c <> 10 ) then
+				if ( c <> asc(!"\n") ) then
 					hUnreadChar( ctx, c )
 				end if
 
 				skipdelim = FALSE
 				goto _exit_
 
-			case 34:
+			case asc(!"\""):
 				if ( isquote = 0 ) then
 					if ( _len = 0 ) then
 						isquote = 1
@@ -126,7 +126,7 @@ sub fb_FileInputNextTokenWstr( buffer as FB_WCHAR ptr, max_chars as ssize_t, is_
 					end if
 				end if
 
-			case 44:
+			case asc(","):
 				if ( isquote = 0 ) then
 					skipdelim = FALSE
 					goto _exit_
@@ -134,7 +134,7 @@ sub fb_FileInputNextTokenWstr( buffer as FB_WCHAR ptr, max_chars as ssize_t, is_
 
 				goto savechar
 
-			case 9, 32:
+			case asc(!"\t"), asc(" "):
 				if ( isquote = 0 ) then
 					if ( is_string  = 0 ) then
 						goto _exit_

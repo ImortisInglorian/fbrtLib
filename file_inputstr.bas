@@ -14,7 +14,7 @@ function fb_FileStrInput FBCALL ( bytes as ssize_t, fnum as long ) as FBSTRING p
 	FB_LOCK()
 
     handle = FB_FILE_TO_HANDLE(fnum)
-    if ( FB_HANDLE_USED(handle) = 0 ) then
+    if ( FB_HANDLE_USED(handle) = NULL ) then
 		FB_UNLOCK()
 		return @__fb_ctx.null_desc
 	end if
@@ -22,7 +22,7 @@ function fb_FileStrInput FBCALL ( bytes as ssize_t, fnum as long ) as FBSTRING p
     dst = fb_hStrAllocTemp( NULL, bytes )
     if ( dst <> NULL ) then
         dim as ssize_t read_count = 0
-        if ( FB_HANDLE_IS_SCREEN(handle) <> 0 ) then
+        if ( FB_HANDLE_IS_SCREEN(handle) <> NULL ) then
             dst->data[0] = 0
             while ( read_count <> bytes )
                 res = fb_FileGetDataEx( handle, _

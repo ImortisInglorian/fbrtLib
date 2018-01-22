@@ -20,7 +20,7 @@ private sub fb_hHookConScroll( handle as fb_ConHooks ptr, x1 as long, y1 as long
 	dim as SMALL_RECT srScroll
 	dim as COORD dwDest
 
-	if ( not(pInfo->fViewSet) ) then
+	if ( pInfo->fViewSet = NULL ) then
 		/' Try to move the window first ... '/
 		if ( (handle->Border.Bottom + 1) < pInfo->BufferSize.Y ) then
 			dim as long remaining = pInfo->BufferSize.Y - handle->Border.Bottom - 1
@@ -166,7 +166,7 @@ sub fb_ConsolePrintBufferEx( buffer as any const ptr, _len as size_t, mask as lo
 	scope
 		dim as CONSOLE_SCREEN_BUFFER_INFO screen_info
 
-		if ( not(GetConsoleScreenBufferInfo( __fb_out_handle, @screen_info )) ) then
+		if ( GetConsoleScreenBufferInfo( __fb_out_handle, @screen_info ) = NULL ) then
 			hooks.Coord.X = hooks.Border.Left
 			hooks.Coord.Y = hooks.Border.Top
 			info.BufferSize.X = FB_SCRN_DEFAULT_WIDTH
@@ -180,7 +180,7 @@ sub fb_ConsolePrintBufferEx( buffer as any const ptr, _len as size_t, mask as lo
 			info.wAttributes = screen_info.wAttributes
 		end if
 
-		if ( __fb_con.scrollWasOff ) then
+		if ( __fb_con.scrollWasOff <> NULL ) then
 			__fb_con.scrollWasOff = FALSE
 			hooks.Coord.Y += 1
 			hooks.Coord.X = hooks.Border.Left
@@ -203,7 +203,7 @@ sub fb_ConsolePrintBufferEx( buffer as any const ptr, _len as size_t, mask as lo
 		end scope
 	end scope
 
-	if(  hooks.Border.Top <> win_top and not(info.fViewSet) ) then
+	if(  hooks.Border.Top <> win_top and info.fViewSet = NULL ) then
 		/' Now we have to ensure that the window shows the right part
 		 * of the screen buffer when it was moved previously ... '/
 		dim as SMALL_RECT srWindow = ( cast(SHORT, hooks.Border.Left), cast(SHORT, hooks.Border.Top), cast(SHORT, hooks.Border.Right), cast(SHORT, hooks.Border.Bottom) )

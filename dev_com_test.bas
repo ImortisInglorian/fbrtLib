@@ -7,7 +7,7 @@ function fb_DevComTestProtocolEx ( handle as FB_FILE ptr, filename as ubyte cons
     dim as ubyte ptr ch
     dim as size_t i, port
 
-    if ( pPort <> 0 ) then
+    if ( pPort <> NULL ) then
         *pPort = 0
     end if
 
@@ -42,7 +42,7 @@ function fb_DevComTestProtocolEx ( handle as FB_FILE ptr, filename as ubyte cons
         return FALSE
 	end if
 
-    if ( pPort <> 0 ) then
+    if ( pPort <> NULL ) then
         *pPort = port
 	end if
 

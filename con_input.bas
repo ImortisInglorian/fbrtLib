@@ -9,7 +9,7 @@ function fb_ConsoleInput FBCALL ( text as FBSTRING ptr, addquestion as long, add
 
 	fb_DevScrnInit_Read( )
 
-	if ( fb_IsRedirected( TRUE ) <> 0 ) then
+	if ( fb_IsRedirected( TRUE ) <> NULL ) then
 		/' del if temp '/
 		fb_hStrDelTemp( text )
 

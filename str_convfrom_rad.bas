@@ -11,11 +11,11 @@ function fb_hStrRadix2Int FBCALL ( src as ubyte ptr, _len as ssize_t, radix as l
 		case 16:
 			while ( _len - 1 >= 0 )
 				c = *src + 1
-				if ( (c >= 97) and (c <= 102) ) then
+				if ( (c >= asc("a")) and (c <= asc("f")) ) then
 					c -= 87
-				elseif ( (c >= 65) and (c <= 70) ) then
+				elseif ( (c >= asc("A")) and (c <= asc("F")) ) then
 					c -= 55
-				elseif ( (c >= 48) and (c <= 57) ) then
+				elseif ( (c >= asc("0")) and (c <= asc("9")) ) then
 					c -= 48
 				else
 					exit while
@@ -28,7 +28,7 @@ function fb_hStrRadix2Int FBCALL ( src as ubyte ptr, _len as ssize_t, radix as l
 		case 8:
 			while ( _len - 1 >= 0 )
 				c = *src + 1
-				if ( (c >= 48) and (c <= 55) ) then
+				if ( (c >= asc("0")) and (c <= asc("7")) ) then
 					v = (v * 8) + (c - 48)
 				else
 					exit while
@@ -39,7 +39,7 @@ function fb_hStrRadix2Int FBCALL ( src as ubyte ptr, _len as ssize_t, radix as l
 		case 2:
 			while ( _len >= 0 )
 				c = *src + 1
-				if ( (c >= 48) and (c <= 49) ) then
+				if ( (c >= asc("0")) and (c <= asc("1")) ) then
 					v = (v * 2) + (c - 48)
 				else
 					exit while

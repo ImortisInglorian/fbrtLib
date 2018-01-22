@@ -189,13 +189,13 @@ private function fb_hConsoleGetKeyEx( full as long, allow_remove as long ) as lo
 		dim as long do_remove = allow_remove
 		key = key_buffer(key_head)
 		if ( key > 255 ) then
-			if ( not(full) ) then
+			if ( full = NULL ) then
 				key_buffer(key_head) = (key shr 8)
 				key = cast(long, FB_EXT_CHAR)
 				do_remove = FALSE
 			end if
 		end if
-		if ( do_remove ) then
+		if ( do_remove = NULL ) then
 			key_head = (key_head + 1) and (KEY_BUFFER_LEN - 1)
 			/' Reset the status for "key buffer changed" when a key
 			 * was removed from the input queue. '/
@@ -244,7 +244,7 @@ end sub
 private sub fb_hConsoleProcessKeyEvent( event as KEY_EVENT_RECORD const ptr )
 	dim as long KeyCode
 	dim as long ValidKeyStatus, ValidKeys, AddScratchPadKey = FALSE
-	if ( event->bKeyDown ) then
+	if ( event->bKeyDown <> NULL ) then
 		KeyCode = fb_hConsoleTranslateKey( event->uChar.AsciiChar, event->wVirtualScanCode, event->wVirtualKeyCode, event->dwControlKeyState, FALSE )
 	else
 		KeyCode = -1
@@ -257,8 +257,8 @@ private sub fb_hConsoleProcessKeyEvent( event as KEY_EVENT_RECORD const ptr )
 	ValidKeys = (event->wVirtualKeyCode >= VK_NUMPAD0 and event->wVirtualKeyCode <= VK_NUMPAD9)
 	#endif
 
-	if ( ValidKeys and ValidKeyStatus ) then
-		if ( event->bKeyDown ) then
+	if ( ValidKeys <> NULL and ValidKeyStatus <> NULL ) then
+		if ( event->bKeyDown <> NULL ) then
 			dim as long number
 			#if 0
 			if( event->wVirtualScanCode <= &h49 ) then
@@ -278,7 +278,7 @@ private sub fb_hConsoleProcessKeyEvent( event as KEY_EVENT_RECORD const ptr )
 		end if
 	elseif ( KeyCode <> -1 ) then
 		key_scratch_pad = 0
-	elseif ( not(ValidKeyStatus) ) then
+	elseif ( ValidKeyStatus = NULL ) then
 		AddScratchPadKey = key_scratch_pad <> 0
 	end if
 
@@ -289,7 +289,7 @@ private sub fb_hConsoleProcessKeyEvent( event as KEY_EVENT_RECORD const ptr )
 	printf("%08x, %d\n", key_scratch_pad, ValidKeyStatus)
 	#endif
 
-	if ( AddScratchPadKey ) then
+	if ( AddScratchPadKey <> NULL ) then
 		dim as ubyte chAsciiCode= cast(char, (key_scratch_pad and &hFF))
 		dim as KEY_EVENT_RECORD rec
 		dim as SHORT wVkCode = VkKeyScan(chAsciiCode)
@@ -332,7 +332,7 @@ end sub
 
 private sub fb_hInitControlHandler( )
 	FB_LOCK()
-	if( not(control_handler_inited) ) then
+	if( control_handler_inited = NULL ) then
 		control_handler_inited = TRUE
 		'atexit( fb_hExitControlHandler )
 		'TODO: Needs to be called by destructor, but only if initialized?
@@ -349,7 +349,7 @@ function fb_ConsoleProcessEvents( ) as long
 	fb_hInitControlHandler()
 
 	do
-		if ( not(PeekConsoleInput( __fb_in_handle, @ir, 1, @dwRead ) ) ) then
+		if ( PeekConsoleInput( __fb_in_handle, @ir, 1, @dwRead ) = 0 ) then
 			dwRead = 0
 		end if
 
@@ -360,7 +360,7 @@ function fb_ConsoleProcessEvents( ) as long
 
 			select case ir.EventType
 				case KEY_EVENT:
-					if ( ir.Event.KeyEvent.bKeyDown and ir.Event.KeyEvent.wRepeatCount <> 0 ) then
+					if ( ir.Event.KeyEvent.bKeyDown <> NULL and ir.Event.KeyEvent.wRepeatCount <> 0 ) then
 						dim as size_t i
 						for i = 0 to ir.Event.KeyEvent.wRepeatCount
 							fb_hConsoleProcessKeyEvent( @ir.Event.KeyEvent )
@@ -394,7 +394,7 @@ function fb_hConsoleTranslateKey ( AsciiChar as ubyte, wVsCode as WORD, wVkCode 
 	dim as long is_ext_code = AsciiChar = 0
 
 	/' Process ENHANCED_KEY's in a different way '/
-	if ( (dwControlKeyState and ENHANCED_KEY) <> 0 and is_ext_code) then
+	if ( (dwControlKeyState and ENHANCED_KEY) <> 0 and is_ext_code <> NULL) then
 		dim as size_t i
 		for i = 0 to FB_KEY_LIST_SIZE - 1
 			dim as FB_KEY_LIST_ENTRY entry = fb_ext_key_entries(i)
@@ -455,8 +455,8 @@ function fb_hConsoleTranslateKey ( AsciiChar as ubyte, wVsCode as WORD, wVkCode 
 			AddKeyCode = (KeyCode > 255) and ((uiAsciiChar = uiNormalKey) or (uiAsciiChar = uiNormalKeyOtherCase))
 		end if
 
-		if ( not(AddKeyCode) and not(bEnhancedKeysOnly)) then
-			if ( not(is_ext_code) ) then
+		if ( AddKeyCode = NULL and bEnhancedKeysOnly = NULL) then
+			if ( is_ext_code = NULL ) then
 				/' The key code is simply the returned ASCII character '/
 				KeyCode = uiAsciiChar
 				AddKeyCode = TRUE

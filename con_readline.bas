@@ -60,7 +60,7 @@ function fb_ConReadLine FBCALL ( soft_cursor as long ) as FBSTRING ptr
 
 		fb_GetXY( @current_x, @current_y )
 
-		if ( soft_cursor <> 0 ) then
+		if ( soft_cursor <> NULL ) then
 			fb_PrintFixString( 0, sadd("\377"), 0 )
 			fb_Locate( current_y, current_x, FALSE, 0, 0 )
 		end if
@@ -70,7 +70,7 @@ function fb_ConReadLine FBCALL ( soft_cursor as long ) as FBSTRING ptr
 		wend
 
 		s = fb_Inkey( )
-		if ( s->data <> 0 ) then
+		if ( s->data <> NULL ) then
 			if ( FB_STRSIZE( s ) = 2 ) then
 				k = FB_MAKE_EXT_KEY( FB_CHAR_TO_INT( s->data[1] ) )
 			else
@@ -227,7 +227,7 @@ function fb_ConReadLine FBCALL ( soft_cursor as long ) as FBSTRING ptr
 
         fb_Locate( 0, 0, (soft_cursor = FALSE), 0, 0 )
 
-	loop while (k <> 13 and k <> 10)
+	loop while (k <> ASC(!"\n") and k <> ASC(!"\r"))
 
     FB_LOCK()
 

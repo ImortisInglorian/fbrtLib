@@ -114,8 +114,7 @@ end sub
    or fb_Die() in case of assert() failure or runtime error '/
 sub fb_End FBCALL ( errlevel as long )
 	if( __fb_ctx.exit_gfxlib2 <> NULL ) then
-		'TODO: Fix this with GFXlib
-		'__fb_ctx.exit_gfxlib2( )
+		__fb_ctx.exit_gfxlib2( )
 	end if
 
 	end( errlevel )

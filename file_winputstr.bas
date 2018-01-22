@@ -15,7 +15,7 @@ function fb_FileWstrInput FBCALL ( chars as ssize_t, fnum as long ) as FB_WCHAR 
 
     handle = FB_FILE_TO_HANDLE(fnum)
 
-    if ( FB_HANDLE_USED(handle) <> 0 ) then
+    if ( FB_HANDLE_USED(handle) <> NULL ) then
 		FB_UNLOCK()
 		return NULL
 	end if
@@ -23,7 +23,7 @@ function fb_FileWstrInput FBCALL ( chars as ssize_t, fnum as long ) as FB_WCHAR 
     dst = fb_wstr_AllocTemp( chars )
     if ( dst <> NULL ) then
         dim as ssize_t read_chars = 0
-        if ( FB_HANDLE_IS_SCREEN(handle) <> 0 ) then
+        if ( FB_HANDLE_IS_SCREEN(handle) <> NULL ) then
             while ( read_chars <> chars )
                 res = fb_FileGetDataEx( handle, 0, cast(any ptr, @dst[read_chars]),chars - read_chars, @_len, TRUE, TRUE )
                 if ( res <> FB_RTERROR_OK ) then

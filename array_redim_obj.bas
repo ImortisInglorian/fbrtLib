@@ -8,7 +8,7 @@ function fb_ArrayRedimObj ( array as FBARRAY ptr, element_len as size_t, ctor as
 	dim as long res
 
 	/' free old '/
-	if ( dtor <> 0 ) then
+	if ( dtor <> NULL ) then
 		fb_ArrayDestructObj( array, dtor )
 	end if
 	fb_ArrayErase( array, 0 )

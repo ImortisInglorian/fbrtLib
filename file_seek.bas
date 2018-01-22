@@ -6,7 +6,7 @@ extern "C"
 function fb_FileSeekEx( handle as FB_FILE ptr, newpos as fb_off_t ) as long
 	dim as long res
 
-    if ( FB_HANDLE_USED(handle) = 0 ) then
+    if ( FB_HANDLE_USED(handle) = NULL ) then
 		return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 	end if
 

@@ -15,7 +15,7 @@ function fb_Timer FBCALL ( ) as double
 	dim as LARGE_INTEGER count
 
 	if ( _timer = TIMER_NONE ) then
-		if ( QueryPerformanceFrequency( @count ) ) then
+		if ( QueryPerformanceFrequency( @count ) <> NULL ) then
 			frequency = 1.0 / cast(double, count.QuadPart)
 			_timer = TIMER_HIGHRES
 		else

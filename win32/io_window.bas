@@ -12,7 +12,7 @@ private sub hReadConsoleRect( pRect as SMALL_RECT ptr, GetRealWindow as long )
 	if ( GetConsoleScreenBufferInfo( __fb_out_handle, @info ) = 0 ) then
 		memset( pRect, 0, sizeof(SMALL_RECT) )
 	else
-		if ( GetRealWindow ) then
+		if ( GetRealWindow <> NULL ) then
 			memcpy( pRect, @info.srWindow, sizeof(SMALL_RECT) )
 		else
 			pRect->Left = 0
@@ -56,7 +56,7 @@ end sub
 
 sub fb_InitConsoleWindow( )
 	static as long inited = FALSE
-	if ( not(inited) ) then
+	if ( inited = NULL ) then
 		inited = TRUE
 		/' query the console window position/size only when needed '/
 		fb_hUpdateConsoleWindow( )
@@ -69,7 +69,7 @@ sub fb_hRestoreConsoleWindow FBCALL ( )
 	/' Whenever the console was set by the user, there's no need to
 	 * restore the original window console because we don't have to
 	 * mess around with scrollable windows '/
-	if (__fb_con.setByUser) then
+	if ( __fb_con.setByUser <> NULL ) then
 		exit sub
 	end if
 
@@ -105,7 +105,7 @@ sub fb_hConvertToConsole FBCALL ( _left as long ptr, top as long ptr, _right as 
 
 	fb_InitConsoleWindow()
 
-	if ( FB_CONSOLE_WINDOW_EMPTY() ) then
+	if ( FB_CONSOLE_WINDOW_EMPTY() <> NULL ) then
 		exit sub
 	end if
 
@@ -130,7 +130,7 @@ sub fb_hConvertFromConsole FBCALL ( _left as long ptr, top as long ptr, _right a
 
 	fb_InitConsoleWindow()
 
-	if ( FB_CONSOLE_WINDOW_EMPTY() ) then
+	if ( FB_CONSOLE_WINDOW_EMPTY() <> NULL ) then
 		exit sub
 	end if
 
@@ -153,7 +153,7 @@ end sub
 sub fb_hConsoleGetWindow( _left as long ptr, top as long ptr, cols as long ptr, rows as long ptr )
 	fb_InitConsoleWindow( )
 
-	if ( FB_CONSOLE_WINDOW_EMPTY() ) then
+	if ( FB_CONSOLE_WINDOW_EMPTY() <> NULL ) then
 		if ( _left <> NULL ) then
 			*_left = 0
 		end if

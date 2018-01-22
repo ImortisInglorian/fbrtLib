@@ -15,7 +15,7 @@ function fb_ConsoleReadXY FBCALL ( col as long, row as long, colorflag as long )
 	coord.X = cast(SHORT, col)
 	coord.Y = cast(SHORT, row)
 
-	if ( colorflag ) then
+	if ( colorflag <> NULL ) then
 		ReadConsoleOutputAttribute( __fb_out_handle, @attribute, 1, coord, @res)
 		return (cast(ulong, attribute)) and &hfffful
 	else

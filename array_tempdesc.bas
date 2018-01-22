@@ -56,7 +56,7 @@ function fb_ArrayAllocTempDesc( pdesc as FBARRAY ptr ptr, arraydata as any ptr, 
 		return NULL
 	end if
 
-	if ( dimensions = 0) then
+	if ( dimensions = NULL) then
 		/' special case for GET temp arrays '/
 		array->size = 0
 		return array
