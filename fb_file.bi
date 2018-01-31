@@ -198,13 +198,13 @@ private function FB_HANDLE_DEREF( handle as FB_FILE ptr ) as FB_FILE ptr
 	return handle
 end function
 
-declare function fb_FilePutData 			cdecl  ( fnum as long, pos as fb_off_t, data as any const ptr, length as size_t, adjust_rec_pos as long, checknewline as long ) as long
-declare function fb_FilePutDataEx 			cdecl  ( handle as FB_FILE ptr, pos as fb_off_t, data as any const ptr, length as size_t, adjust_rec_pos as long, checknewline as long, isunicode as long ) as long
-declare function fb_FileGetData 			cdecl  ( fnum as long, pos as fb_off_t, data as any ptr, length as size_t, adjust_rec_pos as long ) as long
-declare function fb_FileGetDataEx 			cdecl  ( handle as FB_FILE ptr, pos as fb_off_t, data as any ptr, length as size_t, bytesread as size_t ptr, adjust_rec_pos as long, isunicode as long ) as long
+declare function fb_FilePutData 				   ( fnum as long, pos as fb_off_t, data as any const ptr, length as size_t, adjust_rec_pos as long, checknewline as long ) as long
+declare function fb_FilePutDataEx 				   ( handle as FB_FILE ptr, pos as fb_off_t, data as any const ptr, length as size_t, adjust_rec_pos as long, checknewline as long, isunicode as long ) as long
+declare function fb_FileGetData 				   ( fnum as long, pos as fb_off_t, data as any ptr, length as size_t, adjust_rec_pos as long ) as long
+declare function fb_FileGetDataEx 				   ( handle as FB_FILE ptr, pos as fb_off_t, data as any ptr, length as size_t, bytesread as size_t ptr, adjust_rec_pos as long, isunicode as long ) as long
 
-declare function fb_FileOpenVfsRawEx 		cdecl  ( handle as FB_FILE ptr, filename as ubyte const ptr, filename_length as size_t, mode as ulong, access as ulong, lock as ulong, _len as long, encoding as FB_FILE_ENCOD, pfnOpen as FnFileOpen ) as long
-declare function fb_FileOpenVfsEx 			cdecl  ( handle as FB_FILE ptr, str_filename as FBSTRING ptr, mode as ulong, access as ulong, lock as ulong, len as long, encoding as FB_FILE_ENCOD, pfnOpen as FnFileOpen ) as long
+declare function fb_FileOpenVfsRawEx 			   ( handle as FB_FILE ptr, filename as ubyte const ptr, filename_length as size_t, mode as ulong, access as ulong, lock as ulong, _len as long, encoding as FB_FILE_ENCOD, pfnOpen as FnFileOpen ) as long
+declare function fb_FileOpenVfsEx 				   ( handle as FB_FILE ptr, str_filename as FBSTRING ptr, mode as ulong, access as ulong, lock as ulong, len as long, encoding as FB_FILE_ENCOD, pfnOpen as FnFileOpen ) as long
 declare function fb_FileOpenCons 			FBCALL ( str_filename as FBSTRING ptr, mode as ulong, access as ulong, lock as ulong, fnum as long, len as long, encoding as ubyte const ptr ) as long
 declare function fb_FileOpenErr 			FBCALL ( str_filename as FBSTRING ptr, mode as ulong, access as ulong, lock as ulong, fnum as long, len as long, encoding as ubyte const ptr ) as long
 declare function fb_FileOpenPipe 			FBCALL ( str_filename as FBSTRING ptr, mode as ulong, access as ulong, lock as ulong, fnum as long, len as long, encoding as ubyte const ptr ) as long
@@ -219,18 +219,18 @@ declare function fb_FileOpenQB 				FBCALL ( str as FBSTRING ptr, mode as ulong, 
 declare function fb_FileFree 				FBCALL ( ) as long
 declare function fb_FileOpen 				FBCALL ( str as FBSTRING ptr, mode as ulong, access as ulong, lock as ulong, fnum as long, len as long ) as long
 declare function fb_FileOpenEncod 			FBCALL ( str as FBSTRING ptr, mode as ulong, access as ulong, lock as ulong, fnum as long, len as long, encoding as ubyte const ptr ) as long
-declare function fb_FileOpenEx 				cdecl  ( handle as FB_FILE ptr, _str as FBSTRING ptr, mode as ulong, access as ulong, lock as ulong, len as long ) as long
+declare function fb_FileOpenEx 					   ( handle as FB_FILE ptr, _str as FBSTRING ptr, mode as ulong, access as ulong, lock as ulong, len as long ) as long
 declare function fb_FileOpenShort 			FBCALL ( str_file_mode as FBSTRING ptr, fnum as long, filename as FBSTRING ptr, len as long, str_access_mode as FBSTRING ptr, str_lock_mode as FBSTRING ptr ) as long
-declare function fb_FileCloseEx 			cdecl  ( handle as FB_FILE ptr ) as long
+declare function fb_FileCloseEx 				   ( handle as FB_FILE ptr ) as long
 declare function fb_FileClose 				FBCALL ( fnum as long ) as long
 declare function fb_FileCloseAll 			FBCALL ( ) as long
 
 declare function fb_FilePut 				FBCALL ( fnum as long, pos as long, value as any ptr, valuelen as size_t ) as long
 declare function fb_FilePutLarge 			FBCALL ( fnum as long, pos as longint, value as any ptr, valuelen as size_t ) as long
-declare function fb_FilePutEx 				cdecl  ( handle as FB_FILE ptr, pos as fb_off_t, value as any ptr, valuelen as size_t ) as long
+declare function fb_FilePutEx 					   ( handle as FB_FILE ptr, pos as fb_off_t, value as any ptr, valuelen as size_t ) as long
 declare function fb_FilePutStr 				FBCALL ( fnum as long, pos as long, str as any ptr, str_len as ssize_t ) as long
 declare function fb_FilePutStrLarge 		FBCALL ( fnum as long, pos as longint, str as any ptr, str_len as ssize_t ) as long
-declare function fb_FilePutStrEx 			cdecl  ( handle as FB_FILE ptr, pos as fb_off_t, str as any ptr, str_len as ssize_t ) as long
+declare function fb_FilePutStrEx 				   ( handle as FB_FILE ptr, pos as fb_off_t, str as any ptr, str_len as ssize_t ) as long
 declare function fb_FilePutArray 			FBCALL ( fnum as long, pos as long, src as FBARRAY ptr ) as long
 declare function fb_FilePutArrayLarge 		FBCALL ( fnum as long, pos as longint, src as FBARRAY ptr ) as long
 
@@ -238,36 +238,36 @@ declare function fb_FileGet 				FBCALL ( fnum as long, pos as long, value as any
 declare function fb_FileGetLarge 			FBCALL ( fnum as long, pos as longint, dst as any ptr, chars as size_t ) as long
 declare function fb_FileGetIOB 				FBCALL ( fnum as long, pos as long, dst as any ptr, chars as size_t, bytesread as size_t ptr ) as long
 declare function fb_FileGetLargeIOB 		FBCALL ( fnum as long, pos as longint, dst as any ptr, chars as size_t, bytesread as size_t ptr ) as long
-declare function fb_FileGetEx 				cdecl  ( handle as FB_FILE ptr, pos as fb_off_t, value as any ptr, valuelen as size_t ) as long
+declare function fb_FileGetEx 					   ( handle as FB_FILE ptr, pos as fb_off_t, value as any ptr, valuelen as size_t ) as long
 declare function fb_FileGetStr 				FBCALL ( fnum as long, pos as long, str as any ptr, str_len as ssize_t ) as long
 declare function fb_FileGetStrLarge 		FBCALL ( fnum as long, pos as longint, str as any ptr, str_len as ssize_t ) as long
 declare function fb_FileGetStrIOB 			FBCALL ( fnum as long, pos as long, str as any ptr, str_len as ssize_t, bytesread as size_t ptr ) as long
 declare function fb_FileGetStrLargeIOB 		FBCALL ( fnum as long, pos as longint, _tr as any ptr, str_len as ssize_t, bytesread as size_t ptr ) as long
-declare function fb_FileGetStrEx 			cdecl  ( handle as FB_FILE ptr, pos as fb_off_t, str as any ptr, str_len as ssize_t, bytesread as size_t ptr ) as long
+declare function fb_FileGetStrEx 				   ( handle as FB_FILE ptr, pos as fb_off_t, str as any ptr, str_len as ssize_t, bytesread as size_t ptr ) as long
 declare function fb_FileGetArray 			FBCALL ( fnum as long, pos as long, dst as FBARRAY ptr ) as long
 declare function fb_FileGetArrayLarge 		FBCALL ( fnum as long, pos as longint, dst as FBARRAY ptr ) as long
 declare function fb_FileGetArrayIOB 		FBCALL ( fnum as long, pos as long, dst as FBARRAY ptr, bytesread as size_t ptr ) as long
 declare function fb_FileGetArrayLargeIOB 	FBCALL ( fnum as long, pos as longint, dst as FBARRAY ptr, bytesread as size_t ptr ) as long
 
 declare function fb_FileEof 				FBCALL ( fnum as long ) as long
-declare function fb_FileEofEx 				cdecl  ( handle as FB_FILE ptr ) as long
+declare function fb_FileEofEx 					   ( handle as FB_FILE ptr ) as long
 declare function fb_FileTell 				FBCALL ( fnum as long ) as longint
 declare function fb_FileTellEx 				       ( handle as FB_FILE ptr ) as fb_off_t
 declare function fb_FileSeek 				FBCALL ( fnum as long, newpos as long )  as long
 declare function fb_FileSeekLarge 			FBCALL ( fnum as long, newpos as longint ) as long
-declare function fb_FileSeekEx 				cdecl  ( handle as FB_FILE ptr, newpos as fb_off_t ) as long
+declare function fb_FileSeekEx 					   ( handle as FB_FILE ptr, newpos as fb_off_t ) as long
 declare function fb_FileLocation 			FBCALL ( fnum as long ) as longint
-declare function fb_FileLocationEx 			cdecl  ( handle as FB_FILE ptr ) as fb_off_t
+declare function fb_FileLocationEx 				   ( handle as FB_FILE ptr ) as fb_off_t
 declare function fb_FileKill 				FBCALL ( str as FBSTRING ptr ) as long
-declare sub 	  fb_FileReset 				FBCALL ( )
-declare sub 	  fb_FileResetEx 			FBCALL ( streamno as long )
-declare function fb_hFileResetEx 			cdecl  ( streamno as long ) as long
+declare sub 	 fb_FileReset 				FBCALL ( )
+declare sub 	 fb_FileResetEx 			FBCALL ( streamno as long )
+declare function fb_hFileResetEx 				   ( streamno as long ) as long
 declare function fb_FileSize 				FBCALL ( fnum as long ) as longint
-declare function fb_FileSizeEx 				cdecl  ( handle as FB_FILE ptr ) as fb_off_t
+declare function fb_FileSizeEx 					   ( handle as FB_FILE ptr ) as fb_off_t
 declare function fb_FilePutBack 			FBCALL ( fnum as long, _data as any const ptr, length as size_t ) as long
 declare function fb_FilePutBackWstr 		FBCALL ( fnum as long, src as FB_WCHAR const ptr, chars as size_t ) as long
-declare function fb_FilePutBackEx 			cdecl  ( handle as FB_FILE ptr, _data as any const ptr, length as size_t ) as long
-declare function fb_FilePutBackWstrEx 		cdecl  ( handle as FB_FILE ptr, src as FB_WCHAR ptr, chars as size_t ) as long
+declare function fb_FilePutBackEx 				   ( handle as FB_FILE ptr, _data as any const ptr, length as size_t ) as long
+declare function fb_FilePutBackWstrEx 			   ( handle as FB_FILE ptr, src as FB_WCHAR ptr, chars as size_t ) as long
 
 declare function fb_FileInput 				FBCALL ( fnum as long ) as long
 declare function fb_FileStrInput 			FBCALL ( bytes as ssize_t, fnum as long ) as FBSTRING ptr
@@ -294,21 +294,21 @@ declare function fb_FileLockLarge 			FBCALL ( fnum as long, inipos as longint, e
 declare function fb_FileUnlock 				FBCALL ( fnum as long, inipos as ulong, endpos as ulong ) as long
 declare function fb_FileUnlockLarge 		FBCALL ( fnum as long, inipos as longint, endpos as longint ) as long
 
-declare function fb_hFilePrintBuffer 		cdecl  ( fnum as long, buffer as ubyte const ptr ) as long
-declare function fb_hFilePrintBufferWstr 	cdecl  ( fnum as long, buffer as FB_WCHAR const ptr ) as long
-declare function fb_hFilePrintBufferEx 		cdecl  ( handle as FB_FILE ptr, buffer as any const ptr, len as size_t ) as long
-declare function fb_hFilePrintBufferWstrEx 	cdecl  ( handle as FB_FILE ptr, buffer as FB_WCHAR const ptr, len as size_t ) as long
+declare function fb_hFilePrintBuffer 			   ( fnum as long, buffer as ubyte const ptr ) as long
+declare function fb_hFilePrintBufferWstr 		   ( fnum as long, buffer as FB_WCHAR const ptr ) as long
+declare function fb_hFilePrintBufferEx 			   ( handle as FB_FILE ptr, buffer as any const ptr, len as size_t ) as long
+declare function fb_hFilePrintBufferWstrEx 		   ( handle as FB_FILE ptr, buffer as FB_WCHAR const ptr, len as size_t ) as long
 
-declare function fb_hFileLock 				cdecl  ( f as FILE ptr, inipos as fb_off_t, size as fb_off_t ) as long
-declare function fb_hFileUnlock 			cdecl  ( f as FILE ptr, inipos as fb_off_t, size as fb_off_t ) as long
-declare sub 	 fb_hConvertPath 			cdecl  ( path as ubyte ptr )
+declare function fb_hFileLock 					   ( f as FILE ptr, inipos as fb_off_t, size as fb_off_t ) as long
+declare function fb_hFileUnlock 				   ( f as FILE ptr, inipos as fb_off_t, size as fb_off_t ) as long
+declare sub 	 fb_hConvertPath 				   ( path as ubyte ptr )
 
-declare function fb_hFileStrToEncoding 		cdecl  ( encoding as ubyte ptr ) as FB_FILE_ENCOD
+declare function fb_hFileStrToEncoding 			   ( encoding as ubyte ptr ) as FB_FILE_ENCOD
 
 declare function fb_SetPos 					FBCALL ( handle as FB_FILE ptr, line_length as long ) as long
 
-declare function fb_FileInputNextToken 		cdecl  ( buffer as ubyte ptr, maxlen as ssize_t, isstring as long, isfp as long ptr ) as long
-declare sub 	 fb_FileInputNextTokenWstr 	cdecl  ( buffer as FB_WCHAR ptr, max_chars as ssize_t, is_string as long )
+declare function fb_FileInputNextToken 			   ( buffer as ubyte ptr, maxlen as ssize_t, isstring as long, isfp as long ptr ) as long
+declare sub 	 fb_FileInputNextTokenWstr 		   ( buffer as FB_WCHAR ptr, max_chars as ssize_t, is_string as long )
 
 declare function fb_Dir 					FBCALL ( filespec as FBSTRING ptr, attrib as long, out_attrib as long ptr ) as FBSTRING ptr
 declare function fb_Dir64 					FBCALL ( filespec as FBSTRING ptr, attrib as long, outattrib as longint ptr ) as FBSTRING ptr
@@ -340,11 +340,11 @@ declare function fb_DirNext64 				FBCALL ( outattrib as longint ptr ) as FBSTRIN
 
 dim shared as UTF_8 __fb_utf8_bmarkTb(0 to 6)
 
-declare sub 	 fb_hCharToUTF8 			cdecl  ( src as ubyte const ptr, chars as ssize_t, dst as ubyte ptr, bytes as ssize_t ptr )
-declare function fb_CharToUTF 				cdecl  ( encod as FB_FILE_ENCOD, src as ubyte const ptr, chars as ssize_t, dst as ubyte ptr, bytes as ssize_t ptr ) as ubyte ptr
-declare function fb_WCharToUTF 				cdecl  ( encod as FB_FILE_ENCOD, src as FB_WCHAR const ptr, chars as ssize_t, dst as ubyte ptr, bytes as ssize_t ptr ) as ubyte ptr
-declare function fb_hFileRead_UTFToChar 	cdecl  ( fp as FILE ptr, encod as FB_FILE_ENCOD, dst as ubyte ptr, max_chars as ssize_t ) as ssize_t
-declare function fb_hFileRead_UTFToWchar 	cdecl  ( fp as FILE ptr, encod as FB_FILE_ENCOD, dst as FB_WCHAR ptr, max_chars as ssize_t ) as ssize_t
+declare sub 	 fb_hCharToUTF8 				   ( src as ubyte const ptr, chars as ssize_t, dst as ubyte ptr, bytes as ssize_t ptr )
+declare function fb_CharToUTF 					   ( encod as FB_FILE_ENCOD, src as ubyte const ptr, chars as ssize_t, dst as ubyte ptr, bytes as ssize_t ptr ) as ubyte ptr
+declare function fb_WCharToUTF 					   ( encod as FB_FILE_ENCOD, src as FB_WCHAR const ptr, chars as ssize_t, dst as ubyte ptr, bytes as ssize_t ptr ) as ubyte ptr
+declare function fb_hFileRead_UTFToChar 		   ( fp as FILE ptr, encod as FB_FILE_ENCOD, dst as ubyte ptr, max_chars as ssize_t ) as ssize_t
+declare function fb_hFileRead_UTFToWchar 		   ( fp as FILE ptr, encod as FB_FILE_ENCOD, dst as FB_WCHAR ptr, max_chars as ssize_t ) as ssize_t
 
 /''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
  * VB-compatible functions

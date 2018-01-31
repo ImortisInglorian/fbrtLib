@@ -151,7 +151,7 @@ function fb_hIn( port as ushort ) as long
 	return cast(long, value)
 end function
 
-function fb_hOut( port as ushort, value as ubyte ptr ) as long
+function fb_hOut( port as ushort, value as ubyte ) as long
 	if ( inited = NULL ) then
 		inited = init_ports( )
 	end if

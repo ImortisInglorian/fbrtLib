@@ -13,6 +13,7 @@
 type BLENDER as  function FBCALL (as ulong, as ulong, as any ptr) as ulong
 type PUTTER as sub ( as ubyte ptr, as ubyte ptr, as long, as long, as long, as long, as long, as BLENDER ptr, as any ptr)
 
+
 type FB_GFXCTX
 	as long id
 	as long work_page
@@ -47,9 +48,9 @@ type FB_GFXCTX
 	as single win_h
 	as ulong fg_color
 	as ulong bg_color
-	as sub ptr put_pixel ( ctx as FB_GFXCTX ptr, x as long, y as long, _color as ulong )
-	as function ptr get_pixel ( ctx as FB_GFXCTX ptr, x as long, y as long ) as ulong
-	as function ptr pixel_set ( dest as any ptr, _color as long, size as size_t) as any ptr
-	as PUTTER ptr ptr putter(0 to PUT_MODES - 1)
+	as sub ( ctx as FB_GFXCTX ptr, x as long, y as long, _color as ulong ) put_pixel
+	as function( ctx as FB_GFXCTX ptr, x as long, y as long ) as ulong get_pixel
+	as function( dest as any ptr, _color as long, size as size_t) as any ptr pixel_set
+	as PUTTER putter(0 to PUT_MODES - 1)
 	as long flags
 end type

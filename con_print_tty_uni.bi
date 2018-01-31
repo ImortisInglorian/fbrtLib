@@ -48,7 +48,7 @@ sub FB_CONPRINTTTY_( handle as fb_ConHooks ptr, pachText as FB_TCHAR ptr, TextLe
 				end if
 				dwMoveCoord.Y = 0
 
-			case 10:
+			case asc(!"\n"):
 				/' LINE FEED / NEW LINE '/
 				fSetNewCoord = TRUE
 				if ( is_text_mode <> 0 ) then
@@ -59,13 +59,13 @@ sub FB_CONPRINTTTY_( handle as fb_ConHooks ptr, pachText as FB_TCHAR ptr, TextLe
 					dwMoveCoord.Y = 1
 				end if
 
-			case 13:
+			case asc(!"\r"):
 				/' CARRIAGE RETURN '/
 				fSetNewCoord = TRUE
 				dwMoveCoord.X = pBorder->Left - dwCurrentCoord.X
 				dwMoveCoord.Y = 0
 
-			case 9:
+			case asc(!"\t"):
 				/' TAB '/
 				pachOutputData = @achTabSpaces(0)
 				OutputDataChars = ((dwCurrentCoord.X - pBorder->Left + 8) and not(7)) - (dwCurrentCoord.X - pBorder->Left)
@@ -82,7 +82,7 @@ sub FB_CONPRINTTTY_( handle as fb_ConHooks ptr, pachText as FB_TCHAR ptr, TextLe
             fDoFlush = TRUE
         end if
 
-        if ( fDoFlush ) then
+        if ( fDoFlush <> NULL ) then
             fDoFlush = FALSE
             if ( OutputBufferLength <> 0 ) then
                 FB_CONPRINTRAW_( handle, @OutputBuffer(0), OutputBufferChars )
@@ -119,7 +119,7 @@ sub FB_CONPRINTTTY_( handle as fb_ConHooks ptr, pachText as FB_TCHAR ptr, TextLe
 
     if ( OutputBufferLength <> 0 ) then
         FB_CONPRINTRAW_( handle, @OutputBuffer(0), OutputBufferChars )
-    elseif ( fGotNewCoordinate ) then
+    elseif ( fGotNewCoordinate <> NULL ) then
         fb_hConCheckScroll( handle )
     end if
 end sub

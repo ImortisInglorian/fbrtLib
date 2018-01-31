@@ -18,6 +18,6 @@ declare function fb_CVSFROML        FBCALL ( l as long ) as single
 declare function fb_CVLFROMS        FBCALL ( f as single ) as long
 declare function fb_CVLONGINTFROMD  FBCALL ( d as double ) as longint
 
-declare function fb_IntLog10_32 		FBCALL ( x as ulong ) as long
-declare function fb_IntLog10_64 		FBCALL ( x as ulongint ) as long
+declare function fb_IntLog10_32 	FBCALL ( x as ulong ) as long
+declare function fb_IntLog10_64 	FBCALL ( x as ulongint ) as long
 end extern

@@ -10,7 +10,7 @@ extern "C"
 
 	function ftello64 cdecl (stream as FILE ptr) as off64_t
 		dim as fpos_t _pos
-		if ( fgetpos(stream, @_pos) ) then
+		if ( fgetpos(stream, @_pos) <> NULL ) then
 			return  -1
 		else
 			return (cast(off64_t, _pos))

@@ -19,8 +19,9 @@ type UTF_8 as ubyte
 
 #if defined (HOST_DOS)
 	#define FB_WCHAR ubyte
-	#define FB_WEOF ((FB_WCHAR)EOF)
+	#define FB_WEOF (cast(FB_WCHAR, EOF))
 	#define wcslen(s) strlen(s)
+	#define _LC(c) c
 	#define iswlower(c) islower(c)
 	#define iswupper(c) isupper(c)
 	#define towlower(c) tolower(c)
@@ -58,6 +59,7 @@ type UTF_8 as ubyte
 		end function
 #elseif defined (HOST_WIN32)
 	#define FB_WCHAR ushort
+		#define _LC(c) wstr(c)
 	/'#if defined (HOST_MINGW)'/
 		#define FB_WEOF (cast(FB_WCHAR,WEOF))
 		#define FB_WSTR_FROM_INT( buffer, num )        _itow( num, buffer, 10 )
@@ -77,7 +79,9 @@ type UTF_8 as ubyte
 	#include "crt_extra/wctype.bi"
 	#define FB_WCHAR wchar_t
 	#define FB_WEOF cast(FB_WCHAR, WEOF)
+	#define _LC(c) wstr(c)
 #endif
+
 
 #ifndef FB_WSTR_FROM_INT
 #define FB_WSTR_FROM_INT( buffer, num ) swprintf( buffer, sizeof( long ) * 3 + 1, @wstr("%d"), cast(long, num) )

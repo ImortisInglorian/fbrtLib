@@ -157,7 +157,7 @@
 		#define DBG_ASSERT(e) (cast(any ptr, 0))
 	#endif
 
-	#define fb_hSign( x ) (iif((x) < 0), -1 , 1)
+	#define fb_hSign( x ) iif(((x) < 0), -1 , 1)
 
 	/' internal lists '/
 	type FB_LISTELEM
