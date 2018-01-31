@@ -338,9 +338,9 @@ declare function fb_DirNext64 				FBCALL ( outattrib as longint ptr ) as FBSTRIN
  * UTF Encoding
  *************************************************************************************************'/
 
-dim shared as UTF_8 __fb_utf8_bmarkTb(0 to 6)
+extern as UTF_8 __fb_utf8_bmarkTb(0 to 6)
 
-declare sub 	 fb_hCharToUTF8 				   ( src as ubyte const ptr, chars as ssize_t, dst as ubyte ptr, bytes as ssize_t ptr )
+declare sub 	 fb_hCharToUTF8 				   ( src as ubyte ptr, chars as ssize_t, dst as ubyte ptr, bytes as ssize_t ptr )
 declare function fb_CharToUTF 					   ( encod as FB_FILE_ENCOD, src as ubyte const ptr, chars as ssize_t, dst as ubyte ptr, bytes as ssize_t ptr ) as ubyte ptr
 declare function fb_WCharToUTF 					   ( encod as FB_FILE_ENCOD, src as FB_WCHAR const ptr, chars as ssize_t, dst as ubyte ptr, bytes as ssize_t ptr ) as ubyte ptr
 declare function fb_hFileRead_UTFToChar 		   ( fp as FILE ptr, encod as FB_FILE_ENCOD, dst as ubyte ptr, max_chars as ssize_t ) as ssize_t
