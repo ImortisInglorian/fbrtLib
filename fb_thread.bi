@@ -3,7 +3,7 @@
 #endif
 
 
-type FB_THREADPROC as function( param as any ptr ) as any ptr
+type FB_THREADPROC as sub( param as any ptr )
 
 type FBTHREAD as _FBTHREAD
 

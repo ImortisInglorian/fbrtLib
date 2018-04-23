@@ -15,7 +15,7 @@
 	#undef fb_DataReadDouble
 #endif
 
-type _FB_DATADESC
+type _FB_DATADESC field = 1
 	as short 					len
 	union
 		as ubyte ptr 		zstr
