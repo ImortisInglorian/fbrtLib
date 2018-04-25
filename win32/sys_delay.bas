@@ -3,6 +3,6 @@
 
 extern "C"
 sub fb_Delay FBCALL ( msecs as long )
-	Sleep( msecs )
+	Sleep_( msecs )
 end sub
 end extern

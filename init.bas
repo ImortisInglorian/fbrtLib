@@ -13,7 +13,7 @@ sub fb_hRtInit cdecl ( )
 	/' already initialized? '/
 	__fb_is_inicnt += 1
 	if( __fb_is_inicnt <> 1 ) then
-		return
+		exit sub
 	end if
 	
 	/' initialize context '/
@@ -117,6 +117,6 @@ sub fb_End FBCALL ( errlevel as long )
 		__fb_ctx.exit_gfxlib2( )
 	end if
 
-	end( errlevel )
+	exit_( errlevel )
 end sub
 end extern

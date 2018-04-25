@@ -39,7 +39,7 @@ DISABLE_PIC := YesPlease
 
 # To skip files, add them to BLACKLIST:
 # crt/stat.bi not supported on linux
-#BLACKLIST += ./file_attr.bas ./file_datetime.bas
+BLACKLIST += ./dev_file_eof.bas ./dev_file_size.bas ./dev_file_tell.bas ./file_len.bas ./dev_file_open.bas ./signals.bas
 
 # Define this if libffi isn't installed
 #ALLCFLAGS += -DDISABLE_FFI

@@ -22,7 +22,7 @@ function fb_hArrayCalcDiff ( dimensions as size_t, lboundTB as ssize_t const ptr
 		return 0
 	end if
 
-   for i = 0 to dimensions - 2
+   for i = 0 to dimensions - 1
     	elements = (uboundTB[i+1] - lboundTB[i+1]) + 1
     	diff = (diff + lboundTB[i]) * elements
    next
