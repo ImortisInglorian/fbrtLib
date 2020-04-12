@@ -39,7 +39,7 @@ DISABLE_PIC := YesPlease
 
 # To skip files, add them to BLACKLIST:
 # crt/stat.bi not supported on linux
-BLACKLIST += ./dev_file_eof.bas ./dev_file_size.bas ./dev_file_tell.bas ./file_len.bas ./dev_file_open.bas ./signals.bas
+BLACKLIST += ./dev_file_eof.bas ./dev_file_size.bas ./dev_file_tell.bas ./file_len.bas ./dev_file_open.bas ./signals.bas ./file_datetime.bas ./sys_mkdir.bas
 
 # Define this if libffi isn't installed
 #ALLCFLAGS += -DDISABLE_FFI
@@ -292,7 +292,7 @@ VPATH = $(FBRTLIB_DIRS) $(RTLIB_DIRS)
 
 ifdef GCC_BACKEND
   # These files use varargs and can't be compiled by the gcc backend
-  BLACKLIST += ./array_redim.bas ./array_redim_obj.bas ./array_tempdesc.bas ./array_redimpresv.bas ./array_redimpresv_obj.bas ./array_setdesc.bas ./str_chr.bas ./strw_chr.bas
+  # BLACKLIST += ./array_redim.bas ./array_redim_obj.bas ./array_tempdesc.bas ./array_redimpresv.bas ./array_redimpresv_obj.bas ./array_setdesc.bas ./str_chr.bas ./strw_chr.bas
 endif
 
 LIBFB_BI := $(sort $(foreach i,$(FBRTLIB_DIRS),$(wildcard $(i)/*.bi)))
