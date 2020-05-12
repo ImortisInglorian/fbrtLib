@@ -12,7 +12,7 @@ function fb_DevFileReadLineDumb ( fp as FILE ptr, dst as FBSTRING ptr, pfnReadSt
     dim as size_t buffer_len
     dim as long found, first_run
     dim as ubyte ptr buffer(0 to 511)
-    dim as FBSTRING src = ( buffer(0), 0, 0 )
+    dim as FBSTRING src = ( @buffer(0), 0, 0 )
 
     DBG_ASSERT( dst <> NULL )
 
