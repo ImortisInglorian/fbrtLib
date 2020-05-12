@@ -16,7 +16,7 @@ sub fb_hArrayCtorObj( array as FBARRAY ptr, ctor as FB_DEFCTOR, base_idx as size
 	elements = _dim->elements - base_idx
 	_dim += 1
 
-	for i = 1 to array->dimensions
+	for i = 1 to array->dimensions - 1
 		elements *= _dim->elements
 		_dim += 1
 	next
