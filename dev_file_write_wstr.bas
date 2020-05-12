@@ -18,9 +18,9 @@ function fb_DevFileWriteWstr( handle as FB_FILE ptr, src as FB_WCHAR const ptr, 
 	end if
 
 	if ( chars < FB_LOCALBUFF_MAXLEN ) then
-		buffer = malloc( chars + 1 )
+		buffer = allocate( chars + 1 )
 	else
-		buffer = malloc( chars + 1 )
+		buffer = allocate( chars + 1 )
 	end if
 
 	/' convert to ascii, file should be opened with the ENCODING option
@@ -30,9 +30,7 @@ function fb_DevFileWriteWstr( handle as FB_FILE ptr, src as FB_WCHAR const ptr, 
 	/' do write '/
 	res = (fwrite( cast(any ptr, buffer), 1, chars, fp ) = chars)
 
-	if ( chars >= FB_LOCALBUFF_MAXLEN ) then
-		free( buffer )
-	end if
+	deallocate( buffer )
 
 	FB_UNLOCK()
 

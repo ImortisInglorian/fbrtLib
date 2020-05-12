@@ -33,7 +33,7 @@ function fb_DevFileOpen( handle as FB_FILE ptr, filename as ubyte const ptr, fna
 
     FB_LOCK()
 
-    fname = cast(ubyte ptr, malloc(fname_len + 1))
+    fname = cast(ubyte ptr, allocate(fname_len + 1))
     memcpy(fname, filename, fname_len)
     fname[fname_len] = 0
 
@@ -71,6 +71,7 @@ function fb_DevFileOpen( handle as FB_FILE ptr, filename as ubyte const ptr, fna
 
     if ( openmask = NULL ) then
         FB_UNLOCK()
+		deallocate (fname)
         return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
     end if
 
@@ -98,6 +99,7 @@ function fb_DevFileOpen( handle as FB_FILE ptr, filename as ubyte const ptr, fna
 
 				if ( fp = NULL ) then
 					FB_UNLOCK()
+					deallocate (fname)
 					return fb_ErrorSetNum( FB_RTERROR_FILENOTFOUND )
 				end if
 			end if
@@ -112,6 +114,7 @@ function fb_DevFileOpen( handle as FB_FILE ptr, filename as ubyte const ptr, fna
 			fp = fopen( fname, "rb" )
 			if( fp = NULL ) then
 				FB_UNLOCK()
+				deallocate (fname)
 				return fb_ErrorSetNum( FB_RTERROR_FILENOTFOUND )
 			end if
 
@@ -122,6 +125,7 @@ function fb_DevFileOpen( handle as FB_FILE ptr, filename as ubyte const ptr, fna
 			if ( handle->size = -1 ) then
 				fclose( fp )
 				FB_UNLOCK()
+				deallocate (fname)
 				return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 			end if
 
@@ -129,6 +133,7 @@ function fb_DevFileOpen( handle as FB_FILE ptr, filename as ubyte const ptr, fna
 			fp = fopen( fname, "rb" )
 			if ( fp = NULL ) then
 				FB_UNLOCK()
+				deallocate (fname)
 				return fb_ErrorSetNum( FB_RTERROR_FILENOTFOUND )
 			end if
 
@@ -142,6 +147,7 @@ function fb_DevFileOpen( handle as FB_FILE ptr, filename as ubyte const ptr, fna
 			fp = fopen( fname, openmask )
 			if ( fp = NULL ) then
 				FB_UNLOCK()
+				deallocate (fname)
 				return fb_ErrorSetNum( FB_RTERROR_FILENOTFOUND )
 			end if
 
@@ -154,6 +160,7 @@ function fb_DevFileOpen( handle as FB_FILE ptr, filename as ubyte const ptr, fna
         if ( handle->size = -1 ) then
         	fclose( fp )
             FB_UNLOCK()
+			deallocate (fname)
         	return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
         end if
     end if
@@ -169,7 +176,7 @@ function fb_DevFileOpen( handle as FB_FILE ptr, filename as ubyte const ptr, fna
 	end if
 
     FB_UNLOCK()
-
+	deallocate (fname)
 	return fb_ErrorSetNum( FB_RTERROR_OK )
 end function
 end extern

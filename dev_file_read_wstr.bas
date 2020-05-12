@@ -27,9 +27,9 @@ function fb_DevFileReadWstr( handle as FB_FILE ptr, dst as FB_WCHAR ptr, pchars 
     chars = *pchars
 
 	if ( chars < FB_LOCALBUFF_MAXLEN ) then
-		buffer = malloc( chars + 1 )
+		buffer = allocate( chars + 1 )
 	else
-		buffer = malloc( chars + 1 )
+		buffer = allocate( chars + 1 )
 	end if
 
 	/' do read '/
@@ -40,9 +40,7 @@ function fb_DevFileReadWstr( handle as FB_FILE ptr, dst as FB_WCHAR ptr, pchars 
 	   to allow UTF characters to be read '/
 	fb_wstr_ConvFromA( dst, chars, buffer )
 
-	if ( *pchars >= FB_LOCALBUFF_MAXLEN ) then
-		free( buffer )
-	end if
+	deallocate(buffer)
 
 	/' fill with nulls if at eof '/
 	if ( chars <> *pchars ) then
@@ -52,7 +50,7 @@ function fb_DevFileReadWstr( handle as FB_FILE ptr, dst as FB_WCHAR ptr, pchars 
     *pchars = chars
 
 	FB_UNLOCK()
-
+	
 	return fb_ErrorSetNum( FB_RTERROR_OK )
 end function
 end extern

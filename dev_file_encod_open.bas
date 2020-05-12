@@ -101,7 +101,7 @@ function fb_DevFileOpenEncod ( handle as FB_FILE ptr, filename as ubyte ptr, fna
 
     FB_LOCK()
 
-    fname = cast(ubyte ptr, malloc(fname_len + 1))
+    fname = cast(ubyte ptr, allocate(fname_len + 1))
     memcpy(fname, filename, fname_len)
     fname[fname_len] = 0
 
@@ -126,6 +126,7 @@ function fb_DevFileOpenEncod ( handle as FB_FILE ptr, filename as ubyte ptr, fna
 
 		case else:
 			FB_UNLOCK()
+			deallocate(fname)
 			return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
     end select
 
@@ -133,6 +134,7 @@ function fb_DevFileOpenEncod ( handle as FB_FILE ptr, filename as ubyte ptr, fna
 	fp = fopen( fname, openmask )
     if ( fp = NULL ) then
     	FB_UNLOCK()
+		deallocate(fname)
         return fb_ErrorSetNum( FB_RTERROR_FILENOTFOUND )
     end if
 
@@ -150,6 +152,7 @@ function fb_DevFileOpenEncod ( handle as FB_FILE ptr, filename as ubyte ptr, fna
 			if ( hCheckBOM( handle ) = 0 ) then
 				fclose( fp )
 				FB_UNLOCK()
+				deallocate(fname)
 				return fb_ErrorSetNum( FB_RTERROR_FILENOTFOUND )
 			end if
 
@@ -157,6 +160,7 @@ function fb_DevFileOpenEncod ( handle as FB_FILE ptr, filename as ubyte ptr, fna
 			if ( hWriteBOM( handle ) = 0 ) then
 				fclose( fp )
 				FB_UNLOCK()
+				deallocate(fname)
 				return fb_ErrorSetNum( FB_RTERROR_FILENOTFOUND )
 			end if
 	end select
@@ -166,11 +170,12 @@ function fb_DevFileOpenEncod ( handle as FB_FILE ptr, filename as ubyte ptr, fna
     if ( handle->size = -1 ) then
     	fclose( fp )
         FB_UNLOCK()
+		deallocate(fname)
         return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 	end if
 
     FB_UNLOCK()
-
+	deallocate(fname)
 	return fb_ErrorSetNum( FB_RTERROR_OK )
 end function
 end extern
