@@ -18,7 +18,7 @@ function fb_ConsoleInput FBCALL ( text as FBSTRING ptr, addquestion as long, add
 
     ctx = _FB_TLSGETCTX( INPUT )
 
-	fb_StrDelete( ctx->str )
+	fb_StrDelete( @ctx->str )
 	ctx->handle = 0
 	ctx->status = 0
 	ctx->index = 0
