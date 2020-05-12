@@ -15,7 +15,10 @@ function fb_DevFileFlush( handle as FB_FILE ptr ) as long
 		return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 	end if
 
-    fflush( fp )
+	if( fflush( fp ) <> 0 ) then
+		FB_UNLOCK()
+		return fb_ErrorSetNum( FB_RTERROR_FILEIO )
+	end if
 
 	FB_UNLOCK()
 
