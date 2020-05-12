@@ -127,7 +127,7 @@ function fb_DevComOpen( handle as FB_FILE ptr, filename as ubyte const ptr, file
     if ( port > NULL ) then
     	i = sprintf( achDev(0), sadd("COM%u:"), cast(long, port) )
     else
-    	i = strchr( filename, 58 ) - cast(zstring ptr, filename)
+    	i = strchr( filename, asc(":") ) - cast(zstring ptr, filename)
     	strncpy( achDev(0), filename, i )
     end if
     achDev(i) = 0

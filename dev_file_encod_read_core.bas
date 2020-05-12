@@ -84,7 +84,7 @@ private function hReadUTF16ToChar( fp as FILE ptr, dst as ubyte ptr, max_chars a
     				exit while
 				end if
     		end if
-    		c = 63
+    		c = asc("?")
     	end if
 		dst += 1
 		*dst = c
@@ -105,7 +105,7 @@ private function hReadUTF32ToChar( fp as FILE ptr, dst as ubyte ptr, max_chars a
 		end if
 
 		if ( c > 255 ) then
-			c = 63
+			c = asc("?")
 		end if
 		dst += 1
 		*dst = c
