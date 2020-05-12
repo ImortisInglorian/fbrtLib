@@ -23,12 +23,20 @@ type FBARRAYDIM
 	as ssize_t ubound
 end type
 
+enum _FBARRAY_FLAGS
+	FBARRAY_FLAGS_DIMENSIONS = &h0000000f
+	FBARRAY_FLAGS_FIXED_DIM  = &h00000010
+	FBARRAY_FLAGS_FIXED_LEN  = &h00000020
+	FBARRAY_FLAGS_RESERVED   = &hffffffc0
+end enum
+
 type FBARRAY
 	as any ptr           data        /' ptr + diff, must be at ofs 0! '/
 	as any ptr           _ptr
 	as size_t          size
 	as size_t          element_len
 	as size_t          dimensions
+	as size_t          flags       /' FBARRAY_FLAGS '/
 	as FBARRAYDIM      dimTB(0)    /' dimtb[dimensions] '/
 end type
 
