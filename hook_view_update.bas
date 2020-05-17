@@ -7,7 +7,7 @@ extern "C"
 sub fb_ViewUpdate FBCALL ( )
     FB_LOCK()
 
-    if ( @__fb_ctx.hooks.viewupdateproc <> NULL ) then
+    if ( __fb_ctx.hooks.viewupdateproc <> NULL ) then
         __fb_ctx.hooks.viewupdateproc( )
     else
         fb_ConsoleViewUpdate( )
