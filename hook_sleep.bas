@@ -9,7 +9,7 @@ sub fb_Sleep FBCALL ( msecs as long )
     FB_LOCK()
     sleepproc = __fb_ctx.hooks.sleepproc
     FB_UNLOCK()
-    if( @sleepproc <> NULL ) then
+    if( sleepproc <> NULL ) then
         sleepproc( msecs )
     else
         fb_ConsoleSleep( msecs )
