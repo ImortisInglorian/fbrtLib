@@ -16,7 +16,7 @@ function fb_hFileStrToEncoding( _encoding as ubyte ptr ) as FB_FILE_ENCOD
 			_encoding += 1
 		end if
 		
-		if ( *_encoding = asc(":") ) then
+		if ( *_encoding = asc("8") ) then
 			return FB_FILE_ENCOD_UTF8
 		end if
 
