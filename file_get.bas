@@ -52,7 +52,9 @@ function fb_FileGetDataEx ( handle as FB_FILE ptr, _pos as fb_off_t, dst as any 
         		wcp = cast(FB_WCHAR ptr, @handle->putback_buffer(0))
         		_len = bytes
         		while ( _len > 0 )
-        			cp[1] = wcp[1]
+					cp += 1
+					wcp += 1
+        			*cp = *wcp
         			_len -= sizeof( FB_WCHAR )
         		wend
         	end if
@@ -64,7 +66,9 @@ function fb_FileGetDataEx ( handle as FB_FILE ptr, _pos as fb_off_t, dst as any 
         		wcp = cast(FB_WCHAR ptr, @handle->putback_buffer(0))
         		_len = bytes
         		while( _len - 1 > 0 )
-        			wcp[1] = cp[1]
+        			cp += 1
+					wcp += 1
+        			*cp = *wcp
 				wend
         	end if
         end if
