@@ -10,7 +10,7 @@ function fb_LineInput FBCALL ( text as FBSTRING ptr, dst as any ptr, dst_len as 
     lineinputproc = __fb_ctx.hooks.lineinputproc
     FB_UNLOCK()
 
-    if ( @lineinputproc <> NULL ) then
+    if ( lineinputproc <> NULL ) then
         return lineinputproc( text, dst, dst_len, fillrem, addquestion, addnewline )
     else
         return fb_ConsoleLineInput( text, dst, dst_len, fillrem, addquestion, addnewline )
