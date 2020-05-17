@@ -251,7 +251,7 @@ private function fb_PrintUsingFmtStr( fnum as long ) as long
 
 					doexit = TRUE
 				end if
-			case asc("!"), asc(!"\\"), asc("&"), asc("#"):
+			case asc("!"), asc("\"), asc("&"), asc("#"):
 				/' "!", "\ ... \", "&" string formats, "#..." number format '/
 				doexit = TRUE
 
@@ -273,8 +273,9 @@ private function fb_PrintUsingFmtStr( fnum as long ) as long
 		if( doexit = TRUE ) then
 			exit while
 		end if
-
-		buffer(_len + 1) = cast(ubyte, c)
+		
+		_len += 1
+		buffer(_len) = cast(ubyte, c)
 
 		ctx->_ptr += 1
 		ctx->chars -= 1
@@ -336,8 +337,8 @@ function fb_PrintUsingStr FBCALL ( fnum as long, s as FBSTRING ptr, mask as long
 				ctx->_ptr += 1
 				ctx->chars -= 1
 
-			case asc(!"\\"):
-				if ( (strchars <> -1) or (nc = asc(" ")) or (nc = asc(!"\\")) ) then
+			case asc("\"):
+				if ( (strchars <> -1) or (nc = asc(" ")) or (nc = asc("\")) ) then
 					if ( strchars > 0 ) then
 						strchars += 1
 
@@ -451,7 +452,7 @@ function fb_PrintUsingWstr FBCALL ( fnum as long, s as FB_WCHAR ptr, mask as lon
 				ctx->_ptr += 1
 				ctx->chars -= 1
 
-			case asc(!"\\"):
+			case asc("\"):
 				if ( (strchars <> -1) or (nc = asc(" ")) or (nc = asc(!"\\")) ) then
 					if ( strchars > 0 ) then
 						strchars += 1
@@ -642,7 +643,7 @@ private function hPrintNumber( fnum as long, _val as ulongint, val_exp as long, 
 				   '-' at end:  explicit '-' sign, if negative '/
 
 				/' one already at start? '/
-				if ( signatstart <> TRUE ) then
+				if ( signatstart = TRUE ) then
 					doexit = TRUE
 				/' found one before integer part? '/
 				elseif ( intdigs = 0 and decdigs = -1 ) then
@@ -841,7 +842,7 @@ private function hPrintNumber( fnum as long, _val as ulongint, val_exp as long, 
 	/' fixed-point format? '/
 	if ( expdigs < MIN_EXPDIGS ) then
 		/' append any trailing carets '/
-		for j as long = expdigs to 0 step -1
+		for j as long = expdigs to 1 step -1
 			ADD_CHAR( asc("^") )
 		next
 
@@ -971,7 +972,7 @@ private function hPrintNumber( fnum as long, _val as ulongint, val_exp as long, 
 		end if
 
 		/' expdigs > 3 '/
-		for j as long = expdigs to 3 step -1
+		for j as long = expdigs to 4 step -1
 			ADD_CHAR( CHAR_ZERO + (val_exp mod 10) )
 			val_exp /= 10
 		next
@@ -1017,7 +1018,7 @@ private function hPrintNumber( fnum as long, _val as ulongint, val_exp as long, 
 
 	/' output dec part '/
 	if ( decpoint = TRUE ) then
-		for j as long = decdigs to 0 step -1
+		for j as long = decdigs to 1 step -1
 			if ( val_zdigs > 0 ) then
 				ADD_CHAR( CHAR_ZERO )
 				val_zdigs -= 1
@@ -1097,12 +1098,12 @@ private function hPrintNumber( fnum as long, _val as ulongint, val_exp as long, 
 	end if
 
 	/' output padding for any remaining intdigs '/
-	for j as long = intdigs to 0 step -1
+	for j as long = intdigs to 1 step -1
 		ADD_CHAR( padchar )
 	next
 
 	/' output '%' sign(s)? '/
-	for j as long = toobig to 0 step -1
+	for j as long = toobig to 1 step -1
 		ADD_CHAR( CHAR_TOOBIG )
 	next
 
