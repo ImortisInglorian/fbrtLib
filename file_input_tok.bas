@@ -19,7 +19,8 @@ private function hReadChar( ctx as FB_INPUTCTX ptr ) as long
 		if ( ctx->index >= FB_STRSIZE( @ctx->str ) ) then
 			return EOF_
 		else
-			return ctx->str->data[ctx->index + 1]
+			ctx->index += 1
+			return ctx->str->data[ctx->index]
 		end if
 	end if
 end function
