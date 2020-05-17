@@ -15,7 +15,7 @@ sub fb_hConvertPath( path as ubyte ptr )
 			path[i] = asc("\")
 		end if
 #else
-		if ( path[i] = asc("\") and path[i + 1] = asc("\") ) then
+		if ( path[i] = asc("\") ) then
 			path[i] = asc("/")
 		end if
 #endif
