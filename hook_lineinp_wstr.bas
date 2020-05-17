@@ -10,7 +10,7 @@ function fb_LineInputWstr FBCALL ( text as FB_WCHAR const ptr, dst as FB_WCHAR p
     fn = __fb_ctx.hooks.lineinputwproc
     FB_UNLOCK()
 
-    if ( @fn <> NULL ) then
+    if ( fn <> NULL ) then
         return fn( text, dst, max_chars, addquestion, addnewline )
     else
         return fb_ConsoleLineInputWstr( text, dst, max_chars, addquestion, addnewline )
