@@ -75,14 +75,14 @@ function hRnd_MTWIST ( n as single ) as double
 		fb_Randomize( INITIAL_SEED, RND_MTWIST )
 	end if
 
-	if ( p >= state(0) + MAX_STATE ) then
+	if ( p >= @state(0) + MAX_STATE ) then
 		/' generate another array of 624 numbers '/
-		for i = 0 to MAX_STATE - PERIOD
+		for i = 0 to (MAX_STATE - PERIOD) - 1
 			v = ( state(i) and &h80000000 ) or ( state(i + 1) and &h7FFFFFFF )
 			state(i) = state(i + PERIOD) xor ( v shr 1 ) xor xor_mask(v and &h1)
 		next
 		
-		for j as long =i to MAX_STATE - 1
+		for j as long =i to MAX_STATE - 2
 			v = ( state(i) and &h80000000 ) or ( state(i + 1) and &h7FFFFFFF )
 			state(i) = state(i + PERIOD - MAX_STATE) xor ( v shr 1 ) xor xor_mask(v and &h1)
 		next
@@ -91,7 +91,8 @@ function hRnd_MTWIST ( n as single ) as double
 		p = @state(0)
 	end if
 
-	v = *p + 1
+	p += 1
+	v = *p
 	v xor= ( v shr 11 )
 	v xor= ( ( v shl 7 ) and &h9D2C5680 )
 	v xor= ( ( v shl 15 ) and &hEFC60000 )
@@ -238,7 +239,7 @@ sub fb_Randomize FBCALL ( seed as double, algorithm as long )
 		case RND_REAL:
 			rnd_func = @hRnd_REAL
 			state(0) = cast(uinteger,seed)
-			for i = 1 to MAX_STATE
+			for i = 1 to MAX_STATE - 1
 				state(i) = ( state(i - 1) * 1664525 ) + 1013904223
 			next
 			p = @state(0) + MAX_STATE
@@ -246,7 +247,7 @@ sub fb_Randomize FBCALL ( seed as double, algorithm as long )
 		case RND_MTWIST:
 			rnd_func = @hRnd_MTWIST
 			state(0) = cast(uinteger, seed)
-			for i = 1 to MAX_STATE
+			for i = 1 to MAX_STATE - 1
 				state(i) = ( state(i - 1) * 1664525 ) + 1013904223
 			next
 			p = @state(0) + MAX_STATE
