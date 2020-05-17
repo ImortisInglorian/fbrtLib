@@ -21,7 +21,7 @@ end sub
  * @return pointer to the new node
  '/
 private function fb_hListDevElemAlloc ( list as FB_LIST ptr, device as ubyte const ptr, _width as long ) as DEV_INFO_WIDTH ptr
-    dim as DEV_INFO_WIDTH ptr node = cast(DEV_INFO_WIDTH ptr, calloc( 1, sizeof(DEV_INFO_WIDTH) ))
+    dim as DEV_INFO_WIDTH ptr node = cast(DEV_INFO_WIDTH ptr, allocate( 1, sizeof(DEV_INFO_WIDTH) ))
     node->device = strdup(device)
     node->width = _width
     fb_hListDynElemAdd( list, @node->elem )
@@ -33,8 +33,8 @@ end function
  '/
 private sub fb_hListDevElemFree ( list as FB_LIST ptr, node as DEV_INFO_WIDTH ptr )
     fb_hListDynElemRemove( list, @node->elem )
-    free(node->device)
-    free(node)
+    deallocate(node->device)
+    deallocate(node)
 end sub
 #endif
 
@@ -53,7 +53,7 @@ function fb_WidthDev FBCALL ( dev as FBSTRING ptr, _width as long ) as long
 
     /' create list of device info nodes (if not created yet) '/
     if ( dev_info_widths = NULL ) then
-        dev_info_widths = malloc( sizeof(FB_LIST) )
+        dev_info_widths = allocate( sizeof(FB_LIST) )
         fb_hListDevInit( dev_info_widths )
     end if
 
@@ -61,12 +61,12 @@ function fb_WidthDev FBCALL ( dev as FBSTRING ptr, _width as long ) as long
 
     /' '/
     size = FB_STRSIZE(dev)
-    device = malloc(size + 1)
+    device = allocate(size + 1)
     memcpy( device, dev->data, size )
     device[size] = 0
 
     /' make the name uppercase '/
-    for i = 0 to size
+    for i = 0 to size - 1
         dim as ulong ch = cast(ulong, device[i])
         if ( islower(ch) <> NULL ) then
             device[i] = cast(ubyte, toupper(ch))
@@ -76,6 +76,7 @@ function fb_WidthDev FBCALL ( dev as FBSTRING ptr, _width as long ) as long
     FB_LOCK()
 
     /' Search list of devices for the requested device name '/
+	node = dev_info_widths->head
 	while (node <> cast(DEV_INFO_WIDTH ptr,  NULL))
         if ( strcmp( device, node->device ) = 0 ) then
             exit while
@@ -112,7 +113,9 @@ function fb_WidthDev FBCALL ( dev as FBSTRING ptr, _width as long ) as long
     else
         /' unknown device '/
     end if
-
+    
+	deallocate(device)
+	
 	FB_UNLOCK()
 
     if ( _width = -1 ) then
