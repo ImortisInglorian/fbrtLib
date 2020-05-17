@@ -48,7 +48,7 @@ function fb_Wait FBCALL ( port as ushort, _and as long, _xor as long ) as long
 		if ( res < 0 ) then
 			return res
 		end if
-		res ^= _xor
+		res xor= _xor
 	loop while( ( res and _and ) = 0 )
 	
 	return FB_RTERROR_OK
