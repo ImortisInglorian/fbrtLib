@@ -11,7 +11,7 @@ function fb_Width FBCALL ( cols as long, rows as long ) as long
 
 	FB_LOCK()
 
-	if ( @__fb_ctx.hooks.widthproc <> NULL ) then
+	if ( __fb_ctx.hooks.widthproc <> NULL ) then
 		cur = __fb_ctx.hooks.widthproc( cols, rows )
 	else
         cur = fb_ConsoleWidth( cols, rows )
