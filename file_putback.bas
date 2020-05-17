@@ -22,7 +22,7 @@ function fb_FilePutBackEx( handle as FB_FILE ptr, src as any const ptr, chars as
     	bytes = chars
 	end if
 
-    if ( handle->putback_size + bytes > sizeof(handle->putback_buffer) ) then
+    if ( handle->putback_size + bytes > sizeof(handle->putback_buffer(0)) ) then
         res = fb_ErrorSetNum( FB_RTERROR_FILEIO )
     else
         /' note: if encoding != ASCII, putback buffer will be in
