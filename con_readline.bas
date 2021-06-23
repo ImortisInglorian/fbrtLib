@@ -84,7 +84,7 @@ function fb_ConReadLine FBCALL ( soft_cursor as long ) as FBSTRING ptr
 		end if
 
 		if ( soft_cursor <> 0 ) then
-			dim as ubyte ptr mask(0 to 1) = { iif((result.data <> NULL) and (_pos < _len), result.data[_pos], sadd(" ")), 0 }
+			dim as ubyte mask(0 to 1) = { iif((result.data <> NULL) and (_pos < _len), result.data[_pos], asc(" ")), 0 }
 			fb_PrintFixString( 0, cast(ubyte const ptr, @mask(0)), 0 )
 			fb_Locate( current_y, current_x, FALSE, 0, 0 )
 		end if
