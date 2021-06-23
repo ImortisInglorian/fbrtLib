@@ -1,5 +1,11 @@
 /' get file date/time by filename '/
 
+/'
+!!! FIXME !!! - update the crt headers
+- have issues here with duplicate definitions in the crt headers
+- need to update crt headers to allow these includes to work together
+'/
+
 #include "fb.bi"
 #include "crt/time.bi"
 #include "crt/sys/stat.bi"
