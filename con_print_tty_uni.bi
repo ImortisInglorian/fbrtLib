@@ -107,8 +107,9 @@ sub FB_CONPRINTTTY_( handle as fb_ConHooks ptr, pachText as FB_TCHAR ptr, TextLe
                 dwCurrentCoord.Y += NormalX / BorderWidth
             end if
             while ( OutputDataLength <> 0 ) 
+                OutputBuffer(OutputBufferLength) = *pachOutputData
 				OutputBufferLength += 1
-                OutputBuffer(OutputBufferLength) = *pachOutputData + 1
+				pachOutputData += 1
 				OutputDataLength -= 1
             wend
             OutputBufferChars += OutputDataChars
