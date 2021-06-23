@@ -524,7 +524,7 @@ private function hPrintNumber( fnum as long, _val as ulongint, val_exp as long, 
 	dim as long val_digs0, val_exp0
 	dim as long valIsneg, valIsfloat, valIssng
 	dim as long c, lc
-#ifdef DEBUG
+#ifdef __FB_DEBUG__
 	dim as long nc /' used for sanity checks '/
 #endif
 	dim as long doexit, padchar, intdigs, decdigs, expdigs
@@ -571,7 +571,7 @@ private function hPrintNumber( fnum as long, _val as ulongint, val_exp as long, 
 		end if
 
 		c = *ctx->_ptr
-#ifdef DEBUG
+#ifdef __FB_DEBUG__
 		nc = iif( ctx->chars > 1, *(ctx->_ptr+1), -1 )
 #endif
 		doexit = FALSE
