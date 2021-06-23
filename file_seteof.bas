@@ -2,6 +2,7 @@
 
 #include "fb.bi"
 
+extern "C"
 /'
     Truncate a file opened for BINARY, RANDOM, OUTPUT, or APPEND
 
@@ -51,9 +52,8 @@ function fb_FileSetEofEx( handle as FB_FILE ptr ) as long
     return res
 end function
 
-extern "C"
 /':::::'/
-function fb_FileSetEof( fnum as long ) as long
+function fb_FileSetEof FBCALL ( fnum as long ) as long
     return fb_FileSetEofEx(FB_FILE_TO_HANDLE(fnum))
 end function
 end extern

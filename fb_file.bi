@@ -251,6 +251,13 @@ declare function fb_FileGetArrayLargeIOB 	FBCALL ( fnum as long, pos as longint,
 
 declare function fb_FileEof 				FBCALL ( fnum as long ) as long
 declare function fb_FileEofEx 					   ( handle as FB_FILE ptr ) as long
+declare function fb_FileSetEof              FBCALL ( byval fnum as long ) as long
+declare function fb_FileSetEofEx                   ( byval handle as FB_FILE ptr ) as long
+declare function fb_hFileSetEofEx                  ( byval f as FILE ptr ) as long
+declare function fb_FileFlush               FBCALL ( byval fnum as long, byval systembuffers as long ) as long
+declare function fb_FileFlushEx                    ( byval handle as FB_FILE ptr, byval systembuffers as long ) as long
+declare sub      fb_FileFlushAll            FBCALL ( byval systembuffers as long )
+declare function fb_hFileFlushEx                   ( byval f as FILE ptr ) as long
 declare function fb_FileTell 				FBCALL ( fnum as long ) as longint
 declare function fb_FileTellEx 				       ( handle as FB_FILE ptr ) as fb_off_t
 declare function fb_FileSeek 				FBCALL ( fnum as long, newpos as long )  as long
@@ -259,8 +266,8 @@ declare function fb_FileSeekEx 					   ( handle as FB_FILE ptr, newpos as fb_off
 declare function fb_FileLocation 			FBCALL ( fnum as long ) as longint
 declare function fb_FileLocationEx 				   ( handle as FB_FILE ptr ) as fb_off_t
 declare function fb_FileKill 				FBCALL ( str as FBSTRING ptr ) as long
-declare sub 	 fb_FileReset 				FBCALL ( )
-declare sub 	 fb_FileResetEx 			FBCALL ( streamno as long )
+declare sub      fb_FileReset 				FBCALL ( )
+declare sub      fb_FileResetEx 			FBCALL ( streamno as long )
 declare function fb_hFileResetEx 				   ( streamno as long ) as long
 declare function fb_FileSize 				FBCALL ( fnum as long ) as longint
 declare function fb_FileSizeEx 					   ( handle as FB_FILE ptr ) as fb_off_t

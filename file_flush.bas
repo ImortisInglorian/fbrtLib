@@ -1,6 +1,9 @@
 /' flush file buffers to disk (or writable device)'/
 
 #include "fb.bi"
+
+extern "C"
+
 function fb_FileFlushEx( handle as FB_FILE ptr, systembuffers as long ) as long
     dim as long res
 
@@ -19,7 +22,7 @@ function fb_FileFlushEx( handle as FB_FILE ptr, systembuffers as long ) as long
 			return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
     end select
 
-    if handle->hooks and handle->hooks->pfnFlush then
+    if handle->hooks andalso handle->hooks->pfnFlush then
         res = handle->hooks->pfnFlush( handle )
         if res = FB_RTERROR_OK and systembuffers <> 0  then
             res = fb_hFileFlushEx( cast(file ptr, handle->opaque) )
@@ -33,17 +36,15 @@ function fb_FileFlushEx( handle as FB_FILE ptr, systembuffers as long ) as long
     return res
 end function
 
-extern "C"
-
 /'::::'/
-sub fb_FileFlushAll ( systembuffers as long )
+sub fb_FileFlushAll FBCALL ( systembuffers as long )
     dim as long i
 
     FB_LOCK()
 
     for i = 1 to (FB_MAX_FILES - FB_RESERVED_FILES) 
         dim as FB_FILE ptr handle = FB_FILE_TO_HANDLE_VALID( i )
-        if handle->hooks and handle->hooks->pfnFlush  then
+        if handle->hooks andalso handle->hooks->pfnFlush  then
             dim as long res = handle->hooks->pfnFlush( handle )
             if res = FB_RTERROR_OK and systembuffers <> 0  then
                 fb_hFileFlushEx( cast(FILE ptr,handle->opaque) )
@@ -55,7 +56,7 @@ sub fb_FileFlushAll ( systembuffers as long )
 end sub
 
 /':::::'/
-function fb_FileFlush( fnum as long, systembuffers as long ) as long
+function fb_FileFlush FBCALL ( fnum as long, systembuffers as long ) as long
     if fnum = -1 then
         fb_FileFlushAll( systembuffers )
         return fb_ErrorSetNum( FB_RTERROR_OK )
