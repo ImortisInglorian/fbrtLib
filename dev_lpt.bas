@@ -15,7 +15,7 @@ private function fb_DevLptFindDeviceByName( iPort as long, filename as ubyte ptr
 					if ( iPort = 0 or iPort = devInfo->iPort ) then
 						if ( strcmp(devInfo->pszDevice, filename) = 0 ) then
 							/' bugcheck '/
-							DBG_ASSERT( handle <> FB_HANDLE_PRINTER and handle <> FB_HANDLE_PRINTER )
+							DBG_ASSERT( handle <> @FB_HANDLE_PRINTER )
 							return handle
 						end if
 					end if

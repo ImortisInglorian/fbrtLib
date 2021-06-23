@@ -102,7 +102,7 @@ end enum
 
 #define FB_HANDLE_USED(handle) ((handle) <> NULL and ((handle)->hooks <> NULL))
 
-#define FB_HANDLE_SCREEN    __fb_ctx.fileTB(0)
+#define FB_HANDLE_SCREEN    (__fb_ctx.fileTB(0))
 #define FB_HANDLE_PRINTER   (__fb_ctx.fileTB(1))
 
 type _FB_FILE as FB_FILE
