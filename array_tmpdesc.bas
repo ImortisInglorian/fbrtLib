@@ -38,7 +38,7 @@ sub fb_hArrayFreeTmpDesc( src as FBARRAY ptr )
 end sub
 
 function fb_ArrayAllocTempDesc( pdesc as FBARRAY ptr ptr, arraydata as any ptr, element_len as size_t, dimensions as size_t, ... ) as FBARRAY ptr
-	dim as va_list ap
+	dim as cva_list ap
 	dim as size_t i, elements
 	dim as ssize_t diff
 	dim as FBARRAY ptr array
@@ -62,14 +62,13 @@ function fb_ArrayAllocTempDesc( pdesc as FBARRAY ptr ptr, arraydata as any ptr, 
 		return array
 	end if
 
-	'va_start( ap, dimensions )
-	ap = va_first()
+	cva_start( ap, dimensions )
 
 	_dim = @array->dimTB(0)
 
 	for i = 0 to dimensions - 1
-		lbTB(i) = cast(ssize_t, va_next( ap, ssize_t ))
-		ubTB(i) = cast(ssize_t, va_next( ap, ssize_t ))
+		lbTB(i) = cast(ssize_t, cva_arg( ap, ssize_t ))
+		ubTB(i) = cast(ssize_t, cva_arg( ap, ssize_t ))
       
 		_dim->elements = (ubTB(i) - lbTB(i)) + 1
 		_dim->lbound = lbTB(i)
@@ -77,7 +76,7 @@ function fb_ArrayAllocTempDesc( pdesc as FBARRAY ptr ptr, arraydata as any ptr, 
 		_dim += 1
 	next
 
-	'va_end( ap )
+	cva_end( ap )
 
 	elements = fb_hArrayCalcElements( dimensions, @lbTB(0), @ubTB(0) )
 	diff = fb_hArrayCalcDiff( dimensions, @lbTB(0), @ubTB(0) ) * element_len

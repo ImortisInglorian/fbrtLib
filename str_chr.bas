@@ -12,23 +12,21 @@ function fb_CHR cdecl ( args as long, ... ) as FBSTRING ptr
 	if ( args <= 0 ) then
 		return @__fb_ctx.null_desc
 	end if
-	'va_start( ap, args )
-	ap = va_first()
+	cva_start( ap, args )
 
 	/' alloc temp string '/
    dst = fb_hStrAllocTemp( NULL, args )
 	if ( dst <> NULL ) then
 		/' convert '/
 		for i = 0 to args - 1
-			num = va_arg( ap, ulong )
+			num = cva_arg( ap, ulong )
 			dst->data[i] = cast(ubyte, num)
-			ap = va_next(ap, ulong)
 		next
 		dst->data[args] = 0
 	else
 		dst = @__fb_ctx.null_desc
 	end if
-	'va_end( ap )
+	cva_end( ap )
 
 	return dst
 end function

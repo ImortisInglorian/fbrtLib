@@ -14,15 +14,14 @@ function fb_WstrChr ( args as long, ... ) as FB_WCHAR ptr
 	end if
 
 	/' alloc temp string '/
-	'va_start( ap, args )
-	ap = va_first()
+	cva_start( ap, args )
 	
     dst = fb_wstr_AllocTemp( args )
 	if ( dst <> NULL ) then
 		/' convert '/
 		s = dst
 		for i = 0 to args - 1
-			num = va_arg( ap, ulong )
+			num = cva_arg( ap, ulong )
 			s += 1
 			*s = num
 		next
@@ -30,7 +29,7 @@ function fb_WstrChr ( args as long, ... ) as FB_WCHAR ptr
 		*s = 0
 	end if
 
-	'va_end( ap );
+	cva_end( ap )
 
 	return dst
 end function
