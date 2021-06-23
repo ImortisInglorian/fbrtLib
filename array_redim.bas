@@ -103,7 +103,7 @@ end function
 
 function hRedim ( array as FBARRAY ptr, element_len as size_t, doclear as long, isvarlen as long, dimensions as size_t, ap as cva_list ) as long
 	/' free old '/
-	fb_ArrayErase( array, isvarlen )
+	fb_ArrayErase( array )
 	
    return fb_hArrayAlloc( array, element_len, doclear, NULL, dimensions, ap )
 end function
@@ -119,15 +119,4 @@ function fb_ArrayRedimEx ( array as FBARRAY ptr, element_len as size_t, doclear 
 	return res
 end function 
 
-/' legacy '/
-function fb_ArrayRedim ( array as FBARRAY ptr, element_len as size_t, isvarlen as long, dimensions as size_t, ... ) as long
-	dim as cva_list ap
-	dim as long res
-
-	cva_start( ap, dimensions )
-	res = hRedim( array, element_len, TRUE, isvarlen, dimensions, ap )
-	cva_end( ap )
-
-	return res
-end function
 end extern

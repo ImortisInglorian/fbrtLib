@@ -4,6 +4,13 @@
 
 extern "C"
 sub fb_ArrayStrErase FBCALL ( array as FBARRAY ptr )
-	fb_ArrayErase( array, -1 )
+
+	fb_ArrayDestructStr( array )
+
+	/' only free the memory if it's not a fixed length array '/
+	if( array andalso ((array->flags and FBARRAY_FLAGS_FIXED_LEN) <> 0) ) then
+		fb_ArrayErase( array )
+	end if
+
 end sub
 end extern

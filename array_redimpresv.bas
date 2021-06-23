@@ -16,6 +16,11 @@ function fb_hArrayRealloc ( array as FBARRAY ptr, element_len as size_t, doclear
 		return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 	end if
 
+	/' fixed length? '/
+	if( (array->flags and FBARRAY_FLAGS_FIXED_LEN) <> 0 ) then
+		return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
+	end if
+
 	/' load bounds '/
 	for i = 0 to dimensions - 1
 		lbTB(i) = cast(ssize_t, cva_arg( ap, ssize_t ))
@@ -115,14 +120,4 @@ function fb_ArrayRedimPresvEx cdecl ( array as FBARRAY ptr, element_len as size_
 	return res
 end function
 
-function fb_ArrayRedimPresv cdecl ( array as FBARRAY ptr, element_len as size_t, isvarlen as long, dimensions as size_t, ... ) as long
-	dim as cva_list ap
-	dim as long res
-	
-	cva_start( ap, dimensions )
-	res = hRedim( array, element_len, TRUE, isvarlen, dimensions, ap )
-	cva_end( ap )
-	
-	return res
-end function
 end extern

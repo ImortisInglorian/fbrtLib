@@ -40,15 +40,6 @@ type FBARRAY
 	as FBARRAYDIM      dimTB(0)    /' dimtb[dimensions] '/
 end type
 
-/' !!!REMOVEME!!! '/
-type FB_ARRAY_TMPDESC
-    as FB_LISTELEM     elem
-
-    as FBARRAY         array
-    as FBARRAYDIM      dimTB(0 to FB_MAXDIMENSIONS-2)
-end type
-/' !!!REMOVEME!!! '/
-
 type FB_DEFCTOR as sub ( this_ as any ptr )
 type FB_DTORMULT as sub ( array as FBARRAY ptr, dtor as FB_DEFCTOR, base_idx as size_t )
 
@@ -62,10 +53,11 @@ declare sub 	 fb_hArrayDtorObj 			   ( array as FBARRAY ptr, dtor as FB_DEFCTOR,
 declare sub 	 fb_hArrayDtorStr 			   ( array as FBARRAY ptr, dtor as FB_DEFCTOR, base_idx as size_t )
 declare sub 	 fb_ArrayDestructObj 	FBCALL ( array as FBARRAY ptr, dtor as FB_DEFCTOR )
 declare sub 	 fb_ArrayDestructStr 	FBCALL ( array as FBARRAY ptr )
-declare function fb_ArrayClear 			FBCALL ( array as FBARRAY ptr, isvarlen as long ) as long
-declare function fb_ArrayClearObj 		FBCALL ( array as FBARRAY ptr, ctor as FB_DEFCTOR, dtor as FB_DEFCTOR, dofill as long ) as long
-declare function fb_ArrayErase 			FBCALL ( array as FBARRAY ptr, isvarlen as long ) as long
-declare function fb_ArrayEraseObj 		FBCALL ( array as FBARRAY ptr, dtor as FB_DEFCTOR ) as long
+declare function fb_ArrayClear 			FBCALL ( array as FBARRAY ptr ) as long
+declare function fb_ArrayClearObj 		FBCALL ( array as FBARRAY ptr, ctor as FB_DEFCTOR, dtor as FB_DEFCTOR ) as long
+declare function fb_ArrayErase 			FBCALL ( array as FBARRAY ptr ) as long
+declare function fb_ArrayEraseObj 		FBCALL ( array as FBARRAY ptr, ctor as FB_DEFCTOR, dtor as FB_DEFCTOR ) as long
+declare function fb_ArrayGetDesc        FBCALL ( array as FBARRAY ptr ) as FBARRAY ptr
 declare sub 	 fb_ArrayStrErase 		FBCALL ( array as FBARRAY ptr )
 declare function fb_ArrayRedim 				   ( array as FBARRAY ptr, element_len as size_t, preserve as long, dimensions as size_t, ... ) as long
 declare function fb_ArrayRedimEx 			   ( array as FBARRAY ptr, element_len as size_t, doclear as long, isvarlen as long, dimensions as size_t, ... ) as long

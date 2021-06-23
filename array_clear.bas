@@ -4,13 +4,9 @@
 #include "fb.bi"
 
 extern "C"
-function fb_ArrayClear FBCALL ( array as FBARRAY ptr, isvarlen as long ) as long /' isvarlen = legacy '/
+function fb_ArrayClear FBCALL ( array as FBARRAY ptr ) as long
 	if ( array->_ptr ) then
-		if ( isvarlen ) then
-			fb_ArrayDestructStr( array )
-		else
-			memset( array->_ptr, 0, array->size )
-		end if
+		memset( array->_ptr, 0, array->size )
 	end if
 
 	return fb_ErrorSetNum( FB_RTERROR_OK )

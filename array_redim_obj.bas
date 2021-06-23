@@ -11,7 +11,7 @@ function fb_ArrayRedimObj ( array as FBARRAY ptr, element_len as size_t, ctor as
 	if ( dtor <> NULL ) then
 		fb_ArrayDestructObj( array, dtor )
 	end if
-	fb_ArrayErase( array, 0 )
+	fb_ArrayErase( array )
 
 	cva_start( ap, dimensions )
 	/' Have to assume doclear=TRUE, because we have no doclear parameter here,
