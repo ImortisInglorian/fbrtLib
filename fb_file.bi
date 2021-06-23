@@ -166,7 +166,7 @@ end type
 type FB_INPUTCTX
 	as FB_FILE ptr 			handle
 	as long 				status
-	as FBSTRING ptr 		str
+	as FBSTRING				str
 	as long 				index
 end type
 

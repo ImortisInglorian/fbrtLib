@@ -20,7 +20,7 @@ private function hReadChar( ctx as FB_INPUTCTX ptr ) as long
 			return EOF_
 		else
 			ctx->index += 1
-			return ctx->str->data[ctx->index]
+			return ctx->str.data[ctx->index]
 		end if
 	end if
 end function

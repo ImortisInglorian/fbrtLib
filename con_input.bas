@@ -16,7 +16,7 @@ function fb_ConsoleInput FBCALL ( text as FBSTRING ptr, addquestion as long, add
 		return fb_FileInput( 0 )
 	end if
 
-    ctx = _FB_TLSGETCTX( INPUT )
+	ctx = _FB_TLSGETCTX( INPUT )
 
 	fb_StrDelete( @ctx->str )
 	ctx->handle = 0

@@ -18,10 +18,10 @@ private function hReadChar( ctx as FB_INPUTCTX ptr ) as FB_WCHAR
         return c
     /' console.. '/
     else
-		if ( ctx->index >= FB_STRSIZE( @ctx->str->len ) ) then
+		if ( ctx->index >= FB_STRSIZE( @ctx->str ) ) then
 			return FB_WEOF
 		else
-			return cast(ubyte, ctx->str->data[ctx->index + 1])
+			return cast(ubyte, ctx->str.data[ctx->index + 1])
 		end if
 	end if
 
