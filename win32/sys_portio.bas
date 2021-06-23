@@ -176,7 +176,7 @@ function fb_hIn( port as ushort ) as long
 	return -fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 end function
 
-function fb_hOut( port as ushort, value as ubyte ptr ) as long
+function fb_hOut( port as ushort, value as ubyte ) as long
 	return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 end function
 end extern
