@@ -1,7 +1,6 @@
 /' mkdir function '/
 
 #include "fb.bi"
-#include "crt/sys/stat.bi"
 
 /':::::'/
 extern "C"
