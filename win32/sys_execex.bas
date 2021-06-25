@@ -2,6 +2,8 @@
 #include "fb_private_console.bi"
 #include "crt/process.bi"
 
+/' !!!FIXME!!! return type should be ANY PTR (aka INTEGER) sized for 32/64-bit '/
+
 extern "C"
 function fb_ExecEx FBCALL ( program as FBSTRING ptr, args as FBSTRING ptr, do_fork as long ) as long
 	dim as ubyte ptr buffer(MAX_PATH + 1), arguments
@@ -58,7 +60,7 @@ function fb_ExecEx FBCALL ( program as FBSTRING ptr, args as FBSTRING ptr, do_fo
 									@ProcessInfo ) <> 0 ) then
 			res = -1
 		else
-         /' Release main thread handle - we're not interested in it '/
+			/' Release main thread handle - we're not interested in it '/
 			CloseHandle( ProcessInfo.hThread )
 			if ( do_fork <> NULL ) then
 				dim as DWORD dwExitCode
@@ -70,7 +72,10 @@ function fb_ExecEx FBCALL ( program as FBSTRING ptr, args as FBSTRING ptr, do_fo
 				end if
 				CloseHandle( ProcessInfo.hProcess )
 			else
-				res = cast(long, ProcessInfo.hProcess)
+				'' res = cast(long, ProcessInfo.hProcess)
+				'' fbc complains trying to cast ANY PTR to LONG on 64-bit.
+				res = cast(long, cast(integer, ProcessInfo.hProcess))
+				
 			end if
 		end if
 	end scope
