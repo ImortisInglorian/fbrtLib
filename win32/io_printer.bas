@@ -228,7 +228,10 @@ private sub fb_hPrinterBuildListLocal( list as FB_LIST ptr)
 				end if
 
 				pPortName = pFoundPos + 1
-				while( isspace( cast(long, pPortName) ) )
+				/' !!!FIXME!!! - triggers compiler fault Aborting due to runtime error 7 (null pointer access) at line 540 of src\compiler\ast-node-arg.bas::HCHECKSTRPARAM() '/
+				'' while( isspace( cast(long, *pPortName) ) )
+				'' while( isspace( cast(LPTCHAR, *pPortName) ) )
+				while( isspace( *cast(TCHAR ptr, pPortName) ) )
 					pPortName += 1
 				wend
 				pFoundPos = strchr(pPortName, 44) ' ,
