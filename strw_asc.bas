@@ -3,7 +3,7 @@
 #include "fb.bi"
 
 extern "C"
-function fb_WstrAsc FBCALL ( _str as FB_WCHAR const ptr, _pos as ssize_t ) as ulong
+function fb_WstrAsc FBCALL ( _str as const FB_WCHAR ptr, _pos as ssize_t ) as ulong
 	dim as ssize_t _len
 
 	if ( _str = NULL ) then

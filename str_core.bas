@@ -192,7 +192,7 @@ function fb_hStrDelTemp FBCALL ( _str as FBSTRING ptr ) as long
 	return res
 end function
 
-sub fb_hStrCopy FBCALL ( dst as ubyte ptr, src as ubyte const ptr, bytes as ssize_t )
+sub fb_hStrCopy FBCALL ( dst as ubyte ptr, src as const ubyte ptr, bytes as ssize_t )
 	if ( (src <> NULL) and (bytes > 0) ) then
 		dst = cast(ubyte ptr, FB_MEMCPYX( dst, src, bytes ))
 	end if

@@ -3,8 +3,8 @@
 #include "fb.bi"
 
 extern "C"
-function fb_WstrToULongint FBCALL ( src as FB_WCHAR const ptr, _len as ssize_t ) as ulongint
-    dim as  FB_WCHAR ptr p, r
+function fb_WstrToULongint FBCALL ( src as const FB_WCHAR ptr, _len as ssize_t ) as ulongint
+    dim as const FB_WCHAR ptr p, r
 	dim as long radix
 
 	/' skip white spc '/
@@ -38,7 +38,7 @@ function fb_WstrToULongint FBCALL ( src as FB_WCHAR const ptr, _len as ssize_t )
 	return wcstoul( p, NULL, radix )  'Not sure this is right
 end function
 
-function fb_WstrValULng FBCALL ( _str as FB_WCHAR const ptr ) as ulongint
+function fb_WstrValULng FBCALL ( _str as const FB_WCHAR ptr ) as ulongint
     dim as ulongint _val
 	dim as ssize_t _len
 

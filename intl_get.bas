@@ -4,9 +4,9 @@
 
 extern "C"
 /':::::'/
-function fb_IntlGet( Index as eFbIntlIndex, disallow_localized as long ) as ubyte ptr
+function fb_IntlGet( Index as eFbIntlIndex, disallow_localized as long ) as const ubyte ptr
     if( fb_I18nGet() <> NULL and disallow_localized = 0 ) then
-        dim as ubyte const ptr pszResult = fb_DrvIntlGet( Index )
+        dim as const ubyte ptr pszResult = fb_DrvIntlGet( Index )
         if ( pszResult <> NULL ) then
             return pszResult
         end if

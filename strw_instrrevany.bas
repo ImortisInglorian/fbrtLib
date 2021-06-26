@@ -3,7 +3,7 @@
 #include "fb.bi"
 
 extern "C"
-function fb_WstrInstrRevAny FBCALL ( src as FB_WCHAR const ptr, patt as FB_WCHAR const ptr, start as ssize_t ) as ssize_t
+function fb_WstrInstrRevAny FBCALL ( src as const FB_WCHAR ptr, patt as const FB_WCHAR ptr, start as ssize_t ) as ssize_t
 	if ( (src <> NULL) and (patt <> NULL) ) then
 		dim as ssize_t size_src = fb_wstr_Len(src)
 		dim as ssize_t size_patt = fb_wstr_Len(patt)

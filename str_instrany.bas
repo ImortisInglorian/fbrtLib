@@ -16,11 +16,11 @@ function fb_StrInstrAny FBCALL ( start as ssize_t, src as FBSTRING ptr, patt as 
 			r = 0
 		else
 			dim as ssize_t i, found, search_len = size_src - start + 1
-			dim as ubyte const ptr pachText = src->data + start - 1
+			dim as const ubyte ptr pachText = src->data + start - 1
 			r = search_len
 			
 			for i=0 to size_patt
-				dim as ubyte const ptr pszEnd = cast(ubyte const ptr, FB_MEMCHR( pachText, patt->data[i], r ))
+				dim as const ubyte ptr pszEnd = cast(const ubyte ptr, FB_MEMCHR( pachText, patt->data[i], r ))
 				if ( pszEnd <> NULL ) then
 					found = pszEnd - pachText
 					if ( found < r ) then

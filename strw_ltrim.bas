@@ -3,9 +3,9 @@
 #include "fb.bi"
 
 extern "C"
-function fb_WstrLTrim FBCALL ( src as FB_WCHAR const ptr ) as FB_WCHAR ptr
+function fb_WstrLTrim FBCALL ( src as const FB_WCHAR ptr ) as FB_WCHAR ptr
 	dim as FB_WCHAR ptr dst
-	dim as FB_WCHAR ptr p
+	dim as const FB_WCHAR ptr p
 	dim as ssize_t _len
 
 	if ( src = NULL ) then

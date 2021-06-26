@@ -3,7 +3,7 @@
 #include "fb.bi"
 
 extern "C"
-function fb_WstrInstr FBCALL ( start as ssize_t, src as FB_WCHAR const ptr, patt as FB_WCHAR const ptr ) as ssize_t
+function fb_WstrInstr FBCALL ( start as ssize_t, src as const FB_WCHAR ptr, patt as const FB_WCHAR ptr ) as ssize_t
 	dim as ssize_t r
 	dim as FB_WCHAR ptr p
 

@@ -3,8 +3,8 @@
 #include "fb.bi"
 
 extern "C"
-function fb_WstrLTrimAny FBCALL ( src as FB_WCHAR const ptr, pattern as FB_WCHAR const ptr ) as FB_WCHAR ptr
-    dim as FB_WCHAR ptr pachText
+function fb_WstrLTrimAny FBCALL ( src as const FB_WCHAR ptr, pattern as const FB_WCHAR ptr ) as FB_WCHAR ptr
+    dim as const FB_WCHAR ptr pachText
 	dim as FB_WCHAR ptr dst
 	dim as ssize_t _len
 

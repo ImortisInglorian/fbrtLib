@@ -3,10 +3,11 @@
 #include "fb.bi"
 
 extern "C"
-function fb_WstrToDouble FBCALL ( src as FB_WCHAR const ptr, _len as ssize_t ) as double
-	dim as FB_WCHAR ptr p, r, q
+function fb_WstrToDouble FBCALL ( src as const FB_WCHAR ptr, _len as ssize_t ) as double
+	dim as const FB_WCHAR ptr p, r
 	dim as long radix
 	dim as ssize_t i
+	dim as FB_WCHAR ptr q
 	dim as FB_WCHAR c
 	dim as double ret
 
@@ -57,7 +58,7 @@ function fb_WstrToDouble FBCALL ( src as FB_WCHAR const ptr, _len as ssize_t ) a
 	return ret
 end function
 
-function fb_WstrVal FBCALL ( _str as FB_WCHAR const ptr ) as double
+function fb_WstrVal FBCALL ( _str as const FB_WCHAR ptr ) as double
     dim as double _val
 	dim as ssize_t _len
 

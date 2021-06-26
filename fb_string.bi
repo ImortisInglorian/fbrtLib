@@ -200,7 +200,7 @@ declare function fb_hStrAllocTemp 			FBCALL ( str as FBSTRING ptr, size as ssize
 declare function fb_hStrAllocTemp_NoLock 	FBCALL ( str as FBSTRING ptr, size as ssize_t ) as FBSTRING ptr
 declare function fb_hStrDelTemp 			FBCALL ( str as FBSTRING ptr ) as long
 declare function fb_hStrDelTemp_NoLock  	FBCALL ( str as FBSTRING ptr ) as long
-declare sub 	 fb_hStrCopy 				FBCALL ( dst as ubyte ptr, src as ubyte const ptr , bytes as ssize_t )
+declare sub 	 fb_hStrCopy 				FBCALL ( dst as ubyte ptr, src as const ubyte ptr , bytes as ssize_t )
 declare function fb_hStrSkipChar 			FBCALL ( s as ubyte ptr, len as ssize_t, c as long ) as ubyte ptr
 declare function fb_hStrSkipCharRev 		FBCALL ( s as ubyte ptr, len as ssize_t, c as long ) as ubyte ptr
 
@@ -217,8 +217,8 @@ declare function fb_StrCompare 				FBCALL ( str1 as any ptr, str1_size as ssize_
 declare function fb_StrAllocTempResult 		FBCALL ( src as FBSTRING ptr ) as FBSTRING ptr
 declare function fb_StrAllocTempDescF		FBCALL ( str as ubyte ptr, str_size as ssize_t ) as FBSTRING ptr
 declare function fb_StrAllocTempDescV		FBCALL ( str as FBSTRING ptr ) as FBSTRING ptr
-declare function fb_StrAllocTempDescZEx 	FBCALL ( str as ubyte const ptr, len as ssize_t ) as FBSTRING ptr
-declare function fb_StrAllocTempDescZ 		FBCALL ( str as ubyte const ptr ) as FBSTRING ptr
+declare function fb_StrAllocTempDescZEx 	FBCALL ( str as const ubyte ptr, len as ssize_t ) as FBSTRING ptr
+declare function fb_StrAllocTempDescZ 		FBCALL ( str as const ubyte ptr ) as FBSTRING ptr
 declare function fb_StrLen 					FBCALL ( str as any ptr, str_size as ssize_t ) as ssize_t
 
 declare function fb_hBoolToStr 				FBCALL ( num as ubyte ) as ubyte ptr
@@ -265,67 +265,67 @@ declare function fb_BIN_b 					FBCALL ( num as ubyte ) as FBSTRING ptr
 declare function fb_BIN_s 					FBCALL ( num as ushort ) as FBSTRING ptr
 declare function fb_BIN_i 					FBCALL ( num as ulong ) as FBSTRING ptr
 declare function fb_BIN_l 					FBCALL ( num as ulongint ) as FBSTRING ptr
-declare function fb_BIN_p 					FBCALL ( p as any const ptr ) as FBSTRING ptr
+declare function fb_BIN_p 					FBCALL ( p as const any ptr ) as FBSTRING ptr
 declare function fb_BINEx_b 				FBCALL ( num as ubyte, digits as long ) as FBSTRING ptr
 declare function fb_BINEx_s 				FBCALL ( num as ushort, digits as long ) as FBSTRING ptr
 declare function fb_BINEx_i 				FBCALL ( num as ulong, digits as long ) as FBSTRING ptr
 declare function fb_BINEx_l 				FBCALL ( num as ulongint, digits as long ) as FBSTRING ptr
-declare function fb_BINEx_p 				FBCALL ( p as any const ptr, digits as long ) as FBSTRING ptr
+declare function fb_BINEx_p 				FBCALL ( p as const any ptr, digits as long ) as FBSTRING ptr
 
 declare function fb_OCT_b 					FBCALL ( num as ubyte ) as FBSTRING ptr
 declare function fb_OCT_s 					FBCALL ( num as ushort ) as FBSTRING ptr
 declare function fb_OCT_i 					FBCALL ( num as ulong ) as FBSTRING ptr
 declare function fb_OCT_l 					FBCALL ( num as ulongint ) as FBSTRING ptr
-declare function fb_OCT_p 					FBCALL ( p as any const ptr ) as FBSTRING ptr
+declare function fb_OCT_p 					FBCALL ( p as const any ptr ) as FBSTRING ptr
 declare function fb_OCTEx_b 				FBCALL ( num as ubyte, digits as long ) as FBSTRING ptr
 declare function fb_OCTEx_s 				FBCALL ( num as ushort, digits as long ) as FBSTRING ptr
 declare function fb_OCTEx_i 				FBCALL ( num as ulong, digits as long ) as FBSTRING ptr
 declare function fb_OCTEx_l 				FBCALL ( num as ulongint, digits as long ) as FBSTRING ptr
-declare function fb_OCTEx_p 				FBCALL ( p as any const ptr, digits as long ) as FBSTRING ptr
+declare function fb_OCTEx_p 				FBCALL ( p as const any ptr, digits as long ) as FBSTRING ptr
 
 declare function fb_HEX_b 					FBCALL ( num as ubyte ) as FBSTRING ptr
 declare function fb_HEX_s 					FBCALL ( num as ushort ) as FBSTRING ptr
 declare function fb_HEX_i 					FBCALL ( num as ulong ) as FBSTRING ptr
 declare function fb_HEX_l 					FBCALL ( num as ulongint ) as FBSTRING ptr
-declare function fb_HEX_p 					FBCALL ( p as any const ptr ) as FBSTRING ptr
+declare function fb_HEX_p 					FBCALL ( p as const any ptr ) as FBSTRING ptr
 declare function fb_HEXEx_b 				FBCALL ( num as ubyte, digits as long ) as FBSTRING ptr
 declare function fb_HEXEx_s 				FBCALL ( num as ushort, digits as long ) as FBSTRING ptr
 declare function fb_HEXEx_i 				FBCALL ( num as ulong, digits as long ) as FBSTRING ptr
 declare function fb_HEXEx_l 				FBCALL ( num as ulongint, digits as long ) as FBSTRING ptr
-declare function fb_HEXEx_p 				FBCALL ( p as any const ptr, digits as long ) as FBSTRING ptr
+declare function fb_HEXEx_p 				FBCALL ( p as const any ptr, digits as long ) as FBSTRING ptr
 
 declare function fb_WstrBin_b 				FBCALL ( num as ubyte ) as FB_WCHAR ptr
 declare function fb_WstrBin_s 				FBCALL ( num as ushort ) as FB_WCHAR ptr
 declare function fb_WstrBin_i 				FBCALL ( num as ulong ) as FB_WCHAR ptr
 declare function fb_WstrBin_l 				FBCALL ( num as ulongint ) as FB_WCHAR ptr
-declare function fb_WstrBin_p 				FBCALL ( p as any const ptr ) as FB_WCHAR ptr
+declare function fb_WstrBin_p 				FBCALL ( p as const any ptr ) as FB_WCHAR ptr
 declare function fb_WstrBinEx_b 			FBCALL ( num as ubyte, digits as long ) as FB_WCHAR ptr
 declare function fb_WstrBinEx_s 			FBCALL ( num as ushort, digits as long ) as FB_WCHAR ptr
 declare function fb_WstrBinEx_i 			FBCALL ( num as ulong, digits as long ) as FB_WCHAR ptr
 declare function fb_WstrBinEx_l 			FBCALL ( num as ulongint, digits as long ) as FB_WCHAR ptr
-declare function fb_WstrBinEx_p 			FBCALL ( p as any const ptr, digits as long ) as FB_WCHAR ptr
+declare function fb_WstrBinEx_p 			FBCALL ( p as const any ptr, digits as long ) as FB_WCHAR ptr
 
 declare function fb_WstrHex_b 				FBCALL ( num as ubyte ) as FB_WCHAR ptr
 declare function fb_WstrHex_s 				FBCALL ( num as ushort ) as FB_WCHAR ptr
 declare function fb_WstrHex_i 				FBCALL ( num as ulong ) as FB_WCHAR ptr
 declare function fb_WstrHex_l 				FBCALL ( num as ulongint ) as FB_WCHAR ptr
-declare function fb_WstrHex_p 				FBCALL ( p as any const ptr ) as FB_WCHAR ptr
+declare function fb_WstrHex_p 				FBCALL ( p as const any ptr ) as FB_WCHAR ptr
 declare function fb_WstrHexEx_b 			FBCALL ( num as ubyte, digits as long ) as FB_WCHAR ptr
 declare function fb_WstrHexEx_s 			FBCALL ( num as ushort, digits as long ) as FB_WCHAR ptr
 declare function fb_WstrHexEx_i 			FBCALL ( num as ulong, digits as long ) as FB_WCHAR ptr
 declare function fb_WstrHexEx_l 			FBCALL ( num as ulongint, digits as long ) as FB_WCHAR ptr
-declare function fb_WstrHexEx_p 			FBCALL ( p as any const ptr, digits as long ) as FB_WCHAR ptr
+declare function fb_WstrHexEx_p 			FBCALL ( p as const any ptr, digits as long ) as FB_WCHAR ptr
 
 declare function fb_WstrOct_b 				FBCALL ( num as ubyte ) as FB_WCHAR ptr
 declare function fb_WstrOct_s 				FBCALL ( num as ushort ) as FB_WCHAR ptr
 declare function fb_WstrOct_i 				FBCALL ( num as ulong ) as FB_WCHAR ptr
 declare function fb_WstrOct_l 				FBCALL ( num as ulongint ) as FB_WCHAR ptr
-declare function fb_WstrOct_p 				FBCALL ( p as any const ptr ) as FB_WCHAR ptr
+declare function fb_WstrOct_p 				FBCALL ( p as const any ptr ) as FB_WCHAR ptr
 declare function fb_WstrOctEx_b 			FBCALL ( num as ubyte, digits as long ) as FB_WCHAR ptr
 declare function fb_WstrOctEx_s 			FBCALL ( num as ushort, digits as long ) as FB_WCHAR ptr
 declare function fb_WstrOctEx_i 			FBCALL ( num as ulong, digits as long ) as FB_WCHAR ptr
 declare function fb_WstrOctEx_l 			FBCALL ( num as ulongint, digits as long ) as FB_WCHAR ptr
-declare function fb_WstrOctEx_p 			FBCALL ( p as any const ptr, digits as long ) as FB_WCHAR ptr
+declare function fb_WstrOctEx_p 			FBCALL ( p as const any ptr, digits as long ) as FB_WCHAR ptr
 
 declare function fb_MKD 					FBCALL ( num as double ) as FBSTRING ptr
 declare function fb_MKS 					FBCALL ( num as single ) as FBSTRING ptr
@@ -369,13 +369,13 @@ declare function fb_WstrAssign 				FBCALL ( dst as FB_WCHAR ptr, dst_chars as ss
 declare function fb_WstrAssignFromA 		FBCALL ( dst as FB_WCHAR ptr, dst_chars as ssize_t, src as any ptr, src_chars as ssize_t ) as FB_WCHAR ptr
 declare function fb_WstrAssignToA 			FBCALL ( dst as any ptr, dst_chars as ssize_t, src as FB_WCHAR ptr, fill_rem as long ) as any ptr
 declare function fb_WstrAssignToAEx 		FBCALL ( dst as any ptr, dst_chars as ssize_t, src as FB_WCHAR ptr, fill_rem as long, is_init as long ) as any ptr
-declare function fb_WstrConcat 				FBCALL ( str1 as FB_WCHAR const ptr, str2 as FB_WCHAR const ptr )  as FB_WCHAR ptr
-declare function fb_WstrConcatWA 			FBCALL ( str1 as FB_WCHAR const ptr, str2 as any const ptr, str2_size as ssize_t ) as FB_WCHAR ptr
-declare function fb_WstrConcatAW 			FBCALL ( str1 as any const ptr, str1_size as ssize_t, str2 as FB_WCHAR const ptr ) as FB_WCHAR ptr
-declare function fb_WstrConcatAssign 		FBCALL ( dst as FB_WCHAR ptr, dst_chars as ssize_t, src as FB_WCHAR const ptr ) as FB_WCHAR ptr
+declare function fb_WstrConcat 				FBCALL ( str1 as const FB_WCHAR ptr, str2 as const FB_WCHAR ptr )  as FB_WCHAR ptr
+declare function fb_WstrConcatWA 			FBCALL ( str1 as const FB_WCHAR ptr, str2 as const any ptr, str2_size as ssize_t ) as FB_WCHAR ptr
+declare function fb_WstrConcatAW 			FBCALL ( str1 as const any ptr, str1_size as ssize_t, str2 as const FB_WCHAR ptr ) as FB_WCHAR ptr
+declare function fb_WstrConcatAssign 		FBCALL ( dst as FB_WCHAR ptr, dst_chars as ssize_t, src as const FB_WCHAR ptr ) as FB_WCHAR ptr
 
 declare function fb_WstrLen 				FBCALL ( str as FB_WCHAR ptr ) as ssize_t
-declare function fb_WstrCompare 			FBCALL ( str1 as FB_WCHAR const ptr, str2 as FB_WCHAR const ptr ) as long
+declare function fb_WstrCompare 			FBCALL ( str1 as const FB_WCHAR ptr, str2 as const FB_WCHAR ptr ) as long
 
 declare function fb_hBoolToWstr 			FBCALL ( num as ubyte ) as FB_WCHAR ptr
 declare function fb_BoolToWstr 				FBCALL ( num as ubyte ) as FB_WCHAR ptr
@@ -386,57 +386,57 @@ declare function fb_ULongintToWstr 			FBCALL ( num as ulongint ) as FB_WCHAR ptr
 declare function fb_FloatToWstr 			FBCALL ( num as single ) as FB_WCHAR ptr
 declare function fb_FloatExToWstr    			   ( val as double, buffer as FB_WCHAR ptr, digits as long, mask as long ) as FB_WCHAR ptr
 declare function fb_DoubleToWstr			FBCALL ( num as double ) as FB_WCHAR ptr
-declare function fb_StrToWstr 				FBCALL ( src as ubyte const ptr ) as FB_WCHAR ptr
+declare function fb_StrToWstr 				FBCALL ( src as const ubyte ptr ) as FB_WCHAR ptr
 
-declare function fb_WstrToStr 				FBCALL ( src as FB_WCHAR const ptr ) as FBSTRING ptr
-declare function fb_WstrToDouble 			FBCALL ( src as FB_WCHAR const ptr, len as ssize_t ) as double
-declare function fb_WstrToBool 				FBCALL ( src as FB_WCHAR const ptr, len as ssize_t ) as ubyte
-declare function fb_WstrToInt 				FBCALL ( src as FB_WCHAR const ptr, len as ssize_t ) as long
-declare function fb_WstrToUInt 				FBCALL ( src as FB_WCHAR const ptr, len as ssize_t ) as ulong
-declare function fb_WstrToLongint 			FBCALL ( src as FB_WCHAR const ptr, len as ssize_t ) as longint
-declare function fb_WstrToULongint 			FBCALL ( src as FB_WCHAR const ptr, len as ssize_t ) as ulongint
-declare function fb_WstrRadix2Int 			FBCALL ( src as FB_WCHAR const ptr, len as ssize_t, radix as long ) as long
-declare function fb_WstrRadix2Longint 		FBCALL ( s as FB_WCHAR const ptr, len as ssize_t, radix as long ) as longint
+declare function fb_WstrToStr 				FBCALL ( src as const FB_WCHAR ptr ) as FBSTRING ptr
+declare function fb_WstrToDouble 			FBCALL ( src as const FB_WCHAR ptr, len as ssize_t ) as double
+declare function fb_WstrToBool 				FBCALL ( src as const FB_WCHAR ptr, len as ssize_t ) as ubyte
+declare function fb_WstrToInt 				FBCALL ( src as const FB_WCHAR ptr, len as ssize_t ) as long
+declare function fb_WstrToUInt 				FBCALL ( src as const FB_WCHAR ptr, len as ssize_t ) as ulong
+declare function fb_WstrToLongint 			FBCALL ( src as const FB_WCHAR ptr, len as ssize_t ) as longint
+declare function fb_WstrToULongint 			FBCALL ( src as const FB_WCHAR ptr, len as ssize_t ) as ulongint
+declare function fb_WstrRadix2Int 			FBCALL ( src as const FB_WCHAR ptr, len as ssize_t, radix as long ) as long
+declare function fb_WstrRadix2Longint 		FBCALL ( s as const FB_WCHAR ptr, len as ssize_t, radix as long ) as longint
 
 declare function fb_WstrChr 					   ( args as long, ... ) as FB_WCHAR ptr
-declare function fb_WstrAsc 				FBCALL ( str as FB_WCHAR const ptr, _pos as ssize_t ) as ulong
-declare function fb_WstrVal 				FBCALL ( str as FB_WCHAR const ptr ) as double
-declare function fb_WstrValBool 			FBCALL ( str as FB_WCHAR const ptr ) as ubyte
-declare function fb_WstrValInt 				FBCALL ( str as FB_WCHAR const ptr ) as long
-declare function fb_WstrValUInt 			FBCALL ( str as FB_WCHAR const ptr ) as ulong
-declare function fb_WstrValLng 				FBCALL ( str as FB_WCHAR const ptr ) as longint
-declare function fb_WstrValULng 			FBCALL ( str as FB_WCHAR const ptr ) as ulongint
-declare function fb_WstrLeft 				FBCALL ( str as FB_WCHAR const ptr, chars as ssize_t ) as FB_WCHAR ptr
-declare function fb_WstrRight 				FBCALL ( str as FB_WCHAR const ptr, chars as ssize_t ) as FB_WCHAR ptr
+declare function fb_WstrAsc 				FBCALL ( str as const FB_WCHAR ptr, _pos as ssize_t ) as ulong
+declare function fb_WstrVal 				FBCALL ( str as const FB_WCHAR ptr ) as double
+declare function fb_WstrValBool 			FBCALL ( str as const FB_WCHAR ptr ) as ubyte
+declare function fb_WstrValInt 				FBCALL ( str as const FB_WCHAR ptr ) as long
+declare function fb_WstrValUInt 			FBCALL ( str as const FB_WCHAR ptr ) as ulong
+declare function fb_WstrValLng 				FBCALL ( str as const FB_WCHAR ptr ) as longint
+declare function fb_WstrValULng 			FBCALL ( str as const FB_WCHAR ptr ) as ulongint
+declare function fb_WstrLeft 				FBCALL ( str as const FB_WCHAR ptr, chars as ssize_t ) as FB_WCHAR ptr
+declare function fb_WstrRight 				FBCALL ( str as const FB_WCHAR ptr, chars as ssize_t ) as FB_WCHAR ptr
 declare function fb_WstrSpace 				FBCALL ( chars as ssize_t ) as FB_WCHAR ptr
-declare function fb_WstrLTrim 				FBCALL ( str as FB_WCHAR const ptr ) as FB_WCHAR ptr
-declare function fb_WstrLTrimEx 			FBCALL ( str as FB_WCHAR const ptr, pattern as FB_WCHAR const ptr ) as FB_WCHAR ptr
-declare function fb_WstrLTrimAny 			FBCALL ( str as FB_WCHAR const ptr, pattern as FB_WCHAR const ptr ) as FB_WCHAR ptr
-declare function fb_WstrRTrim 				FBCALL ( str as FB_WCHAR const ptr ) as FB_WCHAR ptr
-declare function fb_WstrRTrimEx 			FBCALL ( str as FB_WCHAR const ptr, pattern as FB_WCHAR const ptr ) as FB_WCHAR ptr
-declare function fb_WstrRTrimAny 			FBCALL ( str as FB_WCHAR const ptr, pattern as FB_WCHAR const ptr ) as FB_WCHAR ptr
-declare function fb_WstrTrim 				FBCALL ( src as FB_WCHAR const ptr ) as FB_WCHAR ptr
-declare function fb_WstrTrimEx 				FBCALL ( str as FB_WCHAR const ptr, pattern as FB_WCHAR const ptr ) as FB_WCHAR ptr
-declare function fb_WstrTrimAny 			FBCALL ( str as FB_WCHAR const ptr, pattern as FB_WCHAR const ptr ) as FB_WCHAR ptr
+declare function fb_WstrLTrim 				FBCALL ( str as const FB_WCHAR ptr ) as FB_WCHAR ptr
+declare function fb_WstrLTrimEx 			FBCALL ( str as const FB_WCHAR ptr, pattern as const FB_WCHAR ptr ) as FB_WCHAR ptr
+declare function fb_WstrLTrimAny 			FBCALL ( str as const FB_WCHAR ptr, pattern as const FB_WCHAR ptr ) as FB_WCHAR ptr
+declare function fb_WstrRTrim 				FBCALL ( str as const FB_WCHAR ptr ) as FB_WCHAR ptr
+declare function fb_WstrRTrimEx 			FBCALL ( str as const FB_WCHAR ptr, pattern as const FB_WCHAR ptr ) as FB_WCHAR ptr
+declare function fb_WstrRTrimAny 			FBCALL ( str as const FB_WCHAR ptr, pattern as const FB_WCHAR ptr ) as FB_WCHAR ptr
+declare function fb_WstrTrim 				FBCALL ( src as const FB_WCHAR ptr ) as FB_WCHAR ptr
+declare function fb_WstrTrimEx 				FBCALL ( str as const FB_WCHAR ptr, pattern as const FB_WCHAR ptr ) as FB_WCHAR ptr
+declare function fb_WstrTrimAny 			FBCALL ( str as const FB_WCHAR ptr, pattern as const FB_WCHAR ptr ) as FB_WCHAR ptr
 declare sub 	 fb_WstrLset 				FBCALL ( dst as FB_WCHAR ptr, src as FB_WCHAR ptr )
 declare sub 	 fb_WstrRset 				FBCALL ( dst as FB_WCHAR ptr, src as FB_WCHAR ptr )
-declare function fb_WstrLcase2 				FBCALL ( src as FB_WCHAR const ptr, mode as long ) as FB_WCHAR ptr
-declare function fb_WstrUcase2 				FBCALL ( src as FB_WCHAR const ptr, mode as long ) as FB_WCHAR ptr
+declare function fb_WstrLcase2 				FBCALL ( src as const FB_WCHAR ptr, mode as long ) as FB_WCHAR ptr
+declare function fb_WstrUcase2 				FBCALL ( src as const FB_WCHAR ptr, mode as long ) as FB_WCHAR ptr
 declare function fb_WstrFill1 				FBCALL ( chars as ssize_t, c as long ) as FB_WCHAR ptr
-declare function fb_WstrFill2 				FBCALL ( cnt as ssize_t, src as FB_WCHAR const ptr ) as FB_WCHAR ptr
-declare function fb_WstrInstr 				FBCALL ( start as ssize_t, src as FB_WCHAR const ptr, patt as FB_WCHAR const ptr ) as ssize_t
-declare function fb_WstrInstrAny 			FBCALL ( start as ssize_t, src as FB_WCHAR const ptr, patt as FB_WCHAR const ptr ) as ssize_t
-declare function fb_WstrInstrRev 			FBCALL ( src as FB_WCHAR const ptr, patt as FB_WCHAR const ptr, start as ssize_t ) as ssize_t
-declare function fb_WstrInstrRevAny 		FBCALL ( src as FB_WCHAR const ptr, patt as FB_WCHAR const ptr, start as ssize_t ) as ssize_t
-declare function fb_WstrMid 				FBCALL ( src as FB_WCHAR const ptr, start as ssize_t, len as ssize_t ) as FB_WCHAR ptr
-declare sub 	 fb_WstrAssignMid 			FBCALL ( dst as FB_WCHAR ptr, dst_len as ssize_t, start as ssize_t, len as ssize_t, src as FB_WCHAR const ptr )
+declare function fb_WstrFill2 				FBCALL ( cnt as ssize_t, src as const FB_WCHAR ptr ) as FB_WCHAR ptr
+declare function fb_WstrInstr 				FBCALL ( start as ssize_t, src as const FB_WCHAR ptr, patt as const FB_WCHAR ptr ) as ssize_t
+declare function fb_WstrInstrAny 			FBCALL ( start as ssize_t, src as const FB_WCHAR ptr, patt as const FB_WCHAR ptr ) as ssize_t
+declare function fb_WstrInstrRev 			FBCALL ( src as const FB_WCHAR ptr, patt as const FB_WCHAR ptr, start as ssize_t ) as ssize_t
+declare function fb_WstrInstrRevAny 		FBCALL ( src as const FB_WCHAR ptr, patt as const FB_WCHAR ptr, start as ssize_t ) as ssize_t
+declare function fb_WstrMid 				FBCALL ( src as const FB_WCHAR ptr, start as ssize_t, len as ssize_t ) as FB_WCHAR ptr
+declare sub 	 fb_WstrAssignMid 			FBCALL ( dst as FB_WCHAR ptr, dst_len as ssize_t, start as ssize_t, len as ssize_t, src as const FB_WCHAR ptr )
 
 /''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
  * VB-compatible functions
  *************************************************************************************************'/
 
 declare function fb_StrFormat 				FBCALL ( value as double, mask as FBSTRING ptr ) as FBSTRING ptr
-declare function fb_hStrFormat 				FBCALL ( value as double, mask as ubyte const ptr, mask_length as size_t ) as FBSTRING ptr
+declare function fb_hStrFormat 				FBCALL ( value as double, mask as const ubyte ptr, mask_length as size_t ) as FBSTRING ptr
 
 declare function fb_VALBOOL 				FBCALL ( str as FBSTRING ptr ) as ubyte
 declare function fb_VALINT 					FBCALL ( str as FBSTRING ptr ) as long

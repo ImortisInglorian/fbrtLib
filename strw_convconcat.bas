@@ -3,7 +3,7 @@
 #include "fb.bi"
 
 extern "C"
-function fb_WstrConcatWA FBCALL ( str1 as FB_WCHAR const ptr, str2 as any const ptr, str2_size as ssize_t ) as FB_WCHAR ptr
+function fb_WstrConcatWA FBCALL ( str1 as const FB_WCHAR ptr, str2 as const any ptr, str2_size as ssize_t ) as FB_WCHAR ptr
 	dim as FB_WCHAR ptr dst
 	dim as ssize_t str1_len, str2_len
 	dim as ubyte ptr str2_ptr
@@ -36,7 +36,7 @@ function fb_WstrConcatWA FBCALL ( str1 as FB_WCHAR const ptr, str2 as any const 
 	return dst
 end function
 
-function fb_WstrConcatAW FBCALL ( str1 as any const ptr, str1_size as ssize_t, str2 as FB_WCHAR const ptr ) as FB_WCHAR ptr
+function fb_WstrConcatAW FBCALL ( str1 as const any ptr, str1_size as ssize_t, str2 as const FB_WCHAR ptr ) as FB_WCHAR ptr
 	dim as FB_WCHAR ptr dst
 	dim as ssize_t str1_len, str2_len
 	dim as ubyte ptr str1_ptr

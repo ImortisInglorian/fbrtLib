@@ -145,7 +145,7 @@ function fb_hBuildDouble cdecl ( num as double, decimal_point as ubyte, thousand
 	return dst
 end function
 
-function hRound cdecl ( value as double, pInfo as FormatMaskInfo const ptr ) as double
+function hRound cdecl ( value as double, pInfo as const FormatMaskInfo ptr ) as double
 	dim as double _fix, _frac = modf( value, @_fix )
 
     if ( pInfo->num_digits_frac = 0 ) then
@@ -197,7 +197,7 @@ end function
  * When I've too much time, I'll simplify this function so that almost all
  * queries of do_output will be removed.
  '/
-function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, mask_length as ssize_t, value as double, pInfo as FormatMaskInfo ptr, chThousandsSep as ubyte, chDecimalPoint as ubyte, chDateSep as ubyte, chTimeSep as ubyte ) as long
+function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, mask_length as ssize_t, value as double, pInfo as FormatMaskInfo ptr, chThousandsSep as ubyte, chDecimalPoint as ubyte, chDateSep as ubyte, chTimeSep as ubyte ) as long
 	dim as ubyte FixPart(0 to 127), FracPart(0 to 127), ExpPart(0 to 127), chSign = 0
 	dim as ssize_t LenFix, LenFrac, LenExp = 0, IndexFix, IndexFrac, IndexExp = 0
 	dim as ssize_t ExpValue, ExpAdjust = 0, NumSkipFix = 0, NumSkipExp = 0
@@ -347,7 +347,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 
 	IndexFix = (IndexFrac = 0)
 	for i = 0 to mask_length - 1
-		dim as ubyte ptr pszAdd = mask + i
+		dim as const ubyte ptr pszAdd = mask + i
 		dim as ubyte ptr pszAddFree = NULL
 		dim as long LenAdd = 1
 		dim as ubyte chCurrent = *pszAdd
@@ -1003,9 +1003,9 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as ubyte const ptr, m
 	return TRUE
 end function
 
-function fb_hStrFormat FBCALL ( value as double, mask as ubyte const ptr, mask_length as size_t ) as FBSTRING ptr
+function fb_hStrFormat FBCALL ( value as double, mask as const ubyte ptr, mask_length as size_t ) as FBSTRING ptr
 	dim as FBSTRING ptr dst = @__fb_ctx.null_desc
-	dim as ubyte ptr pszIntlResult
+	dim as const ubyte ptr pszIntlResult
 	dim as ubyte chDecimalPoint, chThousandsSep, chDateSep, chTimeSep
 
 	fb_ErrorSetNum( FB_RTERROR_OK )

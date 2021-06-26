@@ -3,7 +3,7 @@
 #include "fb.bi"
 
 extern "C"
-private function w_cmp( a as FB_WCHAR ptr, _len as ssize_t, z as FB_WCHAR ptr ) as long
+private function w_cmp( a as const FB_WCHAR ptr, _len as ssize_t, z as FB_WCHAR ptr ) as long
 	dim as ssize_t chars, i
 
 	chars = fb_wstr_Len( z )
@@ -30,7 +30,7 @@ end function
  * return value must be 0|1
  *
  '/
-function fb_WstrToBool FBCALL ( src as FB_WCHAR const ptr, _len as ssize_t ) as ubyte
+function fb_WstrToBool FBCALL ( src as const FB_WCHAR ptr, _len as ssize_t ) as ubyte
 	dim as double _val
 
 	if ( w_cmp( src, _len, fb_hBoolToWstr( FALSE ) ) = 0 ) then
@@ -51,7 +51,7 @@ function fb_WstrToBool FBCALL ( src as FB_WCHAR const ptr, _len as ssize_t ) as 
 end function
 
 /':::::'/
-function fb_WstrValBool FBCALL ( _str as FB_WCHAR const ptr ) as ubyte
+function fb_WstrValBool FBCALL ( _str as const FB_WCHAR ptr ) as ubyte
 	dim as ssize_t _len
 	dim as long _val
 

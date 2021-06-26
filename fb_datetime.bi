@@ -74,11 +74,11 @@ declare function fb_DateAdd 				FBCALL ( interval as FBSTRING ptr, interval_valu
 declare function fb_DatePart 				FBCALL ( interval as FBSTRING ptr, serial as double, first_day_of_week as long, first_day_of_year as long ) as long
 declare function fb_DateDiff 				FBCALL ( interval as FBSTRING ptr, serial1 as double, serial2 as double, first_day_of_week as long, first_day_of_year as long ) as longint
 
-declare function fb_hDateParse 					   ( text as ubyte ptr, text_len as size_t, pDay as long ptr, pMonth as long ptr, pYear as long ptr, pLength as size_t ptr ) as long
+declare function fb_hDateParse 					   ( text as const ubyte ptr, text_len as size_t, pDay as long ptr, pMonth as long ptr, pYear as long ptr, pLength as size_t ptr ) as long
 declare function fb_DateParse 				FBCALL ( s as FBSTRING ptr, pDay as long ptr, pMonth as long ptr, pYear as long ptr ) as long
 declare sub 	 fb_hDateDecodeSerial 		FBCALL ( serial as double, pYear as long ptr, pMonth as long ptr, pDay as long ptr )
 
-declare function fb_hTimeParse 					   ( text as ubyte ptr, text_len as size_t, pHour as long ptr, pMinute as long ptr, pSecond as long ptr, pLength as size_t ptr ) as long
+declare function fb_hTimeParse 					   ( text as const ubyte ptr, text_len as size_t, pHour as long ptr, pMinute as long ptr, pSecond as long ptr, pLength as size_t ptr ) as long
 declare function fb_TimeParse 				FBCALL ( s as FBSTRING ptr, pHour as long ptr, pMinute as long ptr, pSecond as long ptr ) as long
 declare sub 	 fb_hTimeDecodeSerial 		FBCALL ( serial as double, pHour as long ptr, pMinute as long ptr, pSecond as long ptr, use_qb_hack as long )
 
@@ -96,13 +96,13 @@ declare function fb_hTimeDaysInMonth 			   ( month as long, year as long ) as lo
 declare sub 	 fb_hNormalizeDate 				   ( pDay as long ptr, pMonth as long ptr, pYear as long ptr )
 declare function fb_hTimeGetIntervalType 		   ( interval as FBSTRING ptr ) as long
 
-declare function fb_IntlGet 					   ( index as eFbIntlIndex, disallow_localized as long ) as ubyte ptr
+declare function fb_IntlGet 					   ( index as eFbIntlIndex, disallow_localized as long ) as const ubyte ptr
 declare function fb_IntlGetDateFormat 			   ( buffer as ubyte ptr, len as size_t, disallow_localized as long ) as long
 declare function fb_IntlGetTimeFormat 			   ( buffer as ubyte ptr, len as size_t, disallow_localized as long ) as long
 declare function fb_IntlGetMonthName 			   ( month as long, short_name as long, disallow_localized as long ) as FBSTRING ptr
 declare function fb_IntlGetWeekdayName 			   ( weekday as long, short_names as long, disallow_localized as long ) as FBSTRING ptr
 
-declare function fb_DrvIntlGet 					   ( index as eFbIntlIndex ) as ubyte ptr
+declare function fb_DrvIntlGet 					   ( index as eFbIntlIndex ) as const ubyte ptr
 declare function fb_DrvIntlGetDateFormat 		   ( buffer as ubyte ptr, len as size_t ) as long
 declare function fb_DrvIntlGetTimeFormat 		   ( buffer as ubyte ptr, len as size_t ) as long
 declare function fb_DrvIntlGetMonthName  		   ( month as long, short_name as long ) as FBSTRING ptr

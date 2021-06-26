@@ -4,7 +4,7 @@
 #include "fb_private_intl.bi"
 
 extern "C"
-private function fb_DrvIntlGet cdecl ( Index as eFbIntlIndex ) as ubyte ptr
+private function fb_DrvIntlGet cdecl ( Index as eFbIntlIndex ) as const ubyte ptr
 	dim as ubyte buf(0 to 127)
 	dim as LCTYPE _lctype
 

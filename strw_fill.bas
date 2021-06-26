@@ -20,7 +20,7 @@ function fb_WstrFill1 FBCALL ( chars as ssize_t, c as long ) as FB_WCHAR ptr
 	return dst
 end function
 
-function fb_WstrFill2 FBCALL ( chars as ssize_t, src as FB_WCHAR const ptr ) as FB_WCHAR ptr
+function fb_WstrFill2 FBCALL ( chars as ssize_t, src as const FB_WCHAR ptr ) as FB_WCHAR ptr
 	dim as FB_WCHAR ptr dst
 
 	if ( (chars > 0) and (src <> NULL) and (fb_wstr_Len( src ) > 0) ) then

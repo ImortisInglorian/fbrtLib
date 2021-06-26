@@ -7,7 +7,7 @@ extern "C"
    must be at least dst_chars+1 bytes.
    src must be null-terminated.
    result = number of chars written, excluding null terminator that is always written '/
-function fb_wstr_ConvToA( dst as ubyte ptr, dst_chars as ssize_t, src as FB_WCHAR ptr ) as ssize_t
+function fb_wstr_ConvToA( dst as ubyte ptr, dst_chars as ssize_t, src as const FB_WCHAR ptr ) as ssize_t
 	if (src = NULL) then
 		*dst = 0
 		return 0
@@ -70,7 +70,7 @@ function fb_wstr_ConvToA( dst as ubyte ptr, dst_chars as ssize_t, src as FB_WCHA
 #endif
 end function
 
-function fb_WstrToStr FBCALL ( src as FB_WCHAR const ptr ) as FBSTRING ptr
+function fb_WstrToStr FBCALL ( src as const FB_WCHAR ptr ) as FBSTRING ptr
 	dim as FBSTRING ptr dst
 	dim as ssize_t chars
 

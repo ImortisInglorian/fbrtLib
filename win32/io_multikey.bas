@@ -3,7 +3,9 @@
 #include "../fb.bi"
 #include "windows.bi"
 
-dim shared as ubyte __fb_keytable(0 to 86, 0 to 2) = { _
+extern "C"
+
+dim shared as const ubyte __fb_keytable(0 to ..., 0 to 2) = { _
 	{ SC_ESCAPE,	VK_ESCAPE,	0			},	{ SC_1,			 49,		0			}, _
 	{ SC_2,			 50,		0			},	{ SC_3,			 51,		0			}, _
 	{ SC_4,			 52,		0			},	{ SC_5,			 53,		0			}, _
@@ -50,7 +52,6 @@ dim shared as ubyte __fb_keytable(0 to 86, 0 to 2) = { _
 	{ 0,			0,			0			} _
 }
 
-extern "C"
 private function find_window() as HWND
 	dim as TCHAR old_title(0 to MAX_PATH - 1)
 	dim as TCHAR title(0 to MAX_PATH - 1)

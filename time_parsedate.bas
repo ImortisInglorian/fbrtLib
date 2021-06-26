@@ -5,8 +5,8 @@
 
 extern "C"
 /':::::'/
-private function fb_hIsMonth( text as ubyte const ptr, text_len as size_t, end_text as ubyte ptr ptr, short_name as long, localized as long ) as long
-    dim as ubyte ptr txt_end = cast(ubyte ptr, text)
+private function fb_hIsMonth( text as const ubyte ptr, text_len as size_t, end_text as const ubyte ptr ptr, short_name as long, localized as long ) as long
+    dim as const ubyte ptr txt_end = text
     dim as long _month
     for _month = 1 to 12
         dim as FBSTRING ptr sMonthName = fb_IntlGetMonthName( _month, short_name, not(localized) )
@@ -47,7 +47,7 @@ private function fb_hIsMonth( text as ubyte const ptr, text_len as size_t, end_t
 end function
 
 /':::::'/
-private function fb_hFindMonth( text as ubyte const ptr, text_len as size_t, end_text as ubyte ptr ptr ) as long
+private function fb_hFindMonth( text as const ubyte ptr, text_len as size_t, end_text as ubyte ptr ptr ) as long
     dim as long short_name
     for short_name = 0 to 2
         dim as long localized = 2
@@ -131,9 +131,9 @@ private function InlineSelect( index as long, num1 as long, num2 as long, num3 a
 end function
 
 /':::::'/
-function fb_hDateParse( text as ubyte ptr, text_len as size_t, pDay as long ptr, pMonth as long ptr, pYear as long ptr, pLength as size_t ptr ) as long
+function fb_hDateParse( text as const ubyte ptr, text_len as size_t, pDay as long ptr, pMonth as long ptr, pYear as long ptr, pLength as size_t ptr ) as long
     dim as size_t length = 0, _len = text_len
-    dim as ubyte ptr text_start = cast(ubyte ptr, text)
+    dim as const ubyte ptr text_start = text
     dim as long result = FALSE
     dim as long _year = 1899, _month = 12, _day = 30
     dim as long order_year, order_month, order_day

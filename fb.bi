@@ -136,13 +136,13 @@
 
 	/' We have to wrap memcpy here because our MEMCPYX should return the position
 	* after the destination string. '/
-	private function FB_MEMCPYX( dest as any ptr, src as any const ptr, n as size_t ) as any ptr
+	private function FB_MEMCPYX( dest as any ptr, src as const any ptr, n as size_t ) as any ptr
 		memcpy(dest, src, n)
 		return (cast(ubyte ptr, dest))+n
 	end function
 
-	private function FB_MEMLEN( s as any const ptr, c as long, n as size_t ) as size_t
-		Dim pachData as ubyte ptr = cast(ubyte const ptr, s)
+	private function FB_MEMLEN( s as const any ptr, c as long, n as size_t ) as size_t
+		Dim pachData as const ubyte ptr = s
 		while (n)
 			n-= 1
 			if( pachData[n] <> cast(ubyte,c) ) then

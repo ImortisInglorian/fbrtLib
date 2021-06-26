@@ -3,8 +3,8 @@
 #include "fb.bi"
 
 extern "C"
-function fb_WstrToInt FBCALL ( src as FB_WCHAR const ptr, _len as ssize_t ) as long
-    dim as FB_WCHAR ptr p, r
+function fb_WstrToInt FBCALL ( src as const FB_WCHAR ptr, _len as ssize_t ) as long
+    dim as const FB_WCHAR ptr p, r
 	dim as long radix
 
 	/' skip white spc '/
@@ -40,7 +40,7 @@ function fb_WstrToInt FBCALL ( src as FB_WCHAR const ptr, _len as ssize_t ) as l
 	return wcstoul( p, NULL, radix )
 end function
 
-function fb_WstrValInt FBCALL ( _str as FB_WCHAR const ptr ) as long
+function fb_WstrValInt FBCALL ( _str as const FB_WCHAR ptr ) as long
 	dim as ssize_t _len
 	dim as long _val
 
