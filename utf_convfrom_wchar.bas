@@ -4,13 +4,14 @@
 
 #include "fb.bi"
 extern "C"
-private sub hUTF16ToUTF8( src as FB_WCHAR const ptr, chars as ssize_t, dst as UTF_8 ptr, total_bytes as ssize_t ptr )
+private sub hUTF16ToUTF8( src as const FB_WCHAR ptr, chars as ssize_t, dst as UTF_8 ptr, total_bytes as ssize_t ptr )
 	dim as UTF_32 c
 	dim as ssize_t bytes
 
 	*total_bytes = 0
 	while( chars > 0 )
-		c = *src + 1
+		c = *src
+		src += 1
 		if ( c >= UTF16_SUR_HIGH_START and c <= UTF16_SUR_HIGH_END ) then
 			c = ((c - UTF16_SUR_HIGH_START) shl UTF16_HALFSHIFT) + ((cast(UTF_32, *src + 1)) - UTF16_SUR_LOW_START) + UTF16_HALFBASE
 			chars -= 1
@@ -30,20 +31,20 @@ private sub hUTF16ToUTF8( src as FB_WCHAR const ptr, chars as ssize_t, dst as UT
 
 		select case ( bytes )
 			case 4:
-				dst -= 1
 				*dst = ((c or UTF8_BYTEMARK) and UTF8_BYTEMASK)
+				dst -= 1
 				c shr= 6
 			case 3:
-				dst -= 1
 				*dst = ((c or UTF8_BYTEMARK) and UTF8_BYTEMASK)
+				dst -= 1
 				c shr= 6
 			case 2:
-				dst -= 1
 				*dst = ((c or UTF8_BYTEMARK) and UTF8_BYTEMASK)
+				dst -= 1
 				c shr= 6
 			case 1:
-				dst -= 1
 				*dst = (c or __fb_utf8_bmarkTb(bytes))
+				dst -= 1
 		end select
 
 		dst += bytes
@@ -52,13 +53,14 @@ private sub hUTF16ToUTF8( src as FB_WCHAR const ptr, chars as ssize_t, dst as UT
 	wend
 end sub
 
-private sub hUTF32ToUTF8( src as FB_WCHAR const ptr, chars as ssize_t, dst as UTF_8 ptr, total_bytes as ssize_t ptr )
+private sub hUTF32ToUTF8( src as const FB_WCHAR ptr, chars as ssize_t, dst as UTF_8 ptr, total_bytes as ssize_t ptr )
 	dim as UTF_32 c
 	dim as ssize_t bytes
 
 	*total_bytes = 0
 	while( chars > 0 )
-		c = *src + 1
+		c = *src
+		src += 1
 		if ( c < cast(UTF_32, &h80) ) then
 			bytes =	1
 		elseif ( c < cast(UTF_32, &h800) ) then
@@ -73,20 +75,20 @@ private sub hUTF32ToUTF8( src as FB_WCHAR const ptr, chars as ssize_t, dst as UT
 
 		select case ( bytes )
 			case 4:
-				dst -= 1
 				*dst = ((c or UTF8_BYTEMARK) and UTF8_BYTEMASK)
+				dst -= 1
 				c shr= 6
 			case 3:
-				dst -= 1
 				*dst = ((c or UTF8_BYTEMARK) and UTF8_BYTEMASK)
+				dst -= 1
 				c shr= 6
 			case 2:
-				dst -= 1
 				*dst = ((c or UTF8_BYTEMARK) and UTF8_BYTEMASK)
+				dst -= 1
 				c shr= 6
 			case 1:
-				dst -= 1
 				*dst = (c or __fb_utf8_bmarkTb(bytes))
+				dst -= 1
 		end select
 
 		dst += bytes
@@ -95,7 +97,7 @@ private sub hUTF32ToUTF8( src as FB_WCHAR const ptr, chars as ssize_t, dst as UT
 	wend
 end sub
 
-private function hToUTF8( src as FB_WCHAR const ptr, chars as ssize_t, dst as ubyte ptr, bytes as ssize_t ptr ) as ubyte ptr
+private function hToUTF8( src as const FB_WCHAR ptr, chars as ssize_t, dst as ubyte ptr, bytes as ssize_t ptr ) as ubyte ptr
 	if ( chars > 0 ) then
 		if ( dst = NULL ) then
 			dst = malloc( chars * 4 )
@@ -117,38 +119,46 @@ private function hToUTF8( src as FB_WCHAR const ptr, chars as ssize_t, dst as ub
 	return dst
 end function
 
-private sub hCharToUTF16( src as FB_WCHAR const ptr, chars as ssize_t, dst as UTF_16 ptr, bytes as ssize_t ptr )
+private sub hCharToUTF16( src as const FB_WCHAR ptr, chars as ssize_t, dst as UTF_16 ptr, bytes as ssize_t ptr )
 	while( chars > 0 )
-		dst[1] = cast(ubyte, *src + 1)
+		*dst = cast(ubyte, *src)
+		dst += 1
+		src += 1		
 		chars -= 1
 	wend
 end sub
 
-private function hUTF32ToUTF16( src as FB_WCHAR const ptr, chars as ssize_t, dst as UTF_16 ptr, bytes as ssize_t ptr ) as UTF_16 ptr
+private function hUTF32ToUTF16( src as const FB_WCHAR ptr, chars as ssize_t, dst as UTF_16 ptr, bytes as ssize_t ptr ) as UTF_16 ptr
 	dim as UTF_16 ptr buffer = dst
 	dim as ssize_t i, dst_size = *bytes
 	dim as UTF_32 c
 
 	i = 0
 	while( chars > 0 )
-		c = *src + 1
+		c = *src
+		src += 1
 		if ( c > UTF16_MAX_BMP ) then
 			if ( *bytes = dst_size ) then
 				dst_size += sizeof( UTF_16 ) * 8
-				buffer = realloc( buffer, dst_size )
+				dim as UTF_16 ptr newbuffer = realloc( buffer, dst_size ) 
+				if( newbuffer = NULL ) then
+					free( buffer )
+					return NULL
+				end if
+				buffer = newbuffer
 				dst = cast(UTF_16 ptr, buffer)
 			end if
 
 			*bytes += sizeof( UTF_16 )
 
 			c -= UTF16_HALFBASE
-			i += 1
 			dst[i] = cast(UTF_16,((c shr UTF16_HALFSHIFT) + UTF16_SUR_HIGH_START))
+			i += 1
 			c = ((c and UTF16_HALFMASK) + UTF16_SUR_LOW_START)
 		end if
 		
-		i += 1
 		dst[i] = cast(UTF_16, c)
+		i += 1
 
 		chars -= 1
 	wend
@@ -156,7 +166,7 @@ private function hUTF32ToUTF16( src as FB_WCHAR const ptr, chars as ssize_t, dst
 	return buffer
 end function
 
-private function hToUTF16( src as FB_WCHAR const ptr, chars as ssize_t, dst as ubyte ptr, bytes as ssize_t ptr ) as ubyte ptr
+private function hToUTF16( src as const FB_WCHAR ptr, chars as ssize_t, dst as ubyte ptr, bytes as ssize_t ptr ) as ubyte ptr
 	/' !!!FIXME!!! only litle-endian supported '/
 
 	*bytes = chars * sizeof( UTF_16 )
@@ -182,33 +192,35 @@ private function hToUTF16( src as FB_WCHAR const ptr, chars as ssize_t, dst as u
 	return dst
 end function
 
-private sub hCharToUTF32( src as FB_WCHAR const ptr, chars as ssize_t, dst as UTF_32 ptr, bytes as ssize_t ptr )
+private sub hCharToUTF32( src as const FB_WCHAR ptr, chars as ssize_t, dst as UTF_32 ptr, bytes as ssize_t ptr )
 	while( chars > 0 )
+		*dst = cast(ubyte, *src)
 		dst += 1
-		*dst = cast(ubyte, *src + 1)
+		src += 1
 		chars -= 1
 	wend
 end sub
 
-private sub hUTF16ToUTF32( src as FB_WCHAR const ptr, chars as ssize_t, dst as UTF_32 ptr, bytes as ssize_t ptr )
+private sub hUTF16ToUTF32( src as const FB_WCHAR ptr, chars as ssize_t, dst as UTF_32 ptr, bytes as ssize_t ptr )
 	dim as UTF_32 c
 
 	while( chars > 0 )
-		c = cast(UTF_32, *src + 1)
+		c = cast(UTF_32, *src)
+		src += 1
 		if ( c >= UTF16_SUR_HIGH_START and c <= UTF16_SUR_HIGH_END ) then
 			c = ((c - UTF16_SUR_HIGH_START) shl UTF16_HALFSHIFT) + (cast(UTF_32, *src + 1) - UTF16_SUR_LOW_START) + UTF16_HALFBASE
 			*bytes -= sizeof( UTF_32 )
 			chars -= 1
 		end if
 		
-		dst += 1
 		*dst = c
+		dst += 1
 
 		chars -= 1
 	wend
 end sub
 
-private function hToUTF32( src as FB_WCHAR const ptr, chars as ssize_t, dst as ubyte ptr, bytes as ssize_t ptr ) as ubyte ptr
+private function hToUTF32( src as const FB_WCHAR ptr, chars as ssize_t, dst as ubyte ptr, bytes as ssize_t ptr ) as ubyte ptr
 	/' !!!FIXME!!! only litle-endian supported '/
 
 	*bytes = chars * sizeof( UTF_32 )
@@ -247,7 +259,7 @@ end function
    fb_UTFToWChar this does NOT stop on seeing a NUL, as the length is known).
    Returns the output buffer and sets *bytes to the number of bytes written.
 '/
-function fb_WCharToUTF( encod as FB_FILE_ENCOD, src as FB_WCHAR const ptr, chars as ssize_t, dst as ubyte ptr, bytes as ssize_t ptr ) as ubyte ptr
+function fb_WCharToUTF( encod as FB_FILE_ENCOD, src as const FB_WCHAR ptr, chars as ssize_t, dst as ubyte ptr, bytes as ssize_t ptr ) as ubyte ptr
 	select case ( encod )
 		case FB_FILE_ENCOD_UTF8:
 			return hToUTF8( src, chars, dst, bytes )

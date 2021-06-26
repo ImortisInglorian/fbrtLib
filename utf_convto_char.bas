@@ -4,11 +4,72 @@
 
 #include "fb.bi"
 
-
-extern as ubyte __fb_utf8_trailingTb(0 to 255)
-extern as UTF_32 __fb_utf8_offsetsTb(0 to 5)
 extern "C"
-function fb_hUTF8ToChar( src as UTF_8 const ptr, dst as ubyte ptr, chars as ssize_t ptr ) as ubyte ptr
+
+extern as const ubyte __fb_utf8_trailingTb(0 to 255)
+extern as const UTF_32 __fb_utf8_offsetsTb(0 to 5)
+
+/'
+char * fb_hUTF8ToChar( const UTF_8 *src, char *dst, ssize_t *chars )
+char * fb_hUTF16ToChar( const UTF_8 *src, char *dst, ssize_t *chars )
+char * fb_hUTF32ToChar( const UTF_8 *src, char *dst, ssize_t *chars )
+
+if 'dst' is null
+
+	src 
+		- 'src' is the address of the source utf-8 encoded string
+		- must not be null
+		- must have a null terminating character
+
+	dst
+		- ignored
+
+	chars
+		- 'chars' must not be null
+		- 'chars' value is ignored on entry
+		- on return, 'chars' is set to the number of characters 
+		  converted not including the null terminator
+
+	return value
+		- the pointer to the newly allocated (realloc) memory
+		  containing the converted string which includes a
+		  terminating null character, or NULL pointer if
+		  unable to allocate memory
+		- 'chars' contains the number of characters 
+		  converted not including the null terminator
+
+	NOTE: caller is responsible to free the memory
+
+
+if 'dst' is not null
+
+	src
+		- 'src' is the address of the source utf-8 encoded string
+		- must not be null
+		- may have null terminating character
+
+	dst
+		- 'dst' is the destination buffer for the ascii string
+
+	chars
+		- 'chars' must not be null
+		- caller must set 'chars' to the maximum number of
+		  characters to convert which may include the 
+		  terminating null character
+		- on return, 'chars' is set to the number characters
+		  converted not including the terminating null
+		  character
+	
+	NOTE: the caller will not know if a terminating null
+	character was written based on the value of 'chars'.  The 
+	value of 'chars' will be the same if the conversion ended
+	on a terminating null character or the character
+	immediately before it.  In either case, the terminating
+	null character is not written.
+
+'/
+
+function fb_hUTF8ToChar( src as const UTF_8 ptr, dst as ubyte ptr, chars as ssize_t ptr ) as ubyte ptr
 	dim as UTF_32 c
 	dim as ssize_t extbytes, charsleft
 	dim as ubyte ptr buffer = dst
@@ -22,22 +83,28 @@ function fb_hUTF8ToChar( src as UTF_8 const ptr, dst as ubyte ptr, chars as ssiz
 			c = 0
 			select case ( extbytes )
 				case 5:
-					c += *src + 1
+					c += *src
+					src += 1
 					c shl= 6
 				case 4:
-					c += *src + 1
+					c += *src
+					src += 1
 					c shl= 6
 				case 3:
-					c += *src + 1
+					c += *src
+					src += 1
 					c shl= 6
 				case 2:
-					c += *src + 1
+					c += *src
+					src += 1
 					c shl= 6
 				case 1:
-					c += *src + 1
+					c += *src
+					src += 1
 					c shl= 6
 				case 0:
-					c += *src + 1
+					c += *src
+					src += 1
 			end select
 	
 			c -= __fb_utf8_offsetsTb(extbytes)
@@ -49,11 +116,17 @@ function fb_hUTF8ToChar( src as UTF_8 const ptr, dst as ubyte ptr, chars as ssiz
 			if ( charsleft = 0 ) then
 				charsleft = 8
 				dst_size += charsleft
-				buffer = realloc( buffer, dst_size )
+				dim as ubyte ptr newbuffer = realloc( buffer, dst_size )
+				if( newbuffer = NULL ) then
+					free( buffer )
+					return NULL
+				end if 
+				buffer = newbuffer
 				dst = buffer + dst_size - charsleft
 			end if
-			dst += 1
+			
 			*dst = c
+			dst += 1
 
 			if ( c = 0 ) then
 				exit do
@@ -71,22 +144,28 @@ function fb_hUTF8ToChar( src as UTF_8 const ptr, dst as ubyte ptr, chars as ssiz
 			c = 0
 			select case( extbytes )
 				case 5:
-					c += *src + 1
+					c += *src
+					src += 1
 					c shl= 6
 				case 4:
-					c += *src + 1 
+					c += *src
+					src += 1 
 					c shl= 6
 				case 3:
-					c += *src + 1
+					c += *src
+					src += 1
 					c shl= 6
 				case 2:
-					c += *src + 1
+					c += *src
+					src += 1
 					c shl= 6
 				case 1:
-					c += *src + 1
+					c += *src
+					src += 1
 					c shl= 6
 				case 0:
-					c += *src + 1
+					c += *src
+					src += 1
 			end select
 	
 			c -= __fb_utf8_offsetsTb(extbytes)
@@ -95,8 +174,8 @@ function fb_hUTF8ToChar( src as UTF_8 const ptr, dst as ubyte ptr, chars as ssiz
 				c = asc("?")
 			end if
 			
-			dst += 1
 			*dst = c
+			dst += 1
 
 			if ( c = 0 ) then
 				exit while
@@ -111,7 +190,7 @@ function fb_hUTF8ToChar( src as UTF_8 const ptr, dst as ubyte ptr, chars as ssiz
 	return buffer
 end function
 
-function fb_hUTF16ToChar( src as UTF_16 ptr, dst as ubyte ptr, chars as ssize_t ptr ) as ubyte ptr
+function fb_hUTF16ToChar( src as const UTF_16 ptr, dst as ubyte ptr, chars as ssize_t ptr ) as ubyte ptr
 	dim as UTF_16 c
 	dim as ssize_t charsleft
 	dim as ubyte ptr buffer = dst
@@ -120,7 +199,8 @@ function fb_hUTF16ToChar( src as UTF_16 ptr, dst as ubyte ptr, chars as ssize_t 
 		dim as ssize_t dst_size = 0
 	    charsleft = 0
 	    do 
-	    	c = *src + 1
+	    	c = *src
+			src += 1
 			if ( c > 255 ) then
 				if ( c >= UTF16_SUR_HIGH_START and c <= UTF16_SUR_HIGH_END ) then
 	    			src += 1
@@ -131,12 +211,17 @@ function fb_hUTF16ToChar( src as UTF_16 ptr, dst as ubyte ptr, chars as ssize_t 
 			if ( charsleft = 0 ) then
 				charsleft = 8
 				dst_size += charsleft
-				buffer = realloc( buffer, dst_size )
+				dim as ubyte ptr newbuffer = realloc( buffer, dst_size )
+				if( newbuffer = NULL ) then
+					free( buffer )
+					return NULL
+				end if
+				buffer = newbuffer
 				dst = buffer + dst_size - charsleft
 			end if
 			
-			dst += 1
 			*dst = c
+			dst += 1
 
 			if ( c = 0 ) then
 				exit do
@@ -149,7 +234,8 @@ function fb_hUTF16ToChar( src as UTF_16 ptr, dst as ubyte ptr, chars as ssize_t 
 	else
 	    charsleft = *chars
 	    while( charsleft > 0 )
-	    	c = *src + 1
+	    	c = *src
+	    	src += 1
 			if ( c > 255 ) then
 				if ( c >= UTF16_SUR_HIGH_START and c <= UTF16_SUR_HIGH_END ) then
 	    			src += 1
@@ -157,8 +243,8 @@ function fb_hUTF16ToChar( src as UTF_16 ptr, dst as ubyte ptr, chars as ssize_t 
 				c = asc("?")
 			end if
 			
-			dst += 1
 			*dst = c
+			dst += 1
 
 			if ( c = 0 ) then
 				exit while
@@ -173,7 +259,7 @@ function fb_hUTF16ToChar( src as UTF_16 ptr, dst as ubyte ptr, chars as ssize_t 
 	return buffer
 end function
 
-function fb_hUTF32ToChar( src as UTF_32 const ptr, dst as ubyte ptr, chars as ssize_t ptr ) as ubyte ptr
+function fb_hUTF32ToChar( src as const UTF_32 ptr, dst as ubyte ptr, chars as ssize_t ptr ) as ubyte ptr
 	dim as UTF_32 c
 	dim as ssize_t charsleft
 	dim as ubyte ptr buffer = dst
@@ -182,7 +268,8 @@ function fb_hUTF32ToChar( src as UTF_32 const ptr, dst as ubyte ptr, chars as ss
 		dim as ssize_t dst_size = 0
 	    charsleft = 0
 	    do
-	    	c = *src + 1
+	    	c = *src
+			src += 1
 			if ( c > 255 ) then
 				c = asc("?")
 			end if
@@ -190,12 +277,17 @@ function fb_hUTF32ToChar( src as UTF_32 const ptr, dst as ubyte ptr, chars as ss
 			if ( charsleft = 0 ) then
 				charsleft = 8
 				dst_size += charsleft
-				buffer = realloc( buffer, dst_size )
+				dim as ubyte ptr newbuffer = realloc( buffer, dst_size )
+				if( newbuffer = NULL ) then
+					free( buffer )
+					return NULL
+				end if
+				buffer = newbuffer 
 				dst = buffer + dst_size - charsleft
 			end if
 			
-			dst += 1
 			*dst = c
+			dst += 1
 
 			if ( c = 0 ) then
 				exit do
@@ -208,13 +300,14 @@ function fb_hUTF32ToChar( src as UTF_32 const ptr, dst as ubyte ptr, chars as ss
 	else
 	    charsleft = *chars
 	    while( charsleft > 0 )
-	    	c = *src + 1
+	    	c = *src
+	    	src += 1
 			if ( c > 255 ) then
 				c = asc("?")
 			end if
 
-			dst += 1
 			*dst = c
+			dst += 1
 
 			if ( c = 0 ) then
 				exit while
@@ -229,7 +322,7 @@ function fb_hUTF32ToChar( src as UTF_32 const ptr, dst as ubyte ptr, chars as ss
 	return buffer
 end function
 
-function fb_UTFToChar( encod as FB_FILE_ENCOD, src as any const ptr, dst as ubyte ptr, chars as ssize_t ptr ) as ubyte ptr
+function fb_UTFToChar( encod as FB_FILE_ENCOD, src as const any ptr, dst as ubyte ptr, chars as ssize_t ptr ) as ubyte ptr
 	select case( encod )
 		case FB_FILE_ENCOD_UTF8:
 			return fb_hUTF8ToChar( src, dst, chars )
