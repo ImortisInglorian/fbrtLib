@@ -4,8 +4,8 @@
 #include "windows.bi"
 
 extern "C"
-
-dim shared as const ubyte __fb_keytable(0 to ..., 0 to 2) = { _
+extern as const ubyte __fb_keytable(0 to 86, 0 to 2)
+dim shared as const ubyte __fb_keytable(0 to 86, 0 to 2) = { _
 	{ SC_ESCAPE,	VK_ESCAPE,	0			},	{ SC_1,			 49,		0			}, _
 	{ SC_2,			 50,		0			},	{ SC_3,			 51,		0			}, _
 	{ SC_4,			 52,		0			},	{ SC_5,			 53,		0			}, _
