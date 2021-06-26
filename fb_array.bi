@@ -40,10 +40,11 @@ type FBARRAY
 	as FBARRAYDIM      dimTB(0)    /' dimtb[dimensions] '/
 end type
 
+extern "C"
+
 type FB_DEFCTOR as sub ( this_ as any ptr )
 type FB_DTORMULT as sub ( array as FBARRAY ptr, dtor as FB_DEFCTOR, base_idx as size_t )
 
-extern "C"
 declare function fb_ArrayBoundChk 		FBCALL ( idx as ssize_t, lbound as ssize_t, ubound as ssize_t, linenum as long, fname as ubyte const ptr ) as any ptr
 
 declare function fb_ArraySngBoundChk 	FBCALL ( sidx as size_t, ubound as size_t,linenum as long, fname as ubyte const ptr ) as any ptr

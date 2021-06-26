@@ -17,10 +17,12 @@ sub fb_hArrayDtorStr ( array as FBARRAY ptr, dtor as FB_DEFCTOR, base_idx as siz
 	elements = _dim->elements - base_idx
 	_dim += 1
 
-	for i = 1 to  array->dimensions - 1
-    	elements *= _dim->elements
+	i = 1
+	while( i < array->dimensions )
+		elements *= _dim->elements
+		i += 1
 		_dim += 1
-	next
+	wend
 
 	/' call dtors in the inverse order '/
 	this_ = cast(FBSTRING ptr, array->_ptr + (base_idx + (elements-1)))

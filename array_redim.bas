@@ -46,7 +46,8 @@ function fb_hArrayAlloc ( array as FBARRAY ptr, element_len as size_t, doclear a
 
 	/' load bounds '/
 	_dim = @array->dimTB(0)
-	for i = 0 to dimensions - 1
+	i = 0
+	while( i < dimensions )
 		lbTB(i) = cast(ssize_t, cva_arg( ap, ssize_t ))
 		ubTB(i) = cast(ssize_t, cva_arg( ap, ssize_t ))
 		
@@ -58,7 +59,8 @@ function fb_hArrayAlloc ( array as FBARRAY ptr, element_len as size_t, doclear a
 		_dim->lbound = lbTB(i)
 		_dim->ubound = ubTB(i)
 		_dim += 1
-	next
+		i += 1
+	wend
 	
 	/' calc size '/
 	elements = fb_hArrayCalcElements( dimensions, @lbTB(0), @ubTB(0) )
@@ -103,7 +105,11 @@ end function
 
 function hRedim ( array as FBARRAY ptr, element_len as size_t, doclear as long, isvarlen as long, dimensions as size_t, ap as cva_list ) as long
 	/' free old '/
-	fb_ArrayErase( array )
+	if( isvarlen ) then
+		fb_ArrayStrErase( array )
+	else
+		fb_ArrayErase( array )
+	end if
 	
    return fb_hArrayAlloc( array, element_len, doclear, NULL, dimensions, ap )
 end function

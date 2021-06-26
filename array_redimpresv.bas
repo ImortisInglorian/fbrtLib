@@ -22,17 +22,18 @@ function fb_hArrayRealloc ( array as FBARRAY ptr, element_len as size_t, doclear
 	end if
 
 	/' load bounds '/
-	for i = 0 to dimensions - 1
+	i = 0
+	while( i < dimensions )
 		lbTB(i) = cast(ssize_t, cva_arg( ap, ssize_t ))
 		ubTB(i) = cast(ssize_t, cva_arg( ap, ssize_t ))
 
 		if ( lbTB(i) > ubTB(i) ) then
 			return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 		end if
-	next
+		i += 1
+	wend
 
 	/' shrinking the array? free unused elements '/
-
 	if ( dtor_mult <> NULL ) then
 		dim as size_t new_lb = (ubTB(0) - lbTB(0)) + 1
 		if ( new_lb < array->dimTB(0).elements ) then
@@ -81,12 +82,14 @@ function fb_hArrayRealloc ( array as FBARRAY ptr, element_len as size_t, doclear
 	array->element_len = element_len
 	array->dimensions = dimensions
 	_dim = @array->dimTB(0)
-	for i = 0 to dimensions - 1
+	i = 0
+	while( i < dimensions )
 		_dim->elements = (ubTB(i) - lbTB(i)) + 1
 		_dim->lbound = lbTB(i)
 		_dim->ubound = ubTB(i)
 		_dim += 1
-	next
+		i += 1
+	wend
 
 	return fb_ErrorSetNum( FB_RTERROR_OK )
 end function
