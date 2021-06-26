@@ -115,6 +115,8 @@
 		Declare Sub fb_StrUnlock FBCALL ()
 		Declare Sub fb_GraphicsLock FBCALL ()
 		Declare Sub fb_GraphicsUnlock FBCALL ()
+		Declare Sub fb_MathLock() FBCALL ()
+		Declare Sub fb_MathUnlock FBCALL ()
 	#else
 		#define FB_LOCK()
 		#define FB_UNLOCK()
@@ -122,6 +124,8 @@
 		#define FB_STRUNLOCK()
 		#define FB_GRAPHICS_LOCK()
 		#define FB_GRAPHICS_UNLOCK()
+		#define FB_MATH_LOCK()
+		#define FB_MATH_UNLOCK()
 	#endif
 
 	/' We use memcmp from C because the compiler might replace this by a built-in
