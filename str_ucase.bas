@@ -31,21 +31,23 @@ function fb_StrUcase2 FBCALL ( src as FBSTRING ptr, mode as long ) as FBSTRING p
 
 		if ( mode = 1 ) then
 			for i = 0 to _len
-				c = *s + 1
+				c = *s
+				s += 1
 				if ( (c >= 97) and (c <= 122) ) then
 					c -= 97 - 65
 				end if
-				*d += 1
 				*d = c
+				*d += 1
 			next
 		else
 			for i = 0 to _len - 1
-				c = *s + 1
+				c = *s
+				s += 1
 				if ( islower( c ) ) then
 					c = toupper( c )
 				end if
-				*d += 1
 				*d = c
+				*d += 1
 			next
 		end if
 
