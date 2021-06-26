@@ -29,22 +29,24 @@ function fb_StrLcase2 FBCALL ( src as FBSTRING ptr, mode as long ) as FBSTRING p
 		d = dst->data
 
 		if( mode = 1 ) then
-			for  i = 0 to _len
-				c = *s + 1
+			for  i = 0 to _len - 1
+				c = *s
+				s += 1
 				if ( (c >= 65) and (c <= 90) ) then
 					c += 97 - 65
 				end if
-				*d += 1
 				*d = c
+				*d += 1
 			next
 		else
 			for i = 0 to _len - 1
-				c = *s + 1
+				c = *s
+				s += 1
 				if ( isupper( c ) ) then
 					c = tolower( c )
 				end if
-				*d += 1
 				*d = c
+				*d += 1
 			next
 		end if
 
