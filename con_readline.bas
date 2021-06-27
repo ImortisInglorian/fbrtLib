@@ -48,7 +48,8 @@ function fb_ConReadLine FBCALL ( soft_cursor as long ) as FBSTRING ptr
     cursor_visible = (fb_Locate( 0, 0, -1, 0, 0 ) and &h10000) <> 0
     fb_Locate( 0, 0, FALSE, 0, 0 )
 
-    _pos = _len = 0
+    _pos = 0
+	_len = 0
     fb_PrintBufferEx( NULL, 0, 0 )
 
     /' Ensure that the cursor is visible during INPUT '/
