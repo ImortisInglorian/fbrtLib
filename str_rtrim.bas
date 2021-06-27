@@ -18,7 +18,7 @@ function fb_RTRIM FBCALL( src as FBSTRING ptr ) as FBSTRING ptr
 		_len = FB_STRSIZE( src )
 		if ( _len > 0 ) then
 			dim as ubyte ptr src_ptr = fb_hStrSkipCharRev( src->data, _len, 32 )
-			_len = cast(ssize_t, (src_ptr - src->data) + 1)
+			_len = cast(ssize_t, (src_ptr - src->data)) + 1
 		end if
 	end if
 
