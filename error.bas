@@ -24,6 +24,12 @@ messages(17) = @"end of file"                          /' FB_RTERROR_ENDOFFILE '
 
 extern "C"
 
+'' !!!TODO!!! see note in fb_thread.bi::_FB_TLSGETCTX(id)
+'' #define fb_ERRORCTX_Destructor NULL
+ 
+sub fb_ERRORCTX_Destructor( byval data_ as any ptr )
+end sub
+
 sub fb_Die ( err_num as long, line_num as long, mod_name as ubyte const ptr, fun_name as ubyte const ptr )
 	dim as long _pos = 0
 
