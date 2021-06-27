@@ -36,6 +36,13 @@ end function
 end extern
 
 extern "C"
+
+'' !!!TODO!!! see note in fb_thread.bi::_FB_TLSGETCTX(id)
+'' #define fb_FBTHREADCTX_Destructor NULL
+ 
+sub fb_FBTHREADCTX_Destructor( byval data_ as any ptr )
+end sub
+
 function fb_ThreadCreate FBCALL ( proc as FB_THREADPROC, param as any ptr, stack_size as ssize_t ) as FBTHREAD ptr
 	dim as FBTHREAD ptr thread
 	dim as FBTHREADINFO ptr info
