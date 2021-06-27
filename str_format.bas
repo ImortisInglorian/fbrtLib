@@ -375,7 +375,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 			else
 				if ( pInfo->exponent_add_plus or ExpValue < 0 ) then
 					if ( ExpValue < 0 ) then
-						pszAdd = sadd("+")
+						pszAdd = sadd("-")
 					else
 						pszAdd = sadd("+")
 					end if
