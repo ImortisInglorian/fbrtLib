@@ -15,10 +15,7 @@ function fb_hStr2ULongint FBCALL ( src as ubyte ptr, _len as ssize_t ) as ulongi
 	end if
 	
 	radix = 10
-	if ( _len < 1 ) then
-		return 0
-	elseif ( (_len >= 2) and (p[0] = 32) ) then '&
-		radix = 0
+	if ( (_len >= 2) and (p[0] = asc( "&" )) ) then
 		skip = 2
 		select case p[1]
 			case 72 or 104: 'h or H
@@ -34,6 +31,9 @@ function fb_hStr2ULongint FBCALL ( src as ubyte ptr, _len as ssize_t ) as ulongi
 
 		if ( radix <> 10 ) then
 			p += skip
+#ifdef HOST_MINGW
+			return fb_hStrRadix2Longint( p, _len - skip, radix )
+#endif
 		end if
 	end if
 
