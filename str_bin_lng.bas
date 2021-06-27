@@ -34,7 +34,7 @@ function fb_BINEx_l FBCALL ( num as ulongint, digits as long ) as FBSTRING ptr
 		i -= 1
 	wend
 
-	s->data[digits] = asc( !"\0" )
+	s->data[digits] = asc( !"\000" ) '' NUL CHAR
 	return s
 end function
 

@@ -64,7 +64,7 @@ function fb_StrConcatByref FBCALL _
 
 			fb_hStrSetLength( str_, dst_len + dst_len )
 
-			str_->data[dst_len + dst_len] = asc( !"\0" )
+			str_->data[dst_len + dst_len] = asc( !"\000" ) '' NUL CHAR
 		end if
 
 		/' delete temps? '/
