@@ -1,3 +1,5 @@
+extern "C"
+
 #ifdef fb_ErrorThrowEx
 	#undef fb_ErrorThrowEx
 	#undef fb_ErrorThrowAt
@@ -44,10 +46,13 @@ type FB_ERRORCTX
 	as any ptr 			resnxt_lbl
 end type
 
+'' !!!TODO!!! see note in fb_thread.bi::_FB_TLSGETCTX(id)
+'' #define fb_ERRORCTX_Destructor NULL
+declare sub fb_ERRORCTX_Destructor( as any ptr )
+
 #define FB_ERRMSG_SIZE 1024
 extern as ubyte __fb_errmsg(0 to FB_ERRMSG_SIZE -1)
 
-extern "C"
 declare sub 	 fb_Assert 				FBCALL ( filename as ubyte ptr, linenum as long, funcname as ubyte ptr, expression as ubyte ptr )
 declare sub 	 fb_AssertWarn 			FBCALL ( filename as ubyte ptr, linenum as long, funcname as ubyte ptr, expression as ubyte ptr )
 declare sub 	 fb_AssertW 			FBCALL ( filename as ubyte ptr, linenum as long, funcname as ubyte ptr, expression as FB_WCHAR ptr )

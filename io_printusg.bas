@@ -61,6 +61,13 @@ end type
 
 
 extern "C"
+
+'' !!!TODO!!! see note in fb_thread.bi::_FB_TLSGETCTX(id)
+'' #define fb_PRINTUSGCTX_Destructor NULL
+ 
+sub fb_PRINTUSGCTX_Destructor( byval data_ as any ptr )
+end sub
+
 /'-------------------------------------------------------------'/
 /' Checks for Infinity/NaN                                     *
  * (assumes IEEE-754 floating-point format)                    *

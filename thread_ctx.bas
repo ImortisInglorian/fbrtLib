@@ -32,14 +32,21 @@
 
 dim shared as FB_TLSENTRY __fb_tls_ctxtb(0 to FB_TLSKEYS - 1)
 
+#define FB_TLS_DATA_TO_HEADER( data ) ( ( cast( FB_TLS_CTX_HEADER ptr, data ) - 1 ) )
+#define FB_TLS_HEADER_TO_DATA( header ) ( cast( any ptr, header + 1 ) )
+
 extern "C"
 /' Retrieve or create new TLS context for given key '/
-function fb_TlsGetCtx FBCALL ( index as long, _len as size_t ) as any ptr
+function fb_TlsGetCtx FBCALL ( index as long, _len as size_t, destructorFn as FB_TLS_DESTRUCTOR ) as any ptr
 	dim as any ptr ctx = cast(any ptr, FB_TLSGET( __fb_tls_ctxtb(index) ))
 
 	if ( ctx = NULL ) then
-		ctx = cast(any ptr, calloc( 1, _len ))
-		FB_TLSSET( __fb_tls_ctxtb(index), ctx )
+		dim as FB_TLS_CTX_HEADER ptr ctxheader = cast( FB_TLS_CTX_HEADER ptr, calloc( 1, _len + sizeof(FB_TLS_CTX_HEADER) ) )
+		if( ctxHeader <> NULL ) then
+			ctxHeader->destructor_ = destructorFn
+			ctx = FB_TLS_HEADER_TO_DATA( ctxHeader )
+			FB_TLSSET( __fb_tls_ctxtb(index), ctx )
+		end if
 	end if
 
 	return ctx
@@ -50,14 +57,11 @@ sub fb_TlsDelCtx FBCALL( index as long )
 
 	/' free mem block if any '/
 	if ( ctx <> NULL ) then
-		if ( index = FB_TLSKEY_GFX ) then
-			/' gfxlib2's TLS context is a special case: it stores
-			   some malloc'ed data that stays alive forever, so it
-			   so it requires extra clean-up when the thread exits.
-			   see also gfxlib2's fb_hGetContext() '/
-			free(cast(FB_GFXCTX ptr,ctx)->line )
+		dim as FB_TLS_CTX_HEADER ptr ctxheader = FB_TLS_DATA_TO_HEADER( ctx )
+		if( ctxHeader->destructor_ ) then
+			ctxHeader->destructor_( ctx )
 		end if
-		free( ctx )
+		free( ctxHeader )
 		FB_TLSSET( __fb_tls_ctxtb(index), NULL )
 	end if
 end sub
@@ -85,6 +89,7 @@ sub fb_TlsExit( )
 	for i = 0 to FB_TLSKEYS - 1
 		FB_TLSFREE( __fb_tls_ctxtb(i) )
 	next
+	fb_CloseAtomicFBThreadFlagMutex( )
 end sub
 #endif
 end extern

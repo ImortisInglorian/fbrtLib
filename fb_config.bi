@@ -5,6 +5,7 @@
 #elseif defined (__FB_DOS__)
 	#define HOST_DOS
 #elseif defined (__FB_WIN32__) /' MinGW, MinGW-w64, TDM-GCC '/
+	#define HOST_MINGW
 	#define HOST_WIN32
 	/' We prefer using non-oldnames functions, see also win32/fb_win32.h '/
 	#define NO_OLDNAMES

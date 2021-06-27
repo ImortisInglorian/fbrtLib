@@ -107,6 +107,8 @@ end enum
 
 type _FB_FILE as FB_FILE
 
+extern "C"
+
 type FnFileSetWidth as function ( handle as _FB_FILE ptr, new_width as long ) as long
 type FnFileTest as function ( handle as _FB_FILE ptr, filename as ubyte const ptr, filename_len as size_t ) as long
 type FnFileOpen as function ( handle as _FB_FILE ptr, filename as ubyte const ptr, filename_len as size_t ) as long
@@ -170,6 +172,8 @@ type FB_INPUTCTX
 	as long 				index
 end type
 
+declare sub fb_INPUTCTX_Destructor( as any ptr ) 
+
 
 #define FB_FILE_TO_HANDLE_VALID( index ) (cast(FB_FILE ptr, (@__fb_ctx.fileTB(0) + (index) - 1 + FB_RESERVED_FILES)))
 
@@ -186,7 +190,6 @@ end type
 		)_
 	)
 
-extern "C"
 private function FB_HANDLE_DEREF( handle as FB_FILE ptr ) as FB_FILE ptr
 	if ( handle <> NULL ) then
 		FB_LOCK()
