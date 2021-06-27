@@ -29,23 +29,30 @@ private sub hUTF16ToUTF8( src as const FB_WCHAR ptr, chars as ssize_t, dst as UT
 
 		dst += bytes
 
-		select case ( bytes )
-			case 4:
+		on bytes goto case1, case2, case3, case4
+		goto default
+		'' switch( bytes )
+			case4:
 				*dst = ((c or UTF8_BYTEMARK) and UTF8_BYTEMASK)
 				dst -= 1
 				c shr= 6
-			case 3:
+				/' fall through '/
+			case3:
 				*dst = ((c or UTF8_BYTEMARK) and UTF8_BYTEMASK)
 				dst -= 1
 				c shr= 6
-			case 2:
+				/' fall through '/
+			case2:
 				*dst = ((c or UTF8_BYTEMARK) and UTF8_BYTEMASK)
 				dst -= 1
 				c shr= 6
-			case 1:
+				/' fall through '/
+			case1:
 				*dst = (c or __fb_utf8_bmarkTb(bytes))
 				dst -= 1
-		end select
+				/' fall through '/
+			default:
+		'' end switch
 
 		dst += bytes
 		chars -= 1
@@ -73,23 +80,29 @@ private sub hUTF32ToUTF8( src as const FB_WCHAR ptr, chars as ssize_t, dst as UT
 
 		dst += bytes
 
-		select case ( bytes )
-			case 4:
+		on bytes goto case1, case2, case3, case4
+		goto default
+		'' switch ( bytes )
+			case4:
 				*dst = ((c or UTF8_BYTEMARK) and UTF8_BYTEMASK)
 				dst -= 1
 				c shr= 6
-			case 3:
+				/' fall through '/
+			case3:
 				*dst = ((c or UTF8_BYTEMARK) and UTF8_BYTEMASK)
 				dst -= 1
 				c shr= 6
-			case 2:
+				/' fall through '/
+			case2:
 				*dst = ((c or UTF8_BYTEMARK) and UTF8_BYTEMASK)
 				dst -= 1
 				c shr= 6
-			case 1:
+				/' fall through '/
+			case1:
 				*dst = (c or __fb_utf8_bmarkTb(bytes))
 				dst -= 1
-		end select
+			default:
+		'' end switch
 
 		dst += bytes
 		chars -= 1

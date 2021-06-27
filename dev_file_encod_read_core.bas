@@ -35,31 +35,40 @@ private function hReadUTF8ToChar( fp as FILE ptr, dst as ubyte ptr, max_chars as
 		
 		wc = 0
 		p = @c(0)
-		select case ( extbytes )
-			case 5:
+
+		on (extbytes+1) goto case0, case1, case2, case3, case4, case5
+		goto default
+		'' switch ( extbytes )
+			case5:
 				wc += *p
 				P += 1
 				wc shl= 6
-			case 4:
+				/' fall through '/
+			case4:
 				wc += *p
 				p += 1
 				wc shl= 6
-			case 3:
+				/' fall through '/
+			case3:
 				wc += *p
 				p += 1
 				wc shl= 6
-			case 2:
+				/' fall through '/
+			case2:
 				wc += *p
 				p += 1
 				wc shl= 6
-			case 1:
+				/' fall through '/
+			case1:
 				wc += *p
 				p += 1
 				wc shl= 6
-			case 0:
+				/' fall through '/
+			case0:
 				wc += *p
 				p += 1
-		end select
+			default:
+		'' end switch
 
 		wc -= __fb_utf8_offsetsTb(extbytes)
 
@@ -163,31 +172,40 @@ private function hUTF8ToUTF16( fp as FILE ptr, dst as FB_WCHAR ptr, max_chars as
 
 		wc = 0
 		p = @c(0)
-		select case ( extbytes )
-			case 5:
+
+		on (extbytes+1) goto case0, case1, case2, case3, case4, case5
+		goto default
+		'' switch ( extbytes )
+			case5:
+				wc += *p
+				P += 1
+				wc shl= 6
+				/' fall through '/
+			case4:
 				wc += *p
 				p += 1
 				wc shl= 6
-			case 4:
-				wc += *p 
-				p += 1
-				wc shl= 6
-			case 3:
+				/' fall through '/
+			case3:
 				wc += *p
 				p += 1
 				wc shl= 6
-			case 2:
+				/' fall through '/
+			case2:
 				wc += *p
 				p += 1
 				wc shl= 6
-			case 1:
+				/' fall through '/
+			case1:
 				wc += *p
 				p += 1
 				wc shl= 6
-			case 0:
+				/' fall through '/
+			case0:
 				wc += *p
 				p += 1
-		end select
+			default:
+		'' end switch
 
 		wc -= __fb_utf8_offsetsTb(extbytes)
 
@@ -233,31 +251,40 @@ private function hUTF8ToUTF32( fp as FILE ptr, dst as FB_WCHAR ptr, max_chars as
 
 		wc = 0
 		p = @c(0)
-		select case ( extbytes )
-			case 5:
+
+		on (extbytes+1) goto case0, case1, case2, case3, case4, case5
+		goto default
+		'' switch ( extbytes )
+			case5:
+				wc += *p
+				P += 1
+				wc shl= 6
+				/' fall through '/
+			case4:
 				wc += *p
 				p += 1
 				wc shl= 6
-			case 4:
+				/' fall through '/
+			case3:
 				wc += *p
 				p += 1
 				wc shl= 6
-			case 3:
+				/' fall through '/
+			case2:
 				wc += *p
 				p += 1
 				wc shl= 6
-			case 2:
+				/' fall through '/
+			case1:
 				wc += *p
 				p += 1
 				wc shl= 6
-			case 1:
+				/' fall through '/
+			case0:
 				wc += *p
 				p += 1
-				wc shl= 6
-			case 0:
-				wc += *p
-				p += 1
-		end select
+			default:
+		'' end switch
 
 		wc -= __fb_utf8_offsetsTb(extbytes)
 		*dst = wc

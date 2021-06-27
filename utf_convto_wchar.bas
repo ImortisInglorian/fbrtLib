@@ -24,32 +24,40 @@ private function hUTF8ToUTF16( src as const UTF_8 ptr, dst as FB_WCHAR ptr, char
 	    do
 			extbytes = __fb_utf8_trailingTb(cast(ulong, *src))
 			c = 0
-			select case( extbytes )
 
-				case 5:
+			on (extbytes+1) goto caseA0, caseA1, caseA2, caseA3, caseA4, caseA5
+			goto defaultA
+			'' switch( extbytes )
+				caseA5:
 					c += *src
 					src += 1
 					c shl= 6
-				case 4:
+					/' fall through '/
+				caseA4:
 					c += *src
 					src += 1
 					c shl= 6
-				case 3:
+					/' fall through '/
+				caseA3:
 					c += *src
 					src += 1
 					c shl= 6
-				case 2:
+					/' fall through '/
+				caseA2:
 					c += *src
 					src += 1
 					c shl= 6
-				case 1:
+					/' fall through '/
+				caseA1:
 					c += *src
 					src += 1
 					c shl= 6
-				case 0:
+					/' fall through '/
+				caseA0:
 					c += *src
 					src += 1
-			end select
+				defaultA:
+			'' end switch
 	
 			c -= __fb_utf8_offsetsTb(extbytes)
 
@@ -97,31 +105,39 @@ private function hUTF8ToUTF16( src as const UTF_8 ptr, dst as FB_WCHAR ptr, char
 			extbytes = __fb_utf8_trailingTb(*src)
 	
 			c = 0
-			select case( extbytes )
-				case 5:
+			on (extbytes+1) goto caseB0, caseB1, caseB2, caseB3, caseB4, caseB5
+			goto defaultB
+			'' switch( extbytes )
+				caseB5:
 					c += *src
 					src += 1
 					c shl= 6
-				case 4:
+					/' fall through '/
+				caseB4:
 					c += *src
 					src += 1
 					c shl= 6
-				case 3:
+					/' fall through '/
+				caseB3:
 					c += *src
 					src += 1
 					c shl= 6
-				case 2:
+					/' fall through '/
+				caseB2:
 					c += *src
 					src += 1
 					c shl= 6
-				case 1:
+					/' fall through '/
+				caseB1:
 					c += *src
 					src += 1
 					c shl= 6
-				case 0:
+					/' fall through '/
+				caseB0:
 					c += *src
 					src += 1
-			end select
+				defaultB:
+			'' end switch
 	
 			c -= __fb_utf8_offsetsTb(extbytes)
 
@@ -164,31 +180,39 @@ private function hUTF8ToUTF32( src as const UTF_8 ptr, dst as FB_WCHAR ptr, char
 			extbytes = __fb_utf8_trailingTb(cast(ulong, *src))
 	
 			c = 0
-			select case( extbytes )
-				case 5:
+			on (extbytes+1) goto caseA0, caseA1, caseA2, caseA3, caseA4, caseA5
+			goto defaultA
+			'' switch( extbytes )
+				caseA5:
 					c += *src
 					src += 1
 					c shl= 6
-				case 4:
+					/' fall through '/
+				caseA4:
 					c += *src
 					src += 1
 					c shl= 6
-				case 3:
+					/' fall through '/
+				caseA3:
 					c += *src
 					src += 1
 					c shl= 6
-				case 2:
+					/' fall through '/
+				caseA2:
 					c += *src
 					src += 1
 					c shl= 6
-				case 1:
+					/' fall through '/
+				caseA1:
 					c += *src
 					src += 1
 					c shl= 6
-				case 0:
+					/' fall through '/
+				caseA0:
 					c += *src
 					src += 1
-			end select
+				defaultA:
+			'' end switch
 
 			c -= __fb_utf8_offsetsTb(extbytes)
 
@@ -216,36 +240,44 @@ private function hUTF8ToUTF32( src as const UTF_8 ptr, dst as FB_WCHAR ptr, char
 		
 		*chars = dst_size - charsleft
 	else
-	    charsleft = *chars
-	    while( charsleft > 0 )
+		charsleft = *chars
+		while( charsleft > 0 )
 			extbytes = __fb_utf8_trailingTb(*src)
 	
 			c = 0
-			select case ( extbytes )
-				case 5:
+			on (extbytes+1) goto caseB0, caseB1, caseB2, caseB3, caseB4, caseB5
+			goto defaultB
+			'' switch( extbytes )
+				caseB5:
 					c += *src
 					src += 1
 					c shl= 6
-				case 4:
+					/' fall through '/
+				caseB4:
 					c += *src
 					src += 1
 					c shl= 6
-				case 3:
+					/' fall through '/
+				caseB3:
 					c += *src
 					src += 1
 					c shl= 6
-				case 2:
+					/' fall through '/
+				caseB2:
 					c += *src
 					src += 1
 					c shl= 6
-				case 1:
+					/' fall through '/
+				caseB1:
 					c += *src
 					src += 1
 					c shl= 6
-				case 0:
+					/' fall through '/
+				caseB0:
 					c += *src
 					src += 1
-			end select
+				defaultB:
+			'' end switch
 	
 			c -= __fb_utf8_offsetsTb(extbytes)
 			
