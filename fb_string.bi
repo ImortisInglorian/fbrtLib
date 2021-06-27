@@ -8,6 +8,7 @@
 	#undef fb_StrDelete
 	#undef fb_StrConcat
 	#undef fb_StrConcatAssign
+	#undef fb_StrConcatByref
 	#undef fb_StrCompare
 	#undef fb_StrAllocTempResult
 	#undef fb_StrAllocTempDescF
@@ -213,6 +214,7 @@ declare function fb_StrAssignEx 			FBCALL ( dst as any ptr, dst_size as ssize_t,
 declare sub 	 fb_StrDelete 				FBCALL ( str as FBSTRING ptr )
 declare function fb_StrConcat 				FBCALL ( dst as FBSTRING ptr, str1 as any ptr, str1_size as ssize_t, str2 as any ptr, str2_size as ssize_t ) as FBSTRING ptr
 declare function fb_StrConcatAssign 		FBCALL ( dst as any ptr, dst_size as ssize_t, src as any ptr,  src_size as ssize_t, fill_rem as long ) as any ptr
+declare function fb_StrConcatByref			FBCALL ( dst as any ptr, dst_size as ssize_t, src as any ptr,  src_size as ssize_t, fill_rem as long ) as any ptr
 declare function fb_StrCompare 				FBCALL ( str1 as any ptr, str1_size as ssize_t, str2 as any ptr, str2_size as ssize_t ) as long
 declare function fb_StrAllocTempResult 		FBCALL ( src as FBSTRING ptr ) as FBSTRING ptr
 declare function fb_StrAllocTempDescF		FBCALL ( str as ubyte ptr, str_size as ssize_t ) as FBSTRING ptr
