@@ -36,7 +36,7 @@ function fb_StrLcase2 FBCALL ( src as FBSTRING ptr, mode as long ) as FBSTRING p
 					c += 97 - 65
 				end if
 				*d = c
-				*d += 1
+				d += 1
 			next
 		else
 			for i = 0 to _len - 1
@@ -46,7 +46,7 @@ function fb_StrLcase2 FBCALL ( src as FBSTRING ptr, mode as long ) as FBSTRING p
 					c = tolower( c )
 				end if
 				*d = c
-				*d += 1
+				d += 1
 			next
 		end if
 
