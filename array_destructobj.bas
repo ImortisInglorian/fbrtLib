@@ -25,7 +25,7 @@ sub fb_hArrayDtorObj ( array as FBARRAY ptr, dtor as FB_DEFCTOR, base_idx as siz
 
 	/' call dtors in the inverse order '/
 	element_len = array->element_len
-	this_ = cast(ubyte ptr, (array->_ptr) + ((base_idx + (elements - 1)) * element_len))
+	this_ = cast(ubyte ptr, (array->_ptr)) + ((base_idx + (elements - 1)) * element_len)
 
 	while( elements > 0 )
 		/' !!!FIXME!!! check exceptions (only if rewritten in C++) '/

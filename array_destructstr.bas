@@ -25,7 +25,7 @@ sub fb_hArrayDtorStr ( array as FBARRAY ptr, dtor as FB_DEFCTOR, base_idx as siz
 	wend
 
 	/' call dtors in the inverse order '/
-	this_ = cast(FBSTRING ptr, array->_ptr + (base_idx + (elements-1)))
+	this_ = cast(FBSTRING ptr, array->_ptr) + (base_idx + (elements-1))
 
 	while( elements > 0 )
 		if ( this_->data <> NULL ) then
