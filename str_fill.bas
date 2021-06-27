@@ -13,7 +13,7 @@ function fb_StrFill1 FBCALL ( cnt as ssize_t, fchar as long ) as FBSTRING ptr
 			/' fill it '/
 			memset( dst->data, fchar, cnt )
 			/' null char '/
-			dst->data[cnt] = 0
+			dst->data[cnt] = asc( !"\000" ) '' NUL CHAR
 		else
 			dst = @__fb_ctx.null_desc
 		end if
@@ -28,7 +28,7 @@ function fb_StrFill2 FBCALL ( cnt as ssize_t, src as FBSTRING ptr ) as FBSTRING 
 	dim as FBSTRING ptr dst
 	dim as long fchar
 
-	if ( (cnt > 0) and (src <> NULL) and (src->data <> NULL) and (FB_STRSIZE( src ) > 0) ) then
+	if ( (cnt > 0) and (src <> NULL) andalso (src->data <> NULL) andalso (FB_STRSIZE( src ) > 0) ) then
 		fchar = src->data[0]
 		dst = fb_StrFill1( cnt, fchar )
 	else

@@ -23,7 +23,7 @@ extern "C"
 function fb_hStrAllocTmpDesc FBCALL ( ) as FBSTRING ptr
 	dim as FB_STR_TMPDESC ptr dsc
 
-	if ( (tmpdsList.fhead = NULL) and (tmpdsList.head = NULL) ) then
+	if ( (tmpdsList.fhead = NULL) andalso (tmpdsList.head = NULL) ) then
 		fb_hListInit( @tmpdsList, @fb_tmpdsTB(0), sizeof(FB_STR_TMPDESC), FB_STR_TMPDESCRIPTORS )
 	end if
 
@@ -53,7 +53,7 @@ function fb_hStrDelTempDesc FBCALL( _str as FBSTRING ptr ) as long
 	dim as FB_STR_TMPDESC ptr item = cast(FB_STR_TMPDESC ptr, ( cast(ubyte ptr, _str) - offsetof( FB_STR_TMPDESC, desc ) ))
 
 	/' is this really a temp descriptor? '/
-	if ( (item < @fb_tmpdsTB(0)) or (item > @fb_tmpdsTB(FB_STR_TMPDESCRIPTORS - 1)) ) then
+	if ( (item < @fb_tmpdsTB(0)) orelse (item > @fb_tmpdsTB(FB_STR_TMPDESCRIPTORS - 1)) ) then
 		return -1
 	end if
 
@@ -76,7 +76,8 @@ function fb_hStrAlloc FBCALL ( _str as FBSTRING ptr, size as ssize_t ) as FBSTRI
 	if ( _str->data = NULL ) then
 		_str->data = cast(ubyte ptr, malloc( size + 1 ))
 		if ( _str->data = NULL ) then
-            _str->len = _str->size = 0
+            _str->len = 0 
+			_str->size = 0
 			return NULL
 		end if
 
@@ -94,7 +95,7 @@ function fb_hStrRealloc FBCALL ( _str as FBSTRING ptr, size as ssize_t, _preserv
 	/' plus 12.5% more '/
 	newsize += (newsize shr 3)
 
-	if ( (_str->data = NULL) or (size > _str->size) or (newsize < (_str->size - (_str->size shr 3))) ) then
+	if ( (_str->data = NULL) orelse (size > _str->size) orelse (newsize < (_str->size - (_str->size shr 3))) ) then
 		if ( _preserve = FB_FALSE ) then
 			fb_StrDelete( _str )
 
@@ -120,7 +121,8 @@ function fb_hStrRealloc FBCALL ( _str as FBSTRING ptr, size as ssize_t, _preserv
 		end if
 
 		if ( _str->data = NULL ) then
-            _str->len = _str->size = 0
+            _str->len = 0
+			_str->size = 0
 			return NULL
 		end if
 

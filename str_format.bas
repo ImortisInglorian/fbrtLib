@@ -83,7 +83,7 @@ sub fb_hGetNumberParts cdecl ( number as double, pachFixPart as ubyte ptr, pcchL
 	pachFracPart[len_frac] = 0
 
 	/' Store fix part of the number into buffer '/
-	if ( ullFix=0 and neg ) then
+	if ( ullFix=0 andalso neg ) then
 		pachFixPart[0] = 0
 		len_fix = 0
 		chSign = 45
@@ -115,7 +115,13 @@ sub fb_hGetNumberParts cdecl ( number as double, pachFixPart as ubyte ptr, pcchL
 	end if
 end sub
 
-function fb_hBuildDouble cdecl ( num as double, decimal_point as ubyte, thousands_separator as ubyte ) as FBSTRING ptr
+function fb_hBuildDouble cdecl _
+	( _
+		num as double, _
+		decimal_point as ubyte, _
+		thousands_separator as ubyte _
+	) as FBSTRING ptr
+
 	dim as ubyte FixPart(0 to 127), FracPart(0 to 127), chSign
 	dim as ssize_t LenFix, LenFrac, LenSign, LenDecPoint, LenTotal
 	dim as FBSTRING ptr dst
@@ -200,7 +206,7 @@ end function
 function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, mask_length as ssize_t, value as double, pInfo as FormatMaskInfo ptr, chThousandsSep as ubyte, chDecimalPoint as ubyte, chDateSep as ubyte, chTimeSep as ubyte ) as long
 	dim as ubyte FixPart(0 to 127), FracPart(0 to 127), ExpPart(0 to 127), chSign = 0
 	dim as ssize_t LenFix, LenFrac, LenExp = 0, IndexFix, IndexFrac, IndexExp = 0
-	dim as ssize_t ExpValue, ExpAdjust = 0, NumSkipFix = 0, NumSkipExp = 0
+	dim as ssize_t ExpValue, ExpAdjust = 0, NumSkipFix = 0, NumSkipExp = 0, NonZero = 0
 	dim as long do_skip = FALSE, do_exp = FALSE, do_string = FALSE
 	dim as long did_sign = FALSE, did_exp = FALSE, did_hour = FALSE, did_thousandsep = FALSE
 	dim as long do_num_frac = FALSE, last_was_comma = FALSE, was_k_div = FALSE
@@ -229,8 +235,10 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 
 	if ( value <> 0.0 ) then
 		ExpValue = cast(long ,floor( log10( fabs( value ) ) ) + 1)
+		NonZero = 1
 	else
 		ExpValue = 0
+		NonZero = 0
 	end if
 	
 	if ( do_output ) then
@@ -241,23 +249,10 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 			 * representation. '/
 
 			if ( pInfo->has_exponent ) then
-				/' exponent too big? scale (up or down) '/
-				if ( ExpValue <= 0 ) then
+
+				/' if non-zero, scale mantissa to fill fix digits '/
+				if ( NonZero ) then
 					ExpValue -= pInfo->num_digits_fix
-				else
-					if ( pInfo->num_digits_frac > 0 ) then
-						if ( ExpValue > pInfo->num_digits_fix ) then
-							ExpValue -= pInfo->num_digits_fix
-						else
-							ExpValue = 0
-						end if
-					else
-						if ( ExpValue > FB_MAXFIXLEN ) then
-							ExpValue -= FB_MAXFIXLEN
-						else
-							ExpValue = 0
-						end if
-					end if
 				end if
 
 				if ( ExpValue <> 0 ) then
@@ -268,14 +263,23 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 						value *= pow( 2.0, -ExpValue )
 					end if
 				end if
+				
+				'' !!!TODO!!! literal too big while( value >= cdbl( 18446744073709551616# ) )
+				while( value >= cdbl( 18446744073709 ) )
+					value /= 10.0
+					ExpValue += 1
+				wend
 
 				LenExp = sprintf( @ExpPart(0), "%d", cast(long, ExpValue) )
 
-				if ( ExpValue < 0 ) then
-					IndexExp = ExpAdjust = 1
+				if( ExpValue < 0 ) then
+					IndexExp = 1
+					ExpAdjust = 1
 				else
-					IndexExp = ExpAdjust = 0
+					IndexExp = 0
+					ExpAdjust = 0
 				end if
+
 				NumSkipExp = pInfo->exp_digits - ( LenExp - ExpAdjust )
 			/' value between (+|-)0.0..1.0 '/
 			elseif ( ExpValue < 0 ) then
@@ -283,7 +287,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 				if ( -ExpValue >= pInfo->num_digits_frac ) then
 					#if 0
 					/' can't scale? '/
-					if ( (pInfo->num_digits_frac == 0 ) or (-ExpValue > pInfo->num_digits_fix + pInfo->num_digits_frac - pInfo->num_digits_omit) ) then
+					if ( (pInfo->num_digits_frac = 0 ) or (-ExpValue > pInfo->num_digits_fix + pInfo->num_digits_frac - pInfo->num_digits_omit) ) then
 						value = 0.0
 					else
 						value *= pow( 10.0, -ExpValue + pInfo->num_digits_fix )
@@ -308,14 +312,16 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 			value = hRound( value, pInfo )
 
 			/' value rounded up to next power of 10? '/
-			if ( pInfo->has_exponent and (fb_IntLog10_64( cast(ulongint, fabs( value ) ) = pInfo->num_digits_fix) ) ) then
+			if ( pInfo->has_exponent andalso (fb_IntLog10_64( cast(ulongint, fabs( value ) ) = pInfo->num_digits_fix) ) ) then
 				value /= 10.0
 				ExpValue += 1
 				LenExp = sprintf( @ExpPart(0), "%d", cast(long, ExpValue) )
 				if( ExpValue < 0 ) then
-					IndexExp = ExpAdjust = 1
+					IndexExp = 1
+					ExpAdjust = 1
 				else
-					IndexExp = ExpAdjust = 0
+					IndexExp = 0
+					ExpAdjust = 0
 				end if
 
 				NumSkipExp = pInfo->exp_digits - ( LenExp - ExpAdjust )
@@ -396,7 +402,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 		else
 			if ( do_output ) then
 				select case chCurrent
-					case 46, 35, 0: ' . # NULL
+					case 46, 35, 48: ' . # 0
 						if ( not(pInfo->has_sign) and not(did_sign) ) then
 							did_sign = TRUE
 							if ( pInfo->sign_add_plus or chSign=45 ) then
@@ -442,7 +448,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 
 			if ( not(do_add) ) then
 				select case chCurrent
-					case 37, 44, 35, 0, 43, 69, 101: ' % , # NULL + E e
+					case 37, 44, 35, 48, 43, 69, 101: ' % , # 0 + E e
 						if ( pInfo->mask_type = eMT_Unknown ) then
 							pInfo->mask_type = eMT_Number
 						/'
@@ -527,7 +533,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 								do_add = TRUE
 							end if
 						end if
-					case 35, 0: ' # NULL
+					case 35, 48: ' # 0
 						if ( not(do_output) ) then
 							if ( pInfo->mask_type = eMT_Number ) then
 								if ( do_num_frac ) then
