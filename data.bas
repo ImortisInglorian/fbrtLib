@@ -7,11 +7,11 @@ dim shared as FB_DATADESC ptr __fb_data_ptr = NULL
 extern "C"
 private sub hSkipLink( )
 	/' If a link was reached, move to the next non-link, or NULL ("EOF") '/
-	while ( __fb_data_ptr <> NULL and (__fb_data_ptr->len = FB_DATATYPE_LINK) ) 
+	while ( __fb_data_ptr <> NULL andalso (__fb_data_ptr->len = FB_DATATYPE_LINK) ) 
 		__fb_data_ptr = __fb_data_ptr->next
 	wend
 
-	DBG_ASSERT( (__fb_data_ptr = NULL) or (__fb_data_ptr->len <> FB_DATATYPE_LINK) )
+	DBG_ASSERT( (__fb_data_ptr = NULL) orelse (__fb_data_ptr->len <> FB_DATATYPE_LINK) )
 end sub
 
 sub fb_DataRestore FBCALL ( labeladdr as FB_DATADESC ptr )

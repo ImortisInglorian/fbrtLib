@@ -49,7 +49,7 @@ function fb_FileGetWstrEx( handle as FB_FILE ptr, _pos as fb_off_t, dst as FB_WC
 		rawbytesread += sizeof(FB_WCHAR) - extra /' round up '/
 	end if
 	DBG_ASSERT( (rawbytesread mod sizeof(FB_WCHAR)) = 0 )
-	dst[rawbytesread / sizeof(FB_WCHAR)] = 0
+	dst[rawbytesread / sizeof(FB_WCHAR)] = asc( !"\000" ) '' NUL CHAR
 
 	return FB_RTERROR_OK
 end function

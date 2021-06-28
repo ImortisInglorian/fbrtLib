@@ -100,6 +100,7 @@ function fb_FilePutDataEx _
             		if ( ch = asc(!"\n") or ch = asc(!"\r") ) then
 	                	exit while
 					end if
+					i -= 1
         		wend
 
         	end if
