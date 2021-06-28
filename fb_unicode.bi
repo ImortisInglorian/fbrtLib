@@ -156,11 +156,11 @@ end function
 
 /' Copy n characters from A to B and terminate with NUL. '/
 private sub fb_wstr_Copy( dst as FB_WCHAR ptr, src as const FB_WCHAR ptr, chars as ssize_t )
-	if( (src <> NULL) and (chars > 0) ) then
+	if( (src <> NULL) andalso (chars > 0) ) then
 		dst = cast(FB_WCHAR ptr, FB_MEMCPYX( dst, src, chars * sizeof( FB_WCHAR ) ))
 	end if
 	/' add the null-term '/
-	dst[chars + 1] = 0
+	*dst = asc(!"\000") '' NUL CHAR
 end sub
 
 /' Copy n characters from A to B. '/
@@ -169,12 +169,14 @@ private function fb_wstr_Move( dst as FB_WCHAR ptr, src as const FB_WCHAR ptr, c
 end function
 
 private sub fb_wstr_Fill( dst as FB_WCHAR ptr, c as FB_WCHAR, chars as ssize_t )
-	dim i as long
-	for i = 0 to chars
-		dst[i] = c
-	next
+	dim i as long = 0
+	while( i < chars )
+		*dst = c
+		dst += 1
+		i += 1
+	wend
 	/' add null-term '/
-	dst[i] = 0
+	*dst = asc(!"\000") '' NUL CHAR
 end sub
 
 /' Skip all characters (c) from the beginning of the string, max 'n' chars. '/
@@ -186,7 +188,7 @@ private function fb_wstr_SkipChar( s as const FB_WCHAR ptr, chars as ssize_t, c 
 	dim p as const FB_WCHAR ptr = s
 	
 	while( chars > 0 )
-		if( p <> c ) then
+		if( *p <> c ) then
 			return p
 		end if
 		p += 1
@@ -198,17 +200,17 @@ end function
 
 /' Skip all characters (c) from the end of the string, max 'n' chars. '/
 private function fb_wstr_SkipCharRev( s as const FB_WCHAR ptr, chars as ssize_t, c as FB_WCHAR ) as const FB_WCHAR ptr
-	if( (s = NULL) or (chars <= 0) ) then
+	if( (s = NULL) orelse (chars <= 0) ) then
 		return s
 	end if
 
 	/' fixed-len's are filled with null's as in PB, strip them too '/
-	dim p as const FB_WCHAR ptr = @s[chars-1]
+	dim p as const FB_WCHAR ptr = @s[chars]
 	while( chars > 0 )
-		if( *p <> c ) then
-			return p
-		end if
 		p -= 1
+		if( *p <> c ) then
+			return p+1
+		end if
 		chars -= 1
 	wend
 	return p
