@@ -25,10 +25,9 @@ function fb_WstrConcatAssign FBCALL ( dst as FB_WCHAR ptr, dst_chars as ssize_t,
 		if ( src_len > dst_chars - dst_len ) then
 			src_len = dst_chars - dst_len
 		end if
-	end if
 
-	/' copy the null-term too '/
-	fb_wstr_Move( @dst[dst_len], src, src_len + 1 )
+		fb_wstr_Copy( @dst[dst_len], src, src_len + 1 )
+	end if
 
 	return dst
 end function

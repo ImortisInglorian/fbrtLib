@@ -31,7 +31,7 @@ function fb_wstr_ConvToA( dst as ubyte ptr, dst_chars as ssize_t, src as const F
 		   enough space, so do it manually (this will cut off the last
 		   char, but what can you do) '/
 		if (chars = (dst_chars + 1)) then
-			dst[dst_chars] = 0
+			dst[dst_chars] = asc( !"\000" )
 			return dst_chars - 1
 		end if
 		return chars
@@ -43,7 +43,8 @@ function fb_wstr_ConvToA( dst as ubyte ptr, dst_chars as ssize_t, src as const F
 	dim as ubyte ptr dstlimit = dst + dst_chars
 	while (dst < dstlimit)
 #if defined(HOST_WIN32)
-		dim as UTF_16 c = *src + 1
+		dim as UTF_16 c = *src
+		src += 1
 		if (c = 0) then
 			exit while
 		end if
@@ -62,10 +63,10 @@ function fb_wstr_ConvToA( dst as ubyte ptr, dst_chars as ssize_t, src as const F
 			c = 63
 		end if
 #endif
-		*dst += 1
 		*dst = c
+		*dst += 1
 	wend
-	*dst = 0
+	*dst = asc( !"\000" )
 	return dst - origdst
 #endif
 end function

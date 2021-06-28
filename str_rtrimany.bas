@@ -24,7 +24,7 @@ function fb_RTrimAny FBCALL ( src as FBSTRING ptr, pattern as FBSTRING ptr ) as 
 				dim as ssize_t i
 				_len -= 1
 				for i = 0 to len_pattern
-					if ( FB_MEMCHR( pattern->data, pachText[_len], len_pattern ) <> NULL ) then
+					if ( FB_MEMCHR( pattern->data, pachText[_len], len_pattern ) = NULL ) then
 						exit for
 					end if
 				next

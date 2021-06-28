@@ -20,11 +20,11 @@ function fb_hStr2UInt FBCALL ( src as ubyte ptr, _len as ssize_t ) as ulong
 		radix = 0
 		skip = 2
 		select case p[1]
-			case 72 or 104: 'h or H
+			case 72, 104: 'h or H
 				radix = 16
-			case 79 or 111: 'o or O
+			case 79, 111: 'o or O
 				radix = 8
-			case 66 or 98: 'b or B
+			case 66, 98: 'b or B
 				radix = 2
 			case else: /' assume octal '/
 				radix = 8

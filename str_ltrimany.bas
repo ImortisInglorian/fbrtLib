@@ -22,7 +22,7 @@ function fb_LTrimAny FBCALL ( src as FBSTRING ptr, pattern as FBSTRING ptr ) as 
 		_len = FB_STRSIZE( src )
 		if ( len_pattern <> 0 ) then
 			while ( _len <> 0 )
-				if ( FB_MEMCHR( pattern->data, *pachText, len_pattern ) <> NULL ) then
+				if ( FB_MEMCHR( pattern->data, *pachText, len_pattern ) = NULL ) then
 					exit while
 				end if
 

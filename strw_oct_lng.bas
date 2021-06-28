@@ -30,12 +30,12 @@ function fb_WstrOctEx_l FBCALL ( num as ulongint, digits as long ) as FB_WCHAR p
 
 	i = digits - 1
 	while ( i >= 0 )
-		s[i] = 0 + (num and 7) /' '0'..'7' '/
+		s[i] = asc("0") + (num and 7) /' '0'..'7' '/
 		num shr= 3
 		i -= 1
 	wend
 
-	s[digits] = 0
+	s[digits] = asc(!"\000") '' NUL CHAR
 	return s
 end function
 

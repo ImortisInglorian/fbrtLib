@@ -13,7 +13,7 @@ function fb_WstrLTrim FBCALL ( src as const FB_WCHAR ptr ) as FB_WCHAR ptr
 	end if
 
 	_len = fb_wstr_Len( src )
-	p = fb_wstr_SkipChar( src, _len, 32 )
+	p = fb_wstr_SkipChar( src, _len, asc(" ") )
 
 	_len -= fb_wstr_CalcDiff( src, p )
 	if ( _len <= 0 ) then

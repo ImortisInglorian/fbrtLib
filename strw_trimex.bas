@@ -18,7 +18,7 @@ function fb_WstrTrimEx FBCALL ( src as const FB_WCHAR ptr, pattern as const FB_W
         if ( _len >= len_pattern ) then
             if ( len_pattern = 1 ) then
                 p = fb_wstr_SkipChar( src, _len, *pattern )
-                _len = _len - cast(ssize_t, (p - src))
+				_len -= fb_wstr_CalcDiff( src, p )
             elseif ( len_pattern <> 0 ) then
                 p = src
                 while (_len >= len_pattern )
@@ -33,7 +33,7 @@ function fb_WstrTrimEx FBCALL ( src as const FB_WCHAR ptr, pattern as const FB_W
         if ( _len >= len_pattern ) then
             if ( len_pattern = 1 ) then
                 dim as const FB_WCHAR ptr p_tmp = fb_wstr_SkipCharRev( p, _len, *pattern )
-                _len = cast(ssize_t, (p_tmp - p) + 1)
+                _len = fb_wstr_CalcDiff( p, p_tmp )
             elseif ( len_pattern <> 0 ) then
                 dim as ssize_t test_index = _len - len_pattern
                 while (_len >= len_pattern )

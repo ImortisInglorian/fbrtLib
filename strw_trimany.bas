@@ -13,36 +13,26 @@ function fb_WstrTrimAny FBCALL ( src as const FB_WCHAR ptr, pattern as const FB_
     end if
 
 	_len = 0
-    scope
-        dim as ssize_t len_pattern = fb_wstr_Len( pattern )
-        pachText = src
-        _len = fb_wstr_Len( src )
-		while ( _len <> 0 )
-            dim as ssize_t i
-            for i = 0 to len_pattern
-                if ( wcschr( pattern, *pachText ) <> NULL ) then
-                    exit for
-                end if
-            next
-            if ( i = len_pattern ) then
-                exit while
-            end if
-            _len -= 1
-            pachText += 1
-		wend
-		while ( _len <> 0 )
-            dim as ssize_t i
-            _len -= 1
-            for i = 0 to len_pattern
-                if ( wcschr( pattern, pachText[_len] ) <> NULL ) then
-                    exit for
-                end if
-            next
-            if ( i = len_pattern ) then
-                _len += 1
-                exit while
-            end if
-		wend
+	scope
+		dim as ssize_t len_pattern = fb_wstr_Len( pattern )
+		pachText = src
+		_len = fb_wstr_Len( src )
+		if( len_pattern <> 0 ) then
+			while ( _len <> 0 )
+				if( wcschr( pattern, *pachText ) = NULL ) then
+					exit while
+				end if
+				_len -= 1
+				pachText += 1
+			wend
+			while ( _len <> 0 )
+				_len -= 1
+				if( wcschr( pattern, pachText[_len] ) = NULL ) then
+					_len += 1
+					exit while
+				end if
+			wend
+		end if
 	end scope
 
 	if ( _len > 0 ) then

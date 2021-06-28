@@ -18,7 +18,7 @@ function fb_WstrLTrimEx FBCALL ( src as const FB_WCHAR ptr, pattern as const FB_
         if ( _len >= len_pattern ) then
             if ( len_pattern = 1 ) then
                 p = fb_wstr_SkipChar( src, _len, *pattern )
-                _len = _len - cast(ssize_t, (p - src))
+				_len -= fb_wstr_CalcDiff( src, p )
             elseif ( len_pattern <> 0 ) then
                 p = src
                 while (_len >= len_pattern )

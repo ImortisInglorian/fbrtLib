@@ -38,7 +38,7 @@ function fb_StrAssignEx FBCALL ( dst as any ptr, dst_size as ssize_t, src as any
 			end if
 		else
 			/' if src is a temp, just copy the descriptor '/
-			if ( (src_size = -1) and FB_ISTEMP(src) ) then
+			if ( (src_size = -1) andalso FB_ISTEMP(src) ) then
 				if ( is_init = FB_FALSE ) then
 					fb_StrDelete( dstr )
 				end if
@@ -73,7 +73,7 @@ function fb_StrAssignEx FBCALL ( dst as any ptr, dst_size as ssize_t, src as any
 	else
 		/' src NULL? '/
 		if ( src_len = 0 ) then
-			*cast(ubyte ptr, dst) = 0
+			*cast(ubyte ptr, dst) = asc(!"\000")
 		else
 			/' byte ptr? as in C, assume dst is large enough '/
 			if ( dst_size = 0 ) then
@@ -92,7 +92,7 @@ function fb_StrAssignEx FBCALL ( dst as any ptr, dst_size as ssize_t, src as any
 		if ( fill_rem <> 0 ) then
 			dst_size -= src_len
 			if ( dst_size > 0 ) then
-				memset( @(cast(ubyte ptr, dst)[src_len]), 0, dst_size )
+				memset( @((cast(ubyte ptr, dst)[src_len])), 0, dst_size )
 			end if
 		end if
 	end if

@@ -200,6 +200,6 @@ sub fb_hStrCopy FBCALL ( dst as ubyte ptr, src as const ubyte ptr, bytes as ssiz
 	end if
 
 	/' add the null-term '/
-	dst = 0
+	*dst = asc(!"\000") '' NUL CHAR
 end sub
 end extern

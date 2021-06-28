@@ -40,7 +40,7 @@ function fb_WstrHexEx_l FBCALL ( num as ulongint, digits as long ) as FB_WCHAR p
 		i -= 1
 	wend
 
-	s[digits] = 0
+	s[digits] = asc(!"\000") '' NUL CHAR
 	return s
 end function
 

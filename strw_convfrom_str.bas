@@ -9,7 +9,7 @@ extern "C"
    result = number of chars written, excluding null terminator that is always written '/
 function fb_wstr_ConvFromA( dst as FB_WCHAR ptr, dst_chars as ssize_t, src as const ubyte ptr ) as ssize_t
 	if (src = NULL) then
-		*dst = 0
+		*dst = asc(!"\000") '' NUL CHAR
 		return 0
 	end if
 
@@ -31,7 +31,7 @@ function fb_wstr_ConvFromA( dst as FB_WCHAR ptr, dst_chars as ssize_t, src as co
 		   enough space, so do it manually (this will cut off the last
 		   char, but what can you do) '/
 		if (chars = (dst_chars + 1)) then
-			dst[dst_chars] = 0
+			dst[dst_chars] = asc(!"\000") '' NUL CHAR
 			return dst_chars - 1
 		end if
 		return chars
@@ -52,7 +52,7 @@ function fb_wstr_ConvFromA( dst as FB_WCHAR ptr, dst_chars as ssize_t, src as co
 		*dst += 1
 		*dst = c
 	wend
-	*dst = 0
+	*dst = asc(!"\000") '' NUL CHAR
 	return dst - origdst
 #endif
 end function

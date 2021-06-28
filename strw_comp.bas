@@ -22,7 +22,7 @@ function fb_WstrCompare FBCALL ( str1 as const FB_WCHAR ptr, str2 as const FB_WC
 	/' left null? '/
 	if ( str1 = NULL ) then
 		/' right also null? return eq '/
-		if ( (str2 = NULL) or (fb_wstr_Len( str2 ) = 0) ) then
+		if ( (str2 = NULL) orelse (fb_wstr_Len( str2 ) = 0) ) then
 			return 0
 		end if
 

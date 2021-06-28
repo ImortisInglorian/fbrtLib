@@ -127,7 +127,7 @@ function fb_hFindBM cdecl ( start as ssize_t, pachText as ubyte const ptr, len_t
 	while( i <= len_max )
 		j = len_pattern
 
-		while( j <> 0 and pachPattern[ j - 1] = pachText[i + j - 1] )
+		while( j <> 0 andalso pachPattern[ j - 1] = pachText[i + j - 1] )
 			j -= 1
 		wend
 		if( j = 0 ) then
@@ -180,13 +180,13 @@ static ssize_t fb_hFindNaive
 function fb_StrInstr FBCALL ( start as ssize_t, src as FBSTRING ptr, patt as FBSTRING ptr ) as ssize_t
 	dim as ssize_t r
 
-	if ( (src = NULL) or (src->data = NULL) or (patt = NULL) or (patt->data = NULL) ) then
+	if ( (src = NULL) orelse (src->data = NULL) orelse (patt = NULL) orelse (patt->data = NULL) ) then
 		r = 0
 	else
 		dim as ssize_t size_src = FB_STRSIZE(src)
 		dim as ssize_t size_patt = FB_STRSIZE(patt)
 
-		if ( (size_src = 0) or (size_patt = 0) or ((start < 1) or (start > size_src)) or (size_patt > size_src) ) then
+		if ( (size_src = 0) orelse (size_patt = 0) orelse ((start < 1) orelse (start > size_src)) orelse (size_patt > size_src) ) then
 			r = 0
 		elseif ( size_patt = 1 ) then
 			dim as ubyte const ptr pszEnd = cast(ubyte const ptr, FB_MEMCHR( src->data + start - 1, patt->data[0], size_src - start + 1))
