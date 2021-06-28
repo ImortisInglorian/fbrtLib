@@ -52,8 +52,8 @@ end type
 #macro ADD_CHAR( c )              
 	DBG_ASSERT( p >= @buffer(0) )
 	if ( p >= @buffer(0) ) then
-		p -= 1
 		*p = cast(ubyte, c)
+		p -= 1
 	elseif ( p = @buffer(0) ) then
 		*p = CHAR_WTF
 	end if
