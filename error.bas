@@ -30,7 +30,7 @@ extern "C"
 sub fb_ERRORCTX_Destructor( byval data_ as any ptr )
 end sub
 
-sub fb_Die ( err_num as long, line_num as long, mod_name as ubyte const ptr, fun_name as ubyte const ptr )
+sub fb_Die ( err_num as long, line_num as long, mod_name as const ubyte ptr, fun_name as const ubyte ptr )
 	dim as long _pos = 0
 
 	_pos += snprintf( @__fb_errmsg(_pos), FB_ERRMSG_SIZE - _pos, "\nAborting due to runtime error %d", err_num )
@@ -59,7 +59,7 @@ sub fb_Die ( err_num as long, line_num as long, mod_name as ubyte const ptr, fun
 	fb_End( err_num )
 end sub
 
-function fb_ErrorThrowEx cdecl ( err_num as long, line_num as long, mod_name as ubyte const ptr, res_label as any ptr, resnext_label as any ptr ) as FB_ERRHANDLER
+function fb_ErrorThrowEx cdecl ( err_num as long, line_num as long, mod_name as const ubyte ptr, res_label as any ptr, resnext_label as any ptr ) as FB_ERRHANDLER
 	dim as FB_ERRORCTX ptr ctx = _FB_TLSGETCTX( ERROR )
 
 	if ( ctx->handler ) then
@@ -80,7 +80,7 @@ function fb_ErrorThrowEx cdecl ( err_num as long, line_num as long, mod_name as 
 	return NULL
 end function
 
-function fb_ErrorThrowAt ( line_num as long, mod_name as ubyte const ptr, res_label as any ptr, resnext_label as any ptr ) as FB_ERRHANDLER
+function fb_ErrorThrowAt ( line_num as long, mod_name as const ubyte ptr, res_label as any ptr, resnext_label as any ptr ) as FB_ERRHANDLER
 	dim as FB_ERRORCTX ptr ctx = _FB_TLSGETCTX( ERROR )
 
 	return fb_ErrorThrowEx( ctx->err_num, line_num, mod_name, res_label, resnext_label )

@@ -94,7 +94,7 @@ private function hWriteBOM( handle as FB_FILE ptr ) as long
 	return 1
 end function
 
-function fb_DevFileOpenEncod ( handle as FB_FILE ptr, filename as ubyte ptr, fname_len as size_t ) as long
+function fb_DevFileOpenEncod ( handle as FB_FILE ptr, filename as const ubyte ptr, fname_len as size_t ) as long
     dim as FILE ptr fp = NULL
     dim as ubyte ptr openmask
     dim as ubyte ptr fname

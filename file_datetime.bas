@@ -11,7 +11,7 @@
 #include "crt/sys/stat.bi"
 
 extern "C"
-function fb_FileDateTime FBCALL ( filename as ubyte const ptr ) as double
+function fb_FileDateTime FBCALL ( filename as const ubyte ptr ) as double
 	dim as stat buf
 	if ( _stat( filename, @buf ) <> 0 ) then
 		return 0.0

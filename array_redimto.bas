@@ -3,7 +3,7 @@
 #include "fb.bi"
 
 extern "C"
-function fb_ArrayRedimTo FBCALL ( dest as FBARRAY ptr, source as FBARRAY const ptr, isvarlen as long, ctor as FB_DEFCTOR, dtor as FB_DEFCTOR ) as long
+function fb_ArrayRedimTo FBCALL ( dest as FBARRAY ptr, source as const FBARRAY ptr, isvarlen as long, ctor as FB_DEFCTOR, dtor as FB_DEFCTOR ) as long
 	dim as ssize_t diff
 	dim as ubyte ptr this_
 	dim as ubyte ptr limit

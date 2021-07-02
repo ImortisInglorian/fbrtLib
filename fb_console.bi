@@ -15,7 +15,7 @@ end type
 type _fb_ConHooks as fb_ConHooks
 
 type fb_fnHookConScroll as sub ( handle as _fb_ConHooks ptr, x1 as long, y1 as long, x2 as long, y2 as long, rows as long )
-type fb_fnHookConWrite as function ( handle as _fb_ConHooks ptr, buffer as any const ptr, length as size_t ) as long
+type fb_fnHookConWrite as function ( handle as _fb_ConHooks ptr, buffer as const any ptr, length as size_t ) as long
 
 type fb_ConHooks
 	as any ptr 				Opaque
@@ -41,10 +41,10 @@ private function fb_hConCheckScroll( handle as fb_ConHooks ptr ) as long
 	return FALSE
 end function
 
-declare sub 	 fb_ConPrintRaw      			( handle as fb_ConHooks ptr, pachText as ubyte ptr, TextLength as size_t )
-declare sub 	 fb_ConPrintRawWstr  			( handle as fb_ConHooks ptr, pachText as FB_WCHAR ptr, TextLength as size_t )
-declare sub 	 fb_ConPrintTTY      			( handle as fb_ConHooks ptr, pachText as ubyte ptr, TextLength as size_t, is_text_mode as long )
-declare sub 	 fb_ConPrintTTYWstr  			( handle as fb_ConHooks ptr, pachText as FB_WCHAR ptr, TextLength as size_t, is_text_mode as long )
+declare sub 	 fb_ConPrintRaw      			( handle as fb_ConHooks ptr, pachText as const ubyte ptr, TextLength as size_t )
+declare sub 	 fb_ConPrintRawWstr  			( handle as fb_ConHooks ptr, pachText as const FB_WCHAR ptr, TextLength as size_t )
+declare sub 	 fb_ConPrintTTY      			( handle as fb_ConHooks ptr, pachText as const ubyte ptr, TextLength as size_t, is_text_mode as long )
+declare sub 	 fb_ConPrintTTYWstr  			( handle as fb_ConHooks ptr, pachText as const FB_WCHAR ptr, TextLength as size_t, is_text_mode as long )
 
 declare function fb_ConsoleWidth     			( cols as long, rows as long ) as long
 declare sub 	 fb_ConsoleClear     			( mode as long )
@@ -75,10 +75,10 @@ declare function fb_ConsoleMultikey  			( scancode as long ) as long
 declare function fb_ConsoleGetMouse  			( x as long ptr, y as long ptr, z as long ptr, buttons_ as long ptr, clip as long ptr ) as long
 declare function fb_ConsoleSetMouse  			( x as long, y as long, cursor as long, clip as long ) as long
 
-declare sub 	 fb_ConsolePrintBuffer			( buffer as ubyte const ptr, mask as long )
-declare sub 	 fb_ConsolePrintBufferWstr		( buffer as FB_WCHAR const ptr, mask as long )
-declare sub 	 fb_ConsolePrintBufferEx		( buffer as any const ptr, _len as size_t, mask as long )
-declare sub 	 fb_ConsolePrintBufferWstrEx	( buffer as FB_WCHAR const ptr, _len as size_t, mask as long )
+declare sub 	 fb_ConsolePrintBuffer			( buffer as const ubyte ptr, mask as long )
+declare sub 	 fb_ConsolePrintBufferWstr		( buffer as const FB_WCHAR ptr, mask as long )
+declare sub 	 fb_ConsolePrintBufferEx		( buffer as const any ptr, _len as size_t, mask as long )
+declare sub 	 fb_ConsolePrintBufferWstrEx	( buffer as const FB_WCHAR ptr, _len as size_t, mask as long )
 
 declare function fb_ConsoleReadStr 				( buffer as ubyte ptr, _len as size_t ) as ubyte ptr
 
@@ -97,7 +97,7 @@ declare function fb_ConReadLine 		 FBCALL ( soft_cursor as long ) as FBSTRING pt
 
 declare function fb_ConsoleInput 		 FBCALL ( text as FBSTRING ptr, addquestion as long, addnewline as long ) as long
 declare function fb_ConsoleLineInput 			( text as FBSTRING ptr, dst as any ptr, dst_len as ssize_t, fillrem as long, addquestion as long, addnewline as long ) as long
-declare function fb_ConsoleLineInputWstr		( text as FB_WCHAR const ptr, dst as FB_WCHAR ptr, max_chars as ssize_t, addquestion as long, addnewline as long ) as long
+declare function fb_ConsoleLineInputWstr		( text as const FB_WCHAR ptr, dst as FB_WCHAR ptr, max_chars as ssize_t, addquestion as long, addnewline as long ) as long
 
 declare function fb_hConsoleInputBufferChanged  ( ) as long
 end extern

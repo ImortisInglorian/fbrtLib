@@ -29,7 +29,7 @@ private function hFileGetSize( handle as FB_FILE ptr ) as fb_off_t
 end function
 
 /'::::::'/
-function fb_FileOpenVfsRawEx( handle as FB_FILE ptr, filename as ubyte const ptr, filename_length as size_t, mode as ulong, access_ as ulong, _lock as ulong, _len as long, _encoding as FB_FILE_ENCOD , pfnOpen as FnFileOpen) as long
+function fb_FileOpenVfsRawEx( handle as FB_FILE ptr, filename as const ubyte ptr, filename_length as size_t, mode as ulong, access_ as ulong, _lock as ulong, _len as long, _encoding as FB_FILE_ENCOD , pfnOpen as FnFileOpen) as long
     dim as long result
 
     FB_LOCK()

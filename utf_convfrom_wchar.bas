@@ -122,7 +122,7 @@ private function hToUTF8( src as const FB_WCHAR ptr, chars as ssize_t, dst as ub
 
 	select case( sizeof( FB_WCHAR ) )
 		case sizeof( UTF_8 ):
-			fb_hCharToUTF8( cast(ubyte const ptr, src), chars, dst, bytes )
+			fb_hCharToUTF8( cast(const ubyte ptr, src), chars, dst, bytes )
 		case sizeof( UTF_16 ):
 			hUTF16ToUTF8( src, chars, cast(UTF_8 ptr, dst), bytes )
 		case sizeof( UTF_32 ):

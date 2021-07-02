@@ -3,7 +3,7 @@
 #include "fb.bi"
 
 extern "C"
-private sub hWriteStrEx( handle as FB_FILE ptr, s as ubyte const ptr, _len as size_t, mask as long )
+private sub hWriteStrEx( handle as FB_FILE ptr, s as const ubyte ptr, _len as size_t, mask as long )
     dim as ubyte ptr buff
 	dim as ssize_t bufflen
 

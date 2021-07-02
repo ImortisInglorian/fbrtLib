@@ -5,7 +5,7 @@
 extern "C"
 #ifdef HOST_XBOX
 
-function fb_DevPipeOpen( handle as FB_FILE ptr, filename as ubyte const ptr, filename_len ) as long
+function fb_DevPipeOpen( handle as FB_FILE ptr, filename as const ubyte ptr, filename_len ) as long
 	return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 end function
 
@@ -26,7 +26,7 @@ dim shared as FB_FILE_HOOKS hooks_dev_pipe = ( @fb_DevFileEof _
 											 , NULL _
 											 , NULL )
 
-function fb_DevPipeOpen( handle as FB_FILE ptr, filename as ubyte const ptr, filename_len as size_t ) as long
+function fb_DevPipeOpen( handle as FB_FILE ptr, filename as const ubyte ptr, filename_len as size_t ) as long
     dim as long res = fb_ErrorSetNum( FB_RTERROR_OK )
     dim as FILE ptr fp = NULL
     dim as ubyte openmask(0 to 15)

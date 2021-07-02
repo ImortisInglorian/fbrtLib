@@ -8,13 +8,13 @@
 	#define FB_TLSENTRY           pthread_key_t
 	#define FB_TLSALLOC(key)      pthread_key_create( @(key), NULL )
 	#define FB_TLSFREE(key)       pthread_key_delete( (key) )
-	#define FB_TLSSET(key,value)  pthread_setspecific( (key), cast(any const ptr, (value)) )
+	#define FB_TLSSET(key,value)  pthread_setspecific( (key), cast(const any ptr, (value)) )
 	#define FB_TLSGET(key)        pthread_getspecific( (key) )
 #elseif defined(ENABLE_MT) and defined(HOST_DOS)
 	#define FB_TLSENTRY           pthread_key_t
 	#define FB_TLSALLOC(key)      pthread_key_create( @(key), NULL )
 	#define FB_TLSFREE(key)       pthread_key_delete( (key) )
-	#define FB_TLSSET(key,value)  pthread_setspecific( (key), cast(any const ptr, (value)) )
+	#define FB_TLSSET(key,value)  pthread_setspecific( (key), cast(const any ptr, (value)) )
 	#define FB_TLSGET(key)        pthread_getspecific( (key) )
 #elseif defined(ENABLE_MT) and defined(HOST_WIN32)
 	#define FB_TLSENTRY           DWORD

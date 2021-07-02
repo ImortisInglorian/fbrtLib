@@ -21,29 +21,29 @@ function fb_ErrorGetLineNum FBCALL ( ) as long
 end function
 
 
-function fb_ErrorGetModName FBCALL ( ) as ubyte ptr
+function fb_ErrorGetModName FBCALL ( ) as const ubyte ptr
 	dim as FB_ERRORCTX ptr ctx = _FB_TLSGETCTX( ERROR )
 	return ctx->mod_name
 end function
 
 
-function fb_ErrorSetModName FBCALL ( mod_name as ubyte const ptr ) as ubyte ptr
+function fb_ErrorSetModName FBCALL ( mod_name as const ubyte ptr ) as const ubyte ptr
 	dim as FB_ERRORCTX ptr ctx = _FB_TLSGETCTX( ERROR )
-	dim as ubyte ptr old_name = ctx->mod_name
+	dim as const ubyte ptr old_name = ctx->mod_name
 	ctx->mod_name = mod_name
 	return old_name
 end function
 
 
-function fb_ErrorGetFuncName FBCALL ( ) as ubyte ptr
+function fb_ErrorGetFuncName FBCALL ( ) as const ubyte ptr
 	dim as FB_ERRORCTX ptr ctx = _FB_TLSGETCTX( ERROR )
 	return ctx->fun_name
 end function
 
 
-function fb_ErrorSetFuncName FBCALL ( fun_name as ubyte const ptr ) as ubyte ptr
+function fb_ErrorSetFuncName FBCALL ( fun_name as const ubyte ptr ) as const ubyte ptr
 	dim as FB_ERRORCTX ptr ctx = _FB_TLSGETCTX( ERROR )
-	dim as ubyte ptr old_name = ctx->fun_name
+	dim as const ubyte ptr old_name = ctx->fun_name
 	ctx->fun_name = fun_name
 	return old_name
 end function

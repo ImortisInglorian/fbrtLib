@@ -22,7 +22,7 @@ private function fb_DevComClose( handle as FB_FILE ptr ) as long
 	return res
 end function
 
-private function fb_DevComWrite( handle as FB_FILE ptr, value as any const ptr,  valuelen as size_t ) as long
+private function fb_DevComWrite( handle as FB_FILE ptr, value as const any ptr,  valuelen as size_t ) as long
     dim as long res
     dim as DEV_COM_INFO ptr pInfo
 
@@ -36,7 +36,7 @@ private function fb_DevComWrite( handle as FB_FILE ptr, value as any const ptr, 
 	return res
 end function
 
-private function fb_DevComWriteWstr( handle as FB_FILE ptr, value as FB_WCHAR const ptr, valuelen as size_t ) as long
+private function fb_DevComWriteWstr( handle as FB_FILE ptr, value as const FB_WCHAR ptr, valuelen as size_t ) as long
 	return fb_DevComWrite( handle, cast(any ptr, value), valuelen * sizeof( FB_WCHAR ) )
 end function
 
@@ -111,10 +111,10 @@ dim shared as FB_FILE_HOOKS hooks_dev_com = ( _
     NULL, _
     NULL)
 
-function fb_DevComOpen( handle as FB_FILE ptr, filename as ubyte const ptr, filename_len as size_t ) as long
+function fb_DevComOpen( handle as FB_FILE ptr, filename as const ubyte ptr, filename_len as size_t ) as long
     dim as DEV_COM_INFO ptr info
     dim as ubyte ptr achDev(0 to 127)
-    dim as ubyte ptr pchPos
+    dim as const ubyte ptr pchPos
     dim as ubyte ptr pchPosTmp
     dim as size_t i, port, uiOption
     dim as long iStopBits = -1
@@ -157,9 +157,9 @@ function fb_DevComOpen( handle as FB_FILE ptr, filename as ubyte const ptr, file
 
     /' Process all passed options '/
     uiOption = 0
-    while ( res = FB_RTERROR_OK and *pchPos <> 0 )
+    while ( res = FB_RTERROR_OK andalso *pchPos <> 0 )
         dim as size_t uiOptionLength
-        dim as ubyte ptr pchPosEnd, pchPosNext
+        dim as const ubyte ptr pchPosEnd, pchPosNext
         dim as ubyte ptr pszOption
 
         /' skip white spaces '/
@@ -354,7 +354,7 @@ function fb_DevComOpen( handle as FB_FILE ptr, filename as ubyte const ptr, file
 	return res
 end function
 
-function fb_DevSerialSetWidth( pszDevice as ubyte const ptr, _width as long, default_width as long ) as long
+function fb_DevSerialSetWidth( pszDevice as const ubyte ptr, _width as long, default_width as long ) as long
     dim as long cur = iif((default_width = -1), 0, default_width)
     dim as size_t i, port
     dim as ubyte ptr achDev(0 to 127)

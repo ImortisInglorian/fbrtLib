@@ -142,7 +142,7 @@ dim shared as const FB_KEY_CODES fb_asc_key_codes(0 to 88) => { _
 dim shared as long control_handler_inited = FALSE
 
 extern "C"
-private sub fb_hConsolePostKey ( key as long, _key_event as KEY_EVENT_RECORD const ptr )
+private sub fb_hConsolePostKey ( key as long, _key_event as const KEY_EVENT_RECORD ptr )
 	dim as INPUT_RECORD ptr record
 
 	FB_LOCK()
@@ -241,7 +241,7 @@ sub fb_hConsolePutBackEvents( )
 	FB_UNLOCK()
 end sub
 
-private sub fb_hConsoleProcessKeyEvent( event as KEY_EVENT_RECORD const ptr )
+private sub fb_hConsoleProcessKeyEvent( event as const KEY_EVENT_RECORD ptr )
 	dim as long KeyCode
 	dim as long ValidKeyStatus, ValidKeys, AddScratchPadKey = FALSE
 	if ( event->bKeyDown <> NULL ) then

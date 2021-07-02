@@ -4,7 +4,7 @@
 
 extern "C"
 #if 0 /' FIXME: implementation is bugged somewhere, missing some matches '/
-function fb_hFindBM cdecl ( start as ssize_t, pachText as ubyte const ptr, len_text as ssize_t, pachPattern as ubyte const ptr, len_pattern as ssize_t ) as ssize_t
+function fb_hFindBM cdecl ( start as ssize_t, pachText as const ubyte ptr, len_text as ssize_t, pachPattern as const ubyte ptr, len_pattern as ssize_t ) as ssize_t
 	dim as ssize_t i, j, len_max = len_text - len_pattern
 	dim as ssize_t bm_bc(0 to 255)
 	dim as ssize_t ptr bm_gc, suffixes
@@ -69,7 +69,7 @@ end function
 #endif
 
 #if 1
-function fb_hFindNaive cdecl ( start as ssize_t, pachText as ubyte ptr, len_text as ssize_t, pachPattern as ubyte const ptr, len_pattern as ssize_t ) as ssize_t
+function fb_hFindNaive cdecl ( start as ssize_t, pachText as ubyte ptr, len_text as ssize_t, pachPattern as const ubyte ptr, len_pattern as ssize_t ) as ssize_t
 	dim as ssize_t i = 0
 	pachText += start
 	while( i <= start )

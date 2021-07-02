@@ -3,7 +3,7 @@
 #include "fb.bi"
 
 extern "C"
-function fb_LineInputWstr FBCALL ( text as FB_WCHAR const ptr, dst as FB_WCHAR ptr, max_chars as ssize_t, addquestion as long, addnewline as long ) as long
+function fb_LineInputWstr FBCALL ( text as const FB_WCHAR ptr, dst as FB_WCHAR ptr, max_chars as ssize_t, addquestion as long, addnewline as long ) as long
     dim as FB_LINEINPUTWPROC fn
 
     FB_LOCK()

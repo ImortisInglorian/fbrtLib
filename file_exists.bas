@@ -3,7 +3,7 @@
 #include "fb.bi"
 
 extern "C"
-function fb_FileExists FBCALL ( filename as ubyte const ptr ) as long
+function fb_FileExists FBCALL ( filename as const ubyte ptr ) as long
 	dim as FILE ptr fp
 	
 	fp = fopen(filename, "r")

@@ -7,7 +7,7 @@ dim shared as ubyte ptr pszDefaultQuestion = sadd("? ")
 extern "C"
 #if defined( HOST_WIN32 ) or defined( HOST_DOS )
 
-function fb_ConsoleLineInputWstr( text as FB_WCHAR const ptr, dst as FB_WCHAR ptr, max_chars as ssize_t, addquestion as long, addnewline as long ) as long
+function fb_ConsoleLineInputWstr( text as const FB_WCHAR ptr, dst as FB_WCHAR ptr, max_chars as ssize_t, addquestion as long, addnewline as long ) as long
     dim as FBSTRING ptr tmp_result
 
     /' !!!FIXME!!! no support for unicode input '/
@@ -47,7 +47,7 @@ private function hWrapper( buffer as ubyte ptr, count as size_t, fp as FILE ptr 
     return fb_ReadString( buffer, count, fp )
 end function
 
-function fb_ConsoleLineInputWstr( text as FB_WCHAR const ptr, dst as FB_WCHAR ptr, max_chars as ssize_t, addquestion as long, addnewline as long ) as long
+function fb_ConsoleLineInputWstr( text as const FB_WCHAR ptr, dst as FB_WCHAR ptr, max_chars as ssize_t, addquestion as long, addnewline as long ) as long
 	dim as size_t _len
 	dim as long res, old_x, old_y
 

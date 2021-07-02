@@ -3,7 +3,7 @@
 #include "fb.bi"
 
 extern "C"
-function fb_FileLenEx( filename as ubyte const ptr ) as fb_off_t
+function fb_FileLenEx( filename as const ubyte ptr ) as fb_off_t
 	dim as FILE ptr fp
 	dim as fb_off_t _len
 	
@@ -24,7 +24,7 @@ function fb_FileLenEx( filename as ubyte const ptr ) as fb_off_t
 	return 0
 end function
 
-function fb_FileLen FBCALL ( filename as ubyte const ptr ) as longint
+function fb_FileLen FBCALL ( filename as const ubyte ptr ) as longint
 	return fb_FileLenEx( filename )
 end function
 end extern

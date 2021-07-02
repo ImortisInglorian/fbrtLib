@@ -3,7 +3,7 @@
 #include "fb.bi"
 
 extern "C"
-function fb_FilePutBackEx( handle as FB_FILE ptr, src as any const ptr, chars as size_t ) as long
+function fb_FilePutBackEx( handle as FB_FILE ptr, src as const any ptr, chars as size_t ) as long
 	dim as long res
 	dim as size_t bytes
 
@@ -56,7 +56,7 @@ function fb_FilePutBackEx( handle as FB_FILE ptr, src as any const ptr, chars as
 	return res
 end function
 
-function fb_FilePutBack FBCALL ( fnum as long, _data as any const ptr, length as size_t ) as long
+function fb_FilePutBack FBCALL ( fnum as long, _data as const any ptr, length as size_t ) as long
     return fb_FilePutBackEx( FB_FILE_TO_HANDLE(fnum), _data, length )
 end function
 end extern

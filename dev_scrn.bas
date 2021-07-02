@@ -19,7 +19,7 @@ dim shared as FB_FILE_HOOKS hooks_dev_scrn = ( _
     NULL, _
     NULL )
 
-function fb_DevScrnOpen( handle as FB_FILE ptr, filename as ubyte const ptr, filename_len as size_t ) as long
+function fb_DevScrnOpen( handle as FB_FILE ptr, filename as const ubyte ptr, filename_len as size_t ) as long
     FB_LOCK()
 
     if (handle <> FB_HANDLE_SCREEN) then

@@ -4,7 +4,7 @@
 
 extern "C"
 /':::::'/
-sub fb_LPrintFixString FBCALL ( fnum as long, s as ubyte const ptr, mask as long )
+sub fb_LPrintFixString FBCALL ( fnum as long, s as const ubyte ptr, mask as long )
     fb_LPrintInit()
     fb_PrintFixStringEx(FB_FILE_TO_HANDLE(fnum), s, FB_PRINT_CONVERT_BIN_NEWLINE(mask))
 end sub

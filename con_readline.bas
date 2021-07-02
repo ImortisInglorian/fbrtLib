@@ -27,7 +27,7 @@ private sub DoMove( x as long ptr, y as long ptr, dx as long, dy as long, cols a
     DoAdjust( x, y, dx, dy, cols, rows )
     if ( *y = (rows+1) and *x = 1 ) then
         fb_Locate( rows, cols, -1, 0, 0 )
-        fb_PrintBufferEx( cast(any const ptr, @FB_NEWLINE), sizeof(FB_NEWLINE)-1, 0 )
+        fb_PrintBufferEx( cast(const any ptr, @FB_NEWLINE), sizeof(FB_NEWLINE)-1, 0 )
     else
         fb_Locate( *y, *x, -1, 0, 0 )
     end if
@@ -86,7 +86,7 @@ function fb_ConReadLine FBCALL ( soft_cursor as long ) as FBSTRING ptr
 
 		if ( soft_cursor <> 0 ) then
 			dim as ubyte mask(0 to 1) = { iif((result.data <> NULL) and (_pos < _len), result.data[_pos], asc(" ")), 0 }
-			fb_PrintFixString( 0, cast(ubyte const ptr, @mask(0)), 0 )
+			fb_PrintFixString( 0, cast(const ubyte ptr, @mask(0)), 0 )
 			fb_Locate( current_y, current_x, FALSE, 0, 0 )
 		end if
 

@@ -26,7 +26,7 @@ sub fb_hSetFileBufSize( fp as FILE ptr )
 	   with that FILE handle '/
 end sub
 
-function fb_DevFileOpen( handle as FB_FILE ptr, filename as ubyte const ptr, fname_len as size_t ) as long
+function fb_DevFileOpen( handle as FB_FILE ptr, filename as const ubyte ptr, fname_len as size_t ) as long
     dim as FILE ptr fp = NULL
     dim as ubyte ptr openmask
     dim as ubyte ptr fname

@@ -137,9 +137,9 @@ end function
 #define FB_WRITENUM(fnum, _val, mask, _type)  FB_WRITENUM_EX(FB_FILE_TO_HANDLE(fnum), _val, mask, _type)
 
 extern "C"
-declare sub 	 fb_PrintBuffer      	FBCALL ( s as ubyte const ptr, mask as long )
-declare sub 	 fb_PrintBufferEx    	FBCALL ( buffer as any const ptr, _len as size_t, mask as long )
-declare sub 	 fb_PrintBufferWstrEx 	FBCALL ( buffer as FB_WCHAR const ptr, _len as size_t, mask as long )
+declare sub 	 fb_PrintBuffer      	FBCALL ( s as const ubyte ptr, mask as long )
+declare sub 	 fb_PrintBufferEx    	FBCALL ( buffer as const any ptr, _len as size_t, mask as long )
+declare sub 	 fb_PrintBufferWstrEx 	FBCALL ( buffer as const FB_WCHAR ptr, _len as size_t, mask as long )
 
 declare sub 	 fb_PrintPad         	FBCALL ( fnum as long, mask as long )
 declare sub 	 fb_PrintPadEx       		   ( handle as FB_FILE ptr, mask as long )
@@ -164,10 +164,10 @@ declare sub 	 fb_PrintSingle      	FBCALL ( fnum as long, _val as single, mask a
 declare sub 	 fb_PrintDouble      	FBCALL ( fnum as long, _val as double, mask as long )
 declare sub 	 fb_PrintString      	FBCALL ( fnum as long, s as FBSTRING ptr, mask as long )
 declare sub 	 fb_PrintStringEx    		   ( handle as FB_FILE ptr, s as FBSTRING ptr, mask as long )
-declare sub 	 fb_PrintWstr        	FBCALL ( fnum as long, s as FB_WCHAR const ptr, mask as long )
-declare sub 	 fb_PrintWstrEx      		   ( handle as FB_FILE ptr, s as FB_WCHAR const ptr, mask as long )
-declare sub 	 fb_PrintFixString   	FBCALL ( fnum as long, s as ubyte const ptr, mask as long )
-declare sub 	 fb_PrintFixStringEx 		   ( handle as FB_FILE ptr, s as ubyte const ptr, mask as long )
+declare sub 	 fb_PrintWstr        	FBCALL ( fnum as long, s as const FB_WCHAR ptr, mask as long )
+declare sub 	 fb_PrintWstrEx      		   ( handle as FB_FILE ptr, s as const FB_WCHAR ptr, mask as long )
+declare sub 	 fb_PrintFixString   	FBCALL ( fnum as long, s as const ubyte ptr, mask as long )
+declare sub 	 fb_PrintFixStringEx 		   ( handle as FB_FILE ptr, s as const ubyte ptr, mask as long )
 
 declare function fb_LPos 				FBCALL ( printer_index as long ) as long
 declare function fb_LPrintInit 				   ( ) as long
@@ -184,7 +184,7 @@ declare sub 	 fb_LPrintULongint   	FBCALL ( fnum as long, _val as ulongint, mask
 declare sub 	 fb_LPrintSingle     	FBCALL ( fnum as long, _val as single, mask as long )
 declare sub 	 fb_LPrintDouble     	FBCALL ( fnum as long, _val as double, mask as long )
 declare sub 	 fb_LPrintString     	FBCALL ( fnum as long, s as FBSTRING ptr, mask as long )
-declare sub 	 fb_LPrintWstr       	FBCALL ( fnum as long, s as FB_WCHAR const ptr, mask as long )
+declare sub 	 fb_LPrintWstr       	FBCALL ( fnum as long, s as const FB_WCHAR ptr, mask as long )
 
 declare sub 	 fb_PrintTab         	FBCALL ( fnum as long, newcol as long )
 declare sub 	 fb_PrintSPC         	FBCALL ( fnum as long, n as ssize_t )

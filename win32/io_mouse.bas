@@ -7,7 +7,7 @@ dim shared as long inited = -1
 dim shared as long last_x = 0, last_y = 0, last_z = 0, last_buttons = 0
 
 extern "C"
-sub ProcessMouseEvent(pEvent as MOUSE_EVENT_RECORD const ptr)
+sub ProcessMouseEvent(pEvent as const MOUSE_EVENT_RECORD ptr)
 	if ( pEvent->dwEventFlags = MOUSE_WHEELED ) then
 		last_z += ( iif(( pEvent->dwButtonState and &hFF000000 ), -1, 1 ))
 	else

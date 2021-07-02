@@ -14,7 +14,7 @@
  '/
 
 extern "C"
-function fb_DevLptParseProtocol( lpt_proto_out as DEV_LPT_PROTOCOL ptr ptr, proto_raw as ubyte const ptr, proto_raw_len as size_t,  subst_prn as long ) as long
+function fb_DevLptParseProtocol( lpt_proto_out as DEV_LPT_PROTOCOL ptr ptr, proto_raw as const ubyte ptr, proto_raw_len as size_t,  subst_prn as long ) as long
 	dim as ubyte ptr p, ptail, pc, pe
 	dim as DEV_LPT_PROTOCOL ptr lpt_proto
 
@@ -137,7 +137,7 @@ function fb_DevLptParseProtocol( lpt_proto_out as DEV_LPT_PROTOCOL ptr ptr, prot
 	return TRUE
 end function
 
-function fb_DevLptTestProtocol( handle as FB_FILE ptr, filename as ubyte const ptr, filename_len as size_t ) as long
+function fb_DevLptTestProtocol( handle as FB_FILE ptr, filename as const ubyte ptr, filename_len as size_t ) as long
 	dim as DEV_LPT_PROTOCOL ptr lpt_proto
 	dim as long ret = fb_DevLptParseProtocol( @lpt_proto, filename, filename_len, FALSE )
 	if ( lpt_proto <> 0 ) then

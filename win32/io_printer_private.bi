@@ -3,7 +3,7 @@
 
 Type _W32_PRINTER_INFO as W32_PRINTER_INFO
 
-type FnEmuPrint as Sub ( pInfo as _W32_PRINTER_INFO ptr, pText as any ptr, uiLength as size_t, isunicode as long)
+type FnEmuPrint as Sub ( pInfo as _W32_PRINTER_INFO ptr, pText as const any ptr, uiLength as size_t, isunicode as long)
 
 type _Emu
 	as DWORD       dwFullSizeX

@@ -7,7 +7,7 @@ function fb_FilePutDataEx _
 	( _
 		handle as FB_FILE ptr, _
 		_pos as fb_off_t, _
-		_data as any const ptr, _
+		_data as const any ptr, _
 		length as size_t, _
 		adjust_rec_pos as long, _
 		checknewline as long, _
@@ -79,7 +79,7 @@ function fb_FilePutDataEx _
     	if ( res = FB_RTERROR_OK ) then
     		dim as size_t i = length
     		if ( is_unicode = 0 ) then
-    			dim as ubyte const ptr pachText = cast(ubyte const ptr, _data)
+    			dim as const ubyte ptr pachText = cast(const ubyte ptr, _data)
 
         		/' search for last printed CR or LF '/
 				i -= 1
@@ -91,7 +91,7 @@ function fb_FilePutDataEx _
 					i -= 1
         		wend
         	else
-    			dim as FB_WCHAR const ptr pachText = cast(FB_WCHAR const ptr, _data)
+    			dim as const FB_WCHAR ptr pachText = cast(const FB_WCHAR ptr, _data)
 
         		/' search for last printed CR or LF '/
 				i -= 1
@@ -133,7 +133,7 @@ function fb_FilePutData _
 	( _
 		fnum as long, _
 		_pos as fb_off_t, _
-		_data as any const ptr, _
+		_data as const any ptr, _
 		length as size_t, _
 		adjust_rec_pos as long, _
 		checknewline as long _

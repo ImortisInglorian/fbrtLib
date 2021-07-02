@@ -19,7 +19,7 @@ dim shared as FB_FILE_HOOKS hooks_dev_err = ( _
     NULL)
 
 extern "C"
-function fb_DevErrOpen( handle as FB_FILE ptr, filename as ubyte const ptr, filename_len as size_t ) as long
+function fb_DevErrOpen( handle as FB_FILE ptr, filename as const ubyte ptr, filename_len as size_t ) as long
     dim as long res = fb_ErrorSetNum( FB_RTERROR_OK )
 
     FB_LOCK()

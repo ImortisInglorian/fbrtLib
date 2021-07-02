@@ -15,23 +15,24 @@ end type
 
 /' Information about a single printer emulation mode '/
 type DEV_PRINTER_EMU_MODE
-	as ubyte const ptr pszId
+	as const ubyte ptr pszId
 	as FnEmuPrint      pfnPrint
 end type
 
 declare sub EmuBuild_LOGFONT cdecl ( lf as LOGFONT ptr, pInfo as W32_PRINTER_INFO ptr, uiCPI as ulong )
 declare sub EmuUpdateInfo cdecl ( pInfo as W32_PRINTER_INFO ptr )
-declare sub EmuPrint_RAW cdecl ( pInfo as W32_PRINTER_INFO ptr, pText as any ptr, uiLength as size_t, isunicode as long )
-declare sub EmuPrint_TTY cdecl ( pInfo as W32_PRINTER_INFO ptr, pText as any ptr, uiLength as size_t, isunicode as long )
+declare sub EmuPrint_RAW cdecl ( pInfo as W32_PRINTER_INFO ptr, pText as const any ptr, uiLength as size_t, isunicode as long )
+declare sub EmuPrint_TTY cdecl ( pInfo as W32_PRINTER_INFO ptr, pText as const any ptr, uiLength as size_t, isunicode as long )
 #if 0
-declare private sub EmuPrint_ESC_P2 cdecl ( pInfo as W32_PRINTER_INFO ptr, pText as any ptr, uiLength as size_t, isunicode as long )
+declare private sub EmuPrint_ESC_P2 cdecl ( pInfo as W32_PRINTER_INFO ptr, pText as const any ptr, uiLength as size_t, isunicode as long )
 #endif
 
 /' List of all known printer emulation modes '/
-dim shared as DEV_PRINTER_EMU_MODE aEmulationModes(0 to 1) 
-aEmulationModes(0) = type( sadd("RAW"), cast(FnEmuPrint, @EmuPrint_RAW) )
-aEmulationModes(1) = type( sadd("TTY"), cast(FnEmuPrint, @EmuPrint_TTY) ) 
-'aEmulationModes(2) = type(sadd("ESC/P2"), cast(FnEmuPrint, @EmuPrint_ESC_P2) )
+dim shared as const DEV_PRINTER_EMU_MODE aEmulationModes(0 to 1) = { _
+		( sadd("RAW"), cast(FnEmuPrint, @EmuPrint_RAW) ), _
+		( sadd("TTY"), cast(FnEmuPrint, @EmuPrint_TTY) ) _
+}
+/'	( sadd("ESC/P2"), cast(FnEmuPrint, @EmuPrint_ESC_P2) ) '/ 
 
 extern "C"
 
@@ -46,7 +47,7 @@ end sub
  * @return pointer to the new node
  '/
 
-private function fb_hListDevElemAlloc ( list as FB_LIST ptr, device as ubyte const ptr, printer_name as ubyte const ptr ) as DEV_PRINTER_DEVICE ptr
+private function fb_hListDevElemAlloc ( list as FB_LIST ptr, device as const ubyte ptr, printer_name as const ubyte ptr ) as DEV_PRINTER_DEVICE ptr
 	dim as DEV_PRINTER_DEVICE ptr node = cast(DEV_PRINTER_DEVICE ptr, calloc( 1, sizeof(DEV_PRINTER_DEVICE) ))
 	node->device = strdup(device)
 	node->printer_name = strdup(printer_name)
@@ -73,7 +74,7 @@ end sub
 
 /'' Find the node containing the requested device.
  '/
-private function fb_hListDevFindDevice( list as FB_LIST ptr, pszDevice as ubyte const ptr ) as DEV_PRINTER_DEVICE ptr
+private function fb_hListDevFindDevice( list as FB_LIST ptr, pszDevice as const ubyte ptr ) as DEV_PRINTER_DEVICE ptr
 	dim as DEV_PRINTER_DEVICE ptr node = cast(DEV_PRINTER_DEVICE ptr, list->head)
 	while (node <> NULL)
 		if( strcasecmp( pszDevice, node->device ) = 0 ) then
@@ -87,7 +88,7 @@ end function
 
 /'' Find the node containing the requested printer name.
  '/
-private function fb_hListDevFindName  ( list as FB_LIST ptr, pszPrinterName as ubyte const ptr ) as DEV_PRINTER_DEVICE ptr
+private function fb_hListDevFindName  ( list as FB_LIST ptr, pszPrinterName as const ubyte ptr ) as DEV_PRINTER_DEVICE ptr
 	dim as DEV_PRINTER_DEVICE ptr node = cast(DEV_PRINTER_DEVICE ptr, list->head)
 	while ( node <> NULL )
 		if( strcasecmp( pszPrinterName, node->printer_name ) = 0 ) then 
@@ -305,9 +306,9 @@ private sub fb_hPrinterBuildList( list as FB_LIST ptr )
 	fb_hPrinterBuildListOther( list, 128 )
 end sub
 
-function fb_PrinterOpen( devInfo as DEV_LPT_INFO ptr, iPort as long, pszDevice as ubyte const ptr ) as long
+function fb_PrinterOpen( devInfo as DEV_LPT_INFO ptr, iPort as long, pszDevice as const ubyte ptr ) as long
 	dim as long result = fb_ErrorSetNum( FB_RTERROR_OK )
-	dim as DEV_PRINTER_EMU_MODE ptr pFoundEmu = NULL
+	dim as const DEV_PRINTER_EMU_MODE ptr pFoundEmu = NULL
 	dim as DWORD dwJob = 0
 	dim as BOOL fResult
 	dim as HANDLE hPrinter = NULL
@@ -328,7 +329,7 @@ function fb_PrinterOpen( devInfo as DEV_LPT_INFO ptr, iPort as long, pszDevice a
 	if ( *lpt_proto->emu <> 0 ) then
 		dim as long i
 		for i = 0 to ARRAY_LENGTH(aEmulationModes) - 1
-			dim as DEV_PRINTER_EMU_MODE ptr pEmu = @aEmulationModes(0) + i
+			dim as const DEV_PRINTER_EMU_MODE ptr pEmu = @aEmulationModes(0) + i
 			if ( strcasecmp( lpt_proto->emu, pEmu->pszId ) = 0 ) then
 				pFoundEmu = pEmu
 				exit for
@@ -535,7 +536,7 @@ private sub EmuPageStart( pInfo as W32_PRINTER_INFO ptr )
 	SetBkColor( pInfo->hDc, pInfo->Emu.clBack )
 end sub
 
-private sub EmuPrint_RAW( pInfo as W32_PRINTER_INFO ptr, pText as any ptr, uiLength as size_t, isunicode as long )
+private sub EmuPrint_RAW( pInfo as W32_PRINTER_INFO ptr, pText as const any ptr, uiLength as size_t, isunicode as long )
 	while( uiLength <> 0 )
 		if ( isunicode = 0 ) then
 			dim as ubyte ptr ch = cast(ubyte ptr, pText)
@@ -585,7 +586,7 @@ private sub fb_hHookConPrinterScroll( handle as _fb_ConHooks ptr, x1 as long, y1
 	handle->Coord.Y = rows
 end sub
 
-private function fb_hHookConPrinterWrite ( handle as _fb_ConHooks ptr, buffer as any const ptr, length as size_t ) as long
+private function fb_hHookConPrinterWrite ( handle as _fb_ConHooks ptr, buffer as const any ptr, length as size_t ) as long
 	dim as W32_PRINTER_INFO ptr pInfo = handle->Opaque
 	pInfo->Emu.dwCurrentX = handle->Coord.X * pInfo->Emu.dwFontSizeX
 	pInfo->Emu.dwCurrentY = handle->Coord.Y * pInfo->Emu.dwFontSizeY
@@ -593,7 +594,7 @@ private function fb_hHookConPrinterWrite ( handle as _fb_ConHooks ptr, buffer as
 	return TRUE
 end function
 
-private function fb_hHookConPrinterWriteWstr ( handle as _fb_ConHooks ptr, buffer as any const ptr, length as size_t ) as long
+private function fb_hHookConPrinterWriteWstr ( handle as _fb_ConHooks ptr, buffer as const any ptr, length as size_t ) as long
 	dim as W32_PRINTER_INFO ptr pInfo = handle->Opaque
 	pInfo->Emu.dwCurrentX = handle->Coord.X * pInfo->Emu.dwFontSizeX
 	pInfo->Emu.dwCurrentY = handle->Coord.Y * pInfo->Emu.dwFontSizeY
@@ -601,7 +602,7 @@ private function fb_hHookConPrinterWriteWstr ( handle as _fb_ConHooks ptr, buffe
 	return TRUE
 end function
 
-private sub EmuPrint_TTY( pInfo as W32_PRINTER_INFO ptr, pText as any ptr, uiLength as size_t, isunicode as long )
+private sub EmuPrint_TTY( pInfo as W32_PRINTER_INFO ptr, pText as const any ptr, uiLength as size_t, isunicode as long )
 	dim as fb_ConHooks hooks
 
 	hooks.Opaque        = pInfo
@@ -693,12 +694,12 @@ private sub EmuPrint_TTY( pInfo as W32_PRINTER_INFO ptr, pText as any ptr, uiLen
 end sub
 
 #if 0
-private sub EmuPrint_ESC_P2( devInfo as DEV_LPT_INFO ptr, pachText as ubyte const ptr, uiLength as size_t )
+private sub EmuPrint_ESC_P2( devInfo as DEV_LPT_INFO ptr, pachText as const ubyte ptr, uiLength as size_t )
 	dim as W32_PRINTER_INFO ptr pInfo = cast(W32_PRINTER_INFO ptr, devInfo->driver_opaque)
 end sub
 #endif
 
-function fb_PrinterWrite( devInfo as DEV_LPT_INFO ptr, _data as any const ptr, length as size_t ) as long
+function fb_PrinterWrite( devInfo as DEV_LPT_INFO ptr, _data as const any ptr, length as size_t ) as long
 	dim as W32_PRINTER_INFO ptr pInfo = cast(W32_PRINTER_INFO ptr, devInfo->driver_opaque)
 	dim as DWORD dwWritten
 
@@ -713,7 +714,7 @@ function fb_PrinterWrite( devInfo as DEV_LPT_INFO ptr, _data as any const ptr, l
 	return fb_ErrorSetNum( FB_RTERROR_OK )
 end function
 
-function fb_PrinterWriteWstr( devInfo as DEV_LPT_INFO ptr, _data as FB_WCHAR const ptr, length as size_t ) as long
+function fb_PrinterWriteWstr( devInfo as DEV_LPT_INFO ptr, _data as const FB_WCHAR ptr, length as size_t ) as long
 	dim as W32_PRINTER_INFO ptr pInfo = cast(W32_PRINTER_INFO ptr, devInfo->driver_opaque)
 	dim as DWORD dwWritten
 

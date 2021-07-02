@@ -5,8 +5,8 @@
 #endif
 
 extern "C"
-sub FB_CONPRINTTTY_( handle as fb_ConHooks ptr, pachText as FB_TCHAR ptr, TextLength as size_t, is_text_mode as long )
-	static as FB_TCHAR achTabSpaces(0 to 7) = { 32, 32, 32, 32, 32, 32, 32, 32 }
+sub FB_CONPRINTTTY_( handle as fb_ConHooks ptr, pachText as const FB_TCHAR ptr, TextLength as size_t, is_text_mode as long )
+	static as const FB_TCHAR achTabSpaces(0 to 7) = { 32, 32, 32, 32, 32, 32, 32, 32 }
 	dim as FB_TCHAR OutputBuffer(0 to OUTPUT_BUFFER_SIZE - 1)
 	dim as size_t OutputBufferLength = 0, OutputBufferChars = 0
 	dim as fb_Rect ptr pBorder = @handle->Border
@@ -27,7 +27,7 @@ sub FB_CONPRINTTTY_( handle as fb_ConHooks ptr, pachText as FB_TCHAR ptr, TextLe
 
     dim as fb_Coord dwMoveCoord = ( 0, 0 )
     for IndexText = 0 to TextLength - 1
-        dim as FB_TCHAR ptr pachOutputData = pachText
+        dim as const FB_TCHAR ptr pachOutputData = pachText
         dim as size_t OutputDataLength = 0, OutputDataChars = 0
         dim as long fDoFlush = FALSE
         dim as long fSetNewCoord = FALSE

@@ -20,7 +20,7 @@ end sub
  *
  * @return pointer to the new node
  '/
-private function fb_hListDevElemAlloc ( list as FB_LIST ptr, device as ubyte const ptr, _width as long ) as DEV_INFO_WIDTH ptr
+private function fb_hListDevElemAlloc ( list as FB_LIST ptr, device as const ubyte ptr, _width as long ) as DEV_INFO_WIDTH ptr
     dim as DEV_INFO_WIDTH ptr node = cast(DEV_INFO_WIDTH ptr, callocate( sizeof(DEV_INFO_WIDTH) ))
     node->device = strdup(device)
     node->width = _width

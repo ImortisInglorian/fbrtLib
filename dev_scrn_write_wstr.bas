@@ -3,7 +3,7 @@
 #include "fb.bi"
 
 extern "C"
-function fb_DevScrnWriteWstr( handle as FB_FILE ptr, value as FB_WCHAR const ptr, valuelen as size_t ) as long
+function fb_DevScrnWriteWstr( handle as FB_FILE ptr, value as const FB_WCHAR ptr, valuelen as size_t ) as long
     fb_PrintBufferWstrEx( value, valuelen, 0 )
 	return fb_ErrorSetNum( FB_RTERROR_OK )
 end function

@@ -41,7 +41,7 @@ declare function fb_Run 					FBCALL ( program as FBSTRING ptr, args as FBSTRING 
 declare function fb_Chain 					FBCALL ( program as FBSTRING ptr ) as long
 declare function fb_Exec 					FBCALL ( program as FBSTRING ptr, args as FBSTRING ptr ) as long
 declare function fb_ExecEx 					FBCALL ( program as FBSTRING ptr, args as FBSTRING ptr, do_wait as long ) as long
-declare function fb_hParseArgs 					   ( dst as ubyte ptr, src as ubyte const ptr, length as ssize_t ) as long
+declare function fb_hParseArgs 					   ( dst as ubyte ptr, src as const ubyte ptr, length as ssize_t ) as long
 
 declare function fb_GetMemAvail 			FBCALL ( mode as long ) as size_t
 

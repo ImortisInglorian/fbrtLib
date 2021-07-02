@@ -8,7 +8,7 @@
 
 
 extern "C"
-function fb_hDynLoad cdecl ( libname as ubyte const ptr, funcname as ubyte const ptr ptr, funcptr as any ptr ptr ) as FB_DYLIB
+function fb_hDynLoad cdecl ( libname as const ubyte ptr, funcname as const ubyte ptr ptr, funcptr as any ptr ptr ) as FB_DYLIB
 	dim as FB_DYLIB _lib
 	dim as ssize_t i
 
@@ -30,7 +30,7 @@ function fb_hDynLoad cdecl ( libname as ubyte const ptr, funcname as ubyte const
 	return _lib
 end function
 
-function fb_hDynLoadAlso cdecl ( _lib as FB_DYLIB, funcname as ubyte const ptr ptr, funcptr as any ptr ptr, count as ssize_t ) as long
+function fb_hDynLoadAlso cdecl ( _lib as FB_DYLIB, funcname as const ubyte ptr ptr, funcptr as any ptr ptr, count as ssize_t ) as long
 	dim as ssize_t i
 
 	/' Load functions '/
