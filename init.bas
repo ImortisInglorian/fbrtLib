@@ -85,7 +85,7 @@ sub fb_hRtExit cdecl ( )
 	/' os-dep termination '/
 	fb_hEnd( 0 )
 
-	fb_DevScrnEnd( @FB_HANDLE_SCREEN )
+	fb_DevScrnEnd( FB_HANDLE_SCREEN )
 
 	/' Free main thread's TLS contexts '/
 	fb_TlsFreeCtxTb( )

@@ -15,7 +15,7 @@ private function fb_DevLptFindDeviceByName( iPort as long, filename as ubyte ptr
 					if ( iPort = 0 or iPort = devInfo->iPort ) then
 						if ( strcmp(devInfo->pszDevice, filename) = 0 ) then
 							/' bugcheck '/
-							DBG_ASSERT( handle <> @FB_HANDLE_PRINTER )
+							DBG_ASSERT( handle <> FB_HANDLE_PRINTER )
 							return handle
 						end if
 					end if
@@ -93,7 +93,7 @@ function fb_DevLptOpen( handle as FB_FILE ptr, filename as ubyte const ptr, file
         res = fb_ErrorSetNum( FB_RTERROR_OK )
         if ( FB_HANDLE_USED(redir_handle) <> 0 ) then
             /' We only allow redirection between OPEN "LPT1:" and LPRINT '/
-            if ( handle = @FB_HANDLE_PRINTER ) then
+            if ( handle = FB_HANDLE_PRINTER ) then
                 redir_handle->redirection_to = handle
                 handle->width = redir_handle->width
                 handle->line_length = redir_handle->line_length

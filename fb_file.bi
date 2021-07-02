@@ -98,12 +98,12 @@ end enum
 
 #define FB_INDEX_IS_SPECIAL(index) (((index) < 1) and (((index) > (-FB_RESERVED_FILES))
 
-#define FB_HANDLE_IS_SCREEN(handle) ((handle)<> NULL and FB_HANDLE_DEREF(handle) = @FB_HANDLE_SCREEN)
+#define FB_HANDLE_IS_SCREEN(handle) ((handle)<> NULL andalso FB_HANDLE_DEREF(handle) = FB_HANDLE_SCREEN)
 
-#define FB_HANDLE_USED(handle) ((handle) <> NULL and ((handle)->hooks <> NULL))
+#define FB_HANDLE_USED(handle) ((handle) <> NULL andalso ((handle)->hooks <> NULL))
 
-#define FB_HANDLE_SCREEN    (__fb_ctx.fileTB(0))
-#define FB_HANDLE_PRINTER   (__fb_ctx.fileTB(1))
+#define FB_HANDLE_SCREEN    (@__fb_ctx.fileTB(0))
+#define FB_HANDLE_PRINTER   (@__fb_ctx.fileTB(1))
 
 type _FB_FILE as FB_FILE
 
@@ -179,9 +179,9 @@ declare sub fb_INPUTCTX_Destructor( as any ptr )
 
 #define FB_FILE_TO_HANDLE( index ) _
 	(iif(index = 0,_
-		(cast(FB_FILE ptr, @FB_HANDLE_SCREEN)),_
+		(cast(FB_FILE ptr, FB_HANDLE_SCREEN)),_
 		iif( (index) = -1,_
-			cast(FB_FILE ptr, @FB_HANDLE_PRINTER),_
+			cast(FB_FILE ptr, FB_HANDLE_PRINTER),_
 			iif( FB_FILE_INDEX_VALID( (index) ),_ 
 				FB_FILE_TO_HANDLE_VALID( (index) ),_
 				(cast(FB_FILE ptr,(NULL)))_

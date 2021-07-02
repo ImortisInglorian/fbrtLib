@@ -24,12 +24,12 @@ function fb_WidthFile FBCALL ( fnum as long, _width as long ) as long
         return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
     end if
 
-    if( handle = @FB_HANDLE_SCREEN ) then
+    if( handle = FB_HANDLE_SCREEN ) then
         /' SCREEN device '/
         if( _width <> -1 ) then
             fb_Width( _width, -1 )
         end if
-        cur = FB_HANDLE_SCREEN.width
+        cur = FB_HANDLE_SCREEN->width
     else
         if( _width <> -1 ) then
             handle->width = _width

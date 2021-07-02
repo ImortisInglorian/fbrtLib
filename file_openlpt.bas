@@ -4,10 +4,10 @@
 
 extern "C"
 private sub close_printer_handle( )
-    if ( FB_HANDLE_PRINTER.hooks = NULL ) then
+    if ( FB_HANDLE_PRINTER->hooks = NULL ) then
         exit sub
 	end if
-    FB_HANDLE_PRINTER.hooks->pfnClose( @FB_HANDLE_PRINTER )
+    FB_HANDLE_PRINTER->hooks->pfnClose( FB_HANDLE_PRINTER )
 end sub
 
 #if defined( HOST_WIN32 )
@@ -19,8 +19,8 @@ dim shared as ubyte const ptr pszPrinterDev = sadd("LPT1:")
 #endif
 
 function fb_LPrintInit( ) as long
-    if( FB_HANDLE_PRINTER.hooks = NULL) then
-        dim as long res = fb_FileOpenVfsRawEx( @FB_HANDLE_PRINTER, _
+    if( FB_HANDLE_PRINTER->hooks = NULL) then
+        dim as long res = fb_FileOpenVfsRawEx( FB_HANDLE_PRINTER, _
 											   pszPrinterDev, _
 											   strlen(pszPrinterDev), _
 											   FB_FILE_MODE_APPEND, _

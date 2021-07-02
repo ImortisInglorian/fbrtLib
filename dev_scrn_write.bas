@@ -12,8 +12,8 @@ sub fb_DevScrnInit_Write( )
 	fb_DevScrnInit_NoOpen( )
 
 	FB_LOCK( )
-    if( FB_HANDLE_SCREEN.hooks->pfnWrite = NULL ) then
-    	FB_HANDLE_SCREEN.hooks->pfnWrite = @fb_DevScrnWrite
+    if( FB_HANDLE_SCREEN->hooks->pfnWrite = NULL ) then
+    	FB_HANDLE_SCREEN->hooks->pfnWrite = @fb_DevScrnWrite
 	end if
 	FB_UNLOCK( )
 end sub

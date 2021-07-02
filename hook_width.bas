@@ -18,7 +18,7 @@ function fb_Width FBCALL ( cols as long, rows as long ) as long
 	end if
 
     if ( cols>0 ) then
-        FB_HANDLE_SCREEN.width = cols
+        FB_HANDLE_SCREEN->width = cols
 	end if
 
     /' Reset VIEW PRINT '/

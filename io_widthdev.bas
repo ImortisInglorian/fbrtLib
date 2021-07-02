@@ -102,7 +102,7 @@ function fb_WidthDev FBCALL ( dev as FBSTRING ptr, _width as long ) as long
         if ( _width <> -1 ) then
             fb_Width( _width, -1 )
         end if
-        cur = FB_HANDLE_SCREEN.width
+        cur = FB_HANDLE_SCREEN->width
 
     elseif ( fb_DevLptTestProtocol( NULL, device, size ) <> NULL ) then
         /' PRINTER device '/
