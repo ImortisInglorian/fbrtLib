@@ -20,7 +20,7 @@ private function hReadChar( ctx as FB_INPUTCTX ptr ) as long
 			return EOF_
 		else
 			ctx->index += 1
-			return ctx->str.data[ctx->index-1]
+			return ctx->str.data[ctx->index - 1]
 		end if
 	end if
 end function
@@ -120,7 +120,7 @@ function fb_FileInputNextToken( buffer as ubyte ptr, max_chars as ssize_t, is_st
 					end if
 				else
 					isquote = FALSE
-					if ( is_string <> NULL ) then
+					if ( is_string <> 0 ) then
 						c = hReadChar( ctx )
 						goto _exit_
 					end if
@@ -164,6 +164,7 @@ function fb_FileInputNextToken( buffer as ubyte ptr, max_chars as ssize_t, is_st
 						goto _exit_
 					end if
 				end if
+				goto savechar
 
 			case else:
 savechar:
