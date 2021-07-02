@@ -11,7 +11,8 @@ function fb_FilePutDataEx _
 		length as size_t, _
 		adjust_rec_pos as long, _
 		checknewline as long, _
-		is_unicode as long ) as long
+		is_unicode as long _
+	) as long
 	dim as long res
 
     if ( FB_HANDLE_USED(handle) = NULL ) then
@@ -52,10 +53,10 @@ function fb_FilePutDataEx _
 
     end if
 
-    if ( handle->mode = FB_FILE_MODE_RANDOM and _
-    	res = FB_RTERROR_OK and _
-    	adjust_rec_pos <> 0 and _
-        handle->len <> 0 and _
+    if ( handle->mode = FB_FILE_MODE_RANDOM andalso _
+    	res = FB_RTERROR_OK andalso _
+    	adjust_rec_pos <> 0 andalso _
+        handle->len <> 0 andalso _
         handle->hooks->pfnSeek <> NULL ) then
         /' if in random mode, writes must be of reclen.
          * The device must also support the SEEK method and the length
@@ -81,27 +82,36 @@ function fb_FilePutDataEx _
     		if ( is_unicode = 0 ) then
     			dim as const ubyte ptr pachText = cast(const ubyte ptr, _data)
 
-        		/' search for last printed CR or LF '/
-				i -= 1
-        		while (i)
-            		dim as ubyte ch = pachText[i]
+        		/' search for last printed CR or LF
+        		   i is -1 if not found
+				   !!!TODO!!! replace this with something better
+				   after test-suite passes 
+				'/
+        		while( i )
+            		dim as ubyte ch = pachText[i-1]
             		if ( ch = asc(!"\n") or ch = asc(!"\r") ) then
 	                	exit while
 					end if
 					i -= 1
         		wend
+       			i -= 1
         	else
     			dim as const FB_WCHAR ptr pachText = cast(const FB_WCHAR ptr, _data)
 
-        		/' search for last printed CR or LF '/
-				i -= 1
-        		while (i)
-            		dim as FB_WCHAR ch = pachText[i]
+        		/' search for last printed CR or LF
+        		   i is -1 if not found 
+				   !!!TODO!!! replace this with something better
+				   after test-suite passes 
+				'/
+        		while( i )
+            		dim as FB_WCHAR ch = pachText[i-1]
             		if ( ch = asc(!"\n") or ch = asc(!"\r") ) then
-	                	exit while
+						i -= 1
+    	            	exit while
 					end if
 					i -= 1
         		wend
+       			i -= 1
 
         	end if
 
