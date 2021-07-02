@@ -23,7 +23,7 @@ function fb_FilePutBackWstrEx( handle as FB_FILE ptr, src as FB_WCHAR ptr, chars
     	bytes = chars
 	end if
 
-    if ( handle->putback_size + bytes > sizeof(handle->putback_buffer(0)) ) then
+    if ( handle->putback_size + bytes > ARRAY_SIZEOF(handle->putback_buffer) ) then
         res = fb_ErrorSetNum( FB_RTERROR_FILEIO )
     else
         if ( handle->putback_size <> 0 ) then

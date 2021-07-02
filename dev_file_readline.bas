@@ -16,7 +16,7 @@ function fb_DevFileReadLineDumb ( fp as FILE ptr, dst as FBSTRING ptr, pfnReadSt
 
     DBG_ASSERT( dst <> NULL )
 
-    buffer_len = sizeof(buffer)
+    buffer_len = ARRAY_SIZEOF( buffer )
     first_run = TRUE
 
 	FB_LOCK()
@@ -29,7 +29,7 @@ function fb_DevFileReadLineDumb ( fp as FILE ptr, dst as FBSTRING ptr, pfnReadSt
     while (found = FALSE )
         memset( @buffer(0), 0, buffer_len )
 
-        if( pfnReadString( @buffer(0), sizeof( buffer ), fp ) = NULL ) then
+        if( pfnReadString( @buffer(0), ARRAY_SIZEOF( buffer ), fp ) = NULL ) then
             /' EOF reached ... this is not an error !!! '/
             res = FB_RTERROR_ENDOFFILE /' but we have to notify the caller '/
 
@@ -41,11 +41,11 @@ function fb_DevFileReadLineDumb ( fp as FILE ptr, dst as FBSTRING ptr, pfnReadSt
         end if
 
         /' the last character always is NUL '/
-        buffer_len = sizeof(buffer) - 1
+        buffer_len = ARRAY_SIZEOF( buffer ) - 1
 
         /' now let's find the end of the buffer '/
 		buffer_len -= 1
-        while (buffer_len <> 0)
+        while( buffer_len <> 0 )
             dim as ubyte ch = buffer(buffer_len)
             if (ch = asc(!"\n") or ch = asc(!"\r")) then
                 /' accept both CR and LF '/
@@ -55,6 +55,7 @@ function fb_DevFileReadLineDumb ( fp as FILE ptr, dst as FBSTRING ptr, pfnReadSt
                 /' a character other than CR/LF found ... i.e. buffer full '/
                 exit while
             end if
+            buffer_len -= 1
         wend
 
         dim as ssize_t tmp_buf_len

@@ -21,6 +21,6 @@ function fb_DrvIntlGet cdecl ( Index as eFbIntlIndex ) as const ubyte ptr
 		return NULL
 	end select
 
-	return iif(fb_hGetLocaleInfo( LOCALE_USER_DEFAULT, _lctype, @buf(0), sizeof(buf) - 1 ), @buf(0), NULL)
+	return iif(fb_hGetLocaleInfo( LOCALE_USER_DEFAULT, _lctype, @buf(0), ARRAY_SIZEOF(buf) - 1 ), @buf(0), NULL)
 end function
 end extern

@@ -67,7 +67,7 @@ private function fb_hDateOrder( pOrderDay as long ptr, pOrderMonth as long ptr, 
     dim as long tmp, got_sep
     dim as ubyte short_format(0 to 89)
 
-    tmp = fb_IntlGetDateFormat( @short_format(0), sizeof(short_format), FALSE )
+    tmp = fb_IntlGetDateFormat( @short_format(0), ARRAY_SIZEOF(short_format), FALSE )
     if ( tmp = 0 ) then
         return FALSE
     end if

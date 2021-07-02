@@ -93,6 +93,10 @@
 
 	#define _SWAP(a,b)		((a) xor= (b): (b) xor= (a): (a) xor= (b))
 
+	#define ARRAY_SIZEOF( array ) ( ( ubound(array) - lbound(array) + 1 ) * sizeof(array(lbound(array))))
+	#define ARRAY_LENGTH( array ) ( ubound(array) - lbound(array) + 1 )
+
+
 	#if defined(HOST_DOS)
 		#include "dos/fb_dos.h"
 	#elseif defined(HOST_UNIX)

@@ -679,7 +679,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 							if ( chCurrent = 116 and count = 5 ) then
 								dim as FBSTRING ptr tmp
 								i += (count-1)
-								fb_IntlGetTimeFormat( @FixPart(0), sizeof(FixPart), FALSE )
+								fb_IntlGetTimeFormat( @FixPart(0), ARRAY_SIZEOF(FixPart), FALSE )
 								tmp = fb_hStrFormat ( value, @FixPart(0), strlen(@FixPart(0)) )
 								if ( not(do_output) ) then
 									pInfo->length_min += FB_STRSIZE(tmp)
@@ -707,7 +707,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 							elseif ( chCurrent = 100 and count = 5 ) then
 								dim as FBSTRING ptr tmp
 								i += count-1
-								fb_IntlGetDateFormat( @FixPart(0), sizeof(FixPart), FALSE )
+								fb_IntlGetDateFormat( @FixPart(0), ARRAY_SIZEOF(FixPart), FALSE )
 								tmp = fb_hStrFormat ( value, @FixPart(0), strlen(@FixPart(0)) )
 								if ( not(do_output) ) then
 									pInfo->length_min += FB_STRSIZE(tmp)

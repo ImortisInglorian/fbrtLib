@@ -50,7 +50,7 @@ private function fb_hFileLineInputEx( handle as FB_FILE ptr, dst as any ptr, dst
 						do_break = TRUE
 						do_add = TRUE
 					else
-						do_add = (_len = (sizeof(buffer)-1))
+						do_add = (_len = (ARRAY_SIZEOF(buffer)-1))
 					end if
 				else
 					do_add = (_len <> 0)

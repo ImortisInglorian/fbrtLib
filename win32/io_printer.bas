@@ -327,7 +327,7 @@ function fb_PrinterOpen( devInfo as DEV_LPT_INFO ptr, iPort as long, pszDevice a
 	/' Allow only valid emulation modes '/
 	if ( *lpt_proto->emu <> 0 ) then
 		dim as long i
-		for i = 0 to sizeof(aEmulationModes)/sizeof(aEmulationModes(0)) - 1
+		for i = 0 to ARRAY_LENGTH(aEmulationModes) - 1
 			dim as DEV_PRINTER_EMU_MODE ptr pEmu = @aEmulationModes(0) + i
 			if ( strcasecmp( lpt_proto->emu, pEmu->pszId ) = 0 ) then
 				pFoundEmu = pEmu

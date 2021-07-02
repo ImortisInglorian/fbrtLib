@@ -281,8 +281,8 @@ private function fb_PrintUsingFmtStr( fnum as long ) as long
 			exit while
 		end if
 		
-		_len += 1
 		buffer(_len) = cast(ubyte, c)
+		_len += 1
 
 		ctx->_ptr += 1
 		ctx->chars -= 1
@@ -849,9 +849,10 @@ private function hPrintNumber( fnum as long, _val as ulongint, val_exp as long, 
 	/' fixed-point format? '/
 	if ( expdigs < MIN_EXPDIGS ) then
 		/' append any trailing carets '/
-		for j as long = expdigs to 1 step -1
+		while( expdigs > 0 )
 			ADD_CHAR( asc("^") )
-		next
+			expdigs -= 1
+		wend
 
 		/' backup unscaled value '/
 		val0 = _val
@@ -979,10 +980,11 @@ private function hPrintNumber( fnum as long, _val as ulongint, val_exp as long, 
 		end if
 
 		/' expdigs > 3 '/
-		for j as long = expdigs to 4 step -1
+		while expdigs > 3
 			ADD_CHAR( CHAR_ZERO + (val_exp mod 10) )
 			val_exp /= 10
-		next
+			expdigs -= 1
+		wend
 
 		/' expdigs == 3 '/
 		if ( val_exp > 9 ) then /' too many exp digits? '/
@@ -1025,7 +1027,7 @@ private function hPrintNumber( fnum as long, _val as ulongint, val_exp as long, 
 
 	/' output dec part '/
 	if ( decpoint = TRUE ) then
-		for j as long = decdigs to 1 step -1
+		while( decdigs > 0 )
 			if ( val_zdigs > 0 ) then
 				ADD_CHAR( CHAR_ZERO )
 				val_zdigs -= 1
@@ -1042,7 +1044,8 @@ private function hPrintNumber( fnum as long, _val as ulongint, val_exp as long, 
 			else
 				ADD_CHAR( CHAR_ZERO )
 			end if
-		next
+			decdigs -= 1
+		wend
 		ADD_CHAR( CHAR_DOT )
 	end if
 
@@ -1052,7 +1055,7 @@ private function hPrintNumber( fnum as long, _val as ulongint, val_exp as long, 
 	'for( ;; )
 	'{
 	do
-		if ( addcommas = TRUE and (i and 3) = 3 and val_digs > 0 ) then
+		if ( (addcommas = TRUE) and ((i and 3) = 3) and (val_digs > 0) ) then
 			/' insert comma '/
 			ADD_CHAR( CHAR_COMMA )
 		elseif ( val_zdigs > 0 ) then
@@ -1105,14 +1108,16 @@ private function hPrintNumber( fnum as long, _val as ulongint, val_exp as long, 
 	end if
 
 	/' output padding for any remaining intdigs '/
-	for j as long = intdigs to 1 step -1
+	while( intdigs > 0 )
 		ADD_CHAR( padchar )
-	next
+		intdigs -= 1
+	wend
 
 	/' output '%' sign(s)? '/
-	for j as long = toobig to 1 step -1
+	while( toobig > 0 )
 		ADD_CHAR( CHAR_TOOBIG )
-	next
+		toobig -= 1
+	wend
 
 
 	/''/
