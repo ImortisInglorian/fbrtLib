@@ -5,9 +5,13 @@
 #include "fb.bi"
 
 extern "C"
+
 /':::::'/
 function fb_hBoolToStr FBCALL ( num as ubyte ) as ubyte ptr
-	return iif(num, @"true", @"false")
+	static false_string as zstring ptr = @"false"
+	static true_string as zstring ptr = @"true"
+
+	return iif( num, false_string, true_string )
 end function
 
 /':::::'/
