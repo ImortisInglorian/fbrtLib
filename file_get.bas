@@ -52,9 +52,9 @@ function fb_FileGetDataEx ( handle as FB_FILE ptr, _pos as fb_off_t, dst as any 
         		wcp = cast(FB_WCHAR ptr, @handle->putback_buffer(0))
         		_len = bytes
         		while ( _len > 0 )
+        			*cp = *wcp
 					cp += 1
 					wcp += 1
-        			*cp = *wcp
         			_len -= sizeof( FB_WCHAR )
         		wend
         	end if
@@ -65,10 +65,12 @@ function fb_FileGetDataEx ( handle as FB_FILE ptr, _pos as fb_off_t, dst as any 
         		cp = pachData
         		wcp = cast(FB_WCHAR ptr, @handle->putback_buffer(0))
         		_len = bytes
-        		while( _len - 1 > 0 )
+        		_len -= 1
+        		while( _len > 0 )
+        			*cp = *wcp
         			cp += 1
 					wcp += 1
-        			*cp = *wcp
+					_len -= 1
 				wend
         	end if
         end if
@@ -109,10 +111,10 @@ function fb_FileGetDataEx ( handle as FB_FILE ptr, _pos as fb_off_t, dst as any 
         end if
     end if
 
-    if ( handle->mode = FB_FILE_MODE_RANDOM and _
-        res = FB_RTERROR_OK and _
-        adjust_rec_pos <> 0 and _
-        handle->len <> 0 and _
+    if ( handle->mode = FB_FILE_MODE_RANDOM andalso _
+        res = FB_RTERROR_OK andalso _
+        adjust_rec_pos <> 0 andalso _
+        handle->len <> 0 andalso _
         handle->hooks->pfnSeek <> NULL ) then
         /' if in random mode, reads must be of reclen.
          * The device must also support the SEEK method and the length
