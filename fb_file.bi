@@ -94,9 +94,9 @@ end enum
 
 
 #define FB_FILE_FROM_HANDLE(handle) ((handle) - @__fb_ctx.fileTB(0)) + 1 - FB_RESERVED_FILES)
-#define FB_FILE_INDEX_VALID(index) ((index)>=1 and ((index)<=(FB_MAX_FILES-FB_RESERVED_FILES)))
+#define FB_FILE_INDEX_VALID(index) ((index)>=1 andalso ((index)<=(FB_MAX_FILES-FB_RESERVED_FILES)))
 
-#define FB_INDEX_IS_SPECIAL(index) (((index) < 1) and (((index) > (-FB_RESERVED_FILES))
+#define FB_INDEX_IS_SPECIAL(index) (((index) < 1) andalso (((index) > (-FB_RESERVED_FILES))
 
 #define FB_HANDLE_IS_SCREEN(handle) ((handle)<> NULL andalso FB_HANDLE_DEREF(handle) = FB_HANDLE_SCREEN)
 
@@ -125,6 +125,7 @@ type FnFileUnlock as function ( handle as _FB_FILE ptr, position as fb_off_t, si
 type FnFileReadLine as function ( handle as _FB_FILE ptr, dst as FBSTRING ptr ) as long
 type FnFileReadLineWstr as function ( handle as _FB_FILE ptr, dst as FB_WCHAR ptr, dst_chars as ssize_t ) as long
 type FnFileFlush as function ( handle as _FB_FILE ptr ) as long
+type FnFileSetEof as function ( handle as _FB_FILE ptr ) as long
 
 type FB_FILE_HOOKS
 	as FnFileEof           pfnEof

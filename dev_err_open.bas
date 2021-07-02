@@ -16,7 +16,8 @@ dim shared as FB_FILE_HOOKS hooks_dev_err = ( _
     @fb_DevFileReadLine, _
     @fb_DevFileReadLineWstr, _
     NULL, _
-    NULL)
+    @fb_DevFileFlush _
+)
 
 extern "C"
 function fb_DevErrOpen( handle as FB_FILE ptr, filename as const ubyte ptr, filename_len as size_t ) as long

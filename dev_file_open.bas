@@ -16,7 +16,8 @@ dim shared as FB_FILE_HOOKS hooks_dev_file = ( _
     @fb_DevFileReadLine, _
     @fb_DevFileReadLineWstr, _
     NULL, _
-    @fb_DevFileFlush)
+    @fb_DevFileFlush _
+)
 
 extern "C"
 sub fb_hSetFileBufSize( fp as FILE ptr )

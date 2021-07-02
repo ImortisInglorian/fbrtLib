@@ -16,7 +16,7 @@ dim shared as FB_FILE_HOOKS hooks_dev_cons = ( _
     @fb_DevFileReadLine, _
     @fb_DevFileReadLineWstr, _
     NULL, _
-    NULL _
+    @fb_DevFileFlush _
 )
 
 extern "C"
