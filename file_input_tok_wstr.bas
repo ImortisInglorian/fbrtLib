@@ -11,7 +11,7 @@ private function hReadChar( ctx as FB_INPUTCTX ptr ) as FB_WCHAR
 
         dim as size_t _len
         res = fb_FileGetDataEx( ctx->handle, 0, @c, 1, @_len, FALSE, TRUE )
-        if ( (res <> FB_RTERROR_OK) or (_len = 0) ) then
+        if ( (res <> FB_RTERROR_OK) orelse (_len = 0) ) then
             return FB_WEOF
 		end if
 
@@ -21,7 +21,9 @@ private function hReadChar( ctx as FB_INPUTCTX ptr ) as FB_WCHAR
 		if ( ctx->index >= FB_STRSIZE( @ctx->str ) ) then
 			return FB_WEOF
 		else
-			return cast(ubyte, ctx->str.data[ctx->index + 1])
+			ctx->index += 1
+			/' !!!FIXME!!! - casting to ubyte? this function returns FB_CHAR '/
+			return cast(ubyte, ctx->str.data[ctx->index - 1])
 		end if
 	end if
 
@@ -140,11 +142,12 @@ sub fb_FileInputNextTokenWstr( buffer as FB_WCHAR ptr, max_chars as ssize_t, is_
 						goto _exit_
 					end if
 				end if
+				goto savechar
 
 			case else:
 	savechar:
-				buffer += 1
 				*buffer = c
+				buffer += 1
 				_len += 1
 		end select
 
