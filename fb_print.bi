@@ -89,49 +89,53 @@ end function
 #define _FB_PRINTWSTR(fnum, s, mask) FB_PRINTWSTR_EX( FB_FILE_TO_HANDLE(fnum), s, fb_wstr_len(s), 0 )
 
 #macro FB_PRINTNUM_EX(handle, _val, mask, fmt, _type)
-	dim as ubyte buffer(0 to 79)
-	dim as size_t _len
+	scope
+		dim as ubyte buffer(0 to 79)
+		dim as size_t _len
+		
+		if ( mask and FB_PRINT_APPEND_SPACE ) then
+			if ( mask and FB_PRINT_BIN_NEWLINE ) then
+				_len = sprintf( @buffer(0), fmt _type " " FB_BINARY_NEWLINE, _val )
+			elseif ( mask and FB_PRINT_NEWLINE ) then
+				_len = sprintf( @buffer(0), fmt _type " " FB_NEWLINE, _val )
+			else
+				_len = sprintf( @buffer(0), fmt _type " ", _val )
+			end if
+		else
+			if ( mask and FB_PRINT_BIN_NEWLINE ) then
+				_len = sprintf( @buffer(0), fmt _type FB_BINARY_NEWLINE, _val )
+			elseif ( mask and FB_PRINT_NEWLINE ) then
+				_len = sprintf( @buffer(0), fmt _type FB_NEWLINE, _val )
+			else
+				_len = sprintf( @buffer(0), fmt _type, _val )
+			end if
+		end if
 	
-	if ( mask and FB_PRINT_APPEND_SPACE ) then
-		if ( mask and FB_PRINT_BIN_NEWLINE ) then
-			_len = sprintf( @buffer(0), fmt _type " " FB_BINARY_NEWLINE, _val )
-		elseif ( mask and FB_PRINT_NEWLINE ) then
-			_len = sprintf( @buffer(0), fmt _type " " FB_NEWLINE, _val )
-		else
-			_len = sprintf( @buffer(0), fmt _type " ", _val )
+		FB_PRINT_EX( handle, @buffer(0), _len, mask )
+	
+		if( mask and FB_PRINT_PAD ) then
+			fb_PrintPadEx ( handle, mask )
 		end if
-	else
-		if ( mask and FB_PRINT_BIN_NEWLINE ) then
-			_len = sprintf( @buffer(0), fmt _type FB_BINARY_NEWLINE, _val )
-		elseif ( mask and FB_PRINT_NEWLINE ) then
-			_len = sprintf( @buffer(0), fmt _type FB_NEWLINE, _val )
-		else
-			_len = sprintf( @buffer(0), fmt _type, _val )
-		end if
-	end if
-
-	FB_PRINT_EX( handle, @buffer(0), _len, mask )
-
-	if( mask and FB_PRINT_PAD ) then
-		fb_PrintPadEx ( handle, mask )
-	end if
+	end scope
 #endmacro
 
 #define FB_PRINTNUM(fnum, _val, mask, fmt, _type) FB_PRINTNUM_EX( FB_FILE_TO_HANDLE(fnum), _val, mask, fmt, _type )
 
 #macro FB_WRITENUM_EX(handle, _val, mask, _type )
-	dim as ubyte buffer(0 to 79)
-	dim as size_t _len
-
-	if ( mask and FB_PRINT_BIN_NEWLINE ) then
-		_len = sprintf( @buffer(0), _type FB_BINARY_NEWLINE, _val )
-	elseif ( mask and FB_PRINT_NEWLINE ) then
-		_len = sprintf( @buffer(0), _type FB_NEWLINE, _val )
-	else
-		_len = sprintf( @buffer(0), _type ",", _val )
-	end if
-
-	fb_hFilePrintBufferEx( handle, @buffer(0), _len )
+	scope
+		dim as ubyte buffer(0 to 79)
+		dim as size_t _len
+	
+		if ( mask and FB_PRINT_BIN_NEWLINE ) then
+			_len = sprintf( @buffer(0), _type FB_BINARY_NEWLINE, _val )
+		elseif ( mask and FB_PRINT_NEWLINE ) then
+			_len = sprintf( @buffer(0), _type FB_NEWLINE, _val )
+		else
+			_len = sprintf( @buffer(0), _type ",", _val )
+		end if
+	
+		fb_hFilePrintBufferEx( handle, @buffer(0), _len )
+	end scope
 #endmacro
 
 #define FB_WRITENUM(fnum, _val, mask, _type)  FB_WRITENUM_EX(FB_FILE_TO_HANDLE(fnum), _val, mask, _type)
