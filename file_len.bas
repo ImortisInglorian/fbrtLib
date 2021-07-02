@@ -10,7 +10,8 @@ function fb_FileLenEx( filename as const ubyte ptr ) as fb_off_t
 	fp = fopen( filename, "rb" )
 	if ( fp <> NULL ) then
 		if ( fseeko( fp, 0, SEEK_END ) = 0 ) then
-			if ( (_len = ftello( fp )) <> -1 ) then
+			_len = ftello( fp )
+			if ( _len <> -1 ) then
 				fclose( fp )
 				fb_ErrorSetNum( FB_RTERROR_OK )
 				return _len
