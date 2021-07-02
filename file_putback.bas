@@ -22,7 +22,7 @@ function fb_FilePutBackEx( handle as FB_FILE ptr, src as const any ptr, chars as
     	bytes = chars
 	end if
 
-    if ( handle->putback_size + bytes > sizeof(handle->putback_buffer(0)) ) then
+    if ( handle->putback_size + bytes > ARRAY_SIZEOF(handle->putback_buffer) ) then
         res = fb_ErrorSetNum( FB_RTERROR_FILEIO )
     else
         /' note: if encoding != ASCII, putback buffer will be in
@@ -38,13 +38,12 @@ function fb_FilePutBackEx( handle as FB_FILE ptr, src as const any ptr, chars as
         else
     		/' char to wchar '/
     		dim as FB_WCHAR ptr dst = cast(FB_WCHAR ptr, @handle->putback_buffer(0))
-    		dim as ubyte ptr patch = cast(ubyte ptr, src)
-			chars -= 1
+    		dim as const ubyte ptr patch = cast(ubyte ptr, src)
 			while( chars > 0 )
+	    		*dst = *patch
 				dst += 1
 				patch += 1
-        		*dst = *patch
-				chars -= 1
+    			chars -= 1
 			wend
         end if
 
