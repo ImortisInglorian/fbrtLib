@@ -17,7 +17,7 @@ function fb_RTrimAny FBCALL ( src as FBSTRING ptr, pattern as FBSTRING ptr ) as 
 	_len = 0
 	if ( src->data <> NULL ) then
 		dim as ubyte ptr pachText = src->data
-		dim as ssize_t len_pattern = iif((pattern <> NULL) and (pattern->data <> NULL), FB_STRSIZE( pattern ), 0)
+		dim as ssize_t len_pattern = iif((pattern <> NULL) andalso (pattern->data <> NULL), FB_STRSIZE( pattern ), 0)
 		_len = FB_STRSIZE( src )
 		if ( len_pattern <> 0 ) then
 			while ( _len <> 0 )

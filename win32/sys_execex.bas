@@ -11,7 +11,7 @@ function fb_ExecEx FBCALL ( program as FBSTRING ptr, args as FBSTRING ptr, do_fo
 	dim as size_t len_arguments
 	dim as size_t len_program
 
-	got_program = (program <> NULL) and (program->data <> NULL)
+	got_program = (program <> NULL) andalso (program->data <> NULL)
 
 	if ( got_program <> 0 ) then
 		fb_hStrDelTemp( args )

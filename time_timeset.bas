@@ -11,7 +11,7 @@ function fb_SetTime FBCALL ( _time as FBSTRING ptr ) as long
    hh:mm
    hh:mm:ss
 '/
-	if ( (_time <> NULL) and (_time->data <> NULL) ) then
+	if ( (_time <> NULL) andalso (_time->data <> NULL) ) then
 		dim as ubyte ptr t
 		dim as ubyte c
 		dim as long i, h, m = 0, s = 0

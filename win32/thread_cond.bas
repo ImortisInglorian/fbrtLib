@@ -77,7 +77,7 @@ sub fb_CondInit( )
 	   winnt: pSignalObjectAndWait() returns WAIT_FAILED '/
 
 	pSignalObjectAndWait = cast(SIGNALOBJECTANDWAIT, GetProcAddress( GetModuleHandle( "KERNEL32" ), "SignalObjectAndWait" ))
-	if ( (pSignalObjectAndWait <> NULL) and (pSignalObjectAndWait(NULL, NULL, 0, 0) = WAIT_FAILED) ) then
+	if ( (pSignalObjectAndWait <> NULL) andalso (pSignalObjectAndWait(NULL, NULL, 0, 0) = WAIT_FAILED) ) then
 		__condops.create    = @fb_CondCreate_nt
 		__condops.destroy   = @fb_CondDestroy_nt
 		__condops.signal    = @fb_CondSignal_nt

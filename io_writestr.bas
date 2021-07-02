@@ -36,7 +36,7 @@ end sub
 sub fb_WriteString FBCALL ( fnum as long, s as FBSTRING ptr, mask as long )
 	dim as FB_FILE ptr handle = FB_FILE_TO_HANDLE( fnum )
 
-	if ( (s <> NULL) and (s->data <> NULL) ) then
+	if ( (s <> NULL) andalso (s->data <> NULL) ) then
 		hWriteStrEx( handle, s->data, FB_STRSIZE(s), mask )
 	else
 		if ( mask and FB_PRINT_BIN_NEWLINE ) then

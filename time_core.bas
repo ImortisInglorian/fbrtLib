@@ -82,7 +82,7 @@ end sub
 function fb_hTimeGetIntervalType( interval as FBSTRING ptr ) as long
 	dim as long result = FB_TIME_INTERVAL_INVALID
 
-    if ( interval <> NULL and interval->data <> NULL ) then
+    if ( interval <> NULL andalso interval->data <> NULL ) then
         if ( strcmp( interval->data, "yyyy" ) = 0 ) then
             result = FB_TIME_INTERVAL_YEAR
         elseif ( strcmp( interval->data, "q" ) = 0 ) then

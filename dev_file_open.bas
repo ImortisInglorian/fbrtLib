@@ -88,7 +88,7 @@ function fb_DevFileOpen( handle as FB_FILE ptr, filename as ubyte const ptr, fna
 					fp = fopen( fname, "w+b" )
 
 					/' if file could not be created and in ANY mode, try opening as read-only '/
-					if ( (fp = NULL) and (handle->access=FB_FILE_ACCESS_ANY) ) then
+					if ( (fp = NULL) andalso (handle->access=FB_FILE_ACCESS_ANY) ) then
 						fp = fopen( fname, "rb" )
 						if (fp <> NULL) then
 							' don't forget to set the effective access mode ...
