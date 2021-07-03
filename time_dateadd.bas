@@ -37,16 +37,16 @@ function fb_DateAdd FBCALL ( interval as FBSTRING ptr, interval_value_arg as dou
     end select
 
     /' Normalize date/time '/
-    select case ( interval_type <> 0 )
+    select case ( interval_type )
 		case FB_TIME_INTERVAL_WEEKDAY, FB_TIME_INTERVAL_DAY, FB_TIME_INTERVAL_DAY_OF_YEAR, FB_TIME_INTERVAL_SECOND, FB_TIME_INTERVAL_MINUTE, FB_TIME_INTERVAL_HOUR, FB_TIME_INTERVAL_WEEK_OF_YEAR:
 			/' Nothing to do here because normalization will implicitly be done
 			 * by the calculation of the new serial number. '/
 		case FB_TIME_INTERVAL_QUARTER, FB_TIME_INTERVAL_YEAR, FB_TIME_INTERVAL_MONTH:
 			/' Handle wrap-around for month '/
 			if ( _month < 1 ) then
-				carry_value = (_month - 12) / 12
+				carry_value = (_month - 12) \ 12
 			else
-				carry_value = (_month - 1) / 12
+				carry_value = (_month - 1) \ 12
 			end if
 			_year += carry_value
 			_month -= carry_value * 12
