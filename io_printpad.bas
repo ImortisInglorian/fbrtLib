@@ -39,7 +39,7 @@ sub fb_PrintPadEx ( handle as FB_FILE ptr, mask as long )
 
     old_x = tmp_handle->line_length + 1
     new_x = old_x + FB_TAB_WIDTH - 1
-    new_x /= FB_TAB_WIDTH
+    new_x \= FB_TAB_WIDTH
     new_x *= FB_TAB_WIDTH
     new_x += 1
     if (tmp_handle->width <> 0) then
