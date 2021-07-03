@@ -11,7 +11,7 @@ function fb_hBoolToStr FBCALL ( num as ubyte ) as ubyte ptr
 	static false_string as zstring ptr = @"false"
 	static true_string as zstring ptr = @"true"
 
-	return iif( num, false_string, true_string )
+	return iif( num, true_string, false_string )
 end function
 
 /':::::'/
