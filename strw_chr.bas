@@ -7,7 +7,7 @@ function fb_WstrChr ( args as long, ... ) as FB_WCHAR ptr
 	dim as FB_WCHAR ptr dst, s
 	dim as any ptr ap
 	dim as ulong num
-	dim as long i
+	dim as long i = any
 
 	if ( args <= 0 ) then
 		return NULL
@@ -20,11 +20,13 @@ function fb_WstrChr ( args as long, ... ) as FB_WCHAR ptr
 	if ( dst <> NULL ) then
 		/' convert '/
 		s = dst
-		for i = 0 to args - 1
+		i = 0
+		while( i < args  )
 			num = cva_arg( ap, ulong )
-			s += 1
 			*s = num
-		next
+			s += 1
+			i += 1
+		wend
 		/' null-term '/
 		*s = 0
 	end if
