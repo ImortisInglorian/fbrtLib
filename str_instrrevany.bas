@@ -18,6 +18,7 @@ function fb_StrInstrRevAny FBCALL ( src as FBSTRING ptr, patt as FBSTRING ptr, s
 			end if
 			
 			while ( (start <> 0) andalso (r = 0) )
+				start -= 1
 				dim as ssize_t i = 0
 				while( i <> size_patt )
 					if ( src->data[start] = patt->data[i] ) then
@@ -26,7 +27,6 @@ function fb_StrInstrRevAny FBCALL ( src as FBSTRING ptr, patt as FBSTRING ptr, s
 					end if
 					i += 1
 				wend
-				start -= 1
 			wend
 		end if
 	end if
