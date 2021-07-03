@@ -86,19 +86,19 @@ sub fb_hGetNumberParts cdecl ( number as double, pachFixPart as ubyte ptr, pcchL
 	if ( ullFix=0 andalso neg ) then
 		pachFixPart[0] = 0
 		len_fix = 0
-		chSign = 45
+		chSign = asc("-")
 	elseif ( ullFix=0 and number > 0.0 ) then
 		pachFixPart[0] = 0
 		len_fix = 0
-		chSign = 43
+		chSign = asc("+")
 	else
-	if ( neg ) then
-		chSign = 45
-	elseif ( ullFix > 0 ) then
-		chSign = 43
-	else
-		chSign = 0
-	end if
+		if ( neg ) then
+			chSign = asc("-")
+		elseif ( ullFix > 0 ) then
+			chSign = asc("+")
+		else
+			chSign = 0
+		end if
 		len_fix = sprintf( pachFixPart, "%" FB_LL_FMTMOD "u", ullFix )
 	end if
 
@@ -265,7 +265,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 				end if
 				
 				'' !!!TODO!!! literal too big while( value >= cdbl( 18446744073709551616# ) )
-				while( value >= cdbl( 18446744073709 ) )
+				while( value >= cdbl( 18446744073709551616.0# ) )
 					value /= 10.0
 					ExpValue += 1
 				wend
