@@ -15,30 +15,35 @@ sub fb_hDateDecodeSerial FBCALL ( serial as double, pYear as long ptr, pMonth as
 
     serial -= 2
     while( serial < 0 )
-        serial += fb_hTimeDaysInYear( cur_year - 1 )
+        cur_year -= 1
+        serial += fb_hTimeDaysInYear( cur_year )
     wend
 
-    while( serial >= (tmp_days = fb_hTimeDaysInYear( cur_year ) ) )
+	tmp_days = fb_hTimeDaysInYear( cur_year )
+    while( serial >= tmp_days )
         serial -= tmp_days
         cur_year += 1
+        tmp_days = fb_hTimeDaysInYear( cur_year )
     wend
 
     if ( pMonth <> 0 or pDay <> 0 ) then
-        while( serial >= (tmp_days = fb_hTimeDaysInMonth( cur_month, cur_year ) ) )
+		tmp_days = fb_hTimeDaysInMonth( cur_month, cur_year )
+        while( serial >= tmp_days )
             serial -= tmp_days
             cur_month += 1
+            tmp_days = fb_hTimeDaysInMonth( cur_month, cur_year )
         wend
     end if
 
     cur_day += serial
 
-    if ( pYear <> 0 ) then
+    if ( pYear <> NULL ) then
         *pYear = cur_year
 	end if
-    if ( pMonth <> 0 ) then
+    if ( pMonth <> NULL ) then
         *pMonth = cur_month
 	end if
-    if ( pDay <> 0 ) then
+    if ( pDay <> NULL ) then
         *pDay = cur_day
 	end if
 end sub
@@ -85,10 +90,11 @@ end function
 /':::::'/
 function fb_hGetDayOfYearEx( _year as long, _month as long, _day as long ) as long
     dim as long result = 0
-    dim as long cur_month
-    for cur_month = 1 to _month
+    dim as long cur_month = 1
+    while( cur_month <> _month )
         result += fb_hTimeDaysInMonth( cur_month, _year )
-	next
+        cur_month += 1
+	wend
     return result + _day
 end function
 
