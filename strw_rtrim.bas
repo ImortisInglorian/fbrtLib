@@ -18,7 +18,7 @@ function fb_WstrRTrim FBCALL ( src as const FB_WCHAR ptr ) as FB_WCHAR ptr
 	end if
 	
 	p = fb_wstr_SkipCharRev( src, chars, 32 )
-	chars = fb_wstr_CalcDiff( src, p ) + 1
+	chars = fb_wstr_CalcDiff( src, p )
 	if( chars <= 0 ) then
 		return NULL
 	end if
