@@ -55,7 +55,8 @@ function fb_wstr_ConvToA( dst as ubyte ptr, dst_chars as ssize_t, src as const F
 			c = 63
 		end if
 #else
-		dim as UTF_32 c = *src + 1 
+		dim as UTF_32 c = *src 
+		src += 1		 
 		if (c = 0) then
 			exit while
 		end if
@@ -64,7 +65,7 @@ function fb_wstr_ConvToA( dst as ubyte ptr, dst_chars as ssize_t, src as const F
 		end if
 #endif
 		*dst = c
-		*dst += 1
+		dst += 1
 	wend
 	*dst = asc( !"\000" )
 	return dst - origdst
