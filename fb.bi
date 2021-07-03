@@ -119,8 +119,12 @@
 		Declare Sub fb_StrUnlock FBCALL ()
 		Declare Sub fb_GraphicsLock FBCALL ()
 		Declare Sub fb_GraphicsUnlock FBCALL ()
-		Declare Sub fb_MathLock() FBCALL ()
+		Declare Sub fb_MathLock FBCALL ()
 		Declare Sub fb_MathUnlock FBCALL ()
+		#define FB_GRAPHICS_LOCK()   fb_GraphicsLock()
+		#define FB_GRAPHICS_UNLOCK() fb_GraphicsUnlock()
+		#define FB_MATH_LOCK()   fb_MathLock()
+		#define FB_MATH_UNLOCK() fb_MathUnlock()
 	#else
 		#define FB_LOCK()
 		#define FB_UNLOCK()
