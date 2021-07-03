@@ -13,7 +13,8 @@ private sub hUTF16ToUTF8( src as const FB_WCHAR ptr, chars as ssize_t, dst as UT
 		c = *src
 		src += 1
 		if ( c >= UTF16_SUR_HIGH_START and c <= UTF16_SUR_HIGH_END ) then
-			c = ((c - UTF16_SUR_HIGH_START) shl UTF16_HALFSHIFT) + ((cast(UTF_32, *src + 1)) - UTF16_SUR_LOW_START) + UTF16_HALFBASE
+			c = ((c - UTF16_SUR_HIGH_START) shl UTF16_HALFSHIFT) + ((cast(UTF_32, *src)) - UTF16_SUR_LOW_START) + UTF16_HALFBASE
+			src += 1
 			chars -= 1
 		end if
 
@@ -33,23 +34,23 @@ private sub hUTF16ToUTF8( src as const FB_WCHAR ptr, chars as ssize_t, dst as UT
 		goto default
 		'' switch( bytes )
 			case4:
-				*dst = ((c or UTF8_BYTEMARK) and UTF8_BYTEMASK)
 				dst -= 1
+				*dst = ((c or UTF8_BYTEMARK) and UTF8_BYTEMASK)
 				c shr= 6
 				/' fall through '/
 			case3:
-				*dst = ((c or UTF8_BYTEMARK) and UTF8_BYTEMASK)
 				dst -= 1
+				*dst = ((c or UTF8_BYTEMARK) and UTF8_BYTEMASK)
 				c shr= 6
 				/' fall through '/
 			case2:
-				*dst = ((c or UTF8_BYTEMARK) and UTF8_BYTEMASK)
 				dst -= 1
+				*dst = ((c or UTF8_BYTEMARK) and UTF8_BYTEMASK)
 				c shr= 6
 				/' fall through '/
 			case1:
-				*dst = (c or __fb_utf8_bmarkTb(bytes))
 				dst -= 1
+				*dst = (c or __fb_utf8_bmarkTb(bytes))
 				/' fall through '/
 			default:
 		'' end switch
@@ -84,23 +85,23 @@ private sub hUTF32ToUTF8( src as const FB_WCHAR ptr, chars as ssize_t, dst as UT
 		goto default
 		'' switch ( bytes )
 			case4:
-				*dst = ((c or UTF8_BYTEMARK) and UTF8_BYTEMASK)
 				dst -= 1
+				*dst = ((c or UTF8_BYTEMARK) and UTF8_BYTEMASK)
 				c shr= 6
 				/' fall through '/
 			case3:
-				*dst = ((c or UTF8_BYTEMARK) and UTF8_BYTEMASK)
 				dst -= 1
+				*dst = ((c or UTF8_BYTEMARK) and UTF8_BYTEMASK)
 				c shr= 6
 				/' fall through '/
 			case2:
-				*dst = ((c or UTF8_BYTEMARK) and UTF8_BYTEMASK)
 				dst -= 1
+				*dst = ((c or UTF8_BYTEMARK) and UTF8_BYTEMASK)
 				c shr= 6
 				/' fall through '/
 			case1:
-				*dst = (c or __fb_utf8_bmarkTb(bytes))
 				dst -= 1
+				*dst = (c or __fb_utf8_bmarkTb(bytes))
 			default:
 		'' end switch
 
@@ -222,6 +223,7 @@ private sub hUTF16ToUTF32( src as const FB_WCHAR ptr, chars as ssize_t, dst as U
 		src += 1
 		if ( c >= UTF16_SUR_HIGH_START and c <= UTF16_SUR_HIGH_END ) then
 			c = ((c - UTF16_SUR_HIGH_START) shl UTF16_HALFSHIFT) + (cast(UTF_32, *src + 1) - UTF16_SUR_LOW_START) + UTF16_HALFBASE
+			src += 1
 			*bytes -= sizeof( UTF_32 )
 			chars -= 1
 		end if
