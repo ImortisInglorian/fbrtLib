@@ -16,8 +16,8 @@ function fb_WstrInstrRevAny FBCALL ( src as const FB_WCHAR ptr, patt as const FB
 				start = 0
 			end if
 
-			start -= 1
 			while ( start <> 0 )
+				start -= 1
 				i = 0
 				while( i <> size_patt )
 					if ( src[start] = patt[i] ) then
@@ -25,7 +25,6 @@ function fb_WstrInstrRevAny FBCALL ( src as const FB_WCHAR ptr, patt as const FB
 					end if
 					i += 1
 				wend
-				start -= 1
 			wend
 		end if
 	end if
