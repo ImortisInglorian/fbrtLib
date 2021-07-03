@@ -94,13 +94,19 @@ end enum
 
 
 #define FB_FILE_FROM_HANDLE(handle) ((handle) - @__fb_ctx.fileTB(0)) + 1 - FB_RESERVED_FILES)
-#define FB_FILE_INDEX_VALID(index) ((index)>=1 andalso ((index)<=(FB_MAX_FILES-FB_RESERVED_FILES)))
+#define FB_FILE_INDEX_VALID(index) ((index)>=1 and ((index)<=(FB_MAX_FILES-FB_RESERVED_FILES)))
 
-#define FB_INDEX_IS_SPECIAL(index) (((index) < 1) andalso (((index) > (-FB_RESERVED_FILES))
+#define FB_INDEX_IS_SPECIAL(index) (((index) < 1) and (((index) > (-FB_RESERVED_FILES))
 
-#define FB_HANDLE_IS_SCREEN(handle) ((handle)<> NULL andalso FB_HANDLE_DEREF(handle) = FB_HANDLE_SCREEN)
+'' FB_HANDLE_IS_SCREEN() can only deref the handle if handle is valid
+''      #define FB_HANDLE_IS_SCREEN(handle) ((handle)<> NULL andalso FB_HANDLE_DEREF(handle) = FB_HANDLE_SCREEN)
+'' therefore, wrap it in an iif() so that it can be used as a function
+#define FB_HANDLE_IS_SCREEN(handle) (iif( (handle), FB_HANDLE_DEREF(handle) = FB_HANDLE_SCREEN, 0 ))
 
-#define FB_HANDLE_USED(handle) ((handle) <> NULL andalso ((handle)->hooks <> NULL))
+'' FB_HANDLE_USED() can only check handle->hooks if handle is valid
+''      #define FB_HANDLE_USED(handle) ((handle) <> NULL andalso ((handle)->hooks <> NULL))
+'' therefore, wrap it in an iif() so that it can be used as a function
+#define FB_HANDLE_USED(handle) (iif( (handle), (handle)->hooks<>NULL, 0 ))
 
 #define FB_HANDLE_SCREEN    (@__fb_ctx.fileTB(0))
 #define FB_HANDLE_PRINTER   (@__fb_ctx.fileTB(1))

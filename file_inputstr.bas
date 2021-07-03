@@ -14,7 +14,7 @@ function fb_FileStrInput FBCALL ( bytes as ssize_t, fnum as long ) as FBSTRING p
 	FB_LOCK()
 
     handle = FB_FILE_TO_HANDLE(fnum)
-    if ( FB_HANDLE_USED(handle) = NULL ) then
+    if ( FB_HANDLE_USED(handle) = 0 ) then
 		FB_UNLOCK()
 		return @__fb_ctx.null_desc
 	end if

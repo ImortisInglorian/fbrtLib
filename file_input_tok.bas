@@ -5,7 +5,7 @@
 extern "C"
 private function hReadChar( ctx as FB_INPUTCTX ptr ) as long
     /' device? '/
-    if ( FB_HANDLE_USED(ctx->handle) <> NULL ) then
+    if ( FB_HANDLE_USED(ctx->handle) <> 0 ) then
 		dim as long res, c
 		dim as size_t _len
         res = fb_FileGetDataEx( ctx->handle, 0, @c, 1, @_len, FALSE, FALSE )
@@ -27,7 +27,7 @@ end function
 
 private function hUnreadChar( ctx as FB_INPUTCTX ptr, c as long ) as long
     /' device? '/
-    if ( FB_HANDLE_USED(ctx->handle) <> NULL ) then
+    if ( FB_HANDLE_USED(ctx->handle) <> 0 ) then
         return fb_FilePutBackEx( ctx->handle, @c, 1 )
     /' console .. '/
     else

@@ -7,7 +7,7 @@ extern "C"
 function fb_FileSizeEx( handle as FB_FILE ptr ) as fb_off_t
 	dim as fb_off_t res = 0
 
-	if( FB_HANDLE_USED(handle) = NULL ) then
+	if( FB_HANDLE_USED(handle) = 0 ) then
 		return res
 	end if
 

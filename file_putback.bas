@@ -7,7 +7,7 @@ function fb_FilePutBackEx( handle as FB_FILE ptr, src as const any ptr, chars as
 	dim as long res
 	dim as size_t bytes
 
-    if( FB_HANDLE_USED(handle) = NULL ) then
+    if( FB_HANDLE_USED(handle) = 0 ) then
 		return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 	end if
 

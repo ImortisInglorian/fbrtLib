@@ -9,7 +9,7 @@ function fb_FileFlushEx( handle as FB_FILE ptr, systembuffers as long ) as long
 
 	FB_LOCK()
 
-	if FB_HANDLE_USED(handle) <> 0 then
+	if( FB_HANDLE_USED(handle) = 0 ) then
 		FB_UNLOCK()
 		return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 	end if

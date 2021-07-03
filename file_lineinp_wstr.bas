@@ -6,7 +6,7 @@ extern "C"
 function fb_FileLineInputWstr FBCALL ( fnum as long, dst as FB_WCHAR ptr, max_chars as ssize_t ) as long
     dim as FB_FILE ptr handle = FB_FILE_TO_HANDLE(fnum)
 
-    if ( FB_HANDLE_USED(handle) = NULL ) then
+    if ( FB_HANDLE_USED(handle) = 0 ) then
 		return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 	end if
 

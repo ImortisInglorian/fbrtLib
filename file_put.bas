@@ -15,7 +15,7 @@ function fb_FilePutDataEx _
 	) as long
 	dim as long res
 
-    if ( FB_HANDLE_USED(handle) = NULL ) then
+    if ( FB_HANDLE_USED(handle) = 0 ) then
 		return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 	end if
 

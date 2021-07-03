@@ -91,7 +91,7 @@ function fb_DevLptOpen( handle as FB_FILE ptr, filename as const ubyte ptr, file
         res = fb_PrinterOpen( devInfo, devInfo->iPort, filename )
     else
         res = fb_ErrorSetNum( FB_RTERROR_OK )
-        if ( FB_HANDLE_USED(redir_handle) <> 0 ) then
+        if ( FB_HANDLE_USED(redir_handle) ) then
             /' We only allow redirection between OPEN "LPT1:" and LPRINT '/
             if ( handle = FB_HANDLE_PRINTER ) then
                 redir_handle->redirection_to = handle

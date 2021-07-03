@@ -16,7 +16,7 @@ private function fb_hFileLineInputEx( handle as FB_FILE ptr, dst as any ptr, dst
 	dim as ubyte buffer(0 to BUFFER_LEN - 1)
     dim as eInputMode  mode = eIM_Invalid
 
-    if ( FB_HANDLE_USED(handle) = NULL ) then
+    if ( FB_HANDLE_USED(handle) = 0 ) then
 		return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 	end if
 

@@ -12,7 +12,7 @@ function fb_WidthFile FBCALL ( fnum as long, _width as long ) as long
 
     handle = FB_HANDLE_DEREF(FB_FILE_TO_HANDLE(fnum))
 
-    if ( FB_HANDLE_USED(handle) = NULL ) then
+    if ( FB_HANDLE_USED(handle) = 0 ) then
         /' invalid file handle '/
         FB_UNLOCK()
         return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )

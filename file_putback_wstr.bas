@@ -8,7 +8,7 @@ function fb_FilePutBackWstrEx( handle as FB_FILE ptr, src as const FB_WCHAR ptr,
 	dim as size_t bytes
     dim as ubyte ptr dst
 
-    if ( FB_HANDLE_USED(handle) = NULL ) then
+    if ( FB_HANDLE_USED(handle) = 0 ) then
 		return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 	end if
 
