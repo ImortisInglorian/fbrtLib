@@ -3,17 +3,19 @@
 #include "fb.bi"
 
 extern "C"
-sub  fb_MemCopyClear FBCALL ( dst as ubyte ptr, dstlen as ssize_t, src as ubyte ptr, srclen as ssize_t )
-	dim as ssize_t bytes
+sub  fb_MemCopyClear FBCALL ( dst as ubyte ptr, dstlen as size_t, src as ubyte ptr, srclen as size_t )
+	dim as size_t bytes
 
-	if ( (dst = NULL) or (src = NULL) or (dstlen <= 0) or (srclen <= 0) ) then
+	if ( (dst = NULL) or (src = NULL) or (dstlen = 0) ) then
 		exit sub
 	end if
 
 	bytes = iif(dstlen <= srclen, dstlen, srclen)
 	
 	/' move '/
-	memcpy( dst, src, bytes )
+	if( bytes > 0 ) then
+		memcpy( dst, src, bytes )
+	end if
 
 	/' clear remainder '/
 	dstlen -= bytes
