@@ -6,7 +6,7 @@ extern "C"
 function fb_WstrLTrimEx FBCALL ( src as const FB_WCHAR ptr, pattern as const FB_WCHAR ptr ) as FB_WCHAR ptr
 	dim as FB_WCHAR ptr dst
 	dim as ssize_t _len
-	dim as const FB_WCHAR ptr p = NULL
+	dim as const FB_WCHAR ptr p = src
 
     if ( src = NULL ) then
         return NULL
