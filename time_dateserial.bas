@@ -14,16 +14,19 @@ function fb_DateSerial FBCALL ( _year as long, _month as long, _day as long ) as
 
     if ( cur_year < _year ) then
         while ( cur_year <> _year )
-            result += fb_hTimeDaysInYear( cur_year + 1 )
+            result += fb_hTimeDaysInYear( cur_year )
+            cur_year += 1
         wend
     else
         while ( cur_year <> _year )
-            result -= fb_hTimeDaysInYear( cur_year - 1 )
+            result -= fb_hTimeDaysInYear( cur_year )
+            cur_year -= 1
         wend
     end if
 
     while ( cur_month <> _month )
-        result += fb_hTimeDaysInMonth( cur_month + 1, _year )
+        result += fb_hTimeDaysInMonth( cur_month, _year )
+        cur_month += 1
     wend
 
     result += _day - cur_day
