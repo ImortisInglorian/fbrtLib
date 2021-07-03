@@ -68,7 +68,7 @@ sub fb_hGetNumberParts cdecl ( number as double, pachFixPart as ubyte ptr, pcchL
 	pszFracEnd = pachFracPart + len_frac
 	while ( pszFracEnd <> pszFracStart )
 		pszFracEnd -= 1
-		if ( *pszFracEnd <> asc("0") ) then
+		if ( *pszFracEnd = asc("0") ) then
 			if ( *pszFracEnd <> chDecimalPoint ) then
 				pszFracStart += 1
 				pszFracEnd += 1
@@ -97,7 +97,7 @@ sub fb_hGetNumberParts cdecl ( number as double, pachFixPart as ubyte ptr, pcchL
 		elseif ( ullFix > 0 ) then
 			chSign = asc("+")
 		else
-			chSign = 0
+			chSign = 0 '' NUL CHAR
 		end if
 		len_fix = sprintf( pachFixPart, "%" FB_LL_FMTMOD "u", ullFix )
 	end if
@@ -159,10 +159,10 @@ function hRound cdecl ( value as double, pInfo as const FormatMaskInfo ptr ) as 
 
     	/' convert to fixed-point because the imprecision and the optimizations
     	   that can be done by gcc (ie: keeping values on fpu stack as twords) '/
-    	dim as longint intfrac = cast(longint, _frac * 1.E + 15)
-    	if ( intfrac > cast(longint, 5.E + 14) ) then
+    	dim as longint intfrac = cast(longint, _frac * 1.E+15)
+    	if ( intfrac > cast(longint, 5.E+14) ) then
         	value = ceil( value )
-		elseif( intfrac < -cast(longint, 5.E + 14) ) then
+		elseif( intfrac < -cast(longint, 5.E+14) ) then
         	value = floor( value )
 		end if
 	else
@@ -174,11 +174,11 @@ function hRound cdecl ( value as double, pInfo as const FormatMaskInfo ptr ) as 
 	        dim as double fracfrac = modf( _frac * p10, @_frac )
 
 	        /' convert to fixed-point, see above '/
-	        dim as longint intfrac = cast(longint, fracfrac * (1.E + 15 / p10) )
+	        dim as longint intfrac = cast(longint, fracfrac * (1.E+15 / p10) )
 
-	        if ( intfrac > cast(longint, 5.E + 14 / p10) ) then
+	        if ( intfrac > cast(longint, 5.E+14 / p10) ) then
 	        	_frac += 1.0
-	        elseif ( intfrac < -cast(longint, 5.E + 14 / p10) ) then
+	        elseif ( intfrac < -cast(longint, 5.E+14 / p10) ) then
 	        	_frac += -1.0
 			end if
 			
@@ -218,7 +218,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 
 	DBG_ASSERT( pInfo <> NULL )
 
-	if ( not(do_output) ) then
+	if ( do_output = FALSE ) then
 		memset( pInfo, 0, sizeof(FormatMaskInfo) )
 		pszOut = NULL
 		LenOut = 0
@@ -331,14 +331,15 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 
 
 			/' handle too big numbers '/
-			if ( (ExpValue > 0) and not(pInfo->has_exponent) ) then
-				dim as long i
-				for i = 0 to ExpValue
-					FixPart(LenFix+i) = 0
-				next
+			if ( (ExpValue > 0) andalso (pInfo->has_exponent = FALSE) ) then
+				dim as long i = 0
+				while( i < ExpValue )
+					FixPart(LenFix+i) = asc( "0" )
+					i += 1
+				wend
 				LenFix += ExpValue
 
-				FixPart(LenFix) = 0
+				FixPart(LenFix) = 0 '' NUL CHAR
 			end if
 
 			/' Number of digits to skip on output '/
@@ -351,21 +352,23 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 		LenFrac = 0
 	end if
 
-	IndexFix = (IndexFrac = 0)
-	for i = 0 to mask_length - 1
+	IndexFix = 0 
+	IndexFrac = 0
+	i = 0
+	while( i <> mask_length )
 		dim as const ubyte ptr pszAdd = mask + i
 		dim as ubyte ptr pszAddFree = NULL
 		dim as long LenAdd = 1
 		dim as ubyte chCurrent = *pszAdd
 		if ( do_skip ) then
 			do_skip = FALSE
-			if ( not(do_output) ) then
+			if ( do_output = FALSE ) then
 				pInfo->length_min += 1
 			else
 				do_add = TRUE
 			end if
 		elseif ( do_exp ) then
-			if ( not(do_output) ) then
+			if ( do_output = FALSE ) then
 				pInfo->has_exponent = TRUE
 				select case chCurrent
 					case 45: ' -
@@ -381,9 +384,9 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 			else
 				if ( pInfo->exponent_add_plus or ExpValue < 0 ) then
 					if ( ExpValue < 0 ) then
-						pszAdd = sadd("-")
+						pszAdd = @"-"
 					else
-						pszAdd = sadd("+")
+						pszAdd = @"+"
 					end if
 					do_add = TRUE
 				end if
@@ -394,7 +397,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 		elseif ( do_string ) then
 			if ( chCurrent = 34 ) then
 				do_string = FALSE
-			elseif ( not(do_output) ) then
+			elseif ( do_output = FALSE ) then
 				pInfo->length_min += 1
 			else
 				do_add = TRUE
@@ -403,14 +406,13 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 			if ( do_output ) then
 				select case chCurrent
 					case 46, 35, 48: ' . # 0
-						if ( not(pInfo->has_sign) and not(did_sign) ) then
+						if ( ( pInfo->has_sign = FALSE ) and ( did_sign = FALSE ) ) then
 							did_sign = TRUE
 							if ( pInfo->sign_add_plus or chSign=45 ) then
 								pszAdd = @chSign
 								do_add = TRUE
 							else
-								i -= 1
-								continue for
+								continue while
 							end if
 						elseif ( NumSkipFix < 0 ) then
 							DBG_ASSERT( IndexFix <> LenFix )
@@ -435,7 +437,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 								LenAdd = -NumSkipFix
 							end if
 							do_add = TRUE
-							if ( not(did_thousandsep) ) then
+							if ( did_thousandsep = FALSE ) then
 								IndexFix += LenAdd
 								NumSkipFix += LenAdd
 							end if
@@ -446,7 +448,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 				end if
 			end if
 
-			if ( not(do_add) ) then
+			if ( do_add = FALSE  ) then
 				select case chCurrent
 					case 37, 44, 35, 48, 43, 69, 101: ' % , # 0 + E e
 						if ( pInfo->mask_type = eMT_Unknown ) then
@@ -476,9 +478,9 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 				/' Here comes the real interpretation '/
 				select case chCurrent
 					case 37: '%
-						if ( not(do_output) ) then
+						if ( do_output = FALSE ) then
 							if ( pInfo->mask_type = eMT_Number ) then
-								if ( not(pInfo->has_percent) ) then
+								if ( pInfo->has_percent = FALSE ) then
 									pInfo->has_percent = TRUE
 									pInfo->length_min += 1
 								else
@@ -492,9 +494,9 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 							do_add = TRUE
 						end if
 					case 46: ' .
-						if ( not(do_output) ) then
+						if ( do_output = FALSE ) then
 							if ( pInfo->mask_type = eMT_Number ) then
-								if ( not(pInfo->has_decimal_point) ) then
+								if ( pInfo->has_decimal_point = FALSE ) then
 									pInfo->has_decimal_point = TRUE
 									if ( last_was_comma ) then
 										pInfo->num_digits_omit += 3
@@ -513,7 +515,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 						end if
 						do_num_frac = TRUE
 					case 44: ' ,
-						if ( not(do_output) ) then
+						if ( do_output = FALSE ) then
 							if ( pInfo->mask_type = eMT_Number ) then
 								if ( last_was_comma ) then
 									pInfo->num_digits_omit += 3
@@ -534,7 +536,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 							end if
 						end if
 					case 35, 48: ' # 0
-						if ( not(do_output) ) then
+						if ( do_output = FALSE ) then
 							if ( pInfo->mask_type = eMT_Number ) then
 								if ( do_num_frac ) then
 									pInfo->num_digits_frac += 1
@@ -553,21 +555,23 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 							end if
 						else
 							if ( pInfo->mask_type = eMT_Number ) then
-								if ( not(do_num_frac) ) then
+								if ( do_num_frac = FALSE ) then
 									if ( IndexFrac <> LenFrac ) then
-										pszAdd = @FracPart(0) + (IndexFrac + 1)
+										pszAdd = @FracPart(0) + IndexFrac
+										IndexFrac += 1
 										do_add = TRUE
-									elseif ( chCurrent = 0 ) then
+									elseif ( chCurrent = asc( "0" ) ) then
 										do_add = TRUE
 									end if
 								elseif ( did_exp ) then
 									if ( NumSkipExp > 0 ) then
-										if( chCurrent = 0 ) then
+										if( chCurrent = asc( "0" ) ) then
 											do_add = TRUE
 										end if
 										NumSkipExp -= 1
 									elseif( IndexExp <> LenExp ) then
-										pszAdd = @ExpPart(0) + (IndexExp + 1)
+										pszAdd = @ExpPart(0) + IndexExp
+										IndexExp += 1
 										if ( (IndexExp-ExpAdjust) >= pInfo->exp_digits and ( IndexExp <> LenExp ) ) then
 											i -= 1
 										end if
@@ -593,17 +597,18 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 										end if
 									end if
 
-									if ( not(do_add) ) then
+									if ( do_add = FALSE ) then
 										if ( NumSkipFix ) then
-											if ( chCurrent = 0 ) then
+											if ( chCurrent = asc( "0" ) ) then
 												do_add = TRUE
 											end if
 											NumSkipFix -= 1
 										else
 											if ( IndexFix <> LenFix ) then
-												pszAdd = @FixPart(0) + (IndexFix + 1)
+												pszAdd = @FixPart(0) + IndexFix
+												IndexFix += 1
 												do_add = TRUE
-											elseif ( chCurrent = 0 ) then
+											elseif ( chCurrent = asc( "0" ) ) then
 												do_add = TRUE
 											end if
 										end if
@@ -615,9 +620,9 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 						end if
 					case 69, 101: ' E e
 						if ( pInfo->mask_type = eMT_Number ) then
-							if ( not(did_exp) ) then
+							if ( did_exp = FALSE ) then
 								do_exp = TRUE
-								if( not(do_output) ) then
+								if( do_output = FALSE ) then
 									pInfo->length_min += 1
 								else
 									do_add = TRUE
@@ -627,7 +632,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 								return FALSE
 							end if
 						else
-							if ( not(do_output) ) then
+							if ( do_output = FALSE ) then
 								pInfo->length_min += 1
 							else
 								do_add = TRUE
@@ -636,23 +641,23 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 					case 92: ' \
 						do_skip = TRUE
 					case 42, 36, 40, 41, 32, 9: ' * $ ( ) space tab
-						if ( not(do_output) ) then
+						if ( do_output = FALSE ) then
 							pInfo->length_min += 1
 						else
 							do_add = TRUE
 						end if
 					case 43, 45: ' + -
 						/' position of the sign? '/
-						if ( not(do_output) ) then
+						if ( do_output = FALSE ) then
 							pInfo->length_min += 1
-							if ( not(pInfo->has_sign) ) then
+							if ( pInfo->has_sign = FALSE ) then
 								pInfo->has_sign = TRUE
 								pInfo->sign_add_plus = (chCurrent = 43 )
 							end if
 						else
 							if ( pInfo->mask_type = eMT_DateTime ) then
 								do_add = TRUE
-							elseif ( not(did_sign) ) then
+							elseif ( did_sign = FALSE ) then
 								did_sign = TRUE
 								if ( pInfo->sign_add_plus or chSign = 45 ) then
 									pszAdd = @chSign
@@ -672,7 +677,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 							wend
 							did_hour = FALSE
 							if ( chCurrent = 109 ) then
-								if ( count > 2 or not(old_did_hour) ) then
+								if ( count > 2 or (old_did_hour = FALSE ) ) then
 									chCurrent = 77
 								end if
 							end if
@@ -681,7 +686,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 								i += (count-1)
 								fb_IntlGetTimeFormat( @FixPart(0), ARRAY_SIZEOF(FixPart), FALSE )
 								tmp = fb_hStrFormat ( value, @FixPart(0), strlen(@FixPart(0)) )
-								if ( not(do_output) ) then
+								if ( do_output = FALSE ) then
 									pInfo->length_min += FB_STRSIZE(tmp)
 								else
 									pszAddFree = strdup( tmp->data )
@@ -691,7 +696,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 								fb_hStrDelTemp( tmp )
 							elseif ( chCurrent = 116 and (count = 1 or count = 2) ) then
 								i += count-1
-								if ( not(do_output) ) then
+								if ( do_output = FALSE ) then
 									pInfo->length_min += count
 									pInfo->has_ampm = TRUE
 								else
@@ -709,7 +714,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 								i += count-1
 								fb_IntlGetDateFormat( @FixPart(0), ARRAY_SIZEOF(FixPart), FALSE )
 								tmp = fb_hStrFormat ( value, @FixPart(0), strlen(@FixPart(0)) )
-								if ( not(do_output) ) then
+								if ( do_output = FALSE ) then
 									pInfo->length_min += FB_STRSIZE(tmp)
 								else
 									pszAddFree = strdup( tmp->data )
@@ -719,7 +724,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 								fb_hStrDelTemp( tmp )
 							elseif ( chCurrent = 100 and count = 1 ) then
 								i += count-1
-								if ( not(do_output) ) then
+								if ( do_output = FALSE ) then
 									pInfo->length_min += 1
 									pInfo->length_opt += 1
 								else
@@ -729,7 +734,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 								end if
 							elseif ( chCurrent = 100 and count = 2 ) then
 								i += count - 1
-								if ( not(do_output) ) then
+								if ( do_output = FALSE ) then
 									pInfo->length_min += 2
 								else
 									pszAdd = @FixPart(0)
@@ -740,7 +745,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 								dim as long _weekday = fb_Weekday( value, FB_WEEK_DAY_SUNDAY )
 								dim as FBSTRING ptr tmp = fb_WeekdayName( _weekday, (count = 3), FB_WEEK_DAY_SUNDAY )
 								i += count - 1
-								if ( not(do_output) ) then
+								if ( do_output = FALSE ) then
 									pInfo->length_min += FB_STRSIZE( tmp )
 								else
 									pszAddFree = strdup( tmp->data )
@@ -750,7 +755,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 								fb_hStrDelTemp( tmp )
 							elseif ( (chCurrent = 109 or chCurrent = 110 ) and count = 1 ) then
 								i += count - 1
-								if ( not(do_output) ) then
+								if ( do_output = FALSE ) then
 									pInfo->length_min += 1
 									pInfo->length_opt += 1
 								else
@@ -760,7 +765,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 								end if
 							elseif ( (chCurrent = 109 or chCurrent = 110) and count = 2 ) then
 								i += count-1
-								if( not(do_output) ) then
+								if( do_output = FALSE ) then
 									pInfo->length_min += 2
 								else
 									pszAdd = @FixPart(0)
@@ -769,7 +774,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 								end if
 							elseif ( (chCurrent = 104 or chCurrent = 72) and count = 1 ) then
 								i += count-1
-								if ( not(do_output) ) then
+								if ( do_output = FALSE ) then
 									pInfo->length_min += 1
 									pInfo->length_opt += 1
 								else
@@ -788,7 +793,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 								did_hour = TRUE
 							elseif ( (chCurrent = 104 or chCurrent = 72) and count = 2 ) then
 								i += count-1
-								if( not(do_output) ) then
+								if( do_output = FALSE ) then
 									pInfo->length_min += 2
 								else
 									dim as long _hour = fb_Hour( value )
@@ -806,7 +811,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 								did_hour = TRUE
 							elseif ( chCurrent = 115 and count = 1 ) then
 								i += count-1
-								if ( not(do_output) ) then
+								if ( do_output = FALSE ) then
 									pInfo->length_min += 1
 									pInfo->length_opt += 1
 								else
@@ -816,7 +821,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 								end if
 							elseif ( chCurrent = 115 and count = 2 ) then
 								i += count-1
-								if ( not(do_output) ) then
+								if ( do_output = FALSE ) then
 									pInfo->length_min += 2
 								else
 									pszAdd = @FixPart(0)
@@ -825,7 +830,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 								end if
 							elseif ( chCurrent = 77 and count = 1 ) then
 								i += count-1
-								if( not(do_output) ) then
+								if( do_output = FALSE ) then
 									pInfo->length_min += 1
 									pInfo->length_opt += 1
 								else
@@ -835,7 +840,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 								end if
 							elseif ( chCurrent = 77 and count = 2 ) then
 								i += count-1
-								if ( not(do_output) ) then
+								if ( do_output = FALSE ) then
 									pInfo->length_min += 2
 								else
 									pszAdd = @FixPart(0)
@@ -846,7 +851,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 								dim as long _month = fb_Month( value )
 								dim as FBSTRING ptr tmp = fb_MonthName( _month, (count = 3) )
 								i += count-1
-								if ( not(do_output) ) then
+								if ( do_output = FALSE ) then
 									pInfo->length_min += FB_STRSIZE( tmp )
 								else
 									pszAddFree = strdup( tmp->data )
@@ -856,7 +861,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 								fb_hStrDelTemp( tmp )
 							elseif ( chCurrent = 121 and count < 3 ) then
 								i += count-1
-								if( not(do_output) ) then
+								if( do_output = FALSE ) then
 									pInfo->length_min += 2
 								else
 									pszAdd = @FixPart(0)
@@ -866,7 +871,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 								end if
 							elseif ( chCurrent = 121 and count = 4 ) then
 								i += count-1
-								if ( not(do_output) ) then
+								if ( do_output = FALSE ) then
 									pInfo->length_min += 4
 								else
 									pszAdd = @FixPart(0)
@@ -874,14 +879,14 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 									do_add = TRUE
 								end if
 							else
-								if ( not(do_output) ) then
+								if ( do_output = FALSE ) then
 									pInfo->length_min += 1
 								else
 									do_add = TRUE
 								end if
 							end if
 						else
-							if ( not(do_output) ) then
+							if ( do_output = FALSE ) then
 								pInfo->length_min += 1
 							else
 								do_add = TRUE
@@ -889,7 +894,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 						end if
 					case 47: ' /
 						/' date divider '/
-						if ( not(do_output) ) then
+						if ( do_output = FALSE ) then
 							pInfo->length_min += 1
 						else
 							if ( pInfo->mask_type = eMT_DateTime ) then
@@ -899,7 +904,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 						end if
 					case 58: ' :
 						/' time divider '/
-						if ( not(do_output) ) then
+						if ( do_output = FALSE ) then
 							pInfo->length_min += 1
 						else
 							if ( pInfo->mask_type = eMT_DateTime ) then
@@ -911,7 +916,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 						/' AM/PM or A/P (in any combination of cases) '/
 						if ( pInfo->mask_type = eMT_DateTime ) then
 							if ( (strncasecmp( mask+i, "AM/PM", 5 ) = 0) or strncasecmp( mask+i, "A/P", 3 ) = 0) then
-								if ( not(do_output) ) then
+								if ( do_output = FALSE ) then
 									if ( pInfo->mask_type = eMT_Unknown ) then
 										pInfo->mask_type = eMT_DateTime
 									elseif ( pInfo->mask_type <> eMT_DateTime ) then
@@ -931,14 +936,14 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 								end if
 								i += iif((mask[i+1] = 47),  2, 4)
 							else
-								if ( not(do_output) ) then
+								if ( do_output = FALSE ) then
 									pInfo->length_min += 1
 								else
 									do_add = TRUE
 								end if
 							end if
 						else
-							if ( not(do_output) ) then
+							if ( do_output = FALSE ) then
 								pInfo->length_min += 1
 							else
 								do_add = TRUE
@@ -947,7 +952,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 					case 34: ' "
 						do_string = TRUE
 					case else:
-						if ( not(do_output) ) then
+						if ( do_output = FALSE ) then
 							pInfo->length_min += 1
 						else
 							do_add = TRUE
@@ -955,8 +960,8 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 				end select
 			end if
 		end if
-		if ( last_was_comma and (chCurrent <> 44 or i = (mask_length - 1)) ) then
-			if( not(do_output) and not(was_k_div) ) then
+		if ( (last_was_comma <> FALSE) andalso (chCurrent <> 44 or i = (mask_length - 1)) ) then
+			if( (do_output = FALSE) and (was_k_div = FALSE ) ) then
 				pInfo->has_thousand_sep = TRUE
 			end if
 			last_was_comma = FALSE
@@ -980,10 +985,11 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 				free( pszAddFree )
 			end if
 		end if
-	next
+		i += 1
+	wend
 
-	if ( not(do_output) ) then
-		if ( not(pInfo->has_decimal_point) ) then
+	if ( do_output = FALSE ) then
+		if ( pInfo->has_decimal_point = FALSE ) then
 			if ( pInfo->num_digits_omit <> 0 ) then
 				pInfo->num_digits_omit += 3
 			end if
@@ -997,7 +1003,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 		if ( pInfo->exp_digits < 5 ) then
 			pInfo->length_opt += 5 - pInfo->exp_digits
 		end if
-		if ( not(pInfo->has_sign) ) then
+		if ( pInfo->has_sign = FALSE ) then
 			pInfo->length_min += 1
 		end if
 	else
