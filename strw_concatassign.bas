@@ -26,7 +26,7 @@ function fb_WstrConcatAssign FBCALL ( dst as FB_WCHAR ptr, dst_chars as ssize_t,
 			src_len = dst_chars - dst_len
 		end if
 
-		fb_wstr_Copy( @dst[dst_len], src, src_len + 1 )
+		fb_wstr_Copy( @dst[dst_len], src, src_len )
 	end if
 
 	return dst
