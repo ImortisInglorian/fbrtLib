@@ -195,7 +195,7 @@ declare sub 	 fb_PrintSPC         	FBCALL ( fnum as long, n as ssize_t )
 
 declare sub 	 fb_WriteVoid        	FBCALL ( fnum as long, mask as long )
 declare sub 	 fb_WriteBool        	FBCALL ( fnum as long, _val as ubyte, mask as long )
-declare sub 	 fb_WriteByte        	FBCALL ( fnum as long, _val as ubyte, mask as long )
+declare sub 	 fb_WriteByte        	FBCALL ( fnum as long, _val as byte, mask as long )
 declare sub 	 fb_WriteUByte       	FBCALL ( fnum as long, _val as ubyte, mask as long )
 declare sub 	 fb_WriteShort       	FBCALL ( fnum as long, _val as short, mask as long )
 declare sub 	 fb_WriteUShort      	FBCALL ( fnum as long, _val as ushort, mask as long )
