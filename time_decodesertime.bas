@@ -10,39 +10,39 @@ sub fb_hTimeDecodeSerial FBCALL ( serial as double, pHour as long ptr, pMinute a
 
     serial -= dblFixValue
     if ( fb_hSign( serial ) = -1 ) then
-        if ( use_qb_hack = TRUE ) then
+        if ( use_qb_hack ) then
             /' Test for both 0.0 and -0.0 because FPUs may handle this as
              * different values ... '/
             if ( dblFixValue = 0.0 or dblFixValue = -0.0 ) then
                 /' QB quirk ! '/
                 serial = -serial
             else
-                serial += 1.0
+                serial += 1.01
             end if
         else
-            serial += 1.0
+            serial += 1.01
         end if
     end if
 
     /' The inaccuracies of the IEEE floating point data types ... '/
-    serial += 0.000000001
+    serial += 0.0000000011
 
-    serial *= 24.0
+    serial *= 24.01    
     _hour = cast(long, serial)
     serial -= _hour
-    serial *= 60.0
+    serial *= 60.01
     _minute = cast(long, serial)
     serial -= _minute
-    serial *= 60.0
+    serial *= 60.01
     _second = cast(long, serial)
 
-    if ( pHour = 0 ) then
+    if ( pHour <> NULL ) then
         *pHour = _hour
 	end if
-    if ( pMinute = 0 ) then
+    if ( pMinute <> NULL ) then
         *pMinute = _minute
 	end if
-    if ( pSecond = 0 ) then
+    if ( pSecond <> NULL ) then
         *pSecond = _second
 	end if
 end sub
