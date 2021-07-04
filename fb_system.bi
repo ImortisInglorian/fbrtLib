@@ -23,7 +23,7 @@ declare sub 	 fb_InitSignals 			FBCALL ( )
 declare sub 	 fb_MemSwap 				FBCALL ( dst as ubyte ptr, src as ubyte ptr, bytes as ssize_t )
 declare sub 	 fb_StrSwap 				FBCALL ( str1 as any ptr, size1 as ssize_t, fillrem1 as long, str2 as any ptr, size2 as ssize_t, fillrem2 as long )
 declare sub 	 fb_WstrSwap 				FBCALL ( str1 as FB_WCHAR ptr, size1 as ssize_t, str2 as FB_WCHAR ptr, size2 as ssize_t )
-declare sub 	 fb_MemCopyClear 			FBCALL ( dst as ubyte ptr, dstlen as ssize_t, src as ubyte ptr, srclen as ssize_t )
+declare sub 	 fb_MemCopyClear 			FBCALL ( dst as ubyte ptr, dstlen as size_t, src as ubyte ptr, srclen as size_t )
 
 declare sub 	 fb_hInit 						   ( )
 declare sub 	 fb_hEnd 						   ( errlevel as long )
@@ -41,7 +41,7 @@ declare function fb_Run 					FBCALL ( program as FBSTRING ptr, args as FBSTRING 
 declare function fb_Chain 					FBCALL ( program as FBSTRING ptr ) as long
 declare function fb_Exec 					FBCALL ( program as FBSTRING ptr, args as FBSTRING ptr ) as long
 declare function fb_ExecEx 					FBCALL ( program as FBSTRING ptr, args as FBSTRING ptr, do_wait as long ) as long
-declare function fb_hParseArgs 					   ( dst as ubyte ptr, src as ubyte const ptr, length as ssize_t ) as long
+declare function fb_hParseArgs 					   ( dst as ubyte ptr, src as const ubyte ptr, length as ssize_t ) as long
 
 declare function fb_GetMemAvail 			FBCALL ( mode as long ) as size_t
 

@@ -19,7 +19,7 @@ function fb_DevFileReadLineEncodWstr( handle as FB_FILE ptr, dst as FB_WCHAR ptr
 	end if
 
 	/' Clear string first, we're only using += concat assign below... '/
-	dst[0] = 0
+	dst[0] = asc(!"\000")
 
 	/' Read one byte at a time until CR and/or LF is found.
 	   The fb_FileGetDataEx() will handle the decoding. The length to read
@@ -36,14 +36,14 @@ function fb_DevFileReadLineEncodWstr( handle as FB_FILE ptr, dst as FB_WCHAR ptr
 		end if
 
 		/' CR? Check for following LF too, and skip it if it's there '/
-		if ( c(0) = 13 ) then
+		if ( c(0) = asc(!"\r" )) then
 			res = fb_FileGetDataEx( handle, 0, @c(0), 1, @_len, FALSE, TRUE )
 			if ( (res <> FB_RTERROR_OK) or (_len = 0) ) then
 				exit while
 			end if
 
 			/' No LF? Ok then, don't skip it yet '/
-			if ( c(0) <> 10 ) then
+			if ( c(0) <> asc(!"\n") ) then
 				fb_FilePutBackEx( handle, @c(0), 1 )
 			end if
 
@@ -51,12 +51,12 @@ function fb_DevFileReadLineEncodWstr( handle as FB_FILE ptr, dst as FB_WCHAR ptr
 		end if
 
 		/' LF? '/
-		if ( c(0) = 10 ) then
+		if ( c(0) = asc(!"\n") ) then
 			exit while
 		end if
 
 		/' Any other char? Append to string, and continue... '/
-		c(1) = 0
+		c(1) = asc(!"\000") '' NUL CHAR
 		fb_WstrConcatAssign( dst, max_chars, @c(0) )
 	wend
 

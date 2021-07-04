@@ -30,7 +30,7 @@ function fb_WstrBinEx_l FBCALL ( num as ulongint, digits as long ) as FB_WCHAR p
 
 	i = digits - 1
 	while( i >= 0 )
-		s[i] = 0 + (num and 1) /' '0' or '1' '/
+		s[i] = asc("0") + (num and 1) /' '0' or '1' '/
 		num shr= 1
 		i -= 1
 	wend

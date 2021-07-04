@@ -16,7 +16,7 @@ function fb_DrvIntlGetDateFormat cdecl ( buffer as ubyte ptr, _len as size_t ) a
 
 	/' Can I use this? The problem is that it returns the date format
 	 * with localized separators. '/
-	pszName = fb_hGetLocaleInfo( LOCALE_USER_DEFAULT, LOCALE_SSHORTDATE, @achFormat(0), sizeof(achFormat) - 1 )
+	pszName = fb_hGetLocaleInfo( LOCALE_USER_DEFAULT, LOCALE_SSHORTDATE, @achFormat(0), ARRAY_SIZEOF(achFormat) - 1 )
 	if ( pszName <> NULL ) then
 		dim as size_t uiNameSize = strlen(pszName)
 		if ( uiNameSize < _len ) then
@@ -29,9 +29,9 @@ function fb_DrvIntlGetDateFormat cdecl ( buffer as ubyte ptr, _len as size_t ) a
 
 
 	/' Fall back for Win95 and WinNT < 4.0 '/
-	pszDayZero = fb_hGetLocaleInfo( LOCALE_USER_DEFAULT, LOCALE_IDAYLZERO, @achDayZero(0), sizeof(achDayZero) )
-	pszMonZero = fb_hGetLocaleInfo( LOCALE_USER_DEFAULT, LOCALE_IMONLZERO, @achMonZero(0), sizeof(achMonZero) )
-	pszDate = fb_hGetLocaleInfo( LOCALE_USER_DEFAULT, LOCALE_IDATE, @achDate(0), sizeof(achDate) )
+	pszDayZero = fb_hGetLocaleInfo( LOCALE_USER_DEFAULT, LOCALE_IDAYLZERO, @achDayZero(0), ARRAY_SIZEOF(achDayZero) )
+	pszMonZero = fb_hGetLocaleInfo( LOCALE_USER_DEFAULT, LOCALE_IMONLZERO, @achMonZero(0), ARRAY_SIZEOF(achMonZero) )
+	pszDate = fb_hGetLocaleInfo( LOCALE_USER_DEFAULT, LOCALE_IDATE, @achDate(0), ARRAY_SIZEOF(achDate) )
 	if ( pszDate <> NULL and pszDayZero <> 0 and pszMonZero <> 0 ) then
 		select case( atoi( pszDate ) )
 			case 0:

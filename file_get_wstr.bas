@@ -13,7 +13,7 @@ function fb_FileGetWstrEx( handle as FB_FILE ptr, _pos as fb_off_t, dst as FB_WC
 		*bytesread = 0
 	end if
 
-	if ( FB_HANDLE_USED(handle) = 0 or dst = 0 or dst_chars < 0 ) then
+	if( (FB_HANDLE_USED(handle) = 0) or (dst = 0) or (dst_chars < 0) ) then
 		return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 	end if
 
@@ -49,7 +49,7 @@ function fb_FileGetWstrEx( handle as FB_FILE ptr, _pos as fb_off_t, dst as FB_WC
 		rawbytesread += sizeof(FB_WCHAR) - extra /' round up '/
 	end if
 	DBG_ASSERT( (rawbytesread mod sizeof(FB_WCHAR)) = 0 )
-	dst[rawbytesread / sizeof(FB_WCHAR)] = 0
+	dst[rawbytesread / sizeof(FB_WCHAR)] = asc( !"\000" ) '' NUL CHAR
 
 	return FB_RTERROR_OK
 end function

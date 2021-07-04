@@ -9,7 +9,7 @@ function fb_InkeyQB FBCALL ( ) as FBSTRING ptr
 	
 	FB_LOCK()
 	
-	if ( res <> NULL and res->data <> NULL and ( FB_STRSIZE(res) = 2 ) and ( res->data[0] = FB_EXT_CHAR ) ) then
+	if ( res <> NULL andalso res->data <> NULL andalso ( FB_STRSIZE(res) = 2 ) andalso ( res->data[0] = FB_EXT_CHAR ) ) then
 		res->data[0] = 0
 	end if
 

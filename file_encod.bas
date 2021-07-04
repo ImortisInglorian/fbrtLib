@@ -4,7 +4,7 @@
 
 extern "C"
 /':::::'/
-function fb_hFileStrToEncoding( _encoding as ubyte ptr ) as FB_FILE_ENCOD
+function fb_hFileStrToEncoding( _encoding as const ubyte ptr ) as FB_FILE_ENCOD
 	if ( _encoding = NULL ) then
 		return FB_FILE_ENCOD_DEFAULT
 	end if

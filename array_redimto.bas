@@ -3,7 +3,7 @@
 #include "fb.bi"
 
 extern "C"
-function fb_ArrayRedimTo FBCALL ( dest as FBARRAY ptr, source as FBARRAY const ptr, isvarlen as long, ctor as FB_DEFCTOR, dtor as FB_DEFCTOR ) as long
+function fb_ArrayRedimTo FBCALL ( dest as FBARRAY ptr, source as const FBARRAY ptr, isvarlen as long, ctor as FB_DEFCTOR, dtor as FB_DEFCTOR ) as long
 	dim as ssize_t diff
 	dim as ubyte ptr this_
 	dim as ubyte ptr limit
@@ -30,7 +30,12 @@ function fb_ArrayRedimTo FBCALL ( dest as FBARRAY ptr, source as FBARRAY const p
 	if ( dtor <> NULL ) then
 		fb_ArrayDestructObj( dest, dtor )
 	end if
-	fb_ArrayErase( dest, isvarlen )
+
+	if( isvarlen ) then
+		fb_ArrayStrErase( dest )
+	else
+		fb_ArrayErase( dest )
+	end if
 
 	DBG_ASSERT( dest->element_len = source->element_len or dest->element_len = 0 )
 	DBG_ASSERT( dest->dimensions = source->dimensions or dest->dimensions = 0 )

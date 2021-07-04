@@ -11,8 +11,8 @@ sub fb_DevScrnInit_ReadLine( )
 	fb_DevScrnInit_NoOpen( )
 
 	FB_LOCK( )
-    if ( FB_HANDLE_SCREEN.hooks->pfnReadLine = NULL ) then
-        FB_HANDLE_SCREEN.hooks->pfnReadLine = @fb_DevScrnReadLine
+    if ( FB_HANDLE_SCREEN->hooks->pfnReadLine = NULL ) then
+        FB_HANDLE_SCREEN->hooks->pfnReadLine = @fb_DevScrnReadLine
 	end if
 	FB_UNLOCK( )
 end sub

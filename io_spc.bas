@@ -19,7 +19,7 @@ sub fb_PrintTab FBCALL ( fnum as long, newcol as long )
 
 	if ( FB_HANDLE_IS_SCREEN(handle) or handle->type = FB_FILE_TYPE_CONSOLE ) then
         if ( handle->type = FB_FILE_TYPE_CONSOLE ) then
-            if( handle->hooks <> NULL and handle->hooks->pfnFlush <> NULL ) then
+            if( handle->hooks <> NULL andalso handle->hooks->pfnFlush <> NULL ) then
                 handle->hooks->pfnFlush( handle )
 			end if
         end if
@@ -89,7 +89,7 @@ sub fb_PrintSPC FBCALL ( fnum as long, n as ssize_t )
 
 	if ( FB_HANDLE_IS_SCREEN(handle) or handle->type = FB_FILE_TYPE_CONSOLE ) then
         if ( handle->type = FB_FILE_TYPE_CONSOLE ) then
-            if ( handle->hooks <> NULL and handle->hooks->pfnFlush <> NULL ) then
+            if ( handle->hooks <> NULL andalso handle->hooks->pfnFlush <> NULL ) then
                 handle->hooks->pfnFlush( handle )
 			end if
         end if

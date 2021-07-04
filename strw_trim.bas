@@ -3,9 +3,9 @@
 #include "fb.bi"
 
 extern "C"
-function fb_WstrTrim FBCALL ( src as FB_WCHAR const ptr ) as FB_WCHAR ptr
+function fb_WstrTrim FBCALL ( src as const FB_WCHAR ptr ) as FB_WCHAR ptr
 	dim as FB_WCHAR ptr dst
-	dim as FB_WCHAR ptr p
+	dim as const FB_WCHAR ptr p
 	dim as ssize_t chars
 
 	if ( src = NULL ) then
@@ -17,13 +17,13 @@ function fb_WstrTrim FBCALL ( src as FB_WCHAR const ptr ) as FB_WCHAR ptr
 		return NULL
 	end if
 
-	p = fb_wstr_SkipCharRev( src, chars, 30 )
-	chars = fb_wstr_CalcDiff( src, p ) + 1
+	p = fb_wstr_SkipCharRev( src, chars, asc(" ") )
+	chars = fb_wstr_CalcDiff( src, p )
 	if ( chars <= 0 ) then
 		return NULL
 	end if
 
-	p = fb_wstr_SkipChar( src, chars, 32 )
+	p = fb_wstr_SkipChar( src, chars, asc(" ") )
 	chars -= fb_wstr_CalcDiff( src, p )
 	if ( chars <= 0 ) then
 		return NULL

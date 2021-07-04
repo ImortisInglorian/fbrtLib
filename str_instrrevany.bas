@@ -6,7 +6,7 @@ extern "C"
 function fb_StrInstrRevAny FBCALL ( src as FBSTRING ptr, patt as FBSTRING ptr, start as ssize_t ) as ssize_t
 	dim as ssize_t r = 0
 
-	if ( (src <> NULL) and (src->data <> NULL) and (patt <> NULL) and (patt->data <> NULL) ) then
+	if ( (src <> NULL) andalso (src->data <> NULL) andalso (patt <> NULL) andalso (patt->data <> NULL) ) then
 		dim as ssize_t size_src = FB_STRSIZE(src)
 		dim as ssize_t size_patt = FB_STRSIZE(patt)
 
@@ -17,16 +17,16 @@ function fb_StrInstrRevAny FBCALL ( src as FBSTRING ptr, patt as FBSTRING ptr, s
 				start = 0
 			end if
 			
-			start -= 1
-			while ( start and (r = 0) )
-				dim as ssize_t i
-				for i = 0 to size_patt
+			while ( (start <> 0) andalso (r = 0) )
+				start -= 1
+				dim as ssize_t i = 0
+				while( i <> size_patt )
 					if ( src->data[start] = patt->data[i] ) then
 						r = start + 1
-						exit for
+						exit while
 					end if
-				next
-				start -= 1
+					i += 1
+				wend
 			wend
 		end if
 	end if

@@ -7,7 +7,7 @@
 extern "C"
 private sub fb_hPrintPadEx( handle as FB_FILE ptr, mask as long, current_x as long, new_x as long )
 #ifdef FB_NATIVE_TAB
-    FB_PRINT_EX(handle, "\t", 1, mask)
+    FB_PRINT_EX(handle, !"\t", 1, mask)
 #else
     dim as ubyte tab_char_buffer(0 to FB_TAB_WIDTH)
     if (new_x <= current_x) then
@@ -26,7 +26,7 @@ end sub
 /':::::'/
 sub fb_PrintPadEx ( handle as FB_FILE ptr, mask as long )
 #ifdef FB_NATIVE_TAB
-    FB_PRINT_EX(handle, "\t", 1, mask)
+    FB_PRINT_EX(handle, !"\t", 1, mask)
 
 #else
     dim as FB_FILE ptr tmp_handle
@@ -39,7 +39,7 @@ sub fb_PrintPadEx ( handle as FB_FILE ptr, mask as long )
 
     old_x = tmp_handle->line_length + 1
     new_x = old_x + FB_TAB_WIDTH - 1
-    new_x /= FB_TAB_WIDTH
+    new_x \= FB_TAB_WIDTH
     new_x *= FB_TAB_WIDTH
     new_x += 1
     if (tmp_handle->width <> 0) then

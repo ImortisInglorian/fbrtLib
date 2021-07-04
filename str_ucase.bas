@@ -6,7 +6,7 @@
 extern "C"
 function fb_StrUcase2 FBCALL ( src as FBSTRING ptr, mode as long ) as FBSTRING ptr
 	dim as FBSTRING ptr dst
-	dim as ssize_t i, _len = 0
+	dim as ssize_t i = any, _len = 0
 	dim as long c
 	dim as ubyte ptr s, d
 
@@ -30,23 +30,29 @@ function fb_StrUcase2 FBCALL ( src as FBSTRING ptr, mode as long ) as FBSTRING p
 		d = dst->data
 
 		if ( mode = 1 ) then
-			for i = 0 to _len
-				c = *s + 1
+			i = 0
+			while( i < _len )
+				c = *s
+				s += 1
 				if ( (c >= 97) and (c <= 122) ) then
 					c -= 97 - 65
 				end if
-				*d += 1
 				*d = c
-			next
+				d += 1
+				i += 1				
+			wend
 		else
-			for i = 0 to _len - 1
-				c = *s + 1
+			i = 0
+			while( i < _len )
+				c = *s
+				s += 1
 				if ( islower( c ) ) then
 					c = toupper( c )
 				end if
-				*d += 1
 				*d = c
-			next
+				d += 1
+				i += 1				
+			wend
 		end if
 
 		/' null char '/

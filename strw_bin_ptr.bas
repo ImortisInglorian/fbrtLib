@@ -3,7 +3,7 @@
 #include "fb.bi"
 
 extern "C"
-function fb_WstrBin_p FBCALL ( p as any const ptr ) as FB_WCHAR ptr
+function fb_WstrBin_p FBCALL ( p as const any ptr ) as FB_WCHAR ptr
 #ifdef HOST_64BIT
 	return fb_WstrBin_l( cast(ulongint, p) )
 #else
@@ -11,7 +11,7 @@ function fb_WstrBin_p FBCALL ( p as any const ptr ) as FB_WCHAR ptr
 #endif
 end function
 
-function fb_WstrBinEx_p FBCALL ( p as any const ptr, digits as long ) as FB_WCHAR ptr
+function fb_WstrBinEx_p FBCALL ( p as const any ptr, digits as long ) as FB_WCHAR ptr
 #ifdef HOST_64BIT
 	return fb_WstrBinEx_l( cast(ulongint, p), digits )
 #else

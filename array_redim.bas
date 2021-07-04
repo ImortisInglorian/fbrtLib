@@ -2,13 +2,19 @@
 
 #include "fb.bi"
 extern "C"
-function fb_hArrayAlloc ( array as FBARRAY ptr, element_len as size_t, doclear as long, ctor as FB_DEFCTOR, dimensions as size_t, ap as va_list ) as long
+function fb_hArrayAlloc ( array as FBARRAY ptr, element_len as size_t, doclear as long, ctor as FB_DEFCTOR, dimensions as size_t, ap as cva_list ) as long
 	dim as size_t i, elements, size
 	dim as ssize_t diff
 	dim as FBARRAYDIM ptr _dim
 	dim as ssize_t lbTB(0 to FB_MAXDIMENSIONS - 1)
 	dim as ssize_t ubTB(0 to FB_MAXDIMENSIONS - 1)
-	
+
+	/' fixed length? '/
+
+	if( array->flags and FBARRAY_FLAGS_FIXED_LEN ) then
+		return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
+	endif
+
 	/' Must take care with the descriptor's maximum dimensions, because fbc
 	   may allocate a smaller descriptor (with room only for some
 	   dimensions, but not necessarily all of FB_MAXARRAYDIMS). Thus it's
@@ -40,9 +46,10 @@ function fb_hArrayAlloc ( array as FBARRAY ptr, element_len as size_t, doclear a
 
 	/' load bounds '/
 	_dim = @array->dimTB(0)
-	for i = 0 to dimensions - 1
-		lbTB(i) = cast(ssize_t, va_next( ap, ssize_t ))
-		ubTB(i) = cast(ssize_t, va_next( ap, ssize_t ))
+	i = 0
+	while( i < dimensions )
+		lbTB(i) = cast(ssize_t, cva_arg( ap, ssize_t ))
+		ubTB(i) = cast(ssize_t, cva_arg( ap, ssize_t ))
 		
 		if ( lbTB(i) > ubTB(i) ) then
 			return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
@@ -52,7 +59,8 @@ function fb_hArrayAlloc ( array as FBARRAY ptr, element_len as size_t, doclear a
 		_dim->lbound = lbTB(i)
 		_dim->ubound = ubTB(i)
 		_dim += 1
-	next
+		i += 1
+	wend
 	
 	/' calc size '/
 	elements = fb_hArrayCalcElements( dimensions, @lbTB(0), @ubTB(0) )
@@ -95,35 +103,26 @@ function fb_hArrayAlloc ( array as FBARRAY ptr, element_len as size_t, doclear a
 	return fb_ErrorSetNum( FB_RTERROR_OK )
 end function
 
-function hRedim ( array as FBARRAY ptr, element_len as size_t, doclear as long, isvarlen as long, dimensions as size_t, ap as va_list ) as long
+function hRedim ( array as FBARRAY ptr, element_len as size_t, doclear as long, isvarlen as long, dimensions as size_t, ap as cva_list ) as long
 	/' free old '/
-	fb_ArrayErase( array, isvarlen )
+	if( isvarlen ) then
+		fb_ArrayStrErase( array )
+	else
+		fb_ArrayErase( array )
+	end if
 	
    return fb_hArrayAlloc( array, element_len, doclear, NULL, dimensions, ap )
 end function
 
 function fb_ArrayRedimEx ( array as FBARRAY ptr, element_len as size_t, doclear as long, isvarlen as long, dimensions as size_t, ... ) as long
-	dim as any ptr ap
+	dim as cva_list ap
 	dim as long res
 
-	'va_start( ap, dimensions )
-	ap = va_first()
+	cva_start( ap, dimensions )
 	res = hRedim( array, element_len, doclear, isvarlen, dimensions, ap )
-	'va_end( ap )
+	cva_end( ap )
 	
 	return res
 end function 
 
-/' legacy '/
-function fb_ArrayRedim ( array as FBARRAY ptr, element_len as size_t, isvarlen as long, dimensions as size_t, ... ) as long
-	dim as any ptr ap
-	dim as long res
-
-	'va_start( ap, dimensions )
-	ap = va_first()
-	res = hRedim( array, element_len, TRUE, isvarlen, dimensions, ap )
-	'va_end( ap )
-
-	return res
-end function
 end extern

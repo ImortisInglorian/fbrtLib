@@ -5,7 +5,7 @@
 #define BUFFER_SIZE 512
 
 extern "C"
-function fb_CrtFileCopy FBCALL ( source as ubyte const ptr, destination as ubyte const ptr ) as long
+function fb_CrtFileCopy FBCALL ( source as const ubyte ptr, destination as const ubyte ptr ) as long
 	dim as FILE ptr src, dst
 	dim as ubyte buffer(0 to BUFFER_SIZE - 1)
 	dim as size_t bytesread

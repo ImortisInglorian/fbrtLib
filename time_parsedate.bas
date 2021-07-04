@@ -5,8 +5,8 @@
 
 extern "C"
 /':::::'/
-private function fb_hIsMonth( text as ubyte const ptr, text_len as size_t, end_text as ubyte ptr ptr, short_name as long, localized as long ) as long
-    dim as ubyte ptr txt_end = cast(ubyte ptr, text)
+private function fb_hIsMonth( text as const ubyte ptr, text_len as size_t, end_text as const ubyte ptr ptr, short_name as long, localized as long ) as long
+    dim as const ubyte ptr txt_end = text
     dim as long _month
     for _month = 1 to 12
         dim as FBSTRING ptr sMonthName = fb_IntlGetMonthName( _month, short_name, not(localized) )
@@ -47,33 +47,37 @@ private function fb_hIsMonth( text as ubyte const ptr, text_len as size_t, end_t
 end function
 
 /':::::'/
-private function fb_hFindMonth( text as ubyte const ptr, text_len as size_t, end_text as ubyte ptr ptr ) as long
-    dim as long short_name
-    for short_name = 0 to 2
+private function fb_hFindMonth( text as const ubyte ptr, text_len as size_t, end_text as ubyte ptr ptr ) as long
+    dim as long short_name = 0
+    while( short_name <> 2 )
         dim as long localized = 2
-        while( localized - 1 <> 0 )
+        localized -= 1
+        while( localized )
             dim as long _month = fb_hIsMonth( text, text_len, end_text, short_name, localized )
             if ( _month <> 0 ) then
                 return _month
             end if
+	        localized -= 1
         wend
-    next
+        short_name += 1
+    wend
     return 0
 end function
 
 /':::::'/
 private function fb_hDateOrder( pOrderDay as long ptr, pOrderMonth as long ptr, pOrderYear as long ptr ) as long
     dim as long order_month = 0, order_day = 1, order_year = 2, order_index = 0
-    dim as long tmp, got_sep
-    dim as ubyte short_format(0 to 89)
+    dim as long tmp = any, got_sep
+    dim as ubyte short_format(0 to 89) = any
 
-    tmp = fb_IntlGetDateFormat( @short_format(0), sizeof(short_format), FALSE )
+    tmp = fb_IntlGetDateFormat( @short_format(0), ARRAY_SIZEOF(short_format), FALSE )
     if ( tmp = 0 ) then
         return FALSE
     end if
 
     got_sep = TRUE
-    for tmp = 0 to short_format(tmp)
+    tmp = 0
+    while( short_format(tmp) <> 0 )
         dim as long ch = FB_CHAR_TO_INT( short_format(tmp) )
         if ( islower(ch) <> 0 ) then
             ch = toupper( ch )
@@ -94,7 +98,8 @@ private function fb_hDateOrder( pOrderDay as long ptr, pOrderMonth as long ptr, 
 				end if
 				got_sep = TRUE
         end select
-    next
+        tmp += 1
+    wend
 
     if ( order_day = order_month or order_day = order_year or order_month = order_year ) then
         return FALSE
@@ -131,9 +136,9 @@ private function InlineSelect( index as long, num1 as long, num2 as long, num3 a
 end function
 
 /':::::'/
-function fb_hDateParse( text as ubyte ptr, text_len as size_t, pDay as long ptr, pMonth as long ptr, pYear as long ptr, pLength as size_t ptr ) as long
+function fb_hDateParse( text as const ubyte ptr, text_len as size_t, pDay as long ptr, pMonth as long ptr, pYear as long ptr, pLength as size_t ptr ) as long
     dim as size_t length = 0, _len = text_len
-    dim as ubyte ptr text_start = cast(ubyte ptr, text)
+    dim as const ubyte ptr text_start = text
     dim as long result = FALSE
     dim as long _year = 1899, _month = 12, _day = 30
     dim as long order_year, order_month, order_day

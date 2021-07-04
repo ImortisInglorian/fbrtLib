@@ -3,7 +3,7 @@
 #include "fb.bi"
 
 extern "C"
-function fb_DevLptWriteWstr( handle as FB_FILE ptr, value as FB_WCHAR const ptr, valuelen as size_t ) as long
+function fb_DevLptWriteWstr( handle as FB_FILE ptr, value as const FB_WCHAR ptr, valuelen as size_t ) as long
     dim as long res
 
     FB_LOCK()

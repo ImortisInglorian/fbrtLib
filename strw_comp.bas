@@ -3,7 +3,7 @@
 #include "fb.bi"
 
 extern "C"
-function fb_WstrCompare FBCALL ( str1 as FB_WCHAR const ptr, str2 as FB_WCHAR const ptr ) as long
+function fb_WstrCompare FBCALL ( str1 as const FB_WCHAR ptr, str2 as const FB_WCHAR ptr ) as long
 	dim as long res
 	dim as ssize_t str1_len, str2_len
 
@@ -22,7 +22,7 @@ function fb_WstrCompare FBCALL ( str1 as FB_WCHAR const ptr, str2 as FB_WCHAR co
 	/' left null? '/
 	if ( str1 = NULL ) then
 		/' right also null? return eq '/
-		if ( (str2 = NULL) or (fb_wstr_Len( str2 ) = 0) ) then
+		if ( (str2 = NULL) orelse (fb_wstr_Len( str2 ) = 0) ) then
 			return 0
 		end if
 

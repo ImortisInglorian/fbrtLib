@@ -58,16 +58,16 @@ declare sub 	 fb_GetSize 		FBCALL ( cols as long ptr, rows as long ptr )
 type FB_READXYPROC as function ( col as long, row as long, colorflag as long ) as ulong
 declare function fb_ReadXY 			FBCALL ( col as long, row as long, colorflag as long ) as ulong
 
-type FB_PRINTBUFFPROC as sub ( buffer as any const ptr, len as size_t, mask as long )
-type FB_PRINTBUFFWPROC as sub ( buffer as FB_WCHAR ptr, len as size_t, mask as long )
+type FB_PRINTBUFFPROC as sub ( buffer as const any ptr, len as size_t, mask as long )
+type FB_PRINTBUFFWPROC as sub ( buffer as const FB_WCHAR ptr, len as size_t, mask as long )
 
 type FB_READSTRPROC as function ( buffer as ubyte ptr, len as ssize_t ) as ubyte ptr
 declare function fb_ReadString 			   ( buffer as ubyte ptr, len as ssize_t, f as FILE ptr ) as ubyte ptr
 
 type FB_LINEINPUTPROC as function ( text as FBSTRING ptr, dst as any ptr, dst_len as ssize_t, fillrem as long, addquestion as long, addnewline as long ) as long
-type FB_LINEINPUTWPROC as function ( text as FB_WCHAR const ptr, dst as FB_WCHAR ptr, max_chars as ssize_t, addquestion as long, addnewline as long ) as long
+type FB_LINEINPUTWPROC as function ( text as const FB_WCHAR ptr, dst as FB_WCHAR ptr, max_chars as ssize_t, addquestion as long, addnewline as long ) as long
 declare function fb_LineInput 		FBCALL ( text as FBSTRING ptr, dst as any ptr, dst_len as ssize_t, fillrem as long, addquestion as long, addnewline as long ) as long
-declare function fb_LineInputWstr 	FBCALL ( text as FB_WCHAR const ptr, dst as FB_WCHAR ptr, max_chars as ssize_t, addquestion as long, addnewline as long ) as long
+declare function fb_LineInputWstr 	FBCALL ( text as const FB_WCHAR ptr, dst as FB_WCHAR ptr, max_chars as ssize_t, addquestion as long, addnewline as long ) as long
 
 declare function fb_Multikey 		FBCALL ( scancode as long ) as long
 declare function fb_GetMouse 		FBCALL ( x as long ptr, y as long ptr, z as long ptr, buttons_ as long ptr, clip as long ptr ) as long

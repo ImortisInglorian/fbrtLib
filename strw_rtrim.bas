@@ -3,9 +3,9 @@
 #include "fb.bi"
 
 extern "C"
-function fb_WstrRTrim FBCALL ( src as FB_WCHAR const ptr ) as FB_WCHAR ptr
+function fb_WstrRTrim FBCALL ( src as const FB_WCHAR ptr ) as FB_WCHAR ptr
 	dim dst as FB_WCHAR ptr
-	dim p as FB_WCHAR ptr
+	dim p as const FB_WCHAR ptr
 	dim chars as ssize_t
 
 	if( src = NULL ) then
@@ -18,7 +18,7 @@ function fb_WstrRTrim FBCALL ( src as FB_WCHAR const ptr ) as FB_WCHAR ptr
 	end if
 	
 	p = fb_wstr_SkipCharRev( src, chars, 32 )
-	chars = fb_wstr_CalcDiff( src, p ) + 1
+	chars = fb_wstr_CalcDiff( src, p )
 	if( chars <= 0 ) then
 		return NULL
 	end if

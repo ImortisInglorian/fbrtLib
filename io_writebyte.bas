@@ -4,7 +4,7 @@
 
 extern "C"
 /':::::'/
-sub fb_WriteByte FBCALL ( fnum as long, _val as ubyte, mask as long )
+sub fb_WriteByte FBCALL ( fnum as long, _val as byte, mask as long )
     FB_WRITENUM( fnum, _val, mask, "%d" )
 end sub
 

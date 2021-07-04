@@ -1,6 +1,6 @@
 #include "windows.bi"
 
-type fb_FnProcessMouseEvent as sub ( pEvent as MOUSE_EVENT_RECORD const ptr )
+type fb_FnProcessMouseEvent as sub ( pEvent as const MOUSE_EVENT_RECORD ptr )
 
 type FB_CONSOLE_CTX
 	as HANDLE 			inHandle, outHandle

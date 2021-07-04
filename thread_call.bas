@@ -85,8 +85,8 @@ end sub
 
 declare function getArgument( args_list as va_list ptr ) as ffi_type ptr
 
-private function getStruct( args_list as va_list ptr ) as ffi_type ptr
-    dim as long num_elems = va_arg( *args_list, long )
+private function getStruct( args_list as cva_list ptr ) as ffi_type ptr
+    dim as long num_elems = cva_arg( *args_list, long )
     dim as long i, j
 
     /' prepare type '/
@@ -116,8 +116,8 @@ private function getStruct( args_list as va_list ptr ) as ffi_type ptr
     return ffi_arg
 end function
 
-private function getArgument( args_list as va_list ptr ) as ffi_type ptr
-    dim as long arg_type = va_arg( (*args_list), long )
+private function getArgument( args_list as cva_list ptr ) as ffi_type ptr
+    dim as long arg_type = cva_arg( (*args_list), long )
     select case( arg_type )
         case FB_THREADCALL_INT8:
 			return @ffi_type_sint8
@@ -159,10 +159,9 @@ function fb_ThreadCall( proc as any ptr, abi as long, stack_size as ssize_t, num
     /' initialize lists and arrays '/
     ffi_args = cast(ffi_type ptr ptr, malloc( sizeof( ffi_type ptr ) * num_args ))
     values = cast(any ptr ptr, malloc( sizeof( any ptr ) * num_args ))
-    dim as va_list args_list
+    dim as cva_list args_list
     
-	'va_start(args_list, num_args)
-    args_list = va_first()
+	cva_start(args_list, num_args)
 	
     /' scan arguments and values from var_args '/
     for i=0 to num_args - 1
@@ -178,9 +177,9 @@ function fb_ThreadCall( proc as any ptr, abi as long, stack_size as ssize_t, num
             free(ffi_args)
             return NULL
         end if
-        values[i] = va_arg( args_list, any ptr )
+        values[i] = cva_arg( args_list, any ptr )
     next
-	'va_end( args_list )
+	cva_end( args_list )
     
     /' pack into thread parameter '/
     param = malloc( sizeof( FBTHREADCALL ) )
@@ -191,6 +190,7 @@ function fb_ThreadCall( proc as any ptr, abi as long, stack_size as ssize_t, num
     param->values = values
     
     /' actually start thread '/
+	'' !!! FIXME !!! -- passing different type
     return fb_ThreadCreate( @threadproc, cast(any ptr,param), stack_size )
 end function
 
@@ -215,9 +215,10 @@ private sub threadproc FBCALL ( param as any ptr )
         status = not(FFI_OK)
 	end if
 
+#endif
+
     /' prep FFI call interface '/
     if ( status = FFI_OK ) then
-#endif
         status = ffi_prep_cif( _
             @cif, _              '' handle
             abi, _               '' ABI (CDECL or STDCALL on x86, host default on x86_64)

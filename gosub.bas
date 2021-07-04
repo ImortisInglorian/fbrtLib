@@ -39,7 +39,7 @@ end function
 
 /':::::'/
 function fb_GosubPop FBCALL ( ctx as GOSUBCTX ptr ) as long
-	if ( ctx <> NULL and  ctx->top <> NULL ) then
+	if ( ctx <> NULL andalso  ctx->top <> NULL ) then
 		dim as GOSUBNODE ptr node = ctx->top->next
 		free(ctx->top)
 		ctx->top = node
@@ -54,7 +54,7 @@ end function
 
 /':::::'/
 function fb_GosubReturn FBCALL ( ctx as GOSUBCTX ptr ) as long
-	if ( ctx <> NULL and ctx->top <> NULL ) then
+	if ( ctx <> NULL andalso ctx->top <> NULL ) then
 		dim as GOSUBNODE ptr node = ctx->top->next
 		
 		/' TODO: with a different stack allocation strategy, this

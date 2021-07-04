@@ -2,7 +2,7 @@
 
 #include "fb.bi"
 extern "C"
-sub fb_WstrAssignMid FBCALL ( dst as FB_WCHAR ptr, dst_len as ssize_t, start as ssize_t, _len as ssize_t, src as FB_WCHAR const ptr )
+sub fb_WstrAssignMid FBCALL ( dst as FB_WCHAR ptr, dst_len as ssize_t, start as ssize_t, _len as ssize_t, src as const FB_WCHAR ptr )
 	dim as ssize_t src_len
 
     if ( (dst = NULL) or (src = NULL) ) then

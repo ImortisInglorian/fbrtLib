@@ -27,10 +27,10 @@ sub fb_MemSwap FBCALL ( dst as ubyte ptr, src as ubyte ptr, bytes as ssize_t )
 	/' remainder '/
 	for i = 0 to (bytes and 3) - 1
 		tb = *src
-		src += 1
-		dst += 1
 		*src = *dst
+		src += 1
 		*dst = tb
+		dst += 1
 	next
 	
 	FB_UNLOCK()

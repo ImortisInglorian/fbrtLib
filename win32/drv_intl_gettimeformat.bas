@@ -14,7 +14,7 @@ function fb_DrvIntlGetTimeFormat cdecl ( buffer as ubyte ptr, _len as size_t ) a
 
 	/' Can I use this? The problem is that it returns the date format
 	 * with localized separators. '/
-	pszFormat = fb_hGetLocaleInfo( LOCALE_USER_DEFAULT, LOCALE_STIMEFORMAT, @achFormat(0), sizeof(achFormat) - 1 )
+	pszFormat = fb_hGetLocaleInfo( LOCALE_USER_DEFAULT, LOCALE_STIMEFORMAT, @achFormat(0), ARRAY_SIZEOF(achFormat) - 1 )
 	if ( pszFormat <> NULL ) then
 		dim as size_t uiNameSize = strlen(pszFormat)
 		if ( uiNameSize < _len ) then
@@ -27,21 +27,21 @@ function fb_DrvIntlGetTimeFormat cdecl ( buffer as ubyte ptr, _len as size_t ) a
 
 
 	/' Fall back for Win95 and WinNT < 4.0 '/
-	pszTimeMarkPos = fb_hGetLocaleInfo( LOCALE_USER_DEFAULT, LOCALE_ITIMEMARKPOSN, @achTimeMarkPos(0), sizeof(achTimeMarkPos) )
-	pszTimeMark = fb_hGetLocaleInfo( LOCALE_USER_DEFAULT, LOCALE_ITIME, @achTimeMark(0), sizeof(achTimeMark) )
-	pszHourZero = fb_hGetLocaleInfo( LOCALE_USER_DEFAULT, LOCALE_ITLZERO, @achHourZero(0), sizeof(achHourZero) )
+	pszTimeMarkPos = fb_hGetLocaleInfo( LOCALE_USER_DEFAULT, LOCALE_ITIMEMARKPOSN, @achTimeMarkPos(0), ARRAY_SIZEOF(achTimeMarkPos) )
+	pszTimeMark = fb_hGetLocaleInfo( LOCALE_USER_DEFAULT, LOCALE_ITIME, @achTimeMark(0), ARRAY_SIZEOF(achTimeMark) )
+	pszHourZero = fb_hGetLocaleInfo( LOCALE_USER_DEFAULT, LOCALE_ITLZERO, @achHourZero(0), ARRAY_SIZEOF(achHourZero) )
 
 	i = 0
 
-	use_timemark = ( pszTimeMark <> NULL and atoi( pszTimeMark ) = 1 )
-	timemark_prefix = ( pszTimeMarkPos <> NULL and atoi( pszTimeMarkPos ) = 1 )
+	use_timemark = ( pszTimeMark <> NULL andalso atoi( pszTimeMark ) = 1 )
+	timemark_prefix = ( pszTimeMarkPos <> NULL andalso atoi( pszTimeMarkPos ) = 1 )
 
 	if ( use_timemark and timemark_prefix ) then
 		strcpy( @achFormat(0) + i, "AM/PM " )
 		i += 6
 	end if
 
-	if ( pszHourZero <> NULL and atoi( pszHourZero ) = 1 ) then
+	if ( pszHourZero <> NULL andalso atoi( pszHourZero ) = 1 ) then
 		if ( not(use_timemark) ) then
 			strcpy( @achFormat(0) + i, "HH:" )
 		else

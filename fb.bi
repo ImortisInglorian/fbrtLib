@@ -93,6 +93,10 @@
 
 	#define _SWAP(a,b)		((a) xor= (b): (b) xor= (a): (a) xor= (b))
 
+	#define ARRAY_SIZEOF( array ) ( ( ubound(array) - lbound(array) + 1 ) * sizeof(array(lbound(array))))
+	#define ARRAY_LENGTH( array ) ( ubound(array) - lbound(array) + 1 )
+
+
 	#if defined(HOST_DOS)
 		#include "dos/fb_dos.h"
 	#elseif defined(HOST_UNIX)
@@ -115,6 +119,12 @@
 		Declare Sub fb_StrUnlock FBCALL ()
 		Declare Sub fb_GraphicsLock FBCALL ()
 		Declare Sub fb_GraphicsUnlock FBCALL ()
+		Declare Sub fb_MathLock FBCALL ()
+		Declare Sub fb_MathUnlock FBCALL ()
+		#define FB_GRAPHICS_LOCK()   fb_GraphicsLock()
+		#define FB_GRAPHICS_UNLOCK() fb_GraphicsUnlock()
+		#define FB_MATH_LOCK()   fb_MathLock()
+		#define FB_MATH_UNLOCK() fb_MathUnlock()
 	#else
 		#define FB_LOCK()
 		#define FB_UNLOCK()
@@ -122,6 +132,8 @@
 		#define FB_STRUNLOCK()
 		#define FB_GRAPHICS_LOCK()
 		#define FB_GRAPHICS_UNLOCK()
+		#define FB_MATH_LOCK()
+		#define FB_MATH_UNLOCK()
 	#endif
 
 	/' We use memcmp from C because the compiler might replace this by a built-in
@@ -132,13 +144,13 @@
 
 	/' We have to wrap memcpy here because our MEMCPYX should return the position
 	* after the destination string. '/
-	private function FB_MEMCPYX( dest as any ptr, src as any const ptr, n as size_t ) as any ptr
+	private function FB_MEMCPYX( dest as any ptr, src as const any ptr, n as size_t ) as any ptr
 		memcpy(dest, src, n)
 		return (cast(ubyte ptr, dest))+n
 	end function
 
-	private function FB_MEMLEN( s as any const ptr, c as long, n as size_t ) as size_t
-		Dim pachData as ubyte ptr = cast(ubyte const ptr, s)
+	private function FB_MEMLEN( s as const any ptr, c as long, n as size_t ) as size_t
+		Dim pachData as const ubyte ptr = s
 		while (n)
 			n-= 1
 			if( pachData[n] <> cast(ubyte,c) ) then

@@ -30,12 +30,12 @@ function fb_OCTEx_l FBCALL ( num as ulongint, digits as long ) as FBSTRING ptr
 
 	i = digits - 1
 	while ( i >= 0 )
-		s->data[i] = 0 + (num and 7) /' '0'..'7' '/
+		s->data[i] = asc( "0" ) + (num and 7) /' '0'..'7' '/
 		num shr= 3
 		i -= 1
 	wend
 
-	s->data[digits] = 0
+	s->data[digits] = asc( !"\000" ) '' NUL CHAR
 	return s
 end function
 

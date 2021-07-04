@@ -4,7 +4,7 @@
 
 extern "C"
 #if 0 /' FIXME: implementation is bugged somewhere, missing some matches '/
-function fb_hFindBM cdecl ( start as ssize_t, pachText as ubyte const ptr, len_text as ssize_t, pachPattern as ubyte const ptr, len_pattern as ssize_t ) as ssize_t
+function fb_hFindBM cdecl ( start as ssize_t, pachText as const ubyte ptr, len_text as ssize_t, pachPattern as const ubyte ptr, len_pattern as ssize_t ) as ssize_t
 	dim as ssize_t i, j, len_max = len_text - len_pattern
 	dim as ssize_t bm_bc(0 to 255)
 	dim as ssize_t ptr bm_gc, suffixes
@@ -69,21 +69,23 @@ end function
 #endif
 
 #if 1
-function fb_hFindNaive cdecl ( start as ssize_t, pachText as ubyte ptr, len_text as ssize_t, pachPattern as ubyte const ptr, len_pattern as ssize_t ) as ssize_t
-	dim as ssize_t i
+function fb_hFindNaive cdecl ( start as ssize_t, pachText as ubyte ptr, len_text as ssize_t, pachPattern as const ubyte ptr, len_pattern as ssize_t ) as ssize_t
+	dim as ssize_t i = 0
 	pachText += start
-	for i = 0 to start
-		dim as ssize_t j
-		for j = 0 to len_pattern
+	while( i <= start )
+		dim as ssize_t j = 0
+		while( j <> len_pattern )
 			if ( pachText[j] <> pachPattern[j] ) then
-				exit for
+				exit while
 			end if
-		next
+			j += 1
+		wend
 		if ( j = len_pattern ) then
 			return start - i + 1
 		end if
 		pachText -= 1
-	next
+		i += 1
+	wend
 	return 0
 end function
 #endif
@@ -91,7 +93,7 @@ end function
 function fb_StrInstrRev FBCALL ( src as FBSTRING ptr, patt as FBSTRING ptr, start as ssize_t ) as ssize_t
 	dim as ssize_t r = 0
 
-	if ( (src <> NULL) and (src->data <> NULL) and (patt <> NULL) and (patt->data <> NULL) ) then
+	if ( (src <> NULL) andalso (src->data <> NULL) andalso (patt <> NULL) andalso (patt->data <> NULL) ) then
 		dim as ssize_t size_src = FB_STRSIZE(src)
 		dim as ssize_t size_patt = FB_STRSIZE(patt)
 

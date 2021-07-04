@@ -39,17 +39,17 @@ type UTF_8 as ubyte
 	#define wcstoull strtoull
 	#define wcschr   strchr
 	#define wcscspn  strcspn
-		function __dos_mbstowcs(wcstr as FB_WCHAR ptr, mbstr as ubyte const ptr, count as ssize_t) as ssize_t
+		function __dos_mbstowcs(wcstr as FB_WCHAR ptr, mbstr as const ubyte ptr, count as ssize_t) as ssize_t
 			memcpy(wcstr,mbstr,count)
 			return count
 		end function
 		
-		function __dos_wcstombs(mbstr as ubyte ptr, wcstr as FB_WCHAR const ptr, count as ssize_t) as ssize_t
+		function __dos_wcstombs(mbstr as ubyte ptr, wcstr as const FB_WCHAR ptr, count as ssize_t) as ssize_t
 			memcpy(mbstr,wcstr,count)
 			return count
 		end function
 		
-		function swprintf(buffer as FB_WCHAR ptr, n as ssize_t, _format as FB_WCHAR const ptr, ...) as long
+		function swprintf(buffer as FB_WCHAR ptr, n as ssize_t, _format as const FB_WCHAR ptr, ...) as long
 			dim result as long
 			dim ap as va_list
 			va_start(ap, _format)
@@ -116,7 +116,7 @@ type UTF_8 as ubyte
 #endif
 
 /' Calculate the number of characters between two pointers. '/
-private function fb_wstr_CalcDiff( ini as FB_WCHAR const ptr, _end as FB_WCHAR const ptr ) as ssize_t
+private function fb_wstr_CalcDiff( ini as const FB_WCHAR ptr, _end as const FB_WCHAR ptr ) as ssize_t
 	return (cast(ssize_t, _end) - cast(ssize_t, ini)) / sizeof( FB_WCHAR )
 end function
 
@@ -130,13 +130,13 @@ private sub fb_wstr_Del( s as FB_WCHAR ptr)
 end sub
 
 /' Return the length of a WSTRING. '/
-private function fb_wstr_Len( s as FB_WCHAR const ptr ) as ssize_t
+private function fb_wstr_Len( s as const FB_WCHAR ptr ) as ssize_t
 	/' without the null-term '/
 	return wcslen( s )
 end function
 
-declare function fb_wstr_ConvFromA( dst as FB_WCHAR ptr, dst_chars as ssize_t, src as ubyte const ptr ) as ssize_t
-declare function fb_wstr_ConvToA( dst as ubyte ptr, dst_chars as ssize_t, src as FB_WCHAR ptr ) as ssize_t
+declare function fb_wstr_ConvFromA( dst as FB_WCHAR ptr, dst_chars as ssize_t, src as const ubyte ptr ) as ssize_t
+declare function fb_wstr_ConvToA( dst as ubyte ptr, dst_chars as ssize_t, src as const FB_WCHAR ptr ) as ssize_t
 
 private function fb_wstr_IsLower( c as FB_WCHAR ) as long
 	return iswlower( c )
@@ -155,38 +155,40 @@ private function fb_wstr_ToUpper( c as FB_WCHAR ) as FB_WCHAR
 end function
 
 /' Copy n characters from A to B and terminate with NUL. '/
-private sub fb_wstr_Copy( dst as FB_WCHAR ptr, src as FB_WCHAR const ptr, chars as ssize_t )
-	if( (src <> NULL) and (chars > 0) ) then
+private sub fb_wstr_Copy( dst as FB_WCHAR ptr, src as const FB_WCHAR ptr, chars as ssize_t )
+	if( (src <> NULL) andalso (chars > 0) ) then
 		dst = cast(FB_WCHAR ptr, FB_MEMCPYX( dst, src, chars * sizeof( FB_WCHAR ) ))
 	end if
 	/' add the null-term '/
-	dst[chars + 1] = 0
+	*dst = asc(!"\000") '' NUL CHAR
 end sub
 
 /' Copy n characters from A to B. '/
-private function fb_wstr_Move( dst as FB_WCHAR ptr, src as FB_WCHAR const ptr, chars as ssize_t ) as FB_WCHAR ptr
+private function fb_wstr_Move( dst as FB_WCHAR ptr, src as const FB_WCHAR ptr, chars as ssize_t ) as FB_WCHAR ptr
 	return cast(FB_WCHAR ptr, FB_MEMCPYX( dst, src, chars * sizeof( FB_WCHAR ) ))
 end function
 
 private sub fb_wstr_Fill( dst as FB_WCHAR ptr, c as FB_WCHAR, chars as ssize_t )
-	dim i as long
-	for i = 0 to chars
-		dst[i] = c
-	next
+	dim i as long = 0
+	while( i < chars )
+		*dst = c
+		dst += 1
+		i += 1
+	wend
 	/' add null-term '/
-	dst[i] = 0
+	*dst = asc(!"\000") '' NUL CHAR
 end sub
 
 /' Skip all characters (c) from the beginning of the string, max 'n' chars. '/
-private function fb_wstr_SkipChar( s as FB_WCHAR const ptr, chars as ssize_t, c as FB_WCHAR ) as FB_WCHAR const ptr
+private function fb_wstr_SkipChar( s as const FB_WCHAR ptr, chars as ssize_t, c as FB_WCHAR ) as const FB_WCHAR ptr
 	if( s = NULL ) then
 		return NULL
 	end if
 	
-	dim p as FB_WCHAR ptr = s
+	dim p as const FB_WCHAR ptr = s
 	
 	while( chars > 0 )
-		if( p <> c ) then
+		if( *p <> c ) then
 			return p
 		end if
 		p += 1
@@ -197,32 +199,32 @@ private function fb_wstr_SkipChar( s as FB_WCHAR const ptr, chars as ssize_t, c 
 end function
 
 /' Skip all characters (c) from the end of the string, max 'n' chars. '/
-private function fb_wstr_SkipCharRev( s as FB_WCHAR const ptr, chars as ssize_t, c as FB_WCHAR) as FB_WCHAR const ptr
-	if( (s = NULL) or (chars <= 0) ) then
+private function fb_wstr_SkipCharRev( s as const FB_WCHAR ptr, chars as ssize_t, c as FB_WCHAR ) as const FB_WCHAR ptr
+	if( (s = NULL) orelse (chars <= 0) ) then
 		return s
 	end if
 
 	/' fixed-len's are filled with null's as in PB, strip them too '/
-	dim p as FB_WCHAR ptr = @s[chars-1]
+	dim p as const FB_WCHAR ptr = @s[chars]
 	while( chars > 0 )
-		if( *p <> c ) then
-			return p
-		end if
 		p -= 1
+		if( *p <> c ) then
+			return p+1
+		end if
 		chars -= 1
 	wend
 	return p
 end function
 
-private function fb_wstr_Instr( s as FB_WCHAR const ptr, patt as FB_WCHAR const ptr ) as FB_WCHAR ptr
+private function fb_wstr_Instr( s as const FB_WCHAR ptr, patt as const FB_WCHAR ptr ) as FB_WCHAR ptr
 	return wcsstr( s, patt )
 end function
 
-private function fb_wstr_InstrAny( s as FB_WCHAR const ptr, sset as FB_WCHAR const ptr ) as size_t
+private function fb_wstr_InstrAny( s as const FB_WCHAR ptr, sset as const FB_WCHAR ptr ) as size_t
 	return wcscspn( s, sset )
 end function
 
-private function fb_wstr_Compare( str1 as FB_WCHAR const ptr, str2 as FB_WCHAR const ptr, chars as ssize_t ) as long
+private function fb_wstr_Compare( str1 as const FB_WCHAR ptr, str2 as const FB_WCHAR ptr, chars as ssize_t ) as long
 	return wcsncmp( str1, str2, chars )
 end function
 end extern

@@ -3,7 +3,7 @@
 #include "fb.bi"
 
 extern "C"
-function fb_hArrayRealloc ( array as FBARRAY ptr, element_len as size_t, doclear as long, ctor as FB_DEFCTOR, dtor_mult as FB_DTORMULT, dtor as FB_DEFCTOR, dimensions as size_t, ap as va_list ) as long
+function fb_hArrayRealloc ( array as FBARRAY ptr, element_len as size_t, doclear as long, ctor as FB_DEFCTOR, dtor_mult as FB_DTORMULT, dtor as FB_DEFCTOR, dimensions as size_t, ap as cva_list ) as long
 	dim as size_t i, elements, size
 	dim as ssize_t diff
 	dim as FBARRAYDIM ptr _dim
@@ -16,18 +16,24 @@ function fb_hArrayRealloc ( array as FBARRAY ptr, element_len as size_t, doclear
 		return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 	end if
 
+	/' fixed length? '/
+	if( (array->flags and FBARRAY_FLAGS_FIXED_LEN) <> 0 ) then
+		return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
+	end if
+
 	/' load bounds '/
-	for i = 0 to dimensions - 1
-		lbTB(i) = cast(ssize_t, va_next( ap, ssize_t ))
-		ubTB(i) = cast(ssize_t, va_next( ap, ssize_t ))
+	i = 0
+	while( i < dimensions )
+		lbTB(i) = cast(ssize_t, cva_arg( ap, ssize_t ))
+		ubTB(i) = cast(ssize_t, cva_arg( ap, ssize_t ))
 
 		if ( lbTB(i) > ubTB(i) ) then
 			return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 		end if
-	next
+		i += 1
+	wend
 
 	/' shrinking the array? free unused elements '/
-
 	if ( dtor_mult <> NULL ) then
 		dim as size_t new_lb = (ubTB(0) - lbTB(0)) + 1
 		if ( new_lb < array->dimTB(0).elements ) then
@@ -76,17 +82,19 @@ function fb_hArrayRealloc ( array as FBARRAY ptr, element_len as size_t, doclear
 	array->element_len = element_len
 	array->dimensions = dimensions
 	_dim = @array->dimTB(0)
-	for i = 0 to dimensions - 1
+	i = 0
+	while( i < dimensions )
 		_dim->elements = (ubTB(i) - lbTB(i)) + 1
 		_dim->lbound = lbTB(i)
 		_dim->ubound = ubTB(i)
 		_dim += 1
-	next
+		i += 1
+	wend
 
 	return fb_ErrorSetNum( FB_RTERROR_OK )
 end function
 
-private function hRedim ( array as FBARRAY ptr, element_len as size_t, doclear as long, isvarlen as long, dimensions as size_t, ap as va_list ) as long
+private function hRedim ( array as FBARRAY ptr, element_len as size_t, doclear as long, isvarlen as long, dimensions as size_t, ap as cva_list ) as long
 	dim as FB_DTORMULT dtor_mult
 
 	/' new? '/
@@ -105,26 +113,14 @@ private function hRedim ( array as FBARRAY ptr, element_len as size_t, doclear a
 end function
 
 function fb_ArrayRedimPresvEx cdecl ( array as FBARRAY ptr, element_len as size_t, doclear as long, isvarlen as long, dimensions as size_t, ... ) as long
-	dim as va_list ap
+	dim as cva_list ap
 	dim as long res
 	
-	'va_start( ap, dimensions )
-	ap = va_first()
+	cva_start( ap, dimensions )
 	res = hRedim( array, element_len, doclear, isvarlen, dimensions, ap )
-	'va_end( ap )
+	cva_end( ap )
 	
 	return res
 end function
 
-function fb_ArrayRedimPresv cdecl ( array as FBARRAY ptr, element_len as size_t, isvarlen as long, dimensions as size_t, ... ) as long
-	dim as va_list ap
-	dim as long res
-	
-	'va_start( ap, dimensions )
-	ap = va_first()
-	res = hRedim( array, element_len, TRUE, isvarlen, dimensions, ap )
-	'va_end( ap )
-	
-	return res
-end function
 end extern

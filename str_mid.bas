@@ -9,7 +9,7 @@ function fb_StrMid FBCALL ( src as FBSTRING ptr, start as ssize_t, _len as ssize
 
 	FB_STRLOCK()
 
-	if ( (src <> NULL) and (src->data <> NULL) and (FB_STRSIZE( src ) > 0) ) then
+	if ( (src <> NULL) and (src->data <> NULL) andalso (FB_STRSIZE( src ) > 0) ) then
 		src_len = FB_STRSIZE( src )
 
 		if ( (start > 0) and (start <= src_len) and (_len <> 0) ) then

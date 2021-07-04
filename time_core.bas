@@ -35,12 +35,12 @@ sub fb_hNormalizeDate( pDay as long ptr, pMonth as long ptr, pYear as long ptr )
         dim as long _year = *pYear
         if ( _month < 1 ) then
             dim as long sub_months = -_month + 1
-            dim as long sub_years = (sub_months + 11) / 12
+            dim as long sub_years = (sub_months + 11) \ 12
             _year -= sub_years
             _month = sub_years * 12 - sub_months + 1
         else
             _month -= 1
-            _year += _month / 12
+            _year += _month \ 12
             _month mod= 12
             _month += 1
         end if
@@ -49,7 +49,8 @@ sub fb_hNormalizeDate( pDay as long ptr, pMonth as long ptr, pYear as long ptr )
             dim as long sub_days = -_day + 1
             while (sub_days > 0) 
                 dim as long dom
-                if ( _month - 1 = 0 ) then
+                _month -= 1
+                if ( _month = 0 ) then
                     _month = 12
                     _year -= 1
                 end if
@@ -65,7 +66,8 @@ sub fb_hNormalizeDate( pDay as long ptr, pMonth as long ptr, pYear as long ptr )
             dim as long dom = fb_hTimeDaysInMonth( _month, _year )
             while( _day > dom )
                 _day -= dom
-                if ( _month + 1 = 13 ) then
+                _month += 1
+                if ( _month = 13 ) then
                     _month = 1
                     _year += 1
                 end if
@@ -82,7 +84,7 @@ end sub
 function fb_hTimeGetIntervalType( interval as FBSTRING ptr ) as long
 	dim as long result = FB_TIME_INTERVAL_INVALID
 
-    if ( interval <> NULL and interval->data <> NULL ) then
+    if ( interval <> NULL andalso interval->data <> NULL ) then
         if ( strcmp( interval->data, "yyyy" ) = 0 ) then
             result = FB_TIME_INTERVAL_YEAR
         elseif ( strcmp( interval->data, "q" ) = 0 ) then

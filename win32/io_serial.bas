@@ -236,7 +236,7 @@ function fb_SerialGetRemaining( handle as FB_FILE ptr, pvHandle as any ptr, pLen
 	return fb_ErrorSetNum( FB_RTERROR_OK )
 end function
 
-function fb_SerialWrite( handle as FB_FILE ptr, pvHandle as any ptr, _data as any const ptr, length as size_t ) as long
+function fb_SerialWrite( handle as FB_FILE ptr, pvHandle as any ptr, _data as const any ptr, length as size_t ) as long
 	dim as W32_SERIAL_INFO ptr pInfo = cast(W32_SERIAL_INFO ptr, pvHandle)
 	dim as DWORD dwWriteCount
 

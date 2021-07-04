@@ -16,11 +16,11 @@ dim shared as FB_FILE_HOOKS hooks_dev_cons = ( _
     @fb_DevFileReadLine, _
     @fb_DevFileReadLineWstr, _
     NULL, _
-    NULL _
+    @fb_DevFileFlush _
 )
 
 extern "C"
-function fb_DevConsOpen( handle as FB_FILE ptr, filename as ubyte const ptr, filename_len as size_t ) as long
+function fb_DevConsOpen( handle as FB_FILE ptr, filename as const ubyte ptr, filename_len as size_t ) as long
     select case ( handle->mode )
 		case FB_FILE_MODE_APPEND, FB_FILE_MODE_INPUT, FB_FILE_MODE_OUTPUT:
 			'nothing

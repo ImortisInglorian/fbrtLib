@@ -1,7 +1,7 @@
 /' print raw data - no interpretation is done '/
 
 extern "C"
-sub FB_CONPRINTRAW_( handle as fb_ConHooks ptr, pachText as FB_TCHAR ptr, textLength as size_t )
+sub FB_CONPRINTRAW_( handle as fb_ConHooks ptr, pachText as const FB_TCHAR ptr, textLength as size_t )
     dim as fb_Rect ptr pBorder = @handle->Border
     dim as fb_Coord ptr pCoord = @handle->Coord
 
@@ -11,7 +11,7 @@ sub FB_CONPRINTRAW_( handle as fb_ConHooks ptr, pachText as FB_TCHAR ptr, textLe
 
         fb_hConCheckScroll( handle )
 
-        if ( handle->FB_CON_HOOK_TWRITE( handle, cast(ubyte const ptr, pachText),copySize ) <> TRUE ) then
+        if ( handle->FB_CON_HOOK_TWRITE( handle, cast(const ubyte ptr, pachText), copySize ) <> TRUE ) then
             exit while
 		end if
 

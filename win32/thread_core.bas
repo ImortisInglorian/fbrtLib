@@ -4,14 +4,18 @@
 #include "../fb_private_thread.bi"
 #include "crt/process.bi"
 
-extern "C"
+extern "Windows"
 /' thread proxy to user's thread proc '/
 #ifdef HOST_MINGW
-function threadproc WINAPI ( param as any ptr ) as ulong
+private function threadproc ( param as any ptr ) as ulong
 #else
-function threadproc stdcall ( param as LPVOID ) as DWORD
+private function threadproc ( param as LPVOID ) as DWORD
 #endif
 	dim as FBTHREADINFO ptr info = param
+	dim as FBTHREAD ptr thread = info->thread
+	dim as FBTHREADFLAGS flags
+	
+	_FB_TLSGETCTX( FBTHREAD )->self = thread
 
 	/' call the user thread '/
 	info->proc( info->param )
@@ -20,8 +24,24 @@ function threadproc stdcall ( param as LPVOID ) as DWORD
 	/' free mem '/
 	fb_TlsFreeCtxTb( )
 
+	flags = fb_AtomicSetThreadFlags( @thread->flags, FBTHREAD_EXITED )
+
+	/' This thread has been detached, we can free the thread structure '/
+	if( flags and FBTHREAD_DETACHED ) then
+		free( thread )
+	end if
+
 	return 1
 end function
+end extern
+
+extern "C"
+
+'' !!!TODO!!! see note in fb_thread.bi::_FB_TLSGETCTX(id)
+'' #define fb_FBTHREADCTX_Destructor NULL
+ 
+sub fb_FBTHREADCTX_Destructor( byval data_ as any ptr )
+end sub
 
 function fb_ThreadCreate FBCALL ( proc as FB_THREADPROC, param as any ptr, stack_size as ssize_t ) as FBTHREAD ptr
 	dim as FBTHREAD ptr thread
@@ -40,12 +60,14 @@ function fb_ThreadCreate FBCALL ( proc as FB_THREADPROC, param as any ptr, stack
 
 	info->proc = proc
 	info->param = param
+	info->thread = thread
+	thread->flags = 0
 
 #ifdef HOST_MINGW
 	/' Note: _beginthreadex()'s last parameter cannot be NULL,
 	   or else the function fails on Windows 9x '/
 	dim as ulong thrdaddr
-	thread->id = cast(HANDLE, _beginthreadex( NULL, stack_size, threadproc, info, 0, @thrdaddr ))
+	thread->id = cast(HANDLE, _beginthreadex( NULL, stack_size, @threadproc, info, 0, @thrdaddr ))
 #else
 	dim as DWORD dwThreadId
 	thread->id = CreateThread( NULL, stack_size, @threadproc, info, 0, @dwThreadId )
@@ -61,7 +83,12 @@ function fb_ThreadCreate FBCALL ( proc as FB_THREADPROC, param as any ptr, stack
 end function
 
 sub fb_ThreadWait FBCALL ( thread as FBTHREAD ptr )
-	if ( thread = NULL ) then
+	/' A wait for the main thread or ourselves will never end
+	   also, if we've been detached, we've nothing to wait on
+	'/
+	if( ( thread = NULL ) orelse _
+		( ( thread->flags and ( FBTHREAD_MAIN or FBTHREAD_DETACHED ) ) <> 0 ) orelse _
+		( thread = _FB_TLSGETCTX( FBTHREAD )->self ) ) then
 		return
 	end if
 

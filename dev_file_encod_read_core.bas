@@ -6,8 +6,8 @@
 
 extern "C"
 
-extern __fb_utf8_trailingTb(0 to 255) as ubyte ptr
-extern __fb_utf8_offsetsTb(0 to 5) as UTF_32
+extern __fb_utf8_trailingTb(0 to 255) as const ubyte
+extern __fb_utf8_offsetsTb(0 to 5) as const UTF_32
 
 /'::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*
  * to char                                                                              *
@@ -15,53 +15,68 @@ extern __fb_utf8_offsetsTb(0 to 5) as UTF_32
 
 private function hReadUTF8ToChar( fp as FILE ptr, dst as ubyte ptr, max_chars as ssize_t ) as ssize_t
 	dim as UTF_32 wc
-	dim as ubyte ptr c(0 to 6)
+	dim as ubyte c(0 to 6)
 	dim as ubyte ptr p
 	dim as ssize_t chars, extbytes
 
 	chars = max_chars
     while( chars > 0 )
-		if( fread( c(0), 1, 1, fp ) <> 1 ) then
+		if( fread( @c(0), 1, 1, fp ) <> 1 ) then
 			exit while
 		end if
 
-		extbytes = cast(ssize_t, *__fb_utf8_trailingTb(*c(0)))
+		extbytes = cast(ssize_t, __fb_utf8_trailingTb(c(0)))
 
 		if ( extbytes > 0 ) then
-			if( fread( c(1), extbytes, 1, fp ) <> 1 ) then
+			if( fread( @c(1), extbytes, 1, fp ) <> 1 ) then
 				exit while
 			end if
 		end if
 		
 		wc = 0
-		p = c(0)
-		select case ( extbytes )
-			case 5:
-				wc += *p + 1
+		p = @c(0)
+
+		on (extbytes+1) goto case0, case1, case2, case3, case4, case5
+		goto default
+		'' switch ( extbytes )
+			case5:
+				wc += *p
+				P += 1
 				wc shl= 6
-			case 4:
-				wc += *p + 1
+				/' fall through '/
+			case4:
+				wc += *p
+				p += 1
 				wc shl= 6
-			case 3:
-				wc += *p + 1
+				/' fall through '/
+			case3:
+				wc += *p
+				p += 1
 				wc shl= 6
-			case 2:
-				wc += *p + 1
+				/' fall through '/
+			case2:
+				wc += *p
+				p += 1
 				wc shl= 6
-			case 1:
-				wc += *p + 1
+				/' fall through '/
+			case1:
+				wc += *p
+				p += 1
 				wc shl= 6
-			case 0:
-				wc += *p + 1
-		end select
+				/' fall through '/
+			case0:
+				wc += *p
+				p += 1
+			default:
+		'' end switch
 
 		wc -= __fb_utf8_offsetsTb(extbytes)
 
 		if ( wc > 255 ) then
 			wc = asc("?")
 		end if
-		dst += 1
 		*dst = wc
+		dst += 1
 		chars -= 1
 	wend
 
@@ -86,8 +101,8 @@ private function hReadUTF16ToChar( fp as FILE ptr, dst as ubyte ptr, max_chars a
     		end if
     		c = asc("?")
     	end if
-		dst += 1
 		*dst = c
+		dst += 1
 		chars -= 1
 	wend
 
@@ -107,8 +122,8 @@ private function hReadUTF32ToChar( fp as FILE ptr, dst as ubyte ptr, max_chars a
 		if ( c > 255 ) then
 			c = asc("?")
 		end if
-		dst += 1
 		*dst = c
+		dst += 1
 		chars -= 1
 	wend
 
@@ -137,57 +152,73 @@ end function
 
 private function hUTF8ToUTF16( fp as FILE ptr, dst as FB_WCHAR ptr, max_chars as ssize_t ) as ssize_t
 	dim as UTF_32 wc
-	dim as ubyte ptr c(0 to 6)
+	dim as ubyte c(0 to 6)
 	dim as ubyte ptr p
 	dim as ssize_t chars, extbytes
 
 	chars = max_chars
     while ( chars > 0 )
-		if( fread( c(0), 1, 1, fp ) <> 1 ) then
+		if( fread( @c(0), 1, 1, fp ) <> 1 ) then
 			exit while
 		end if
 
-		extbytes = cast(ssize_t, *__fb_utf8_trailingTb(*c(0)))
+		extbytes = cast(ssize_t, __fb_utf8_trailingTb(c(0)))
 
 		if ( extbytes > 0 ) then
-			if( fread( c(1), extbytes, 1, fp ) <> 1 ) then
+			if( fread( @c(1), extbytes, 1, fp ) <> 1 ) then
 				exit while
 			end if
 		end if
 
 		wc = 0
-		p = c(0)
-		select case ( extbytes )
-			case 5:
-				wc += *p + 1
+		p = @c(0)
+
+		on (extbytes+1) goto case0, case1, case2, case3, case4, case5
+		goto default
+		'' switch ( extbytes )
+			case5:
+				wc += *p
+				P += 1
 				wc shl= 6
-			case 4:
-				wc += *p + 1
+				/' fall through '/
+			case4:
+				wc += *p
+				p += 1
 				wc shl= 6
-			case 3:
-				wc += *p + 1
+				/' fall through '/
+			case3:
+				wc += *p
+				p += 1
 				wc shl= 6
-			case 2:
-				wc += *p + 1
+				/' fall through '/
+			case2:
+				wc += *p
+				p += 1
 				wc shl= 6
-			case 1:
-				wc += *p + 1
+				/' fall through '/
+			case1:
+				wc += *p
+				p += 1
 				wc shl= 6
-			case 0:
-				wc += *p + 1
-		end select
+				/' fall through '/
+			case0:
+				wc += *p
+				p += 1
+			default:
+		'' end switch
 
 		wc -= __fb_utf8_offsetsTb(extbytes)
 
 		if ( wc <= UTF16_MAX_BMP ) then
-			dst += 1
 			*dst = wc
+			dst += 1
 		else
 			if ( chars > 1 ) then
 				wc -= UTF16_HALFBASE
-				dst += 1
 				*dst = ((wc shr UTF16_HALFSHIFT) +	UTF16_SUR_HIGH_START)
+				dst += 1
 				*dst = ((wc and UTF16_HALFMASK)	+ UTF16_SUR_LOW_START)
+				dst += 1
 				chars -= 1
 			end if
 		end if
@@ -200,7 +231,7 @@ end function
 
 private function hUTF8ToUTF32( fp as FILE ptr, dst as FB_WCHAR ptr, max_chars as ssize_t ) as ssize_t
 	dim as UTF_32 wc
-	dim as ubyte ptr c(0 to 6) 
+	dim as ubyte c(0 to 6) 
 	dim as ubyte ptr p
 	dim as ssize_t chars, extbytes
 
@@ -210,7 +241,7 @@ private function hUTF8ToUTF32( fp as FILE ptr, dst as FB_WCHAR ptr, max_chars as
 			exit while
 		end if
 
-		extbytes = cast(ssize_t, __fb_utf8_trailingTb(*c(0)))
+		extbytes = cast(ssize_t, __fb_utf8_trailingTb(c(0)))
 
 		if ( extbytes > 0 ) then
 			if ( fread( @c(1), extbytes, 1, fp ) <> 1 ) then
@@ -219,30 +250,45 @@ private function hUTF8ToUTF32( fp as FILE ptr, dst as FB_WCHAR ptr, max_chars as
 		end if
 
 		wc = 0
-		p = c(0)
-		select case ( extbytes )
-			case 5:
-				wc += *p + 1
+		p = @c(0)
+
+		on (extbytes+1) goto case0, case1, case2, case3, case4, case5
+		goto default
+		'' switch ( extbytes )
+			case5:
+				wc += *p
+				P += 1
 				wc shl= 6
-			case 4:
-				wc += *p + 1
+				/' fall through '/
+			case4:
+				wc += *p
+				p += 1
 				wc shl= 6
-			case 3:
-				wc += *p + 1
+				/' fall through '/
+			case3:
+				wc += *p
+				p += 1
 				wc shl= 6
-			case 2:
-				wc += *p + 1
+				/' fall through '/
+			case2:
+				wc += *p
+				p += 1
 				wc shl= 6
-			case 1:
-				wc += *p + 1
+				/' fall through '/
+			case1:
+				wc += *p
+				p += 1
 				wc shl= 6
-			case 0:
-				wc += *p + 1
-		end select
+				/' fall through '/
+			case0:
+				wc += *p
+				p += 1
+			default:
+		'' end switch
 
 		wc -= __fb_utf8_offsetsTb(extbytes)
-		dst += 1
 		*dst = wc
+		dst += 1
 		chars -= 1
 	wend
 
@@ -286,8 +332,8 @@ private function hUTF16ToUTF32( fp as FILE ptr, dst as FB_WCHAR ptr, max_chars a
 			c = ((c - UTF16_SUR_HIGH_START) shl UTF16_HALFSHIFT) + (c2 - UTF16_SUR_LOW_START) + UTF16_HALFBASE
 		end if
 		
-		dst += 1
 		*dst = c
+		dst += 1
 		chars -= 1
     wend
 
@@ -327,15 +373,15 @@ private function hUTF32ToUTF16( fp as FILE ptr, dst as FB_WCHAR ptr, max_chars a
 		if ( c > UTF16_MAX_BMP ) then
 			c -= UTF16_HALFBASE
 			if ( chars > 1 ) then
-				dst += 1
 				*dst = cast(UTF_16, ((c shr UTF16_HALFSHIFT) + UTF16_SUR_HIGH_START))
+				dst += 1
 				chars -= 1
 			end if
 			c = ((c and UTF16_HALFMASK) + UTF16_SUR_LOW_START)
 		end if
 
-		dst += 1
 		*dst = cast(UTF_16, c)
+		dst += 1
 		chars -= 1
     wend
 

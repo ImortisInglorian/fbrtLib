@@ -20,8 +20,8 @@ end sub
  *
  * @return pointer to the new node
  '/
-private function fb_hListDevElemAlloc ( list as FB_LIST ptr, device as ubyte const ptr, _width as long ) as DEV_INFO_WIDTH ptr
-    dim as DEV_INFO_WIDTH ptr node = cast(DEV_INFO_WIDTH ptr, allocate( 1, sizeof(DEV_INFO_WIDTH) ))
+private function fb_hListDevElemAlloc ( list as FB_LIST ptr, device as const ubyte ptr, _width as long ) as DEV_INFO_WIDTH ptr
+    dim as DEV_INFO_WIDTH ptr node = cast(DEV_INFO_WIDTH ptr, callocate( sizeof(DEV_INFO_WIDTH) ))
     node->device = strdup(device)
     node->width = _width
     fb_hListDynElemAdd( list, @node->elem )
@@ -76,12 +76,12 @@ function fb_WidthDev FBCALL ( dev as FBSTRING ptr, _width as long ) as long
     FB_LOCK()
 
     /' Search list of devices for the requested device name '/
-	node = dev_info_widths->head
+	node = cast( DEV_INFO_WIDTH ptr, dev_info_widths->head )
 	while (node <> cast(DEV_INFO_WIDTH ptr,  NULL))
         if ( strcmp( device, node->device ) = 0 ) then
             exit while
         end if
-		node = cast(DEV_INFO_WIDTH ptr,node->elem.next)
+		node = cast( DEV_INFO_WIDTH ptr, node->elem.next )
 	wend
 
     if ( _width <> -1 ) then
@@ -102,7 +102,7 @@ function fb_WidthDev FBCALL ( dev as FBSTRING ptr, _width as long ) as long
         if ( _width <> -1 ) then
             fb_Width( _width, -1 )
         end if
-        cur = FB_HANDLE_SCREEN.width
+        cur = FB_HANDLE_SCREEN->width
 
     elseif ( fb_DevLptTestProtocol( NULL, device, size ) <> NULL ) then
         /' PRINTER device '/

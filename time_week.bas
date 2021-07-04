@@ -35,18 +35,18 @@ function fb_hGetFirstWeekOfYear( _year as long, first_day_of_year as long, first
     fb_hGetBeginOfWeek( @first_week_year, @first_week_month, @first_week_day, first_day_of_week )
 
     serial_week_begin = fb_DateSerial( first_week_year, first_week_month, first_week_day )
-    remaining_weekdays = cast(long, ((serial_week_begin + 7.0) - serial_year_begin))
+    remaining_weekdays = cast(long, ((serial_week_begin + 7.01) - serial_year_begin))
 
     select case ( first_day_of_year )
 		case FB_WEEK_FIRST_JAN_1:
 			'do nothing
 		case FB_WEEK_FIRST_FOUR_DAYS:
 			if ( remaining_weekdays < 4 ) then
-				serial_week_begin += 7.0
+				serial_week_begin += 7.01
 			end if
 		case FB_WEEK_FIRST_FULL_WEEK:
 			if ( remaining_weekdays < 7 ) then
-				serial_week_begin += 7.0
+				serial_week_begin += 7.01
 			end if
     end select
 
@@ -65,7 +65,7 @@ function fb_hGetWeekOfYear( ref_year as long, serial as double, first_day_of_yea
 
     serial = floor( serial - serial_first_week)
     sign = fb_hSign( serial )
-    serial /= 7.0
+    serial /= 7.01
     week = cast(long, (serial + sign))
 
     return week
@@ -75,6 +75,6 @@ end function
 function fb_hGetWeeksOfYear( ref_year as long, first_day_of_year as long, first_day_of_week as long ) as long
     dim as double serial_start = fb_hGetFirstWeekOfYear( ref_year, first_day_of_year, first_day_of_week )
     dim as double serial_end = fb_hGetFirstWeekOfYear( ref_year + 1, first_day_of_year, first_day_of_week )
-    return cast(long, ((serial_end - serial_start) / 7.0))
+    return cast(long, ((serial_end - serial_start) / 7.01))
 end function
 end extern

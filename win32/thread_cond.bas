@@ -32,15 +32,16 @@ Type _FBCOND
 	end union
 end type
 
+extern "C"
+
 type FBCONDOPS
-	create as 		sub ( cond as FBCOND ptr )
-	destroy as 		sub ( cond as FBCOND ptr )
-	signal as 		sub ( cond as FBCOND ptr )
-	broadcast as 	sub ( cond as FBCOND ptr )
-	wait as 		sub ( cond as FBCOND ptr, mutex as FBMUTEX ptr )
+	create as 		sub FBCALL ( cond as FBCOND ptr )
+	destroy as 		sub FBCALL ( cond as FBCOND ptr )
+	signal as 		sub FBCALL ( cond as FBCOND ptr )
+	broadcast as 	sub FBCALL ( cond as FBCOND ptr )
+	wait as 		sub FBCALL ( cond as FBCOND ptr, mutex as FBMUTEX ptr )
 end type
 
-extern "C"
 /' SignalObjectAndWait version '/
 declare sub 	 fb_CondCreate_nt    FBCALL ( cond as FBCOND ptr )
 declare sub 	 fb_CondDestroy_nt   FBCALL ( cond as FBCOND ptr )
@@ -76,7 +77,7 @@ sub fb_CondInit( )
 	   winnt: pSignalObjectAndWait() returns WAIT_FAILED '/
 
 	pSignalObjectAndWait = cast(SIGNALOBJECTANDWAIT, GetProcAddress( GetModuleHandle( "KERNEL32" ), "SignalObjectAndWait" ))
-	if ( (pSignalObjectAndWait <> NULL) and (pSignalObjectAndWait(NULL, NULL, 0, 0) = WAIT_FAILED) ) then
+	if ( (pSignalObjectAndWait <> NULL) andalso (pSignalObjectAndWait(NULL, NULL, 0, 0) = WAIT_FAILED) ) then
 		__condops.create    = @fb_CondCreate_nt
 		__condops.destroy   = @fb_CondDestroy_nt
 		__condops.signal    = @fb_CondSignal_nt
@@ -101,7 +102,7 @@ function fb_CondCreate FBCALL ( ) as FBCOND ptr
 	fb_CondInit( )
 
 	cond = malloc( sizeof( FBCOND ) )
-	if ( not(cond) ) then
+	if ( NULL <> cond ) then
 		return NULL
 	end if
 	

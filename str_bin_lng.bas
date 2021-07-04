@@ -29,12 +29,12 @@ function fb_BINEx_l FBCALL ( num as ulongint, digits as long ) as FBSTRING ptr
 	end if
 	i = digits - 1
 	while( i >= 0 )
-		s->data[i] = 0 + (num and 1) /' '0' or '1' '/
+		s->data[i] = asc( "0" ) + (num and 1) /' '0' or '1' '/
 		num shr= 1
 		i -= 1
 	wend
 
-	s->data[digits] = 0
+	s->data[digits] = asc( !"\000" ) '' NUL CHAR
 	return s
 end function
 

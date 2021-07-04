@@ -33,11 +33,11 @@ type FB_SERIAL_OPTIONS
 end type
 
 extern "C"
-declare function fb_DevSerialSetWidth	( pszDevice as ubyte const ptr, _width as long, default_width as long ) as long
+declare function fb_DevSerialSetWidth	( pszDevice as const ubyte ptr, _width as long, default_width as long ) as long
 declare function fb_SerialOpen       	( handle as FB_FILE ptr, iPort as long, options as FB_SERIAL_OPTIONS ptr, pszDevice as ubyte ptr, ppvHandle as any ptr ptr ) as long
 declare function fb_SerialGetRemaining	( handle as FB_FILE ptr, pvHandle as any ptr, pLength as fb_off_t ptr ) as long
-declare function fb_SerialWrite      	( handle as FB_FILE ptr, pvHandle as any ptr, _data as any const ptr, length as size_t ) as long
-declare function fb_SerialWriteWstr  	( handle as FB_FILE ptr, pvHandle as any ptr, _data as FB_WCHAR const ptr, length as size_t ) as long
+declare function fb_SerialWrite      	( handle as FB_FILE ptr, pvHandle as any ptr, _data as const any ptr, length as size_t ) as long
+declare function fb_SerialWriteWstr  	( handle as FB_FILE ptr, pvHandle as any ptr, _data as const FB_WCHAR ptr, length as size_t ) as long
 declare function fb_SerialRead       	( handle as FB_FILE ptr, pvHandle as any ptr, _data as any ptr, pLength as size_t ptr ) as long
 declare function fb_SerialReadWstr   	( handle as FB_FILE ptr, pvHandle as any ptr, _data as FB_WCHAR ptr, pLength as size_t ptr ) as long
 declare function fb_SerialClose      	( handle as FB_FILE ptr, pvHandle as any ptr ) as long

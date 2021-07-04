@@ -2,10 +2,11 @@
 
 #include "fb.bi"
 #include "crt/locale.bi"
+#include "fb_private_thread.bi"
 
 extern "C"
 
-dim __fb_ctx as FB_RTLIB_CTX
+dim shared __fb_ctx as FB_RTLIB_CTX = any /' not initialized '/
 dim shared __fb_is_inicnt as long = 0
 
 /' called from fbrt0 '/
@@ -25,6 +26,7 @@ sub fb_hRtInit cdecl ( )
 #ifdef ENABLE_MT
 	fb_TlsInit( )
 #endif
+	fb_AllocateMainFBThread()
 
 	/''
 	 * With the default "C" locale (which is just plain 7-bit ASCII),
@@ -85,7 +87,7 @@ sub fb_hRtExit cdecl ( )
 	/' os-dep termination '/
 	fb_hEnd( 0 )
 
-	fb_DevScrnEnd( @FB_HANDLE_SCREEN )
+	fb_DevScrnEnd( FB_HANDLE_SCREEN )
 
 	/' Free main thread's TLS contexts '/
 	fb_TlsFreeCtxTb( )
@@ -108,6 +110,12 @@ sub fb_Init FBCALL( argc as long, argv as ubyte ptr ptr, lang as long )
 	__fb_ctx.argc = argc
 	__fb_ctx.argv = argv
 	__fb_ctx.lang = lang
+
+#ifdef HOST_JS
+    '' global constructors and destructors are not supported by emscripten
+    fb_hRtInit()
+#endif '' HOST_JS
+
 end sub
 
 /' called by FB program,
@@ -116,6 +124,11 @@ sub fb_End FBCALL ( errlevel as long )
 	if( __fb_ctx.exit_gfxlib2 <> NULL ) then
 		__fb_ctx.exit_gfxlib2( )
 	end if
+
+#ifdef HOST_JS
+    '' global constructors and destructors are not supported by emscripten
+    fb_hRtExit()
+#endif '' HOST_JS
 
 	exit_( errlevel )
 end sub

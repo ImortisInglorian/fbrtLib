@@ -18,8 +18,15 @@ function fb_Time FBCALL ( ) as FBSTRING ptr
 	/' Note: localtime() may return NULL, as documented on MSDN and Linux man pages,
 	   and it has been observed to do that on at least one FB user's Windows system,
 	   because of a negative time_t value from time(). '/
-	if ( ((ptm = localtime( @rawtime )) <> NULL) and ((dst = fb_hStrAllocTemp( NULL, 2+1+2+1+2 )) <> NULL) ) then /' done last so it's not leaked '/
-		sprintf( dst->data, "%02d:%02d:%02d", ptm->tm_hour, ptm->tm_min, ptm->tm_sec )
+	ptm = localtime( @rawtime )
+	if( ptm <> NULL ) then
+		/' done last so it's not leaked '/
+		dst = fb_hStrAllocTemp( NULL, 2+1+2+1+2 )
+		if( dst <> NULL ) then
+			sprintf( dst->data, "%02d:%02d:%02d", ptm->tm_hour, ptm->tm_min, ptm->tm_sec )
+		else
+			dst = @__fb_ctx.null_desc
+		end if
 	else
 		dst = @__fb_ctx.null_desc
 	end if

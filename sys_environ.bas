@@ -9,7 +9,7 @@ function fb_GetEnviron FBCALL ( varname as FBSTRING ptr ) as FBSTRING ptr
 	dim as ubyte ptr tmp
 	dim as ssize_t _len
 
-	if ( (varname <> NULL) and (varname->data <> NULL) ) then
+	if ( (varname <> NULL) andalso (varname->data <> NULL) ) then
 		tmp = getenv( varname->data )
 	else
 		tmp = NULL
@@ -40,7 +40,7 @@ end function
 function fb_SetEnviron FBCALL ( _str as FBSTRING ptr ) as long
 	dim as long res = 0
 
-	if ( (_str <> NULL) and (_str->data <> NULL) ) then
+	if ( (_str <> NULL) andalso (_str->data <> NULL) ) then
 		res = _putenv( _str->data )
 	end if
 

@@ -5,8 +5,8 @@
 
 extern "C"
 /':::::'/
-private function fb_hCheckAMPM( text as ubyte ptr, pLength as size_t ptr ) as long
-    dim as ubyte ptr text_start = cast(ubyte ptr, text)
+private function fb_hCheckAMPM( text as const ubyte ptr, pLength as size_t ptr ) as long
+    dim as const ubyte ptr text_start = text
     dim as long result = 0
 
     /' skip WS '/
@@ -51,9 +51,9 @@ private function fb_hCheckAMPM( text as ubyte ptr, pLength as size_t ptr ) as lo
 end function
 
 /':::::'/
-function fb_hTimeParse( text as ubyte ptr, text_len as size_t, pHour as long ptr, pMinute as long ptr, pSecond as long ptr, pLength as size_t ptr ) as long
+function fb_hTimeParse( text as const ubyte ptr, text_len as size_t, pHour as long ptr, pMinute as long ptr, pSecond as long ptr, pLength as size_t ptr ) as long
     dim as size_t length = 0
-    dim as ubyte ptr text_start = cast(ubyte ptr, text)
+    dim as const ubyte ptr text_start = text
     dim as long am_pm = 0
     dim as long result = FALSE
     dim as long _hour = 0, _minute = 0, _second = 0

@@ -15,7 +15,7 @@ function fb_hStr2Longint FBCALL ( src as ubyte ptr, _len as ssize_t ) as longint
 		return 0
 	end if
 	radix = 10
-	if ( (_len >= 2) and (p[0] = 32) ) then
+	if ( (_len >= 2) and (p[0] = asc( "&" ) ) ) then
 		skip = 2
 		select case p[1]
 			case asc("h"), asc("H"):
@@ -31,6 +31,9 @@ function fb_hStr2Longint FBCALL ( src as ubyte ptr, _len as ssize_t ) as longint
 
 		if ( radix <> 10 ) then
 			p += skip
+#ifdef HOST_MINGW
+			return fb_hStrRadix2Longint( p, _len - skip, radix )
+#endif
 		end if
 	end if
 

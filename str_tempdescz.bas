@@ -3,7 +3,7 @@
 #include "fb.bi"
 
 extern "C"
-function fb_StrAllocTempDescZEx FBCALL ( _str as ubyte const ptr, _len as ssize_t ) as FBSTRING ptr
+function fb_StrAllocTempDescZEx FBCALL ( _str as const ubyte ptr, _len as ssize_t ) as FBSTRING ptr
 	dim as FBSTRING ptr dsc
 
 	FB_STRLOCK()
@@ -24,7 +24,7 @@ function fb_StrAllocTempDescZEx FBCALL ( _str as ubyte const ptr, _len as ssize_
 	return dsc
 end function
 
-function fb_StrAllocTempDescZ FBCALL ( _str as ubyte const ptr ) as FBSTRING ptr
+function fb_StrAllocTempDescZ FBCALL ( _str as const ubyte ptr ) as FBSTRING ptr
 	dim as ssize_t _len
 
 	/' find the true size '/

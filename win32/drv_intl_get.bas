@@ -4,7 +4,7 @@
 #include "fb_private_intl.bi"
 
 extern "C"
-private function fb_DrvIntlGet cdecl ( Index as eFbIntlIndex ) as ubyte ptr
+function fb_DrvIntlGet cdecl ( Index as eFbIntlIndex ) as const ubyte ptr
 	dim as ubyte buf(0 to 127)
 	dim as LCTYPE _lctype
 
@@ -21,6 +21,6 @@ private function fb_DrvIntlGet cdecl ( Index as eFbIntlIndex ) as ubyte ptr
 		return NULL
 	end select
 
-	return iif(fb_hGetLocaleInfo( LOCALE_USER_DEFAULT, _lctype, @buf(0), sizeof(buf) - 1 ), @buf(0), NULL)
+	return iif(fb_hGetLocaleInfo( LOCALE_USER_DEFAULT, _lctype, @buf(0), ARRAY_SIZEOF(buf) - 1 ), @buf(0), NULL)
 end function
 end extern

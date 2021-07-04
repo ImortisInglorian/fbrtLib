@@ -15,7 +15,7 @@ private function fb_DevLptFindDeviceByName( iPort as long, filename as ubyte ptr
 					if ( iPort = 0 or iPort = devInfo->iPort ) then
 						if ( strcmp(devInfo->pszDevice, filename) = 0 ) then
 							/' bugcheck '/
-							DBG_ASSERT( handle <> FB_HANDLE_PRINTER and handle <> FB_HANDLE_PRINTER )
+							DBG_ASSERT( handle <> FB_HANDLE_PRINTER )
 							return handle
 						end if
 					end if
@@ -54,7 +54,7 @@ dim shared as FB_FILE_HOOKS hooks_dev_lpt = ( _
     NULL)
 
 /':::::'/
-function fb_DevLptOpen( handle as FB_FILE ptr, filename as ubyte const ptr, filename_len as size_t ) as long
+function fb_DevLptOpen( handle as FB_FILE ptr, filename as const ubyte ptr, filename_len as size_t ) as long
 	dim as DEV_LPT_PROTOCOL ptr lpt_proto
     dim as DEV_LPT_INFO ptr devInfo
     dim as FB_FILE ptr redir_handle = NULL
@@ -91,9 +91,9 @@ function fb_DevLptOpen( handle as FB_FILE ptr, filename as ubyte const ptr, file
         res = fb_PrinterOpen( devInfo, devInfo->iPort, filename )
     else
         res = fb_ErrorSetNum( FB_RTERROR_OK )
-        if ( FB_HANDLE_USED(redir_handle) <> 0 ) then
+        if ( FB_HANDLE_USED(redir_handle) ) then
             /' We only allow redirection between OPEN "LPT1:" and LPRINT '/
-            if ( handle = @FB_HANDLE_PRINTER ) then
+            if ( handle = FB_HANDLE_PRINTER ) then
                 redir_handle->redirection_to = handle
                 handle->width = redir_handle->width
                 handle->line_length = redir_handle->line_length
@@ -125,7 +125,7 @@ function fb_DevLptOpen( handle as FB_FILE ptr, filename as ubyte const ptr, file
 	return res
 end function
 
-function fb_DevPrinterSetWidth( pszDevice as ubyte const ptr, _width as long, default_width as long ) as long
+function fb_DevPrinterSetWidth( pszDevice as const ubyte ptr, _width as long, default_width as long ) as long
 	dim as FB_FILE ptr tmp_handle = NULL
     dim as long cur = iif((default_width = -1), 80, default_width)
     dim as ubyte ptr pszDev
@@ -157,7 +157,7 @@ function fb_DevPrinterSetWidth( pszDevice as ubyte const ptr, _width as long, de
     return cur
 end function
 
-function fb_DevPrinterGetOffset( pszDevice as ubyte const ptr ) as long
+function fb_DevPrinterGetOffset( pszDevice as const ubyte ptr ) as long
 	dim as FB_FILE ptr tmp_handle = NULL
     dim as long cur = 0
     dim as ubyte ptr pszDev

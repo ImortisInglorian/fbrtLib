@@ -17,19 +17,12 @@ function fb_RTrimAny FBCALL ( src as FBSTRING ptr, pattern as FBSTRING ptr ) as 
 	_len = 0
 	if ( src->data <> NULL ) then
 		dim as ubyte ptr pachText = src->data
-		dim as ssize_t len_pattern = iif((pattern <> NULL) and (pattern->data <> NULL), FB_STRSIZE( pattern ), 0)
+		dim as ssize_t len_pattern = iif((pattern <> NULL) andalso (pattern->data <> NULL), FB_STRSIZE( pattern ), 0)
 		_len = FB_STRSIZE( src )
 		if ( len_pattern <> 0 ) then
 			while ( _len <> 0 )
-				dim as ssize_t i
 				_len -= 1
-				for i = 0 to len_pattern
-					if ( FB_MEMCHR( pattern->data, pachText[_len], len_pattern ) <> NULL ) then
-						exit for
-					end if
-				next
-
-				if ( i = len_pattern ) then 
+				if ( FB_MEMCHR( pattern->data, pachText[_len], len_pattern ) = NULL ) then
 					_len += 1
 					exit while
 				end if

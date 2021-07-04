@@ -3,8 +3,8 @@
 #include "fb.bi"
 
 extern "C"
-function fb_WstrToUInt FBCALL ( src as FB_WCHAR const ptr, _len as ssize_t ) as ulong
-    dim as FB_WCHAR ptr p, r
+function fb_WstrToUInt FBCALL ( src as const FB_WCHAR ptr, _len as ssize_t ) as ulong
+    dim as const FB_WCHAR ptr p, r
 	dim as long radix
 
 	/' skip white spc '/
@@ -17,17 +17,20 @@ function fb_WstrToUInt FBCALL ( src as FB_WCHAR const ptr, _len as ssize_t ) as 
 
 	radix = 10
 	r = p
-	if ( (_len >= 2) and (*r + 1 = 1) ) then
-		select case *r + 1
+	if ( (_len >= 2) and (*r = asc("&")) ) then
+		r += 1
+		select case *r
 			case 104, 72: /' h H '/
+				r += 1
 				radix = 16
 			case 111, 79: /' o O '/
+				r += 1
 				radix = 8
 			case 098, 66: /' b B '/
+				r += 1
 				radix = 2
 			case else: /' assume octal '/
 				radix = 8
-				r -= 1
 		end select
 
 		if ( radix <> 10 ) then
@@ -38,7 +41,7 @@ function fb_WstrToUInt FBCALL ( src as FB_WCHAR const ptr, _len as ssize_t ) as 
 	return wcstoul( p, NULL, radix )
 end function
 
-function fb_WstrValUInt FBCALL ( _str as FB_WCHAR const ptr ) as ulong
+function fb_WstrValUInt FBCALL ( _str as const FB_WCHAR ptr ) as ulong
     dim as ulong _val
 	dim as ssize_t _len
 

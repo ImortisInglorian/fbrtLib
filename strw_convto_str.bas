@@ -7,7 +7,7 @@ extern "C"
    must be at least dst_chars+1 bytes.
    src must be null-terminated.
    result = number of chars written, excluding null terminator that is always written '/
-function fb_wstr_ConvToA( dst as ubyte ptr, dst_chars as ssize_t, src as FB_WCHAR ptr ) as ssize_t
+function fb_wstr_ConvToA( dst as ubyte ptr, dst_chars as ssize_t, src as const FB_WCHAR ptr ) as ssize_t
 	if (src = NULL) then
 		*dst = 0
 		return 0
@@ -31,7 +31,7 @@ function fb_wstr_ConvToA( dst as ubyte ptr, dst_chars as ssize_t, src as FB_WCHA
 		   enough space, so do it manually (this will cut off the last
 		   char, but what can you do) '/
 		if (chars = (dst_chars + 1)) then
-			dst[dst_chars] = 0
+			dst[dst_chars] = asc( !"\000" )
 			return dst_chars - 1
 		end if
 		return chars
@@ -43,7 +43,8 @@ function fb_wstr_ConvToA( dst as ubyte ptr, dst_chars as ssize_t, src as FB_WCHA
 	dim as ubyte ptr dstlimit = dst + dst_chars
 	while (dst < dstlimit)
 #if defined(HOST_WIN32)
-		dim as UTF_16 c = *src + 1
+		dim as UTF_16 c = *src
+		src += 1
 		if (c = 0) then
 			exit while
 		end if
@@ -54,7 +55,8 @@ function fb_wstr_ConvToA( dst as ubyte ptr, dst_chars as ssize_t, src as FB_WCHA
 			c = 63
 		end if
 #else
-		dim as UTF_32 c = *src + 1 
+		dim as UTF_32 c = *src 
+		src += 1		 
 		if (c = 0) then
 			exit while
 		end if
@@ -62,15 +64,15 @@ function fb_wstr_ConvToA( dst as ubyte ptr, dst_chars as ssize_t, src as FB_WCHA
 			c = 63
 		end if
 #endif
-		*dst += 1
 		*dst = c
+		dst += 1
 	wend
-	*dst = 0
+	*dst = asc( !"\000" )
 	return dst - origdst
 #endif
 end function
 
-function fb_WstrToStr FBCALL ( src as FB_WCHAR const ptr ) as FBSTRING ptr
+function fb_WstrToStr FBCALL ( src as const FB_WCHAR ptr ) as FBSTRING ptr
 	dim as FBSTRING ptr dst
 	dim as ssize_t chars
 

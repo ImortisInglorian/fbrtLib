@@ -17,7 +17,7 @@
  '/
 extern "C"
 function fb_SetDate FBCALL ( _date as FBSTRING ptr ) as long
-	if ( (_date <> NULL) and (_date->data <> NULL) ) then
+	if ( (_date <> NULL) andalso (_date->data <> NULL) ) then
 		dim as ubyte ptr t
 		dim as ubyte c, sep
 		dim as long m, d, y

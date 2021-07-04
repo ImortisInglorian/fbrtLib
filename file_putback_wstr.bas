@@ -3,12 +3,12 @@
 #include "fb.bi"
 
 extern "C"
-function fb_FilePutBackWstrEx( handle as FB_FILE ptr, src as FB_WCHAR ptr, chars as size_t ) as long
+function fb_FilePutBackWstrEx( handle as FB_FILE ptr, src as const FB_WCHAR ptr, chars as size_t ) as long
 	dim as long res
 	dim as size_t bytes
     dim as ubyte ptr dst
 
-    if ( FB_HANDLE_USED(handle) = NULL ) then
+    if ( FB_HANDLE_USED(handle) = 0 ) then
 		return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 	end if
 
@@ -23,7 +23,7 @@ function fb_FilePutBackWstrEx( handle as FB_FILE ptr, src as FB_WCHAR ptr, chars
     	bytes = chars
 	end if
 
-    if ( handle->putback_size + bytes > sizeof(handle->putback_buffer(0)) ) then
+    if ( handle->putback_size + bytes > ARRAY_SIZEOF(handle->putback_buffer) ) then
         res = fb_ErrorSetNum( FB_RTERROR_FILEIO )
     else
         if ( handle->putback_size <> 0 ) then
@@ -55,7 +55,7 @@ function fb_FilePutBackWstrEx( handle as FB_FILE ptr, src as FB_WCHAR ptr, chars
 	return res
 end function
 
-function fb_FilePutBackWstr FBCALL ( fnum as long, src as FB_WCHAR const ptr, chars as size_t ) as long
+function fb_FilePutBackWstr FBCALL ( fnum as long, src as const FB_WCHAR ptr, chars as size_t ) as long
     return fb_FilePutBackWstrEx( FB_FILE_TO_HANDLE(fnum), src, chars )
 end function
 end extern

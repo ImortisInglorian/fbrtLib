@@ -3,8 +3,8 @@
 #include "fb.bi"
 
 extern "C"
-function fb_WstrLTrimAny FBCALL ( src as FB_WCHAR const ptr, pattern as FB_WCHAR const ptr ) as FB_WCHAR ptr
-    dim as FB_WCHAR ptr pachText
+function fb_WstrLTrimAny FBCALL ( src as const FB_WCHAR ptr, pattern as const FB_WCHAR ptr ) as FB_WCHAR ptr
+    dim as const FB_WCHAR ptr pachText
 	dim as FB_WCHAR ptr dst
 	dim as ssize_t _len
 
@@ -16,19 +16,15 @@ function fb_WstrLTrimAny FBCALL ( src as FB_WCHAR const ptr, pattern as FB_WCHAR
     scope
         dim as ssize_t len_pattern = fb_wstr_Len( pattern )
         pachText = src
-		while ( _len <> 0 )
-            dim as ssize_t i
-            for i = 0 to len_pattern
-                if ( wcschr( pattern, *pachText ) <> NULL ) then
+        if( len_pattern <> 0 ) then
+			while ( _len <> 0 )
+                if ( wcschr( pattern, *pachText ) = NULL ) then
                     exit while
                 end if
-            next
-            if ( i = len_pattern ) then
-                exit while
-            end if
-            _len -= 1
-            pachText += 1
-		wend
+	            _len -= 1
+	            pachText += 1
+            wend
+		end if
 	end scope
 
 	if ( _len > 0 ) then

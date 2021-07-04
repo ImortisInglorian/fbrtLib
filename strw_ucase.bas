@@ -3,11 +3,11 @@
 #include "fb.bi"
 
 extern "C"
-function fb_WstrUcase2 FBCALL ( src as FB_WCHAR const ptr, mode as long ) as FB_WCHAR ptr
+function fb_WstrUcase2 FBCALL ( src as const FB_WCHAR ptr, mode as long ) as FB_WCHAR ptr
 	dim as FB_WCHAR ptr dst, d
-	dim as FB_WCHAR ptr s
+	dim as const FB_WCHAR ptr s
 	dim as FB_WCHAR c
-	dim as ssize_t chars, i
+	dim as ssize_t chars, i = any
 
 	if ( src = NULL ) then
 		return NULL
@@ -25,23 +25,29 @@ function fb_WstrUcase2 FBCALL ( src as FB_WCHAR const ptr, mode as long ) as FB_
 	d = dst
 
 	if ( mode = 1 ) then
-		for i = 0  to chars - 1
-			c = *s + 1
+		i = 0
+		while( i < chars )		
+			c = *s
+			s += 1
 			if ( (c >= 97) and (c <= 122) ) then
 				c -= 97 - 65
 			end if
-			*d += 1
 			*d = c
-		next
+			d += 1
+			i += 1
+		wend
 	else
-		for i = 0 to chars - 1
-			c = *s + 1
+		i = 0
+		while( i < chars )		
+			c = *s
+			s += 1
 			if ( fb_wstr_IsLower( c ) ) then
 				c = fb_wstr_ToUpper( c )
 			end if
-			*d += 1
 			*d = c
-		next
+			d += 1
+			i += 1
+		wend
 	end if
 
 	/' null char '/

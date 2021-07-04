@@ -4,7 +4,7 @@
 
 extern "C"
 /':::::'/
-sub fb_PrintBufferEx FBCALL ( buffer as any const ptr, _len as size_t, mask as long )
+sub fb_PrintBufferEx FBCALL ( buffer as const any ptr, _len as size_t, mask as long )
 	FB_LOCK()
 
     if ( __fb_ctx.hooks.printbuffproc <> NULL ) then
@@ -17,7 +17,7 @@ sub fb_PrintBufferEx FBCALL ( buffer as any const ptr, _len as size_t, mask as l
 end sub
 
 /':::::'/
-sub fb_PrintBuffer FBCALL ( buffer as ubyte const ptr, mask as long )
+sub fb_PrintBuffer FBCALL ( buffer as const ubyte ptr, mask as long )
     fb_PrintBufferEx( buffer, strlen( buffer ), mask )
 end sub
 end extern

@@ -5,7 +5,7 @@
 extern "C"
 private function hReadChar( ctx as FB_INPUTCTX ptr ) as long
     /' device? '/
-    if ( FB_HANDLE_USED(ctx->handle) <> NULL ) then
+    if ( FB_HANDLE_USED(ctx->handle) <> 0 ) then
 		dim as long res, c
 		dim as size_t _len
         res = fb_FileGetDataEx( ctx->handle, 0, @c, 1, @_len, FALSE, FALSE )
@@ -20,14 +20,14 @@ private function hReadChar( ctx as FB_INPUTCTX ptr ) as long
 			return EOF_
 		else
 			ctx->index += 1
-			return ctx->str->data[ctx->index]
+			return ctx->str.data[ctx->index - 1]
 		end if
 	end if
 end function
 
 private function hUnreadChar( ctx as FB_INPUTCTX ptr, c as long ) as long
     /' device? '/
-    if ( FB_HANDLE_USED(ctx->handle) <> NULL ) then
+    if ( FB_HANDLE_USED(ctx->handle) <> 0 ) then
         return fb_FilePutBackEx( ctx->handle, @c, 1 )
     /' console .. '/
     else
@@ -120,7 +120,7 @@ function fb_FileInputNextToken( buffer as ubyte ptr, max_chars as ssize_t, is_st
 					end if
 				else
 					isquote = FALSE
-					if ( is_string <> NULL ) then
+					if ( is_string <> 0 ) then
 						c = hReadChar( ctx )
 						goto _exit_
 					end if
@@ -164,11 +164,12 @@ function fb_FileInputNextToken( buffer as ubyte ptr, max_chars as ssize_t, is_st
 						goto _exit_
 					end if
 				end if
+				goto savechar
 
 			case else:
 savechar:
-				buffer += 1
 				*buffer = c
+				buffer += 1
 				_len += 1
 		end select
 

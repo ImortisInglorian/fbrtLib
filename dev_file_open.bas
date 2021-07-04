@@ -16,7 +16,8 @@ dim shared as FB_FILE_HOOKS hooks_dev_file = ( _
     @fb_DevFileReadLine, _
     @fb_DevFileReadLineWstr, _
     NULL, _
-    @fb_DevFileFlush)
+    @fb_DevFileFlush _
+)
 
 extern "C"
 sub fb_hSetFileBufSize( fp as FILE ptr )
@@ -26,7 +27,7 @@ sub fb_hSetFileBufSize( fp as FILE ptr )
 	   with that FILE handle '/
 end sub
 
-function fb_DevFileOpen( handle as FB_FILE ptr, filename as ubyte const ptr, fname_len as size_t ) as long
+function fb_DevFileOpen( handle as FB_FILE ptr, filename as const ubyte ptr, fname_len as size_t ) as long
     dim as FILE ptr fp = NULL
     dim as ubyte ptr openmask
     dim as ubyte ptr fname
@@ -88,7 +89,7 @@ function fb_DevFileOpen( handle as FB_FILE ptr, filename as ubyte const ptr, fna
 					fp = fopen( fname, "w+b" )
 
 					/' if file could not be created and in ANY mode, try opening as read-only '/
-					if ( (fp = NULL) and (handle->access=FB_FILE_ACCESS_ANY) ) then
+					if ( (fp = NULL) andalso (handle->access=FB_FILE_ACCESS_ANY) ) then
 						fp = fopen( fname, "rb" )
 						if (fp <> NULL) then
 							' don't forget to set the effective access mode ...

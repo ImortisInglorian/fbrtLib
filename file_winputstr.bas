@@ -15,7 +15,7 @@ function fb_FileWstrInput FBCALL ( chars as ssize_t, fnum as long ) as FB_WCHAR 
 
     handle = FB_FILE_TO_HANDLE(fnum)
 
-    if ( FB_HANDLE_USED(handle) <> NULL ) then
+    if ( FB_HANDLE_USED(handle) = 0 ) then
 		FB_UNLOCK()
 		return NULL
 	end if
@@ -38,7 +38,7 @@ function fb_FileWstrInput FBCALL ( chars as ssize_t, fnum as long ) as FB_WCHAR 
         end if
 
 		if ( res = FB_RTERROR_OK ) then
-			dst[read_chars] = 0
+			dst[read_chars] = asc(!"\000") '' NUL CHAR
 		else
 			fb_wstr_Del( dst )
 			dst = NULL

@@ -8,18 +8,20 @@
 
 
 extern "C"
-function fb_hDynLoad cdecl ( libname as ubyte const ptr, funcname as ubyte const ptr ptr, funcptr as any ptr ptr ) as FB_DYLIB
+function fb_hDynLoad cdecl ( libname as const ubyte ptr, funcname as const ubyte ptr ptr, funcptr as any ptr ptr ) as FB_DYLIB
 	dim as FB_DYLIB _lib
 	dim as ssize_t i
 
-	if (not(_lib = LoadLibrary(libname))) then
+	_lib = LoadLibrary(libname)
+	if( NULL <> _lib ) then
 		return NULL
 	end if
 
 	/' Load functions '/
 	while funcname[i]
 		funcptr[i] = hDylibSymbol(_lib, funcname[i])
-		if ( not(funcptr[i])) then
+		/' !!!FIXME!!! -previous translated code was 'NOT(funcptr[i])' which fbc doesn't catch but gcc does '/
+		if ( NULL <> funcptr[i] ) then
 			hDylibFree(_lib)
 			return NULL
 		end if
@@ -28,13 +30,13 @@ function fb_hDynLoad cdecl ( libname as ubyte const ptr, funcname as ubyte const
 	return _lib
 end function
 
-function fb_hDynLoadAlso cdecl ( _lib as FB_DYLIB, funcname as ubyte const ptr ptr, funcptr as any ptr ptr, count as ssize_t ) as long
+function fb_hDynLoadAlso cdecl ( _lib as FB_DYLIB, funcname as const ubyte ptr ptr, funcptr as any ptr ptr, count as ssize_t ) as long
 	dim as ssize_t i
 
 	/' Load functions '/
 	for i = 0 to count
 		funcptr[i] = hDylibSymbol(_lib, funcname[i])
-		if (not(funcptr[i])) then
+		if ( NULL <> funcptr[i]) then
 			return -1
 		end if
 	next

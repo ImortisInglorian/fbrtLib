@@ -61,8 +61,8 @@ sub fb_DevScrnInit_ReadWstr( )
 	fb_DevScrnInit_NoOpen( )
 
 	FB_LOCK( )
-    if ( FB_HANDLE_SCREEN.hooks->pfnReadWstr = NULL ) then
-    	FB_HANDLE_SCREEN.hooks->pfnReadWstr = iif(fb_IsRedirected( TRUE ), @hReadFromStdin, @fb_DevScrnReadWstr)
+    if ( FB_HANDLE_SCREEN->hooks->pfnReadWstr = NULL ) then
+    	FB_HANDLE_SCREEN->hooks->pfnReadWstr = iif(fb_IsRedirected( TRUE ), @hReadFromStdin, @fb_DevScrnReadWstr)
 	end if
 	
 	FB_UNLOCK( )

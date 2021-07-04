@@ -15,7 +15,7 @@ sub fb_Cls FBCALL ( mode as long )
         fb_ConsoleClear( mode )
 	end if
 
-    FB_HANDLE_SCREEN.line_length = 0
+    FB_HANDLE_SCREEN->line_length = 0
 
 	FB_UNLOCK()
 

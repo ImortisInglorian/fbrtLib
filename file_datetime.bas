@@ -1,11 +1,17 @@
 /' get file date/time by filename '/
 
+/'
+!!! FIXME !!! - update the crt headers
+- have issues here with duplicate definitions in the crt headers
+- need to update crt headers to allow these includes to work together
+'/
+
 #include "fb.bi"
 #include "crt/time.bi"
 #include "crt/sys/stat.bi"
 
 extern "C"
-function fb_FileDateTime FBCALL ( filename as ubyte const ptr ) as double
+function fb_FileDateTime FBCALL ( filename as const ubyte ptr ) as double
 	dim as stat buf
 	if ( _stat( filename, @buf ) <> 0 ) then
 		return 0.0

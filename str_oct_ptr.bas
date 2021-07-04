@@ -3,7 +3,7 @@
 #include "fb.bi"
 
 extern "C"
-function fb_OCT_p FBCALL ( p as any const ptr ) as FBSTRING ptr
+function fb_OCT_p FBCALL ( p as const any ptr ) as FBSTRING ptr
 	#ifdef HOST_64BIT
 	return fb_OCT_l( cast(ulongint, p) )
 	#else
@@ -11,7 +11,7 @@ function fb_OCT_p FBCALL ( p as any const ptr ) as FBSTRING ptr
 	#endif
 end function
 
-function fb_OCTEx_p FBCALL ( p as any const ptr, digits as long ) as FBSTRING ptr
+function fb_OCTEx_p FBCALL ( p as const any ptr, digits as long ) as FBSTRING ptr
 	#ifdef HOST_64BIT
 	return fb_OCTEx_l( cast(ulongint, p), digits )
 	#else

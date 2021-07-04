@@ -3,7 +3,7 @@
 #include "fb.bi"
 
 extern "C"
-function fb_WstrConcatAssign FBCALL ( dst as FB_WCHAR ptr, dst_chars as ssize_t, src as FB_WCHAR const ptr ) as FB_WCHAR ptr
+function fb_WstrConcatAssign FBCALL ( dst as FB_WCHAR ptr, dst_chars as ssize_t, src as const FB_WCHAR ptr ) as FB_WCHAR ptr
 	dim as ssize_t src_len, dst_len
 
 	/' NULL? '/
@@ -25,10 +25,9 @@ function fb_WstrConcatAssign FBCALL ( dst as FB_WCHAR ptr, dst_chars as ssize_t,
 		if ( src_len > dst_chars - dst_len ) then
 			src_len = dst_chars - dst_len
 		end if
-	end if
 
-	/' copy the null-term too '/
-	fb_wstr_Move( @dst[dst_len], src, src_len + 1 )
+		fb_wstr_Copy( @dst[dst_len], src, src_len )
+	end if
 
 	return dst
 end function

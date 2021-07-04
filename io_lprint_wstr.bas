@@ -4,7 +4,7 @@
 
 extern "C"
 /':::::'/
-sub fb_LPrintWstr FBCALL ( fnum as long, s as FB_WCHAR const ptr, mask as long )
+sub fb_LPrintWstr FBCALL ( fnum as long, s as const FB_WCHAR ptr, mask as long )
     fb_LPrintInit()
 
     fb_PrintWstrEx( FB_FILE_TO_HANDLE(fnum), s, FB_PRINT_CONVERT_BIN_NEWLINE(mask) )

@@ -28,7 +28,7 @@ function fb_LocateEx FBCALL ( row as long, col as long, cursor as long, current_
         end if
 
         if ( col <> 0 ) then
-            FB_HANDLE_SCREEN.line_length = col - 1
+            FB_HANDLE_SCREEN->line_length = col - 1
 		end if
 
         FB_UNLOCK()

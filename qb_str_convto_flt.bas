@@ -9,7 +9,7 @@
 
 /':::::'/
 extern "C"
-function fb_FloatToStrQB ( num as single ) as FBSTRING ptr
+function fb_FloatToStrQB FBCALL ( num as single ) as FBSTRING ptr
 	dim as FBSTRING ptr dst
 
 	/' alloc temp string '/
@@ -24,8 +24,8 @@ function fb_FloatToStrQB ( num as single ) as FBSTRING ptr
 
 		/' skip the dot at end if any '/
 		if tmp_len > 0 then
-			if dst->data[tmp_len-1] = "." then
-				dst->data[tmp_len-1] = !"\000"
+			if dst->data[tmp_len-1] = asc(".") then
+				dst->data[tmp_len-1] = asc(!"\000")
 				tmp_len -= 1
 			end if
 		end if
@@ -38,7 +38,7 @@ function fb_FloatToStrQB ( num as single ) as FBSTRING ptr
 end function
 
 /':::::'/
-function fb_DoubleToStrQB ( num as double ) as FBSTRING ptr
+function fb_DoubleToStrQB FBCALL ( num as double ) as FBSTRING ptr
 	dim as FBSTRING ptr dst
 
 	/' alloc temp string '/
@@ -53,8 +53,8 @@ function fb_DoubleToStrQB ( num as double ) as FBSTRING ptr
 
 		/' skip the dot at end if any '/
 		if tmp_len > 0 then
-			if dst->data[tmp_len-1] = "." then
-				dst->data[tmp_len-1] = !"\000"
+			if dst->data[tmp_len-1] = asc(".") then
+				dst->data[tmp_len-1] = asc(!"\000")
 				tmp_len -= 1
 			end if
 		end if

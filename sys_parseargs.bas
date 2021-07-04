@@ -6,7 +6,7 @@
    returns -1 on error, or number of arguments '/
 
 extern "C"
-function fb_hParseArgs( dst as ubyte ptr, src as ubyte const ptr, length as ssize_t ) as long
+function fb_hParseArgs( dst as ubyte ptr, src as const ubyte ptr, length as ssize_t ) as long
 	dim as long in_quote = 0, argc = 0
 	dim as ssize_t bs_count = 0, i = 0
 	dim as ubyte ptr s = cast(ubyte ptr, src)

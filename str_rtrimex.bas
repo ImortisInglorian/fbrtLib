@@ -15,7 +15,7 @@ function fb_RTrimEx FBCALL ( src as FBSTRING ptr, pattern as FBSTRING ptr ) as F
 	FB_STRLOCK()
 
 	if ( src->data <> NULL ) then
-		dim as ssize_t len_pattern = iif((pattern <> NULL) and (pattern->data <> NULL), FB_STRSIZE( pattern ), 0)
+		dim as ssize_t len_pattern = iif((pattern <> NULL) andalso (pattern->data <> NULL), FB_STRSIZE( pattern ), 0)
 		_len = FB_STRSIZE( src )
 		if ( _len >= len_pattern ) then
 			if ( len_pattern = 1 ) then

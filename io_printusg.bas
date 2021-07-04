@@ -52,8 +52,8 @@ end type
 #macro ADD_CHAR( c )              
 	DBG_ASSERT( p >= @buffer(0) )
 	if ( p >= @buffer(0) ) then
-		p -= 1
 		*p = cast(ubyte, c)
+		p -= 1
 	elseif ( p = @buffer(0) ) then
 		*p = CHAR_WTF
 	end if
@@ -61,6 +61,13 @@ end type
 
 
 extern "C"
+
+'' !!!TODO!!! see note in fb_thread.bi::_FB_TLSGETCTX(id)
+'' #define fb_PRINTUSGCTX_Destructor NULL
+ 
+sub fb_PRINTUSGCTX_Destructor( byval data_ as any ptr )
+end sub
+
 /'-------------------------------------------------------------'/
 /' Checks for Infinity/NaN                                     *
  * (assumes IEEE-754 floating-point format)                    *
@@ -173,7 +180,7 @@ private function hLog10_ULL( a as ulongint ) as long
 
 	a64 = a
 	while( a64 >= cast(long, 1.E+8) )
-		a64 /= cast(long, 1.E+8)
+		a64 \= cast(long, 1.E+8)
 		ret += 8
 	wend
 	a32 = a64
@@ -184,7 +191,7 @@ private function hLog10_ULL( a as ulongint ) as long
 	if ( a = 0 ) then
 		DBG_ASSERT( ret = 0 )
 	else
-		DBG_ASSERT( hPow10_ULL( ret ) <= a and hPow10_ULL( ret ) > a / 10 )
+		DBG_ASSERT( hPow10_ULL( ret ) <= a and hPow10_ULL( ret ) > a \ 10 )
 	end if
 
 	return ret
@@ -202,9 +209,9 @@ private function hDivPow10_ULL( a as ulongint, n as long ) as ulongint
 	if ( n > 19 ) then return 0
 
 	b = hPow10_ULL( n )
-	ret = a / b
+	ret = a \ b
 
-	if( (a mod b) >= (b + 1) / 2 ) then
+	if( (a mod b) >= (b + 1) \ 2 ) then
 		ret += 1 /' round up '/
 	end if
 
@@ -274,8 +281,8 @@ private function fb_PrintUsingFmtStr( fnum as long ) as long
 			exit while
 		end if
 		
-		_len += 1
 		buffer(_len) = cast(ubyte, c)
+		_len += 1
 
 		ctx->_ptr += 1
 		ctx->chars -= 1
@@ -522,9 +529,9 @@ private function hPrintNumber( fnum as long, _val as ulongint, val_exp as long, 
 	dim as long val_digs, val_zdigs
 	dim as ulongint val0
 	dim as long val_digs0, val_exp0
-	dim as long valIsneg, valIsfloat, valIssng
+	dim as long valIsNeg, valIsFloat, valIsSng
 	dim as long c, lc
-#ifdef DEBUG
+#ifdef __FB_DEBUG__
 	dim as long nc /' used for sanity checks '/
 #endif
 	dim as long doexit, padchar, intdigs, decdigs, expdigs
@@ -566,12 +573,12 @@ private function hPrintNumber( fnum as long, _val as ulongint, val_exp as long, 
 
 	while( ctx->chars > 0 )
 		/' exit if just parsed end '+'/'-' sign, or '&' sign '/
-		if ( signatend <> NULL or isamp <> NULL ) then
+		if ( signatend <> FALSE or isamp <> FALSE ) then
 			exit while
 		end if
 
 		c = *ctx->_ptr
-#ifdef DEBUG
+#ifdef __FB_DEBUG__
 		nc = iif( ctx->chars > 1, *(ctx->_ptr+1), -1 )
 #endif
 		doexit = FALSE
@@ -701,9 +708,9 @@ private function hPrintNumber( fnum as long, _val as ulongint, val_exp as long, 
 	/' ------------------------------------------------------ '/
 
 	/' check flags '/
-	valIsneg = ( (flags and VAL_ISNEG) <> 0 )
-	valIsfloat = ( (flags and VAL_ISFLOAT) <> 0 )
-	valIssng = ( (flags and VAL_ISSNG) <> 0 )
+	valIsNeg = ( (flags and VAL_ISNEG) <> 0 )
+	valIsFloat = ( (flags and VAL_ISFLOAT) <> 0 )
+	valIsSng = ( (flags and VAL_ISSNG) <> 0 )
 
 	if ( (flags and (VAL_ISINF or VAL_ISIND or VAL_ISNAN)) <> 0) then
 		if ( (flags and VAL_ISINF) <> 0 ) then
@@ -721,13 +728,13 @@ private function hPrintNumber( fnum as long, _val as ulongint, val_exp as long, 
 		val_exp = -4
 	end if
 
-	if ( isamp and (flags and VAL_ISBOOL) <> 0 ) then
+	if ( isamp andalso ((flags and VAL_ISBOOL) <> 0) ) then
 		/' String value for "&": return "true"/"false"
 		   (use val to placehold digits) '/
 		if ( _val <> 0 ) then
 			chars = CHARS_TRUE
 			_val = 1234
-			valIsneg = FALSE
+			valIsNeg = FALSE
 		else
 			chars = CHARS_FALSE
 			_val = 12345
@@ -744,7 +751,7 @@ private function hPrintNumber( fnum as long, _val as ulongint, val_exp as long, 
 
 	/' Special '&' format? '/
 	if ( isamp = TRUE ) then
-		if ( val_issng = TRUE ) then
+		if ( valIsSng = TRUE ) then
 			/' crop to 7-digit precision '/
 			if ( val_digs > SNG_AUTODIGS ) then
 				_val = hDivPow10_ULL( _val, val_digs - SNG_AUTODIGS )
@@ -765,10 +772,10 @@ private function hPrintNumber( fnum as long, _val as ulongint, val_exp as long, 
 			end if
 		end if
 
-		if ( val_isfloat = TRUE ) then
+		if ( valIsFloat = TRUE ) then
 			/' remove trailing zeroes in float digits '/
 			while( val_digs > 1 and (_val mod 10) = 0 )
-				_val /= 10
+				_val \= 10
 				val_digs -= 1
 				val_exp += 1
 			wend
@@ -785,9 +792,9 @@ private function hPrintNumber( fnum as long, _val as ulongint, val_exp as long, 
 			decdigs = -val_exp
 		end if
 
-		if ( val_isfloat = TRUE ) then
+		if ( valIsFloat = TRUE ) then
 			/' scientific notation? e.g. 3.1E+42 '/
-			if ( intdigs > 16 or (val_issng and intdigs > 7) or _
+			if ( intdigs > 16 or (valIsSng and intdigs > 7) or _
 			    val_digs + val_exp - 1 < -MIN_EXPDIGS ) then
 				intdigs = 1
 				decdigs = val_digs - 1
@@ -799,7 +806,7 @@ private function hPrintNumber( fnum as long, _val as ulongint, val_exp as long, 
 			end if
 		end if
 
-		if ( val_isneg = TRUE ) then
+		if ( valIsNeg = TRUE ) then
 			signatstart = TRUE
 		end if
 	end if
@@ -828,12 +835,12 @@ private function hPrintNumber( fnum as long, _val as ulongint, val_exp as long, 
 
 	if ( signatend = TRUE ) then
 		/' put sign at end '/
-		if ( val_isneg = TRUE ) then
+		if ( valIsNeg = TRUE ) then
 			ADD_CHAR( CHAR_MINUS )
 		else
 			ADD_CHAR( iif(plussign = TRUE, CHAR_PLUS, CHAR_SPACE) )
 		end if
-	elseif ( val_isneg = TRUE and signatstart = FALSE ) then
+	elseif ( valIsNeg = TRUE and signatstart = FALSE ) then
 		/' implicit negative sign at start '/
 		signatstart = TRUE
 		intdigs -= 1
@@ -842,9 +849,10 @@ private function hPrintNumber( fnum as long, _val as ulongint, val_exp as long, 
 	/' fixed-point format? '/
 	if ( expdigs < MIN_EXPDIGS ) then
 		/' append any trailing carets '/
-		for j as long = expdigs to 1 step -1
+		while( expdigs > 0 )
 			ADD_CHAR( asc("^") )
-		next
+			expdigs -= 1
+		wend
 
 		/' backup unscaled value '/
 		val0 = _val
@@ -874,7 +882,7 @@ private function hPrintNumber( fnum as long, _val as ulongint, val_exp as long, 
 		intdigs2 = val_digs + val_exp
 		if ( intdigs2 < 0 ) then intdigs2 = 0
 		if( addcommas = TRUE ) then
-			intdigs2 += (intdigs2 - 1) / 3
+			intdigs2 += (intdigs2 - 1) \ 3
 		end if
 
 		/' compare fixed/floating point representations,
@@ -930,7 +938,7 @@ private function hPrintNumber( fnum as long, _val as ulongint, val_exp as long, 
 		/' blank first digit if positive and no explicit sign
 		   (pos/neg numbers should be formatted the same where
 		   possible, as in QB) '/
-		if ( isamp = FALSE and val_isneg = FALSE and (signatstart or signatend) = FALSE ) then
+		if ( (isamp = FALSE) and (valIsNeg = FALSE) and ((signatstart or signatend) = FALSE) ) then
 			if ( intdigs >= 1 and totdigs > 1 ) then
 				totdigs -= 1
 			end if
@@ -954,7 +962,7 @@ private function hPrintNumber( fnum as long, _val as ulongint, val_exp as long, 
 			if ( _val >= hPow10_ULL( val_digs ) ) then
 				/' rounding up brought val to the next power of 10:
 				   add the extra digit onto val_exp '/
-				_val /= 10
+				_val \= 10
 				val_exp += 1
 			end if
 		else
@@ -972,17 +980,18 @@ private function hPrintNumber( fnum as long, _val as ulongint, val_exp as long, 
 		end if
 
 		/' expdigs > 3 '/
-		for j as long = expdigs to 4 step -1
+		while expdigs > 3
 			ADD_CHAR( CHAR_ZERO + (val_exp mod 10) )
-			val_exp /= 10
-		next
+			val_exp \= 10
+			expdigs -= 1
+		wend
 
 		/' expdigs == 3 '/
 		if ( val_exp > 9 ) then /' too many exp digits? '/
 #if 1		/' Add remaining digits (QB would just crop these) '/
 			do
 				ADD_CHAR( CHAR_ZERO + (val_exp mod 10) )
-				val_exp /= 10
+				val_exp \= 10
 			loop while( val_exp > 9 )
 			ADD_CHAR( CHAR_ZERO + val_exp )
 #endif
@@ -1018,7 +1027,7 @@ private function hPrintNumber( fnum as long, _val as ulongint, val_exp as long, 
 
 	/' output dec part '/
 	if ( decpoint = TRUE ) then
-		for j as long = decdigs to 1 step -1
+		while( decdigs > 0 )
 			if ( val_zdigs > 0 ) then
 				ADD_CHAR( CHAR_ZERO )
 				val_zdigs -= 1
@@ -1030,12 +1039,13 @@ private function hPrintNumber( fnum as long, _val as ulongint, val_exp as long, 
 				else
 					ADD_CHAR( CHAR_ZERO + (_val mod 10) )
 				end if
-				_val /= 10
+				_val \= 10
 				val_digs -= 1
 			else
 				ADD_CHAR( CHAR_ZERO )
 			end if
-		next
+			decdigs -= 1
+		wend
 		ADD_CHAR( CHAR_DOT )
 	end if
 
@@ -1045,7 +1055,7 @@ private function hPrintNumber( fnum as long, _val as ulongint, val_exp as long, 
 	'for( ;; )
 	'{
 	do
-		if ( addcommas = TRUE and (i and 3) = 3 and val_digs > 0 ) then
+		if ( (addcommas = TRUE) and ((i and 3) = 3) and (val_digs > 0) ) then
 			/' insert comma '/
 			ADD_CHAR( CHAR_COMMA )
 		elseif ( val_zdigs > 0 ) then
@@ -1059,7 +1069,7 @@ private function hPrintNumber( fnum as long, _val as ulongint, val_exp as long, 
 			else
 				ADD_CHAR( CHAR_ZERO + (_val mod 10) )
 			end if
-			_val /= 10
+			_val \= 10
 			val_digs -= 1
 		else
 			if ( i = 0 and intdigs > 0 ) then
@@ -1090,7 +1100,7 @@ private function hPrintNumber( fnum as long, _val as ulongint, val_exp as long, 
 
 	/' output sign? '/
 	if ( signatstart = TRUE ) then
-		if ( val_isneg = TRUE ) then
+		if ( valIsNeg = TRUE ) then
 			ADD_CHAR( CHAR_MINUS )
 		else
 			ADD_CHAR( iif(plussign = TRUE, CHAR_PLUS, padchar) )
@@ -1098,14 +1108,16 @@ private function hPrintNumber( fnum as long, _val as ulongint, val_exp as long, 
 	end if
 
 	/' output padding for any remaining intdigs '/
-	for j as long = intdigs to 1 step -1
+	while( intdigs > 0 )
 		ADD_CHAR( padchar )
-	next
+		intdigs -= 1
+	wend
 
 	/' output '%' sign(s)? '/
-	for j as long = toobig to 1 step -1
+	while( toobig > 0 )
 		ADD_CHAR( CHAR_TOOBIG )
-	next
+		toobig -= 1
+	wend
 
 
 	/''/
@@ -1196,14 +1208,14 @@ private function hScaleDoubleToULL( value as double, pval_exp as long ptr ) as u
 		else
 			/' divide by 5, rounding to nearest
 			 * (val_ull will be much bigger than 3 so no underflow) '/
-			val_ull = (val_ull - 3) / 5 + 1
+			val_ull = (val_ull - 3) \ 5 + 1
 			pow10 += 1
 			pow2 -= 1
 		end if
 	wend
 
 	while( pow2 < 0 )
-		/' essentially, val_ull/=2, ++pow2,
+		/' essentially, val_ull\=2, ++pow2,
 		 * multiplying by 5 when possible to keep precision high '/
 		if ( val_ull <= &h3333333333333333ull ) then
 			/' multiply by 5 (max 0xffffffffffffffff) '/
@@ -1212,7 +1224,7 @@ private function hScaleDoubleToULL( value as double, pval_exp as long ptr ) as u
 			pow2 += 1
 		else
 			/' divide by 2, rounding to even '/
-			val_ull = val_ull / 2 + (val_ull and (val_ull / 2) and 1)
+			val_ull = (val_ull \ 2) + (val_ull and (val_ull \ 2) and 1)
 			pow2 += 1
 		end if
 	wend

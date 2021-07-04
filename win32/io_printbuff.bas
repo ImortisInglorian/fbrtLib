@@ -96,10 +96,10 @@ private sub fb_hHookConScroll( handle as fb_ConHooks ptr, x1 as long, y1 as long
 	handle->Coord.Y = handle->Border.Bottom
 end sub
 
-private function fb_hHookConWrite ( handle as fb_ConHooks ptr, buffer as any const ptr, length as size_t ) as long
+private function fb_hHookConWrite ( handle as fb_ConHooks ptr, buffer as const any ptr, length as size_t ) as long
 	dim as fb_PrintInfo ptr pInfo = cast(fb_PrintInfo ptr, handle->Opaque)
 	dim as HANDLE hnd = pInfo->hOutput
-	dim as ubyte const ptr pachText = cast(ubyte const ptr, buffer)
+	dim as const ubyte ptr pachText = cast(const ubyte ptr, buffer)
 	dim as CHAR_INFO ptr lpBuffer = malloc( sizeof(CHAR_INFO) * length )
 	dim as WORD wAttributes = pInfo->wAttributes
 	dim as COORD dwBufferSize = ( cast(SHORT, length), 1 )
@@ -117,7 +117,7 @@ private function fb_hHookConWrite ( handle as fb_ConHooks ptr, buffer as any con
 	return result
 end function
 
-sub fb_ConsolePrintBufferEx( buffer as any const ptr, _len as size_t, mask as long )
+sub fb_ConsolePrintBufferEx( buffer as const any ptr, _len as size_t, mask as long )
 	dim as ubyte ptr pachText = cast(ubyte ptr, buffer)
 	dim as long win_left, win_top, win_cols, win_rows
 	dim as long view_top, view_bottom
@@ -215,7 +215,7 @@ sub fb_ConsolePrintBufferEx( buffer as any const ptr, _len as size_t, mask as lo
 	FB_UNLOCK()
 end sub
 
-sub fb_ConsolePrintBuffer( buffer as ubyte const ptr, mask as long )
+sub fb_ConsolePrintBuffer( buffer as const ubyte ptr, mask as long )
 	fb_ConsolePrintBufferEx( buffer, strlen(buffer), mask )
 end sub
 end extern

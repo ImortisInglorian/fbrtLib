@@ -31,7 +31,7 @@ function fb_hStr2Double FBCALL ( src as ubyte ptr, _len as ssize_t ) as double
 
 			return fb_hStrRadix2Longint( p + skip, _len - skip, radix )
 
-		elseif ( p[0] = 0 ) then
+		elseif ( p[0] = asc("0") ) then
 			if ( p[1] = asc("x") or p[1] = asc("X") )  then
 				/' Filter out strings with 0x/0X prefix -- strtod() treats them as hex.
 				   But we only want to support the &h prefix for that. '/

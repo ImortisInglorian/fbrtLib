@@ -3,7 +3,7 @@
 #include "fb.bi"
 
 extern "C"
-function fb_DevFileWriteEncod( handle as FB_FILE ptr, buffer as any const ptr, chars as size_t ) as long
+function fb_DevFileWriteEncod( handle as FB_FILE ptr, buffer as const any ptr, chars as size_t ) as long
     dim as FILE ptr fp
     dim as ubyte ptr encod_buffer
 	dim as ssize_t bytes
@@ -18,7 +18,7 @@ function fb_DevFileWriteEncod( handle as FB_FILE ptr, buffer as any const ptr, c
 
 	/' convert (note: encoded file can only be opened in text-mode, so no
 	   			PUT# is allowed, no binary data should be emitted ever) '/
-	encod_buffer = fb_CharToUTF( handle->encod, cast(ubyte const ptr, buffer), chars, NULL, @bytes )
+	encod_buffer = fb_CharToUTF( handle->encod, cast(const ubyte ptr, buffer), chars, NULL, @bytes )
 
 	if ( encod_buffer <> NULL ) then
 		/' do write '/

@@ -27,7 +27,7 @@ private sub DoMove( x as long ptr, y as long ptr, dx as long, dy as long, cols a
     DoAdjust( x, y, dx, dy, cols, rows )
     if ( *y = (rows+1) and *x = 1 ) then
         fb_Locate( rows, cols, -1, 0, 0 )
-        fb_PrintBufferEx( cast(any const ptr, @FB_NEWLINE), sizeof(FB_NEWLINE)-1, 0 )
+        fb_PrintBufferEx( cast(const any ptr, @FB_NEWLINE), sizeof(FB_NEWLINE)-1, 0 )
     else
         fb_Locate( *y, *x, -1, 0, 0 )
     end if
@@ -48,7 +48,8 @@ function fb_ConReadLine FBCALL ( soft_cursor as long ) as FBSTRING ptr
     cursor_visible = (fb_Locate( 0, 0, -1, 0, 0 ) and &h10000) <> 0
     fb_Locate( 0, 0, FALSE, 0, 0 )
 
-    _pos = _len = 0
+    _pos = 0
+	_len = 0
     fb_PrintBufferEx( NULL, 0, 0 )
 
     /' Ensure that the cursor is visible during INPUT '/
@@ -84,8 +85,8 @@ function fb_ConReadLine FBCALL ( soft_cursor as long ) as FBSTRING ptr
 		end if
 
 		if ( soft_cursor <> 0 ) then
-			dim as ubyte ptr mask(0 to 1) = { iif((result.data <> NULL) and (_pos < _len), result.data[_pos], sadd(" ")), 0 }
-			fb_PrintFixString( 0, cast(ubyte const ptr, @mask(0)), 0 )
+			dim as ubyte mask(0 to 1) = { iif((result.data <> NULL) and (_pos < _len), result.data[_pos], asc(" ")), 0 }
+			fb_PrintFixString( 0, cast(const ubyte ptr, @mask(0)), 0 )
 			fb_Locate( current_y, current_x, FALSE, 0, 0 )
 		end if
 

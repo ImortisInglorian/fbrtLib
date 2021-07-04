@@ -1,7 +1,7 @@
 #include "fb.bi"
 
 extern "C"
-function fb_WstrRadix2Int FBCALL ( src as FB_WCHAR const ptr, _len as ssize_t, radix as long ) as long
+function fb_WstrRadix2Int FBCALL ( src as const FB_WCHAR ptr, _len as ssize_t, radix as long ) as long
 	dim as long c, v
 
 	v = 0

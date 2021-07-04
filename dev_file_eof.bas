@@ -34,7 +34,7 @@ function fb_DevFileEof( handle as FB_FILE ptr ) as long
 			if ( eof__ = 0 ) then
 				/' b) peek ahead: will the next read reach EOF? '/
 				dim as long c = getc( fp )
-				eof__ = (c = eof__)
+				eof__ = (c = EOF_)
 				if ( eof__ = 0 ) then
 					ungetc( c, fp )
 				end if

@@ -6,12 +6,12 @@ extern "C"
 	'In the mingw headers, ftello64 is an inline function, as below.
 	'I'm not sure whether these should be in FB's crt headers, or in win32/fb_win32.bi.
 
-
+	'' !!! TODO !!! -- update fb's crt headers
 
 	declare function fseeko64 cdecl ( as FILE ptr, as off64_t, as long ) as long
-/'
+
 #ifndef ftello64
-	function ftello64 cdecl (stream as FILE ptr) as off64_t
+	private function ftello64 cdecl (stream as FILE ptr) as off64_t
 		dim as fpos_t _pos
 		if ( fgetpos(stream, @_pos) <> NULL ) then
 			return  -1
@@ -20,7 +20,7 @@ extern "C"
 		end if
 	end function
 #endif
-'/
+
 #else
 
 	#ifndef off64_t
@@ -43,6 +43,11 @@ extern "C"
 #else
 	declare function swprintf (byval s as wchar_t ptr, byval n as size_t, byval format as wchar_t ptr, ...) as long
 	declare function vswprintf (byval s as wchar_t ptr, byval n as size_t, byval format as wchar_t ptr, byval arg as va_list) as long
+#endif
+
+'' wcstoull needs to get added to fb's inc/crt headers
+#ifdef __FB_WIN32__
+	declare function wcstoull( byval str_ as const wchar_t ptr, byval endptr as wchar_t ptr ptr, byval radix as long ) as ulongint
 #endif
 
 end extern

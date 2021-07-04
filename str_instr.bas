@@ -73,7 +73,7 @@ static ssize_t fb_hFindQS
  * http://www.iti.fh-flensburg.de/lang/algorithmen/pattern/bm.htm
  '/
 
-function fb_hFindBM cdecl ( start as ssize_t, pachText as ubyte const ptr, len_text as ssize_t, pachPattern as ubyte const ptr, len_pattern as ssize_t ) as ssize_t
+function fb_hFindBM cdecl ( start as ssize_t, pachText as const ubyte ptr, len_text as ssize_t, pachPattern as const ubyte ptr, len_pattern as ssize_t ) as ssize_t
 	dim as ssize_t i, j, len_max = len_text - len_pattern
 	dim as ssize_t bm_bc(0 to 255)
 	dim as ssize_t ptr bm_gc, suffixes
@@ -86,7 +86,7 @@ function fb_hFindBM cdecl ( start as ssize_t, pachText as ubyte const ptr, len_t
 	memset( suffixes, 0, sizeof(ssize_t) * (len_pattern+1) )
 
 	/' create "bad character" shifts '/
-	memset(@bm_bc(0), -1, sizeof(bm_bc))
+	memset(@bm_bc(0), -1, ARRAY_SIZEOF(bm_bc))
 	for i=0 to len_pattern - 1
 		bm_bc( FB_CHAR_TO_INT(pachPattern[i]) ) = i
 	next
@@ -127,7 +127,7 @@ function fb_hFindBM cdecl ( start as ssize_t, pachText as ubyte const ptr, len_t
 	while( i <= len_max )
 		j = len_pattern
 
-		while( j <> 0 and pachPattern[ j - 1] = pachText[i + j - 1] )
+		while( j <> 0 andalso pachPattern[ j - 1] = pachText[i + j - 1] )
 			j -= 1
 		wend
 		if( j = 0 ) then
@@ -180,16 +180,16 @@ static ssize_t fb_hFindNaive
 function fb_StrInstr FBCALL ( start as ssize_t, src as FBSTRING ptr, patt as FBSTRING ptr ) as ssize_t
 	dim as ssize_t r
 
-	if ( (src = NULL) or (src->data = NULL) or (patt = NULL) or (patt->data = NULL) ) then
+	if ( (src = NULL) orelse (src->data = NULL) orelse (patt = NULL) orelse (patt->data = NULL) ) then
 		r = 0
 	else
 		dim as ssize_t size_src = FB_STRSIZE(src)
 		dim as ssize_t size_patt = FB_STRSIZE(patt)
 
-		if ( (size_src = 0) or (size_patt = 0) or ((start < 1) or (start > size_src)) or (size_patt > size_src) ) then
+		if ( (size_src = 0) orelse (size_patt = 0) orelse ((start < 1) orelse (start > size_src)) orelse (size_patt > size_src) ) then
 			r = 0
 		elseif ( size_patt = 1 ) then
-			dim as ubyte const ptr pszEnd = cast(ubyte const ptr, FB_MEMCHR( src->data + start - 1, patt->data[0], size_src - start + 1))
+			dim as const ubyte ptr pszEnd = cast(const ubyte ptr, FB_MEMCHR( src->data + start - 1, patt->data[0], size_src - start + 1))
 			if ( pszEnd = NULL ) then
 				r = 0
 			else

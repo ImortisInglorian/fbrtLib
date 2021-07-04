@@ -3,7 +3,7 @@
 #include "fb.bi"
 
 extern "C"
-function fb_DevFileWriteEncodWstr( handle as FB_FILE ptr, buffer as FB_WCHAR const ptr, chars as size_t ) as long
+function fb_DevFileWriteEncodWstr( handle as FB_FILE ptr, buffer as const FB_WCHAR ptr, chars as size_t ) as long
     dim as FILE ptr fp
     dim as ubyte ptr encod_buffer
 	dim as ssize_t bytes

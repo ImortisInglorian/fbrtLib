@@ -10,7 +10,7 @@ sub hCV cdecl ( _str as FBSTRING ptr, _len as ssize_t, num as any ptr )
 		return
 	end if
 	
-	if ( (_str->data <> NULL) and (FB_STRSIZE( _str ) >= _len) ) then
+	if ( (_str->data <> NULL) andalso (FB_STRSIZE( _str ) >= _len) ) then
 		for i = 0 to _len - 1
 			(cast(ubyte ptr, num)[i]) = _str->data[i]
 		next

@@ -3,8 +3,8 @@
 #include "fb.bi"
 
 extern "C"
-function fb_WstrRTrimAny FBCALL ( src as FB_WCHAR const ptr, pattern as FB_WCHAR const ptr ) as FB_WCHAR ptr
-	dim pachText as FB_WCHAR ptr
+function fb_WstrRTrimAny FBCALL ( src as const FB_WCHAR ptr, pattern as const FB_WCHAR ptr ) as FB_WCHAR ptr
+	dim pachText as const FB_WCHAR ptr
 	dim dst as FB_WCHAR ptr
 	dim _len as ssize_t
 
@@ -13,21 +13,19 @@ function fb_WstrRTrimAny FBCALL ( src as FB_WCHAR const ptr, pattern as FB_WCHAR
 	end if
 
 	_len = fb_wstr_Len( src )
-	dim len_pattern as ssize_t = fb_wstr_Len( pattern )
-	pachText = src
-	while ( _len <> 0 )
-		dim i as ssize_t
-		_len -= 1
-		for i = 0 to len_pattern
-			if( wcschr( pattern, pachText[_len] ) <> NULL ) then
-				exit for
-			end if
-		next
-		if( i = len_pattern ) then
-			_len += 1
-			exit while
+	scope
+		dim len_pattern as ssize_t = fb_wstr_Len( pattern )
+		pachText = src
+		if( len_pattern <> 0 ) then
+			while ( _len <> 0 )
+				_len -= 1
+				if( wcschr( pattern, pachText[_len] ) = NULL ) then
+					_len += 1
+					exit while
+				end if
+			wend
 		end if
-	wend
+	end scope
 
 	if( _len > 0 ) then
 		/' alloc temp string '/
