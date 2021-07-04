@@ -555,7 +555,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 							end if
 						else
 							if ( pInfo->mask_type = eMT_Number ) then
-								if ( do_num_frac = FALSE ) then
+								if ( do_num_frac ) then
 									if ( IndexFrac <> LenFrac ) then
 										pszAdd = @FracPart(0) + IndexFrac
 										IndexFrac += 1
