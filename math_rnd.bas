@@ -108,7 +108,7 @@ end sub
 private function hRnd_MTWIST32 ( ) as uint32_t 
 	dim as uint32_t i, v, xor_mask(0 to 1) = { 0, &h9908B0DF }
 
-	if( ctx.index32 <> NULL ) then
+	if( ctx.index32 = NULL ) then
 		/' initialize state starting with an initial seed '/
 		hRndCtxInitMTWIST32( INITIAL_SEED )
 	end if
@@ -121,7 +121,7 @@ private function hRnd_MTWIST32 ( ) as uint32_t
 			ctx.state32(i) = ctx.state32(i + PERIOD) xor ( v shr 1 ) xor xor_mask(v and &h1)
 			i += 1
 		wend
-		while( i < i < MAX_STATE - 1 )
+		while( i < MAX_STATE - 1 )
 			v = ( ctx.state32(i) and &h80000000 ) or ( ctx.state32(i + 1) and &h7FFFFFFF )
 			ctx.state32(i) = ctx.state32(i + PERIOD - MAX_STATE) xor ( v shr 1 ) xor xor_mask(v and &h1)
 			i +=1
