@@ -21,13 +21,12 @@
 
 #include "fb.bi"
 
-extern "C"
 #if defined(DISABLE_FFI) or defined(HOST_DOS) or (defined(HOST_X86) = 0 and defined(HOST_X86_64) = 0)
-
+extern "C"
 function fb_ThreadCall( proc as any ptr, abi as long, stack_size as ssize_t, num_args as long, ... ) as FBTHREAD ptr
 	return NULL
 end function
-
+end extern
 #else
 
 #include "ffi.bi"
@@ -150,6 +149,7 @@ end function
 
 declare sub threadproc FBCALL ( param as any ptr )
 
+extern "c"
 function fb_ThreadCall( proc as any ptr, abi as long, stack_size as ssize_t, num_args as long, ... ) as FBTHREAD ptr
     dim as ffi_type ptr ptr ffi_args
     dim as any ptr ptr values
@@ -190,9 +190,9 @@ function fb_ThreadCall( proc as any ptr, abi as long, stack_size as ssize_t, num
     param->values = values
     
     /' actually start thread '/
-	'' !!! FIXME !!! -- passing different type
     return fb_ThreadCreate( @threadproc, cast(any ptr,param), stack_size )
 end function
+end extern
 
 private sub threadproc FBCALL ( param as any ptr )
     dim as FBTHREADCALL ptr info = cast(FBTHREADCALL ptr, param)
@@ -245,4 +245,3 @@ private sub threadproc FBCALL ( param as any ptr )
 end sub
 
 #endif
-end extern

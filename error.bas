@@ -1,6 +1,8 @@
 /' runtime error handling '/
 
 #include "fb.bi"
+#include "fb_private_error.bi"
+#include "fb_private_thread.bi"
 
 dim shared messages(0 to 17) as zstring ptr
 messages(0) = @""                                      /' FB_RTERROR_OK '/
@@ -22,13 +24,22 @@ messages(15) = @!"\"quit request\" signal"             /' FB_RTERROR_SIGABRT '/
 messages(16) = @"return without gosub"                 /' FB_RTERROR_RETURNWITHOUTGOSUB '/
 messages(17) = @"end of file"                          /' FB_RTERROR_ENDOFFILE '/
 
-extern "C"
-
-'' !!!TODO!!! see note in fb_thread.bi::_FB_TLSGETCTX(id)
-'' #define fb_ERRORCTX_Destructor NULL
- 
-sub fb_ERRORCTX_Destructor( byval data_ as any ptr )
+private sub ERRORCTX_destructor( byval data_ as any ptr )
+	Delete cast( FB_ERRORCTX ptr, data_ )
 end sub
+
+function fb_get_thread_errorctx( ) as FB_ERRORCTX ptr
+	dim thread As FBThread Ptr = fb_GetCurrentThread( )
+	dim ctx As FB_ERRORCTX ptr = cast( FB_ERRORCTX ptr, thread->GetData( FB_TLSKEY_ERROR ) )
+        If( ctx = Null ) Then
+		ctx = New FB_ERRORCTX
+		thread->SetData( FB_TLSKEY_ERROR, ctx, @ERRORCTX_destructor )
+        End If
+	Return ctx
+
+end function
+
+extern "C"
 
 sub fb_Die ( err_num as long, line_num as long, mod_name as const ubyte ptr, fun_name as const ubyte ptr )
 	dim as long _pos = 0
@@ -60,7 +71,7 @@ sub fb_Die ( err_num as long, line_num as long, mod_name as const ubyte ptr, fun
 end sub
 
 function fb_ErrorThrowEx cdecl ( err_num as long, line_num as long, mod_name as const ubyte ptr, res_label as any ptr, resnext_label as any ptr ) as FB_ERRHANDLER
-	dim as FB_ERRORCTX ptr ctx = _FB_TLSGETCTX( ERROR )
+	dim as FB_ERRORCTX ptr ctx = fb_get_thread_errorctx( )
 
 	if ( ctx->handler ) then
 		ctx->err_num = err_num
@@ -81,13 +92,13 @@ function fb_ErrorThrowEx cdecl ( err_num as long, line_num as long, mod_name as 
 end function
 
 function fb_ErrorThrowAt ( line_num as long, mod_name as const ubyte ptr, res_label as any ptr, resnext_label as any ptr ) as FB_ERRHANDLER
-	dim as FB_ERRORCTX ptr ctx = _FB_TLSGETCTX( ERROR )
+	dim as FB_ERRORCTX ptr ctx = fb_get_thread_errorctx( )
 
 	return fb_ErrorThrowEx( ctx->err_num, line_num, mod_name, res_label, resnext_label )
 end function
 
 function fb_ErrorSetHandler FBCALL ( newhandler as FB_ERRHANDLER ) as FB_ERRHANDLER
-	dim as FB_ERRORCTX ptr ctx = _FB_TLSGETCTX( ERROR )
+	dim as FB_ERRORCTX ptr ctx = fb_get_thread_errorctx( )
 	dim as FB_ERRHANDLER oldhandler
 
 	oldhandler = ctx->handler
@@ -98,7 +109,7 @@ function fb_ErrorSetHandler FBCALL ( newhandler as FB_ERRHANDLER ) as FB_ERRHAND
 end function
 
 function fb_ErrorResume( ) as any ptr
-	dim as FB_ERRORCTX ptr ctx = _FB_TLSGETCTX( ERROR )
+	dim as FB_ERRORCTX ptr ctx = fb_get_thread_errorctx( )
 	dim as any ptr label = ctx->res_lbl
 
 	/' not defined? die '/
@@ -114,7 +125,7 @@ function fb_ErrorResume( ) as any ptr
 end function
 
 function fb_ErrorResumeNext( ) as any ptr
-	dim as FB_ERRORCTX ptr ctx = _FB_TLSGETCTX( ERROR )
+	dim as FB_ERRORCTX ptr ctx = fb_get_thread_errorctx( )
 	dim as any ptr label = ctx->resnxt_lbl
 
 	/' not defined? die '/

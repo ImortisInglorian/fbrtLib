@@ -19,12 +19,12 @@ type DEV_PRINTER_EMU_MODE
 	as FnEmuPrint      pfnPrint
 end type
 
-declare sub EmuBuild_LOGFONT cdecl ( lf as LOGFONT ptr, pInfo as W32_PRINTER_INFO ptr, uiCPI as ulong )
-declare sub EmuUpdateInfo cdecl ( pInfo as W32_PRINTER_INFO ptr )
-declare sub EmuPrint_RAW cdecl ( pInfo as W32_PRINTER_INFO ptr, pText as const any ptr, uiLength as size_t, isunicode as long )
-declare sub EmuPrint_TTY cdecl ( pInfo as W32_PRINTER_INFO ptr, pText as const any ptr, uiLength as size_t, isunicode as long )
+declare sub EmuBuild_LOGFONT ( lf as LOGFONT ptr, pInfo as W32_PRINTER_INFO ptr, uiCPI as ulong )
+declare sub EmuUpdateInfo ( pInfo as W32_PRINTER_INFO ptr )
+declare sub EmuPrint_RAW ( pInfo as W32_PRINTER_INFO ptr, pText as const any ptr, uiLength as size_t, isunicode as long )
+declare sub EmuPrint_TTY ( pInfo as W32_PRINTER_INFO ptr, pText as const any ptr, uiLength as size_t, isunicode as long )
 #if 0
-declare private sub EmuPrint_ESC_P2 cdecl ( pInfo as W32_PRINTER_INFO ptr, pText as const any ptr, uiLength as size_t, isunicode as long )
+declare private sub EmuPrint_ESC_P2 ( pInfo as W32_PRINTER_INFO ptr, pText as const any ptr, uiLength as size_t, isunicode as long )
 #endif
 
 /' List of all known printer emulation modes '/
@@ -33,8 +33,6 @@ dim shared as const DEV_PRINTER_EMU_MODE aEmulationModes(0 to 1) = { _
 		( sadd("TTY"), cast(FnEmuPrint, @EmuPrint_TTY) ) _
 }
 /'	( sadd("ESC/P2"), cast(FnEmuPrint, @EmuPrint_ESC_P2) ) '/ 
-
-extern "C"
 
 /'' Initialize the list of device info nodes.
  '/
@@ -306,6 +304,7 @@ private sub fb_hPrinterBuildList( list as FB_LIST ptr )
 	fb_hPrinterBuildListOther( list, 128 )
 end sub
 
+extern "C"
 function fb_PrinterOpen( devInfo as DEV_LPT_INFO ptr, iPort as long, pszDevice as const ubyte ptr ) as long
 	dim as long result = fb_ErrorSetNum( FB_RTERROR_OK )
 	dim as const DEV_PRINTER_EMU_MODE ptr pFoundEmu = NULL
@@ -492,6 +491,7 @@ function fb_PrinterOpen( devInfo as DEV_LPT_INFO ptr, iPort as long, pszDevice a
 	end if
 	return result
 end function
+end extern
 
 private sub EmuBuild_LOGFONT( lf as LOGFONT ptr, pInfo as W32_PRINTER_INFO ptr, uiCPI as ulong )
 	memset( lf, 0, sizeof( LOGFONT ) )
@@ -699,6 +699,7 @@ private sub EmuPrint_ESC_P2( devInfo as DEV_LPT_INFO ptr, pachText as const ubyt
 end sub
 #endif
 
+extern "C"
 function fb_PrinterWrite( devInfo as DEV_LPT_INFO ptr, _data as const any ptr, length as size_t ) as long
 	dim as W32_PRINTER_INFO ptr pInfo = cast(W32_PRINTER_INFO ptr, devInfo->driver_opaque)
 	dim as DWORD dwWritten

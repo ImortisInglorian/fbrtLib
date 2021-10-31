@@ -11,7 +11,6 @@ type fb_PrintInfo
 	as long            fViewSet
 end type
 
-extern "C"
 private sub fb_hHookConScroll( handle as fb_ConHooks ptr, x1 as long, y1 as long, x2 as long, y2 as long, rows as long )
 	dim as fb_PrintInfo ptr pInfo = cast(fb_PrintInfo ptr, handle->Opaque)
 	dim as HANDLE hnd = pInfo->hOutput
@@ -117,6 +116,7 @@ private function fb_hHookConWrite ( handle as fb_ConHooks ptr, buffer as const a
 	return result
 end function
 
+extern "C"
 sub fb_ConsolePrintBufferEx( buffer as const any ptr, _len as size_t, mask as long )
 	dim as ubyte ptr pachText = cast(ubyte ptr, buffer)
 	dim as long win_left, win_top, win_cols, win_rows

@@ -36,20 +36,6 @@ end enum
 
 type FB_ERRHANDLER as Sub()
 
-type FB_ERRORCTX
-	as FB_ERRHANDLER 	handler
-	as long 			err_num
-	as long 			line_num
-	as const ubyte ptr 	mod_name
-	as const ubyte ptr 	fun_name
-	as any ptr 			res_lbl
-	as any ptr 			resnxt_lbl
-end type
-
-'' !!!TODO!!! see note in fb_thread.bi::_FB_TLSGETCTX(id)
-'' #define fb_ERRORCTX_Destructor NULL
-declare sub fb_ERRORCTX_Destructor( as any ptr )
-
 #define FB_ERRMSG_SIZE 1024
 extern as ubyte __fb_errmsg(0 to FB_ERRMSG_SIZE -1)
 
