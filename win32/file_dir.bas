@@ -35,11 +35,11 @@ private function get_thread_dir_data ( ) as FB_DIRCTX Ptr
 
 End Function
 
-private function find_next cdecl ( attrib as long ptr, ctx as FB_DIRCTX ptr ) as ubyte ptr
+private function find_next ( attrib as long ptr, ctx as FB_DIRCTX ptr ) as ubyte ptr
 	dim as ubyte ptr _name = NULL
 
 	do
-		if ( not(FindNextFile( ctx->handle, @ctx->data )) ) then
+		if ( FindNextFile( ctx->handle, @ctx->data ) = 0 ) then
 			close_dir( ctx )
 			_name = NULL
 			exit do
