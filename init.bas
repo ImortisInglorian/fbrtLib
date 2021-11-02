@@ -26,7 +26,8 @@ sub fb_hRtInit cdecl ( )
 #ifdef ENABLE_MT
 	fb_TlsInit( )
 #endif
-	fb_AllocateMainFBThread()
+	Dim mainThread As FBThread Ptr = New FBThread( FBTHREAD_MAIN )
+	fb_SetCurrentThread( mainThread )
 
 	/''
 	 * With the default "C" locale (which is just plain 7-bit ASCII),
@@ -55,6 +56,7 @@ sub fb_hRtExit cdecl ( )
 	if( __fb_is_inicnt <> 0 ) then
 		return
 	end if
+	Dim threadData As FBThread Ptr = fb_GetCurrentThread( )
 
 	/' Doing clean-up here in the rtlib's global dtor, instead of using
 	   atexit().
@@ -90,7 +92,7 @@ sub fb_hRtExit cdecl ( )
 	fb_DevScrnEnd( FB_HANDLE_SCREEN )
 
 	/' Free main thread's TLS contexts '/
-	fb_TlsFreeCtxTb( )
+	Delete threadData
 
 #ifdef ENABLE_MT
 	fb_TlsExit( )

@@ -1,6 +1,7 @@
 /' input function core '/
 
 #include "fb.bi"
+#include "fb_private_file.bi"
 
 extern "C"
 private function hReadChar( ctx as FB_INPUTCTX ptr ) as FB_WCHAR
@@ -88,8 +89,8 @@ sub fb_FileInputNextTokenWstr( buffer as FB_WCHAR ptr, max_chars as ssize_t, is_
 
 	dim as ssize_t _len
 	dim as long isquote, skipdelim
-    dim as FB_WCHAR c
-	dim as FB_INPUTCTX ptr ctx = _FB_TLSGETCTX( INPUT )
+	dim as FB_WCHAR c
+	dim as FB_INPUTCTX ptr ctx = fb_get_thread_inputctx( )
 
 	/' '/
 	skipdelim = TRUE

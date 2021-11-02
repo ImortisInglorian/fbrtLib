@@ -1,64 +1,46 @@
 /' dir() '/
 
 #include "../fb.bi"
-'' #ifndef HOST_CYGWIN
-'' 	#include "direct.bi"
-'' #endif
+#include "../fb_private_thread.bi"
 #include "windows.bi"
 
 type FB_DIRCTX
-	as long in_use
-	as long attrib
-#ifdef HOST_CYGWIN
 	as WIN32_FIND_DATA data
 	as HANDLE handle
-#else
-	as _finddata_t data
-	as long handle
-#endif
+	as long in_use
+	as long attrib
 end type
 
-extern "C"
-private sub close_dir_internal( byval ctx as FB_DIRCTX ptr )
-#ifdef HOST_MINGW
-	_findclose( ctx->handle )
-#else
+private sub close_dir( byval ctx as FB_DIRCTX ptr )
 	FindClose( ctx->handle )
-#endif
 	ctx->in_use = FALSE
 end sub
 
-sub fb_DIRCTX_Destructor ( byval _data as any ptr )
+private sub FB_DIRCTX_destructor ( byval _data as any ptr )
 	dim as FB_DIRCTX ptr ctx = cast( FB_DIRCTX ptr, _data )
 	if( ctx->in_use ) then
-		close_dir_internal( ctx )
+		close_dir( ctx )
 	end if
+	Delete ctx
 end sub
 
-private sub close_dir cdecl ( )
-	dim as FB_DIRCTX ptr ctx = _FB_TLSGETCTX( DIR )
-	close_dir_internal( ctx )
-end sub
+private function get_thread_dir_data ( ) as FB_DIRCTX Ptr
+	dim thread As FBTHREAD Ptr = fb_GetCurrentThread( )
+	dim ctx As FB_DIRCTX ptr = cast( FB_DIRCTX ptr, thread->GetData( FB_TLSKEY_DIR ) )
+        If( ctx = Null ) Then
+		ctx = New FB_DIRCTX
+		thread->SetData( FB_TLSKEY_DIR, ctx, @FB_DIRCTX_destructor )
+        End If
+	Return ctx
 
-private function find_next cdecl ( attrib as long ptr ) as ubyte ptr
+End Function
+
+private function find_next ( attrib as long ptr, ctx as FB_DIRCTX ptr ) as ubyte ptr
 	dim as ubyte ptr _name = NULL
-	dim as FB_DIRCTX ptr ctx = _FB_TLSGETCTX( DIR )
 
-#ifdef HOST_MINGW
-    do
-		if( _findnext( ctx->handle, @ctx->data ) ) then
-			close_dir( )
-			_name = NULL
-			exit do
-		end if
-        _name = sadd(ctx->data.name)
-	loop while( ctx->data.attrib and not ctx->attrib )
-
-	*attrib = ctx->data.attrib and not(&hFFFFFF00)
-#else
 	do
-		if ( not(FindNextFile( ctx->handle, @ctx->data )) ) then
-			close_dir()
+		if ( FindNextFile( ctx->handle, @ctx->data ) = 0 ) then
+			close_dir( ctx )
 			_name = NULL
 			exit do
 		end if
@@ -66,11 +48,11 @@ private function find_next cdecl ( attrib as long ptr ) as ubyte ptr
 	loop while ( ctx->data.dwFileAttributes and not(ctx->attrib) )
 
 	*attrib = ctx->data.dwFileAttributes and not(&hFFFFFF00)
-#endif
 
 	return _name
 end function
 
+extern "C"
 function fb_Dir FBCALL ( filespec as FBSTRING ptr, attrib as long, out_attrib as long ptr ) as FBSTRING ptr
 	dim as FB_DIRCTX ptr ctx
 	dim as FBSTRING ptr res
@@ -86,21 +68,15 @@ function fb_Dir FBCALL ( filespec as FBSTRING ptr, attrib as long, out_attrib as
 	_len = FB_STRSIZE( filespec )
 	_name = NULL
 
-	ctx = _FB_TLSGETCTX( DIR )
+	ctx = get_thread_dir_data( )
 
 	if ( _len > 0 ) then
 		/' findfirst '/
 		if ( ctx->in_use ) then
-			close_dir( )
+			close_dir( ctx )
 		end if
-
-#ifdef HOST_MINGW
-		ctx->handle = _findfirst( filespec->data, @ctx->data )
-		handle_ok = ctx->handle <> -1
-#else
 		ctx->handle = FindFirstFile( filespec->data, @ctx->data )
 		handle_ok = ctx->handle <> INVALID_HANDLE_VALUE
-#endif
 		
 		if ( handle_ok ) then
 			/' Handle any other possible bits different Windows versions could return '/
@@ -111,21 +87,13 @@ function fb_Dir FBCALL ( filespec as FBSTRING ptr, attrib as long, out_attrib as
 				ctx->attrib or= &h20
 			end if
 
-#ifdef HOST_MINGW
-			if( ctx->data.attrib and not ctx->attrib ) then
-				_name = find_next( out_attrib )
-			else
-                _name = sadd(ctx->data.name)
-				*out_attrib = ctx->data.attrib and not &hFFFFFF00
-            end if
-#else
-			if ( ctx->data.dwFileAttributes and not(ctx->attrib) ) then
-				_name = find_next( out_attrib )
+			if ( ctx->data.dwFileAttributes and not(ctx->attrib) ) then 
+				_name = find_next( out_attrib, ctx )
 			else
 				_name = sadd(ctx->data.cFileName)
 				*out_attrib = ctx->data.dwFileAttributes and not(&hFFFFFF00)
 			end if
-#endif			
+
 			if ( _name ) then
 				ctx->in_use = TRUE
 			end if
@@ -133,7 +101,7 @@ function fb_Dir FBCALL ( filespec as FBSTRING ptr, attrib as long, out_attrib as
 	else
 		/' findnext '/
 		if ( ctx->in_use ) then
-			_name = find_next( out_attrib )
+			_name = find_next( out_attrib, ctx )
 		end if
 	end if
 

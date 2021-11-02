@@ -1,6 +1,8 @@
 /' input function '/
 
 #include "fb.bi"
+#include "fb_private_thread.bi"
+#include "fb_private_file.bi"
 
 extern "C"
 function fb_FileInput FBCALL ( fnum as long ) as long
@@ -15,7 +17,7 @@ function fb_FileInput FBCALL ( fnum as long ) as long
         return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
     end if
 
-    ctx = _FB_TLSGETCTX( INPUT )
+    ctx = fb_get_thread_inputctx( )
 
     ctx->handle = handle
     ctx->status = 0
@@ -27,12 +29,24 @@ function fb_FileInput FBCALL ( fnum as long ) as long
 	return fb_ErrorSetNum( FB_RTERROR_OK )
 end function
 
-sub fb_INPUTCTX_Destructor( byval _data as any ptr )
+end extern
+
+private sub INPUTCTX_destructor( byval _data as any ptr )
 
     dim as FB_INPUTCTX ptr ctx = cast( FB_INPUTCTX ptr, _data )
     fb_StrDelete( @ctx->str )
+    Delete ctx
     /' The file handle is closed by the program, it's not ours to clean up '/
 
 end sub
 
-end extern
+function fb_get_thread_inputctx( ) as FB_INPUTCTX ptr
+    dim thread As FBThread Ptr = fb_GetCurrentThread( )
+    dim ctx As FB_INPUTCTX ptr = cast( FB_INPUTCTX ptr, thread->GetData( FB_TLSKEY_INPUT ) )
+    If( ctx = Null ) Then
+        ctx = New FB_INPUTCTX
+        thread->SetData( FB_TLSKEY_INPUT, ctx, @INPUTCTX_destructor )
+    End If
+    Return ctx
+
+end function

@@ -1,6 +1,7 @@
 /' input function '/
 
 #include "fb.bi"
+#include "fb_private_file.bi"
 
 extern "C"
 function fb_ConsoleInput FBCALL ( text as FBSTRING ptr, addquestion as long, addnewline as long ) as long
@@ -16,7 +17,7 @@ function fb_ConsoleInput FBCALL ( text as FBSTRING ptr, addquestion as long, add
 		return fb_FileInput( 0 )
 	end if
 
-	ctx = _FB_TLSGETCTX( INPUT )
+	ctx = fb_get_thread_inputctx( )
 
 	fb_StrDelete( @ctx->str )
 	ctx->handle = 0

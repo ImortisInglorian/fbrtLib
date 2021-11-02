@@ -7,32 +7,10 @@
  '/
 
 #include "../fb.bi"
-#include "../fb_private_thread.bi"
+#include "win32_private_thread.bi"
 
 #define _SIGNAL		0
 #define _BROADCAST	1
-
-type w9x_t
-	as HANDLE event(0 to 1)
-end type
-
-type nt_t
-	as HANDLE sema /' semaphore for waiters '/
-	as HANDLE waiters_done /' event '/
-	as Boolean was_broadcast
-end type
-
-Type _FBCOND
-	/' data common to both implementations '/
-	as long waiters_count
-	as CRITICAL_SECTION waiters_count_lock
-	union
-		as w9x_t w9x
-		as nt_t nt
-	end union
-end type
-
-extern "C"
 
 type FBCONDOPS
 	create as 		sub FBCALL ( cond as FBCOND ptr )
@@ -62,7 +40,7 @@ dim shared as SIGNALOBJECTANDWAIT pSignalObjectAndWait = NULL
 dim shared as long __inited = FALSE
 dim shared as FBCONDOPS __condops
 
-sub fb_CondInit( )
+private sub fb_CondInit( )
 	/' If two threads get here at the same time, make sure only one of
 	   them does the initialization while the other one waits. '/
 	FB_MT_LOCK()
@@ -96,45 +74,44 @@ sub fb_CondInit( )
 	FB_MT_UNLOCK()
 end sub
 
+extern "C"
 function fb_CondCreate FBCALL ( ) as FBCOND ptr
 	dim as FBCOND ptr cond
 
 	fb_CondInit( )
 
-	cond = malloc( sizeof( FBCOND ) )
-	if ( NULL <> cond ) then
-		return NULL
-	end if
+	cond = New FBCOND
+	if ( Null <> cond ) then
 	
-	cond->waiters_count = 0
-	InitializeCriticalSection( @cond->waiters_count_lock )
-	__condops.create( cond )
+		cond->waiters_count = 0
+		InitializeCriticalSection( @cond->waiters_count_lock )
+		__condops.create( cond )
+
+	end if
 
 	return cond
 end function
 
 sub fb_CondDestroy FBCALL ( cond as FBCOND ptr )
-	if ( cond = NULL ) then
-		exit sub
-	end if
-	DeleteCriticalSection( @cond->waiters_count_lock )
-	__condops.destroy( cond )
-	free( cond )
+	if ( cond <> NULL ) then
+		DeleteCriticalSection( @cond->waiters_count_lock )
+		__condops.destroy( cond )
+		Delete cond
+	End If
 end sub
 
 sub fb_CondSignal FBCALL ( cond as FBCOND ptr )
 	dim as long has_waiters
 
-	if ( cond = NULL ) then
-		return
-	end if
+	if ( cond <> NULL ) then
 	
-	EnterCriticalSection( @cond->waiters_count_lock )
-	has_waiters = cond->waiters_count > 0
-	LeaveCriticalSection( @cond->waiters_count_lock )
+		EnterCriticalSection( @cond->waiters_count_lock )
+		has_waiters = cond->waiters_count > 0
+		LeaveCriticalSection( @cond->waiters_count_lock )
 
-	if ( has_waiters <> NULL ) then
-		__condops.signal( cond )
+		if ( has_waiters <> NULL ) then
+			__condops.signal( cond )
+		end if
 	end if
 end sub
 
@@ -149,25 +126,26 @@ sub fb_CondWait FBCALL ( cond as FBCOND ptr, mutex as FBMUTEX ptr )
 		__condops.wait( cond, mutex )
 	end if
 end sub
+end extern
 
 /' SignalObjectAndWait version '/
 
-sub fb_CondCreate_nt FBCALL ( cond as FBCOND ptr )
+private sub fb_CondCreate_nt FBCALL ( cond as FBCOND ptr )
 	cond->nt.was_broadcast = FALSE
 	cond->nt.sema = CreateSemaphore( NULL, 0, &h7fffffff, NULL )
 	cond->nt.waiters_done = CreateEvent( NULL, FALSE, FALSE, NULL )
 end sub
 
-sub fb_CondDestroy_nt FBCALL ( cond as FBCOND ptr )
+private sub fb_CondDestroy_nt FBCALL ( cond as FBCOND ptr )
 	CloseHandle( cond->nt.sema )
 	CloseHandle( cond->nt.waiters_done )
 end sub
 
-sub fb_CondSignal_nt FBCALL ( cond as FBCOND ptr )
+private sub fb_CondSignal_nt FBCALL ( cond as FBCOND ptr )
 	ReleaseSemaphore( cond->nt.sema, 1, 0 )
 end sub
 
-sub fb_CondBroadcast_nt FBCALL ( cond as FBCOND ptr )
+private sub fb_CondBroadcast_nt FBCALL ( cond as FBCOND ptr )
 	EnterCriticalSection( @cond->waiters_count_lock )
 
 	if ( cond->waiters_count > 0 ) then
@@ -183,7 +161,7 @@ sub fb_CondBroadcast_nt FBCALL ( cond as FBCOND ptr )
 	end if
 end sub
 
-sub fb_CondWait_nt FBCALL ( cond as FBCOND ptr, mutex as FBMUTEX ptr )
+private sub fb_CondWait_nt FBCALL ( cond as FBCOND ptr, mutex as FBMUTEX ptr )
 	dim as long last_waiter
 
 	EnterCriticalSection( @cond->waiters_count_lock )
@@ -208,21 +186,21 @@ end sub
 
 /' non-SignalObjectAndWait version '/
 
-sub fb_CondCreate_9x FBCALL ( cond as FBCOND ptr )
+private sub fb_CondCreate_9x FBCALL ( cond as FBCOND ptr )
 	cond->w9x.event(_SIGNAL)    = CreateEvent( NULL, FALSE, FALSE, NULL )
 	cond->w9x.event(_BROADCAST) = CreateEvent( NULL, TRUE, FALSE, NULL )
 end sub
 
-sub fb_CondDestroy_9x FBCALL ( cond as FBCOND ptr )
+private sub fb_CondDestroy_9x FBCALL ( cond as FBCOND ptr )
 	CloseHandle( cond->w9x.event(_SIGNAL) )
 	CloseHandle( cond->w9x.event(_BROADCAST) )
 end sub
 
-sub fb_CondSignal_9x FBCALL( cond as FBCOND ptr )
+private sub fb_CondSignal_9x FBCALL( cond as FBCOND ptr )
 	SetEvent( cond->w9x.event(_SIGNAL) )
 end sub
 
-sub fb_CondBroadcast_9x FBCALL ( cond as FBCOND ptr )
+private sub fb_CondBroadcast_9x FBCALL ( cond as FBCOND ptr )
 	dim as long has_waiters
 
 	EnterCriticalSection( @cond->waiters_count_lock )
@@ -234,7 +212,7 @@ sub fb_CondBroadcast_9x FBCALL ( cond as FBCOND ptr )
 	end if
 end sub
 
-sub fb_CondWait_9x FBCALL ( cond as FBCOND ptr, mutex as FBMUTEX ptr )
+private sub fb_CondWait_9x FBCALL ( cond as FBCOND ptr, mutex as FBMUTEX ptr )
 	dim as long result, last_waiter
 
 	EnterCriticalSection( @cond->waiters_count_lock )
@@ -258,4 +236,4 @@ sub fb_CondWait_9x FBCALL ( cond as FBCOND ptr, mutex as FBMUTEX ptr )
 	/' relock mutex '/
 	WaitForSingleObject( mutex->id, INFINITE )
 end sub
-end extern
+

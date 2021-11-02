@@ -1,16 +1,14 @@
 /' mutex handling routines '/
 
 #include "../fb.bi"
-#include "../fb_private_thread.bi"
+#include "win32_private_thread.bi"
 
 extern "C"
 function fb_MutexCreate FBCALL ( ) as FBMUTEX ptr
-	dim as FBMUTEX ptr mutex = cast(FBMUTEX ptr,malloc( sizeof( FBMUTEX ) ))
-	if ( mutex = NULL ) then
-		return NULL
+	dim as FBMUTEX ptr mutex = New FBMUTEX
+	if ( mutex <> NULL ) then
+		mutex->id = CreateSemaphore( NULL, 1, 1, NULL )
 	end if
-
-	mutex->id = CreateSemaphore( NULL, 1, 1, NULL )
 
 	return mutex
 end function
@@ -18,7 +16,7 @@ end function
 sub fb_MutexDestroy FBCALL ( mutex as FBMUTEX ptr )
 	if ( mutex <> NULL ) then
 		CloseHandle( mutex->id )
-		free( cast(any ptr,mutex) )
+		Delete mutex
 	end if
 end sub
 

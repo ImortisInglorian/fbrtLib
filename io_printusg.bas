@@ -1,6 +1,7 @@
 /' print using function '/
 
 #include "fb.bi"
+#include "fb_private_thread.bi"
 #include "crt/math.bi"
 
 type FB_PRINTUSGCTX
@@ -60,13 +61,24 @@ end type
 #endmacro
 
 
-extern "C"
-
-'' !!!TODO!!! see note in fb_thread.bi::_FB_TLSGETCTX(id)
-'' #define fb_PRINTUSGCTX_Destructor NULL
- 
-sub fb_PRINTUSGCTX_Destructor( byval data_ as any ptr )
+private sub PRINTUSGCTX_destructor( byval data_ as any ptr )
+	dim ctx As FB_PRINTUSGCTX ptr = cast( FB_PRINTUSGCTX ptr, data_ )
+	fb_StrDelete( @ctx->fmtstr )
+	Delete ctx
 end sub
+
+private function get_thread_printusg_data ( ) as FB_PRINTUSGCTX ptr
+	dim thread As FBThread Ptr = fb_GetCurrentThread( )
+	dim ctx As FB_PRINTUSGCTX ptr = cast( FB_PRINTUSGCTX ptr, thread->GetData( FB_TLSKEY_PRINTUSG ) )
+        If( ctx = Null ) Then
+		ctx = New FB_PRINTUSGCTX
+		thread->SetData( FB_TLSKEY_PRINTUSG, ctx, @PRINTUSGCTX_destructor )
+        End If
+	Return ctx
+
+end function
+
+extern "C"
 
 /'-------------------------------------------------------------'/
 /' Checks for Infinity/NaN                                     *
@@ -126,11 +138,9 @@ end function
 declare function fb_PrintUsingFmtStr( fnum as long ) as long
 
 function fb_PrintUsingInit FBCALL ( fmtstr as FBSTRING ptr ) as long
-    dim as FB_PRINTUSGCTX ptr ctx
+	dim as FB_PRINTUSGCTX ptr ctx = get_thread_printusg_data( )
 
-    FB_LOCK()
-
-    ctx = _FB_TLSGETCTX( PRINTUSG )
+	FB_LOCK()
 
 	fb_StrAssign( cast(any ptr, @ctx->fmtstr), -1, fmtstr, -1, 0 )
 	ctx->_ptr = ctx->fmtstr.data
@@ -142,13 +152,11 @@ function fb_PrintUsingInit FBCALL ( fmtstr as FBSTRING ptr ) as long
 end function
 
 function fb_PrintUsingEnd FBCALL ( fnum as long ) as long
-	dim as FB_PRINTUSGCTX ptr ctx
+	dim as FB_PRINTUSGCTX ptr ctx = get_thread_printusg_data( )
 
 	fb_PrintUsingFmtStr( fnum )
 
 	FB_LOCK()
-
-	ctx = _FB_TLSGETCTX( PRINTUSG )
 
 	fb_StrDelete( @ctx->fmtstr )
 	ctx->_ptr = 0
@@ -219,11 +227,9 @@ private function hDivPow10_ULL( a as ulongint, n as long ) as ulongint
 end function
 
 private function fb_PrintUsingFmtStr( fnum as long ) as long
-	dim as FB_PRINTUSGCTX ptr ctx
+	dim as FB_PRINTUSGCTX ptr ctx = get_thread_printusg_data( )
 	dim as ubyte buffer(0 to BUFFERLEN)
 	dim as long c, nc, nnc, _len, doexit
-
-	ctx = _FB_TLSGETCTX( PRINTUSG )
 
 	_len = 0
 	if ( ctx->_ptr = NULL ) then
@@ -298,13 +304,11 @@ private function fb_PrintUsingFmtStr( fnum as long ) as long
 end function
 
 function fb_PrintUsingStr FBCALL ( fnum as long, s as FBSTRING ptr, mask as long ) as long
-	dim as FB_PRINTUSGCTX ptr ctx
+	dim as FB_PRINTUSGCTX ptr ctx = get_thread_printusg_data( )
 	dim as ubyte buffer(0 to BUFFERLEN)
 	dim as long c, nc, strchars, doexit, i
 
-	ctx = _FB_TLSGETCTX( PRINTUSG )
-
-    /' restart if needed '/
+	/' restart if needed '/
 	if ( ctx->chars = 0 ) then
 		ctx->_ptr = ctx->fmtstr.data
 		ctx->chars = FB_STRSIZE( @ctx->fmtstr )
@@ -413,11 +417,9 @@ function fb_PrintUsingStr FBCALL ( fnum as long, s as FBSTRING ptr, mask as long
 end function
 
 function fb_PrintUsingWstr FBCALL ( fnum as long, s as FB_WCHAR ptr, mask as long ) as long
-	dim as FB_PRINTUSGCTX ptr ctx
+	dim as FB_PRINTUSGCTX ptr ctx = get_thread_printusg_data( )
 	dim as FB_WCHAR buffer(0 to BUFFERLEN)
 	dim as long c, nc, strchars, doexit, i, length
-
-	ctx = _FB_TLSGETCTX( PRINTUSG )
 
 	/' restart if needed '/
 	if ( ctx->chars = 0 ) then
@@ -523,7 +525,7 @@ function fb_PrintUsingWstr FBCALL ( fnum as long, s as FB_WCHAR ptr, mask as lon
 end function
 
 private function hPrintNumber( fnum as long, _val as ulongint, val_exp as long, flags as long, mask as long ) as long
-	dim as FB_PRINTUSGCTX ptr ctx
+	dim as FB_PRINTUSGCTX ptr ctx = get_thread_printusg_data( )
 	dim as ubyte buffer(0 to BUFFERLEN) 
 	dim as ubyte ptr p
 	dim as long val_digs, val_zdigs
@@ -540,8 +542,6 @@ private function hPrintNumber( fnum as long, _val as ulongint, val_exp as long, 
 	dim as long isamp
 	dim as long i
 	dim as uint64_t chars = 0
-
-	ctx = _FB_TLSGETCTX( PRINTUSG )
 
 	/' restart if needed '/
 	if ( ctx->chars = 0 ) then

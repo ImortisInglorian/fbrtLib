@@ -190,6 +190,7 @@
 	declare sub fb_hListDynInit         ( list as FB_LIST ptr )
 	declare sub fb_hListDynElemAdd      ( list as FB_LIST ptr, elem as FB_LISTELEM ptr )
 	declare sub fb_hListDynElemRemove   ( list as FB_LIST ptr, elem as FB_LISTELEM ptr )
+	end extern
 
 	/'  Include as added.'/
 	#include "fb_unicode.bi"
@@ -328,6 +329,7 @@
 	#define KEY_DEL         FB_MAKE_EXT_KEY( ASC("S") )
 	#define KEY_QUIT        FB_MAKE_EXT_KEY( ASC("k") )
 
+	extern "C"
 	declare function fb_hMakeInkeyStr( ch as long ) as FBSTRING ptr
 	declare function fb_hScancodeToExtendedKey( scancode as long ) as long
 

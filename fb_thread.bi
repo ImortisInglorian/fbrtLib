@@ -4,7 +4,7 @@
 
 type FB_THREADPROC as sub FBCALL( param as any ptr )
 
-type FBTHREAD as _FBTHREAD
+type FBTHREAD As _FBTHREAD
 
 type FBMUTEX as _FBMUTEX
 
@@ -12,7 +12,7 @@ type FBCOND as _FBCOND
 
 extern "C"
 declare function fb_ThreadCreate 		FBCALL ( proc as FB_THREADPROC, param as any ptr, stack_size as ssize_t ) as FBTHREAD ptr
-declare function fb_ThreadSelf          FBCALL ( ) as FBTHREAD ptr
+declare function fb_ThreadSelf			FBCALL ( ) as FBTHREAD ptr
 declare sub 	 fb_ThreadWait 			FBCALL ( thread as FBTHREAD ptr )
 declare sub 	 fb_ThreadDetach 		FBCALL ( thread as FBTHREAD ptr )
 
@@ -28,46 +28,5 @@ declare sub 	 fb_CondDestroy 		FBCALL ( cond as FBCOND ptr )
 declare sub 	 fb_CondSignal 			FBCALL ( cond as FBCOND ptr )
 declare sub 	 fb_CondBroadcast 		FBCALL ( cond as FBCOND ptr )
 declare sub 	 fb_CondWait 			FBCALL ( cond as FBCOND ptr, mutex as FBMUTEX ptr )
-
-/''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
- * per-thread local storage context
- *************************************************************************************************'/
-
-enum
-	FB_TLSKEY_ERROR
-	FB_TLSKEY_DIR
-	FB_TLSKEY_INPUT
-	FB_TLSKEY_PRINTUSG
-	FB_TLSKEY_GFX
-	FB_TLSKEY_FBTHREAD
-	FB_TLSKEYS
-end enum
-
-type FB_TLS_DESTRUCTOR as sub cdecl ( byval tlsData as any ptr )
-
-type FB_TLS_CTX_HEADER
-	destructor_ as FB_TLS_DESTRUCTOR
-end type
-
-declare function  fb_TlsGetCtx          FBCALL ( index as long, _len as size_t, destructor_ as FB_TLS_DESTRUCTOR ) as any ptr
-declare sub 	  fb_TlsDelCtx 			FBCALL ( index as long )
-declare sub 	  fb_TlsFreeCtxTb 		FBCALL ( )
-#ifdef ENABLE_MT
-declare sub 	  fb_TlsInit 				   ( )
-declare sub 	  fb_TlsExit 			       ( )
-#endif
-
-#ifndef NULL
-#print "really? no NULL"
-#endif
-
-'' !!!TODO!!! we can't use _FB_TLSGETCTX() as-is like in C because only in C can we  
-'' interchange a NULL pointer and a procedure name and get a pointer.  In fbc,
-'' we have no way to do this.  Maybe in a future version of fbc with some macro
-'' help we could do something like __FB_IIF__( __FB_TYPEOF__( fb_##id##CTX_Destructor ) = __FB_TYPEOF__( NULL ), NULL, procptr(fb_##id##CTX_Destructor) ) 
-'' #define _FB_TLSGETCTX(id)        (cast(FB_##id##CTX ptr, fb_TlsGetCtx( FB_TLSKEY_##id, sizeof( FB_##id##CTX ), fb_##id##CTX_Destructor ) ) )
-'' For now, we expect something we can take address of here and add dummy dtor procs in the rest of the rtlib.
-
-#define _FB_TLSGETCTX(id)        (cast(FB_##id##CTX ptr, fb_TlsGetCtx( FB_TLSKEY_##id, sizeof( FB_##id##CTX ), procptr(fb_##id##CTX_Destructor) ) ) )
 
 end extern

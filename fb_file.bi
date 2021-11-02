@@ -172,16 +172,6 @@ type FB_FILE
 	as _FB_FILE ptr 		redirection_to
 end type
 
-type FB_INPUTCTX
-	as FB_FILE ptr 			handle
-	as long 				status
-	as FBSTRING				str
-	as long 				index
-end type
-
-declare sub fb_INPUTCTX_Destructor( as any ptr ) 
-
-
 #define FB_FILE_TO_HANDLE_VALID( index ) (cast(FB_FILE ptr, (@__fb_ctx.fileTB(0) + (index) - 1 + FB_RESERVED_FILES)))
 
 #define FB_FILE_TO_HANDLE( index ) _
