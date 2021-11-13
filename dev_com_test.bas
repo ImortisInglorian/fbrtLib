@@ -31,7 +31,8 @@ function fb_DevComTestProtocolEx ( handle as FB_FILE ptr, filename as const ubyt
     ch =  filename[i]
     while( ch >= asc("0") and ch <= asc("9") )
         port = port * 10 + (ch - asc("0"))
-        ch = filename[i + 1]
+        i += 1
+        ch = filename[i]
     wend
 
 		/' removed to allow for open com "COM:"

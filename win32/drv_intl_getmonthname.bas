@@ -4,7 +4,7 @@
 #include "fb_private_intl.bi"
 
 extern "C"
-function fb_DrvIntlGetMonthName cdecl ( _month as long, short_names as long ) as FBSTRING ptr
+function fb_DrvIntlGetMonthName ( _month as long, short_names as long ) as FBSTRING ptr
 	dim as ubyte ptr pszName = NULL
 	dim as size_t name_len
 	dim as LCTYPE _lctype

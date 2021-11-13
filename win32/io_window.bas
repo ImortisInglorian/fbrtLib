@@ -5,7 +5,6 @@
 
 dim shared as SMALL_RECT srRealConsoleWindow
 
-extern "C"
 private sub hReadConsoleRect( pRect as SMALL_RECT ptr, GetRealWindow as long )
 	dim as CONSOLE_SCREEN_BUFFER_INFO info
 
@@ -41,12 +40,12 @@ end sub
  * - After screen buffer size change (using WIDTH)
  * - After printing text
  '/
-
+extern "C"
 sub fb_hUpdateConsoleWindow FBCALL ( )
 	/' Whenever the console was set by the user, we MUST NOT query this
 	 * information again because this would cause a mess with SAA
 	 * applications otherwise. '/
-	if (__fb_con.setByUser) then
+	if (__fb_con.setByUser <> 0) then
 		exit sub
 	end if
 
@@ -55,9 +54,9 @@ sub fb_hUpdateConsoleWindow FBCALL ( )
 end sub
 
 sub fb_InitConsoleWindow( )
-	static as long inited = FALSE
-	if ( inited = NULL ) then
-		inited = TRUE
+	static as Boolean inited = False
+	if ( inited = False ) then
+		inited = True
 		/' query the console window position/size only when needed '/
 		fb_hUpdateConsoleWindow( )
 	end if
@@ -69,7 +68,7 @@ sub fb_hRestoreConsoleWindow FBCALL ( )
 	/' Whenever the console was set by the user, there's no need to
 	 * restore the original window console because we don't have to
 	 * mess around with scrollable windows '/
-	if ( __fb_con.setByUser <> NULL ) then
+	if ( __fb_con.setByUser <> 0 ) then
 		exit sub
 	end if
 
@@ -77,12 +76,12 @@ sub fb_hRestoreConsoleWindow FBCALL ( )
 
 	/' Update only when changed! '/
 	hReadConsoleRect( @sr, TRUE )
-	if ( (sr.Top <> srRealConsoleWindow.Top) or (sr.Bottom <> srRealConsoleWindow.Bottom) ) then
+	if ( (sr.Top <> srRealConsoleWindow.Top) orelse (sr.Bottom <> srRealConsoleWindow.Bottom) ) then
 		/' Keep the left/right coordinate of the console '/
 		sr.Top = srRealConsoleWindow.Top
 		sr.Bottom = srRealConsoleWindow.Bottom
 		dim as long i
-		for i = 0 to FB_CONSOLE_MAXPAGES
+		for i = 0 to FB_CONSOLE_MAXPAGES - 1
 			if ( __fb_con.pgHandleTb(i) <> NULL ) then
 				SetConsoleWindowInfo( __fb_con.pgHandleTb(i), TRUE, @srRealConsoleWindow )
 			end if

@@ -18,13 +18,7 @@ function fb_DevFileWriteWstr( handle as FB_FILE ptr, src as const FB_WCHAR ptr, 
 		return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 	end if
 
-	if ( chars < FB_LOCALBUFF_MAXLEN ) then
-		buffer = allocate( chars + 1 )
-		/' original C code used alloca() for small allocations on the stack '/
-		/' note: if out of memory on alloca, it's a stack exception '/
-	else
-		buffer = allocate( chars + 1 )
-	end if
+	buffer = allocate( chars + 1 )
 
 	if( buffer = NULL ) then
 		FB_UNLOCK()
@@ -36,7 +30,7 @@ function fb_DevFileWriteWstr( handle as FB_FILE ptr, src as const FB_WCHAR ptr, 
 	fb_wstr_ConvToA( buffer, chars, src )
 
 	/' do write '/
-	res = (fwrite( cast(any ptr, buffer), 1, chars, fp ) = chars)
+	res = (fwrite( buffer, 1, chars, fp ) = chars)
 
 	deallocate( buffer )
 

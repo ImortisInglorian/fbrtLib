@@ -4,32 +4,33 @@
 
 extern "C"
 function fb_DevFileReadWstr( handle as FB_FILE ptr, dst as FB_WCHAR ptr, pchars as size_t ptr ) as long
-    dim as FILE ptr fp
-    dim as size_t chars
-    dim as ubyte ptr buffer
+	dim as FILE ptr fp
+	dim as size_t chars
+	dim as ubyte ptr buffer
+        dim as long errorRet = FB_RTERROR_OK
 
-    FB_LOCK()
+	FB_LOCK()
 
-    if ( handle = NULL ) then
-    	fp = stdin
-    else
-    	fp = cast(FILE ptr, handle->opaque)
-    	if ( fp = stdout or fp = stderr ) then
-        	fp = stdin
+	if ( handle = NULL ) then
+		fp = stdin
+	else
+		fp = cast(FILE ptr, handle->opaque)
+		if ( fp = stdout orelse fp = stderr ) then
+			fp = stdin
 		end if
 
 		if ( fp = NULL ) then
-			FB_UNLOCK()
-			return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
+			errorRet = FB_RTERROR_ILLEGALFUNCTIONCALL
+			goto functionExit
 		end if
 	end if
 
-    chars = *pchars
+	chars = *pchars
 
-	if ( chars < FB_LOCALBUFF_MAXLEN ) then
-		buffer = allocate( chars + 1 )
-	else
-		buffer = allocate( chars + 1 )
+	buffer = allocate( chars + 1 )
+        if ( buffer = Null ) then 
+		errorRet = FB_RTERROR_ILLEGALFUNCTIONCALL
+		goto functionExit
 	end if
 
 	/' do read '/
@@ -40,17 +41,18 @@ function fb_DevFileReadWstr( handle as FB_FILE ptr, dst as FB_WCHAR ptr, pchars 
 	   to allow UTF characters to be read '/
 	fb_wstr_ConvFromA( dst, chars, buffer )
 
-	deallocate(buffer)
+	deallocate( buffer )
 
 	/' fill with nulls if at eof '/
 	if ( chars <> *pchars ) then
-        memset( cast(any ptr, @dst[chars]), 0, (*pchars - chars) * sizeof( FB_WCHAR ) )
+		memset( @dst[chars], 0, (*pchars - chars) * sizeof( FB_WCHAR ) )
 	end if
 
-    *pchars = chars
+	*pchars = chars
 
+functionExit;
 	FB_UNLOCK()
-	
-	return fb_ErrorSetNum( FB_RTERROR_OK )
+
+	return fb_ErrorSetNum( errorRet )
 end function
 end extern

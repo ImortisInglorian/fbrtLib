@@ -95,23 +95,21 @@ private function hWriteBOM( handle as FB_FILE ptr ) as long
 end function
 
 function fb_DevFileOpenEncod ( handle as FB_FILE ptr, filename as const ubyte ptr, fname_len as size_t ) as long
-    dim as FILE ptr fp = NULL
-    dim as ubyte ptr openmask
-    dim as ubyte ptr fname
+	dim as FILE ptr fp = NULL
+	dim as ubyte ptr openmask
+	dim as ubyte ptr fname
+	dim as long errorRet = FB_RTERROR_OK
 
-    FB_LOCK()
+	FB_LOCK()
 
-    fname = cast(ubyte ptr, allocate(fname_len + 1))
-    memcpy(fname, filename, fname_len)
-    fname[fname_len] = 0
+	fname = strdup( filename )
 
-    /' Convert directory separators to whatever the current platform supports '/
-    fb_hConvertPath( fname )
+	/' Convert directory separators to whatever the current platform supports '/
+	fb_hConvertPath( fname )
 
-    handle->hooks = @hooks_dev_file
+	handle->hooks = @hooks_dev_file
 
-    openmask = NULL
-    select case ( handle->mode )
+	select case ( handle->mode )
 		case FB_FILE_MODE_APPEND:
 			/' will create the file if it doesn't exist '/
 			openmask = sadd("ab")
@@ -125,57 +123,53 @@ function fb_DevFileOpenEncod ( handle as FB_FILE ptr, filename as const ubyte pt
 			openmask = sadd("wb")
 
 		case else:
-			FB_UNLOCK()
-			deallocate(fname)
-			return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
-    end select
+			errorRet = FB_RTERROR_ILLEGALFUNCTIONCALL
+			Goto unlockExit
+	end select
 
-    /' try opening '/
+	/' try opening '/
 	fp = fopen( fname, openmask )
-    if ( fp = NULL ) then
-    	FB_UNLOCK()
-		deallocate(fname)
-        return fb_ErrorSetNum( FB_RTERROR_FILENOTFOUND )
-    end if
-
-    fb_hSetFileBufSize( fp )
-
-    handle->opaque = fp
-
-    if ( handle->access = FB_FILE_ACCESS_ANY) then
-        handle->access = FB_FILE_ACCESS_READWRITE
+	if ( fp = NULL ) then
+		errorRet = FB_RTERROR_FILENOTFOUND
+		Goto unlockExit
 	end if
 
-    /' handle BOM '/
-    select case ( handle->mode )
+	fb_hSetFileBufSize( fp )
+
+	handle->opaque = fp
+
+	if ( handle->access = FB_FILE_ACCESS_ANY) then
+		handle->access = FB_FILE_ACCESS_READWRITE
+	end if
+
+	/' handle BOM '/
+	select case ( handle->mode )
 		case FB_FILE_MODE_APPEND, FB_FILE_MODE_INPUT:
 			if ( hCheckBOM( handle ) = 0 ) then
-				fclose( fp )
-				FB_UNLOCK()
-				deallocate(fname)
-				return fb_ErrorSetNum( FB_RTERROR_FILENOTFOUND )
+				errorRet = FB_RTERROR_FILENOTFOUND
+				Goto fileCloseExit
 			end if
 
 		case FB_FILE_MODE_OUTPUT:
 			if ( hWriteBOM( handle ) = 0 ) then
-				fclose( fp )
-				FB_UNLOCK()
-				deallocate(fname)
-				return fb_ErrorSetNum( FB_RTERROR_FILENOTFOUND )
+				errorRet = FB_RTERROR_FILENOTFOUND
+				Goto fileCloseExit
 			end if
 	end select
 
 	/' calc file size '/
-    handle->size = fb_DevFileGetSize( fp, handle->mode, handle->encod, TRUE )
-    if ( handle->size = -1 ) then
-    	fclose( fp )
-        FB_UNLOCK()
-		deallocate(fname)
-        return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
+	handle->size = fb_DevFileGetSize( fp, handle->mode, handle->encod, TRUE )
+	if ( handle->size = -1 ) then
+		err = FB_RTERROR_ILLEGALFUNCTIONCALL
+		Goto fileCloseExit
 	end if
 
-    FB_UNLOCK()
-	deallocate(fname)
-	return fb_ErrorSetNum( FB_RTERROR_OK )
+fileCloseExit:
+	fclose( fp )
+unlockExit:
+	FB_UNLOCK()
+deallocExit:
+	free( fname )
+	return fb_ErrorSetNum( errorRet )
 end function
 end extern

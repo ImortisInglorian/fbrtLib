@@ -11,31 +11,30 @@ end function
 
 #else
 
-dim shared as FB_FILE_HOOKS hooks_dev_pipe = ( @fb_DevFileEof _
-											 , @fb_DevPipeClose _
-											 , NULL _
-											 , NULL _
-											 , @fb_DevFileRead _ 
-											 , @fb_DevFileReadWstr _
-											 , @fb_DevFileWrite _ 
-											 , @fb_DevFileWriteWstr _
-											 , NULL _
-											 , NULL _
-											 , @fb_DevFileReadLine _
-											 , @fb_DevFileReadLineWstr _
-											 , NULL _
-											 , @fb_DevFileFlush )
+dim shared as FB_FILE_HOOKS hooks_dev_pipe = ( _
+	@fb_DevFileEof _
+	, @fb_DevPipeClose _
+	, NULL _
+	, NULL _
+	, @fb_DevFileRead _ 
+	, @fb_DevFileReadWstr _
+	, @fb_DevFileWrite _ 
+	, @fb_DevFileWriteWstr _
+	, NULL _
+	, NULL _
+	, @fb_DevFileReadLine _
+	, @fb_DevFileReadLineWstr _
+	, NULL _
+	, @fb_DevFileFlush )
 
 function fb_DevPipeOpen( handle as FB_FILE ptr, filename as const ubyte ptr, filename_len as size_t ) as long
     dim as long res = fb_ErrorSetNum( FB_RTERROR_OK )
     dim as FILE ptr fp = NULL
-    dim as ubyte openmask(0 to 15)
+    dim as ubyte ptr openmask = NULL
 
     FB_LOCK()
 
     handle->hooks = @hooks_dev_pipe
-
-    openmask(0) = 0
 
     select case ( handle->mode )
 		case FB_FILE_MODE_INPUT:
@@ -47,7 +46,7 @@ function fb_DevPipeOpen( handle as FB_FILE ptr, filename as const ubyte ptr, fil
 				res = fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 			end if
 
-			strcpy( @openmask(0), "r" )
+			openmask = sadd( "r" )
 
 		case FB_FILE_MODE_OUTPUT:
 			if ( handle->access = FB_FILE_ACCESS_ANY) then
@@ -58,14 +57,14 @@ function fb_DevPipeOpen( handle as FB_FILE ptr, filename as const ubyte ptr, fil
 				res = fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 			end if
 
-			strcpy( @openmask(0), "w" )
+			openmask = sadd( "w" )
 
 		case FB_FILE_MODE_BINARY:
 			if ( handle->access = FB_FILE_ACCESS_ANY) then
 				handle->access = FB_FILE_ACCESS_WRITE
 			end if
 
-			strcpy( @openmask(0), iif(handle->access = FB_FILE_ACCESS_WRITE, @"wb", @"rb") )
+			openmask = iif(handle->access = FB_FILE_ACCESS_WRITE, sadd( "wb" ), sadd( "rb" ) )
 
 		case else:
 			res = fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
@@ -73,7 +72,7 @@ function fb_DevPipeOpen( handle as FB_FILE ptr, filename as const ubyte ptr, fil
 
     if ( res = FB_RTERROR_OK ) then
         /' try to open/create pipe '/
-		fp = popen( filename, @openmask(0) )
+	fp = popen( cast( ZString ptr, filename ), openmask )
         if( fp = NULL ) then
             res = fb_ErrorSetNum( FB_RTERROR_FILENOTFOUND )
         end if

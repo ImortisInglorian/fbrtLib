@@ -6,8 +6,8 @@
 extern "C"
 function fb_DrvIntlGetDateFormat cdecl ( buffer as ubyte ptr, _len as size_t ) as long
 	dim as ubyte ptr pszName
+	dim as ubyte ptr achOrder = NULL
 	dim as ubyte achFormat(0 to 89)
-	dim as ubyte achOrder(0 to 2)
 	dim as ubyte achDayZero(0 to 1), achMonZero(0 to 1), achDate(0 to 1)
 	dim as ubyte ptr pszDayZero, pszMonZero, pszDate
 	dim as size_t i
@@ -32,37 +32,37 @@ function fb_DrvIntlGetDateFormat cdecl ( buffer as ubyte ptr, _len as size_t ) a
 	pszDayZero = fb_hGetLocaleInfo( LOCALE_USER_DEFAULT, LOCALE_IDAYLZERO, @achDayZero(0), ARRAY_SIZEOF(achDayZero) )
 	pszMonZero = fb_hGetLocaleInfo( LOCALE_USER_DEFAULT, LOCALE_IMONLZERO, @achMonZero(0), ARRAY_SIZEOF(achMonZero) )
 	pszDate = fb_hGetLocaleInfo( LOCALE_USER_DEFAULT, LOCALE_IDATE, @achDate(0), ARRAY_SIZEOF(achDate) )
-	if ( pszDate <> NULL and pszDayZero <> 0 and pszMonZero <> 0 ) then
+	if ( pszDate <> NULL andalso pszDayZero <> 0 andalso pszMonZero <> 0 ) then
 		select case( atoi( pszDate ) )
 			case 0:
-				FB_MEMCPY(@achOrder(0), sadd("mdy"), 3)
+				achOrder = sadd("mdy")
 			case 1:
-				FB_MEMCPY(@achOrder(0), sadd("dmy"), 3)
+				achOrder = sadd("dmy")
 			case 2:
-				FB_MEMCPY(@achOrder(0), sadd("ymd"), 3)
+				achOrder = sadd("ymd")
 		end select
 
-		if ( achOrder(0) <> 0 ) then
+		if ( achOrder <> NULL ) then
 			dim as size_t remaining = _len - 1
 			dim as long day_lead_zero = atoi( pszDayZero ) <> 0
 			dim as long mon_lead_zero = atoi( pszMonZero ) <> 0
-			for i=0 to 3
+			for i=0 to 2
 				dim as ubyte ptr pszAdd = NULL
 				dim as size_t add_len
-				select case ( achOrder(i) )
-					case 109:	' m
+				select case ( achOrder[i] )
+					case asc("m"):	' m
 						if ( mon_lead_zero ) then
 							pszAdd = sadd("MM")
 						else
 							pszAdd = sadd("M")
 						end if
-					case 100: 	' d
+					case asc("d"): 	' d
 						if ( day_lead_zero ) then
 							pszAdd = sadd("dd")
 						else
 							pszAdd = sadd("d")
 						end if
-					case 121: 	' y
+					case asc("y"): 	' y
 						pszAdd = sadd("yyyy")
 				end select
 				add_len = strlen(pszAdd)

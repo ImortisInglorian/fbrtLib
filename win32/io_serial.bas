@@ -5,39 +5,39 @@
 
 #define GET_MSEC_TIME() (cast(DWORD, (fb_Timer() * 1000.0)))
 
-extern "C"
-private function fb_hSerialWaitSignal( hDevice as HANDLE, dwMask as DWORD, dwResult as DWORD, dwTimeout as DWORD ) as long
+private function fb_hSerialWaitSignal( hDevice as HANDLE, dwMask as DWORD, dwResult as DWORD, dwTimeout as DWORD ) as boolean
 	dim as DWORD dwStartTime = GET_MSEC_TIME()
 	dim as DWORD dwModemStatus = 0
 
-	if ( GetCommModemStatus( hDevice, @dwModemStatus ) = NULL ) then
-		return FALSE
+	if ( GetCommModemStatus( hDevice, @dwModemStatus ) = FALSE ) then
+		return False
 	end if
 
-	while ( ((GET_MSEC_TIME() - dwStartTime) <= dwTimeout) and ((dwModemStatus and dwMask) <> dwResult) )
-		if( GetCommModemStatus( hDevice, @dwModemStatus ) = NULL ) then
-			return FALSE
+	while ( ((GET_MSEC_TIME() - dwStartTime) <= dwTimeout) andalso ((dwModemStatus and dwMask) <> dwResult) )
+		if( GetCommModemStatus( hDevice, @dwModemStatus ) = FALSE ) then
+			return False
 		end if
 	wend
 	return ((dwModemStatus and dwMask) = dwResult)
 end function
 
-private function fb_hSerialCheckLines( hDevice as HANDLE, pOptions as FB_SERIAL_OPTIONS ptr ) as long
+private function fb_hSerialCheckLines( hDevice as HANDLE, pOptions as FB_SERIAL_OPTIONS ptr ) as boolean
 	DBG_ASSERT( pOptions <> NULL )
 	if ( pOptions->DurationCD <> 0 ) then
-		if ( not(fb_hSerialWaitSignal( hDevice, MS_RLSD_ON, MS_RLSD_ON, pOptions->DurationCD )) ) then
-			return FALSE
+		if ( not(fb_hSerialWaitSignal( hDevice, MS_RLSD_ON, MS_RLSD_ON, pOptions->DurationCD ) ) ) then
+			return False
 		end if
 	end if
 
 	if ( pOptions->DurationDSR <> 0 ) then
-		if ( not(fb_hSerialWaitSignal( hDevice, MS_DSR_ON, MS_DSR_ON, pOptions->DurationDSR )) ) then
-			return FALSE
+		if ( not(fb_hSerialWaitSignal( hDevice, MS_DSR_ON, MS_DSR_ON, pOptions->DurationDSR ) ) ) then
+			return False
 		end if
 	end if
-	return TRUE
+	return True
 end function
 
+extern "C"
 function fb_SerialOpen( handle as FB_FILE ptr, iPort as long, options as FB_SERIAL_OPTIONS ptr, pszDevice as ubyte ptr, ppvHandle as any ptr ptr ) as long
 	dim as DWORD dwDefaultTxBufferSize = 16384
 	dim as DWORD dwDefaultRxBufferSize = 16384
@@ -64,6 +64,9 @@ function fb_SerialOpen( handle as FB_FILE ptr, iPort as long, options as FB_SERI
 
 	/' Get device name without ":" '/
 	pszDev = calloc(strlen( pszDevice ) + 5, 1)
+	if ( pszDev = NULL ) then
+		return fb_ErrorSetNum( FB_RTERROR_OUTOFMEM )
+	end if
 	if ( iPort = 0 ) then
 		iPort = 1
 		strcpy( pszDev, "COM1:" )
@@ -85,8 +88,9 @@ function fb_SerialOpen( handle as FB_FILE ptr, iPort as long, options as FB_SERI
 	/' FIXME: Use default COM properties by default '/
 	dim as COMMCONFIG cc
 	if ( GetDefaultCommConfig( pszDev, @cc, @dwSizeCC ) = NULL ) then
+
 		'Empty
-   end if
+	end if
 	#endif
 
 	/' Open device '/
@@ -104,15 +108,15 @@ function fb_SerialOpen( handle as FB_FILE ptr, iPort as long, options as FB_SERI
 		if ( GetCommProperties( hDevice, @prop ) = NULL ) then
 			res = fb_ErrorSetNum( FB_RTERROR_NOPRIVILEGES )
 		else
-			if ( prop.dwCurrentTxQueue <> NULL ) then
+			if ( prop.dwCurrentTxQueue <> 0 ) then
 				dwDefaultTxBufferSize = prop.dwCurrentTxQueue
-			elseif ( prop.dwMaxTxQueue <> NULL ) then
+			elseif ( prop.dwMaxTxQueue <> 0 ) then
 				dwDefaultTxBufferSize = prop.dwMaxTxQueue
 			end if
 
-			if ( prop.dwCurrentRxQueue <> NULL ) then
+			if ( prop.dwCurrentRxQueue <> 0 ) then
 				dwDefaultRxBufferSize = prop.dwCurrentRxQueue
-			elseif ( prop.dwMaxRxQueue <> NULL ) then
+			elseif ( prop.dwMaxRxQueue <> 0 ) then
 				dwDefaultRxBufferSize = prop.dwMaxRxQueue
 			end if
 
@@ -133,7 +137,7 @@ function fb_SerialOpen( handle as FB_FILE ptr, iPort as long, options as FB_SERI
 	/' set timeouts '/
 	if ( res = FB_RTERROR_OK ) then
 		dim as COMMTIMEOUTS timeouts
-		if ( GetCommTimeouts( hDevice, @timeouts ) = NULL ) then
+		if ( GetCommTimeouts( hDevice, @timeouts ) = FALSE ) then
 			res = fb_ErrorSetNum( FB_RTERROR_NOPRIVILEGES )
 		else
 			if ( options->DurationCTS <> 0 ) then
@@ -141,7 +145,7 @@ function fb_SerialOpen( handle as FB_FILE ptr, iPort as long, options as FB_SERI
 				timeouts.ReadTotalTimeoutMultiplier = 0
 				timeouts.ReadTotalTimeoutConstant = 0
 			end if
-			if ( SetCommTimeouts( hDevice, @timeouts ) = NULL ) then
+			if ( SetCommTimeouts( hDevice, @timeouts ) = FALSE ) then
 				res = fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 			end if
 		end if
@@ -151,11 +155,11 @@ function fb_SerialOpen( handle as FB_FILE ptr, iPort as long, options as FB_SERI
 	if ( res = FB_RTERROR_OK ) then
 		dim as DCB _dcb
 		_dcb.DCBlength = sizeof( _dcb )
-		if ( GetCommState( hDevice, @_dcb ) = NULL ) then
+		if ( GetCommState( hDevice, @_dcb ) = FALSE ) then
 			res = fb_ErrorSetNum( FB_RTERROR_NOPRIVILEGES )
 		else
 			_dcb.BaudRate = options->uiSpeed
-			_dcb.fBinary = not(options->AddLF) /' FIXME: Windows only supports binary mode '/
+			_dcb.fBinary = (options->AddLF = 0) /' FIXME: Windows only supports binary mode '/
 			_dcb.fParity = options->CheckParity
 			_dcb.fOutxCtsFlow = options->DurationCTS <> 0
 			_dcb.fDtrControl = iif( options->KeepDTREnabled, DTR_CONTROL_ENABLE, DTR_CONTROL_DISABLE )
@@ -205,7 +209,7 @@ function fb_SerialOpen( handle as FB_FILE ptr, iPort as long, options as FB_SERI
 		end if
 	end if
 
-	if ( fb_hSerialCheckLines( hDevice, options ) = NULL ) then
+	if ( fb_hSerialCheckLines( hDevice, options ) = False ) then
 		res = fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 	end if
 

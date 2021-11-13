@@ -71,7 +71,8 @@ function fb_DevLptParseProtocol( lpt_proto_out as DEV_LPT_PROTOCOL ptr ptr, prot
 	lpt_proto->proto = p
 	p = pc + 1
 	
-	pc[-1] = 0
+	*pc = 0
+        pc -= 1
 
 	/' Get port number if any '/
 	while ( *pc >= asc("0") and *pc <= asc("9") )
@@ -83,7 +84,7 @@ function fb_DevLptParseProtocol( lpt_proto_out as DEV_LPT_PROTOCOL ptr ptr, prot
 	/' Name, TITLE=?, EMU=? '/
 
 	while( *p )
-		if ( isspace( *p ) <> 0 or *p = asc(",") ) then
+		if ( isspace( *p ) <> 0 orelse *p = asc(",") ) then
 			p += 1
 		else
 			dim as ubyte ptr pt
@@ -91,7 +92,7 @@ function fb_DevLptParseProtocol( lpt_proto_out as DEV_LPT_PROTOCOL ptr ptr, prot
 			pe = strchr(p, asc("="))
 			pc = strchr(p, asc(","))
 
-			if ( pc <> 0 and pe > pc ) then
+			if ( pc <> 0 andalso pe > pc ) then
 				pe = NULL
 			end if
 
@@ -101,13 +102,15 @@ function fb_DevLptParseProtocol( lpt_proto_out as DEV_LPT_PROTOCOL ptr ptr, prot
 				/' remove spaces before '=' '/
 				pt = pe - 1
 				while( isspace( *pt ) <> 0 )
-					pt[-1] = 0
+					*pt = 0
+					pt -= 1
 				wend
 
 				/' remove spaces after '=' or end '/
 				pe[1] = 0
 				while( isspace( *pe ) <> 0 )
-					pe[1] = 0
+					*pe = 0
+					pe += 1
 				wend
 
 				if( strcasecmp( p, "EMU" ) = 0) then
@@ -122,7 +125,8 @@ function fb_DevLptParseProtocol( lpt_proto_out as DEV_LPT_PROTOCOL ptr ptr, prot
 			pt = iif(pc <> 0, pc, ptail)
 			pt -= 1
 			while( isspace( *pt ) <> 0 )
-				pt[-1] = 0
+				*pt = 0
+				pt -= 1
 			wend
 
 			if ( pc <> 0 ) then
@@ -140,9 +144,7 @@ end function
 function fb_DevLptTestProtocol( handle as FB_FILE ptr, filename as const ubyte ptr, filename_len as size_t ) as long
 	dim as DEV_LPT_PROTOCOL ptr lpt_proto
 	dim as long ret = fb_DevLptParseProtocol( @lpt_proto, filename, filename_len, FALSE )
-	if ( lpt_proto <> 0 ) then
-		free( lpt_proto )
-	end if
+	free( lpt_proto )
 	return ret
 end function
 end extern

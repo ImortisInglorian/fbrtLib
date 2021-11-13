@@ -45,9 +45,9 @@ function fb_DevScrnOpen( handle as FB_FILE ptr, filename as const ubyte ptr, fil
 end function
 
 sub fb_DevScrnInit( )
-	FB_LOCK( )
+    FB_LOCK( )
     if ( FB_HANDLE_SCREEN->hooks = NULL ) then
-        memset(FB_HANDLE_SCREEN, 0, sizeof(FB_HANDLE_SCREEN))
+        Clear(FB_HANDLE_SCREEN, 0, sizeof(*FB_HANDLE_SCREEN))
 
         FB_HANDLE_SCREEN->mode = FB_FILE_MODE_APPEND
         FB_HANDLE_SCREEN->encod = FB_FILE_ENCOD_DEFAULT
@@ -56,8 +56,8 @@ sub fb_DevScrnInit( )
 
         fb_DevScrnOpen( FB_HANDLE_SCREEN, NULL, 0 )
     elseif ( FB_HANDLE_SCREEN->hooks <> @hooks_dev_scrn ) then
-		FB_HANDLE_SCREEN->hooks = @hooks_dev_scrn
-	end if
-	FB_UNLOCK( )
+	FB_HANDLE_SCREEN->hooks = @hooks_dev_scrn
+    end if
+    FB_UNLOCK( )
 end sub
 end extern

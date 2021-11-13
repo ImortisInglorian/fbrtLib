@@ -4,8 +4,8 @@
 #include "fb_private_intl.bi"
 
 extern "C"
-function fb_DrvIntlGet cdecl ( Index as eFbIntlIndex ) as const ubyte ptr
-	dim as ubyte buf(0 to 127)
+function fb_DrvIntlGet ( Index as eFbIntlIndex ) as const ubyte ptr
+	static as ubyte buf(0 to 127)
 	dim as LCTYPE _lctype
 
 	select case Index
