@@ -50,7 +50,7 @@ function fb_DevFileReadWstr( handle as FB_FILE ptr, dst as FB_WCHAR ptr, pchars 
 
 	*pchars = chars
 
-functionExit;
+functionExit:
 	FB_UNLOCK()
 
 	return fb_ErrorSetNum( errorRet )

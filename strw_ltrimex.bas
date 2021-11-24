@@ -4,9 +4,9 @@
 
 extern "C"
 function fb_WstrLTrimEx FBCALL ( src as const FB_WCHAR ptr, pattern as const FB_WCHAR ptr ) as FB_WCHAR ptr
-	dim as FB_WCHAR ptr dst
-	dim as ssize_t _len
-	dim as const FB_WCHAR ptr p = src
+    dim as FB_WCHAR ptr dst
+    dim as ssize_t _len
+    dim as const FB_WCHAR ptr p = src
 
     if ( src = NULL ) then
         return NULL
@@ -18,33 +18,33 @@ function fb_WstrLTrimEx FBCALL ( src as const FB_WCHAR ptr, pattern as const FB_
         if ( _len >= len_pattern ) then
             if ( len_pattern = 1 ) then
                 p = fb_wstr_SkipChar( src, _len, *pattern )
-				_len -= fb_wstr_CalcDiff( src, p )
+                _len -= fb_wstr_CalcDiff( src, p )
             elseif ( len_pattern <> 0 ) then
                 p = src
                 while (_len >= len_pattern )
                     if ( fb_wstr_Compare( p, pattern, len_pattern ) <> 0 ) then
                         exit while
-					end if
+                    end if
                     p += len_pattern
                     _len -= len_pattern
                 wend
             end if
         end if
-	end scope
+    end scope
 
-	if ( _len > 0 ) then
-		/' alloc temp string '/
+    if ( _len > 0 ) then
+        /' alloc temp string '/
         dst = fb_wstr_AllocTemp( _len )
-		if ( dst <> NULL ) then
-			/' simple copy '/
-			fb_wstr_Copy( dst, p, _len )
-		else
-			dst = NULL
-		end if
-	else
-		dst = NULL
-	end if
+        if ( dst <> NULL ) then
+            /' simple copy '/
+            fb_wstr_Copy( dst, p, _len )
+        else
+            dst = NULL
+        end if
+    else
+        dst = NULL
+    end if
 
-	return dst
+    return dst
 end function
 end extern

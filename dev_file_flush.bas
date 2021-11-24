@@ -13,7 +13,7 @@ function fb_DevFileFlush( handle as FB_FILE ptr ) as long
 
 	if ( fp = NULL ) then
 		errorRet = FB_RTERROR_ILLEGALFUNCTIONCALL
-        else if( fflush( fp ) <> 0 ) then
+        elseif( fflush( fp ) <> 0 ) then
 		errorRet = FB_RTERROR_FILEIO
 	end if
 

@@ -53,6 +53,6 @@ function fb_ConsolePageCopy( src as long, dst as long ) as long
 		deallocate( buff )
 	end if
 
-	return fb_ErrorSetNum( iif( buff <> NULL, FB_RTERROR_OK, FB_RTERROR_OUTOFMEMORY ) )
+	return fb_ErrorSetNum( iif( buff <> NULL, FB_RTERROR_OK, FB_RTERROR_OUTOFMEM ) )
 end function
 end extern

@@ -40,11 +40,10 @@ function fb_FilePutBackWstrEx( handle as FB_FILE ptr, src as const FB_WCHAR ptr,
         else
         	/' wchar to char '/
         	dst = @handle->putback_buffer(0)
-			chars -= 1
         	while( chars > 0 )
+        		*dst = *src
 				dst += 1
 				src += 1
-        		*dst = *src
 				chars -= 1
 			wend
         end if

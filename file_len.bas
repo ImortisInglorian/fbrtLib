@@ -7,7 +7,7 @@ function fb_FileLenEx( filename as const ubyte ptr ) as fb_off_t
 	dim as FILE ptr fp
 	dim as fb_off_t _len
 	
-	fp = fopen( filename, "rb" )
+	fp = fopen( cast(ubyte ptr, filename), "rb" )
 	if ( fp <> NULL ) then
 		if ( fseeko( fp, 0, SEEK_END ) = 0 ) then
 			_len = ftello( fp )

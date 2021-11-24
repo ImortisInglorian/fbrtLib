@@ -29,7 +29,7 @@ function fb_WstrLcase2 FBCALL ( src as const FB_WCHAR ptr, mode as long ) as FB_
 		while( i < chars )
 			c = *s
 			s += 1
-			if ( (c >= 65) and (c <= 90) ) then
+			if ( (c >= asc("A")) and (c <= asc("Z")) ) then
 				c += 97 - 65
 			end if
 			*d = c

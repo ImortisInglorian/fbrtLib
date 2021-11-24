@@ -59,7 +59,7 @@ function fb_hTimeParse( text as const ubyte ptr, text_len as size_t, pHour as lo
     dim as long _hour = 0, _minute = 0, _second = 0
     dim as ubyte ptr endptr
 
-    _hour = strtol( text, @endptr, 10 )
+    _hour = strtol( cast(ubyte ptr, text), @endptr, 10 )
     if ( _hour >= 0 and _hour < 24 and endptr <> text) then
         dim as long is_ampm_hour = ( _hour >= 1 and _hour <= 12 )
         /' skip white spaces '/
@@ -69,7 +69,7 @@ function fb_hTimeParse( text as const ubyte ptr, text_len as size_t, pHour as lo
 		wend
         if ( *text= asc(":") ) then
             text += 1
-            _minute = strtol( text, @endptr, 10 )
+            _minute = strtol( cast(ubyte ptr, text), @endptr, 10 )
             if ( _minute >= 0 and _minute < 60 and endptr <> text ) then
                 text = endptr
                 while ( isspace( *text ) <> 0 )
@@ -79,7 +79,7 @@ function fb_hTimeParse( text as const ubyte ptr, text_len as size_t, pHour as lo
                 result = TRUE
                 if ( *text = asc(":") ) then
                     text += 1
-                    _second = strtol( text, @endptr, 10 )
+                    _second = strtol( cast(ubyte ptr, text), @endptr, 10 )
                     if ( endptr <> text ) then
                         if( _second < 0 or _second > 59 ) then
                             result = FALSE

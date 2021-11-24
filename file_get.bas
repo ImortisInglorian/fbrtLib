@@ -65,13 +65,12 @@ function fb_FileGetDataEx ( handle as FB_FILE ptr, _pos as fb_off_t, dst as any 
         		cp = pachData
         		wcp = cast(FB_WCHAR ptr, @handle->putback_buffer(0))
         		_len = bytes
-        		_len -= 1
         		while( _len > 0 )
-        			*cp = *wcp
+        			*wcp = *cp
         			cp += 1
-					wcp += 1
-					_len -= 1
-				wend
+				wcp += 1
+				_len -= 1
+			wend
         	end if
         end if
 
@@ -90,7 +89,7 @@ function fb_FileGetDataEx ( handle as FB_FILE ptr, _pos as fb_off_t, dst as any 
         chars -= bytes
     else
     	read_chars = 0
-	end if
+    end if
 
     if ( (res = FB_RTERROR_OK) and (chars <> 0) ) then
         /' do read '/

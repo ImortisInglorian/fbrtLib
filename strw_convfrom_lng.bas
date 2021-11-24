@@ -17,16 +17,16 @@ function fb_WstrToLongint FBCALL ( src as const FB_WCHAR ptr, _len as ssize_t ) 
 
 	radix = 10
 	r = p
-	if ( (_len >= 2) andalso (*r = 38) ) then
+	if ( (_len >= 2) andalso (*r = asc("&")) ) then
 		r += 1
 		select case *r
-			case 104, 72: /' h H '/
+			case asc("h"), asc("H"):
 				r += 1
 				radix = 16
-			case 111, 79: /' o O '/
+			case asc("o"), asc("O"):
 				r += 1
 				radix = 8
-			case 098, 66: /' b B '/
+			case asc("b"), asc("B"):
 				r += 1
 				radix = 2
 			case else: /' assume octal '/

@@ -23,7 +23,7 @@ function fb_wstr_ConvToA( dst as ubyte ptr, dst_chars as ssize_t, src as const F
 	return chars
 #else
 	/' plus the null-term '/
-	dim as ssize_t chars = wcstombs(dst, src, dst_chars + 1)
+	dim as ssize_t chars = wcstombs(dst, cast(FB_WCHAR ptr, src), dst_chars + 1)
 
 	/' worked? '/
 	if (chars >= 0) then
@@ -49,10 +49,10 @@ function fb_wstr_ConvToA( dst as ubyte ptr, dst_chars as ssize_t, src as const F
 			exit while
 		end if
 		if (c > 127) then
-			if (c >= UTF16_SUR_HIGH_START and c <= UTF16_SUR_HIGH_END) then
+			if (c >= UTF16_SUR_HIGH_START andalso c <= UTF16_SUR_HIGH_END) then
 				src += 1
 			end if
-			c = 63
+			c = asc("?")
 		end if
 #else
 		dim as UTF_32 c = *src 
@@ -61,7 +61,7 @@ function fb_wstr_ConvToA( dst as ubyte ptr, dst_chars as ssize_t, src as const F
 			exit while
 		end if
 		if (c > 127) then
-			c = 63
+			c = asc("?")
 		end if
 #endif
 		*dst = c
@@ -80,7 +80,13 @@ function fb_WstrToStr FBCALL ( src as const FB_WCHAR ptr ) as FBSTRING ptr
     	return @__fb_ctx.null_desc
 	end if
 
+#if defined(HOST_DOS)
+	/* on DOS, wcstombs() simply calls memcpy() and won't compute
+       length  see fb_unicode.h */
 	chars = fb_wstr_Len( src )
+#else
+	chars = wcstombs( NULL, cast(FB_WCHAR ptr, src), 0 )
+#endif
     if ( chars = 0 ) then
     	return @__fb_ctx.null_desc
 	end if

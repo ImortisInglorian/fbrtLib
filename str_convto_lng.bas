@@ -15,7 +15,11 @@ function fb_LongintToStr FBCALL ( num as longint ) as FBSTRING ptr
 	dst = fb_hStrAllocTemp( NULL, sizeof( longint ) * 3 )
 	if ( dst <> NULL ) then
 		/' convert '/
+#ifdef HOST_WIN32
+		_i64toa( num, dst->data, 10 )
+#else
 		sprintf( dst->data, "%lld", num )
+#endif
 
 		fb_hStrSetLength( dst, strlen( dst->data ) )
 	else
@@ -33,7 +37,11 @@ function fb_ULongintToStr FBCALL ( num as ulongint ) as FBSTRING ptr
 	dst = fb_hStrAllocTemp( NULL, sizeof( longint ) * 3 )
 	if ( dst <> NULL ) then
 		/' convert '/
+#ifdef HOST_WIN32
+		_ui64toa( num, dst->data, 10 )
+#else
 		sprintf( dst->data, "%llu", num )
+#endif
 
 		fb_hStrSetLength( dst, strlen( dst->data ) )
 	else

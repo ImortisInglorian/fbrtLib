@@ -16,7 +16,7 @@ private function fb_wstr_ConvFromA_nomultibyte( dst as FB_WCHAR ptr, dst_chars a
 			exit while
 		end if
 		if (c > 127) then
-			c = 63
+			c = asc("?")
 		end if
 		*dst = c
 		*dst += 1
@@ -46,7 +46,7 @@ function fb_wstr_ConvFromA( dst as FB_WCHAR ptr, dst_chars as ssize_t, src as co
 	return chars
 #else
 	/' plus the null-term (note: "n" in chars, not bytes!) '/
-	dim as ssize_t chars = mbstowcs(dst, src, dst_chars + 1)
+	dim as ssize_t chars = mbstowcs(dst, cast(ubyte ptr, src), dst_chars + 1)
 
 	/' worked? '/
 	if (chars >= 0) then
@@ -81,7 +81,7 @@ function fb_StrToWstr FBCALL ( src as const ubyte ptr ) as FB_WCHAR ptr
 	length  see fb_unicode.h '/
 	chars = strlen( src )
 #else
-	chars = mbstowcs( NULL, src, 0 )
+	chars = mbstowcs( NULL, cast(ubyte ptr, src), 0 )
 
 	/' invalid multibyte characters? get the plain old NUL terminated 
 	'' string length and allocate a buffer for at least the ASCII chars 

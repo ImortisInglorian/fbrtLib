@@ -59,18 +59,14 @@ type UTF_8 as ubyte
 		end function
 #elseif defined (HOST_WIN32)
 	#define FB_WCHAR ushort
-		#define _LC(c) wstr(c)
-	/'#if defined (HOST_MINGW)'/
-		#define FB_WEOF (cast(FB_WCHAR,WEOF))
-		#define FB_WSTR_FROM_INT( buffer, num )        _itow( num, buffer, 10 )
-		#define FB_WSTR_FROM_UINT( buffer, num )       _ultow( cast(ulong, num), buffer, 10 )
-		#define FB_WSTR_FROM_UINT_OCT( buffer, num )   _itow( num, buffer, 8 )
-		#define FB_WSTR_FROM_INT64( buffer, num )      _i64tow( num, buffer, 10 )
-		#define FB_WSTR_FROM_UINT64( buffer, num )     _ui64tow( num, buffer, 10 )
-		#define FB_WSTR_FROM_UINT64_OCT( buffer, num ) _ui64tow( num, buffer, 8 )
-	/'#else'/
-		'#define FB_WEOF (cast(FB_WCHAR,-1))
-	/'#endif'/
+	#define _LC(c) wstr(c)
+	#define FB_WEOF (cast(FB_WCHAR,-1))
+	#define FB_WSTR_FROM_INT( buffer, num )        _itow( num, buffer, 10 )
+	#define FB_WSTR_FROM_UINT( buffer, num )       _ultow( cast(ulong, num), buffer, 10 )
+	#define FB_WSTR_FROM_UINT_OCT( buffer, num )   _itow( num, buffer, 8 )
+	#define FB_WSTR_FROM_INT64( buffer, num )      _i64tow( num, buffer, 10 )
+	#define FB_WSTR_FROM_UINT64( buffer, num )     _ui64tow( num, buffer, 10 )
+	#define FB_WSTR_FROM_UINT64_OCT( buffer, num ) _ui64tow( num, buffer, 8 )
 #else
 	#define __USE_ISOC99 1
 	#define __USE_ISOC95 1

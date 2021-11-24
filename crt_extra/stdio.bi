@@ -45,9 +45,4 @@ extern "C"
 	declare function vswprintf (byval s as wchar_t ptr, byval n as size_t, byval format as wchar_t ptr, byval arg as va_list) as long
 #endif
 
-'' wcstoull needs to get added to fb's inc/crt headers
-#ifdef __FB_WIN32__
-	declare function wcstoull( byval str_ as const wchar_t ptr, byval endptr as wchar_t ptr ptr, byval radix as long ) as ulongint
-#endif
-
 end extern

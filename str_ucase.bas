@@ -34,7 +34,7 @@ function fb_StrUcase2 FBCALL ( src as FBSTRING ptr, mode as long ) as FBSTRING p
 			while( i < _len )
 				c = *s
 				s += 1
-				if ( (c >= 97) and (c <= 122) ) then
+				if ( (c >= asc("a")) and (c <= asc("z")) ) then
 					c -= 97 - 65
 				end if
 				*d = c

@@ -4,7 +4,8 @@
 
 extern "C"
 function fb_hStr2Double FBCALL ( src as ubyte ptr, _len as ssize_t ) as double
-	dim as ubyte ptr p, q, c
+	dim as ubyte ptr p, q
+	dim as ubyte c
 	dim as long radix, i, skip
 	dim as double ret
 
@@ -47,11 +48,11 @@ function fb_hStr2Double FBCALL ( src as ubyte ptr, _len as ssize_t ) as double
 	 '/
 	q = malloc( _len + 1 )
 	for i = 0 to _len - 1
-		c = @p[i]
+		c = p[i]
 		if ( c = asc("d") or c = asc("D") ) then
 			c += 1
 		end if
-		q[i] = *c
+		q[i] = c
 	next
 	q[_len] = 0
 

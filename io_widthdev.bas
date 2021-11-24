@@ -68,7 +68,7 @@ function fb_WidthDev FBCALL ( dev as FBSTRING ptr, _width as long ) as long
     /' make the name uppercase '/
     for i = 0 to size - 1
         dim as ulong ch = cast(ulong, device[i])
-        if ( islower(ch) <> NULL ) then
+        if ( islower(ch) <> 0 ) then
             device[i] = cast(ubyte, toupper(ch))
 		end if
     next
@@ -77,7 +77,7 @@ function fb_WidthDev FBCALL ( dev as FBSTRING ptr, _width as long ) as long
 
     /' Search list of devices for the requested device name '/
 	node = cast( DEV_INFO_WIDTH ptr, dev_info_widths->head )
-	while (node <> cast(DEV_INFO_WIDTH ptr,  NULL))
+	while (node <> NULL)
         if ( strcmp( device, node->device ) = 0 ) then
             exit while
         end if
@@ -113,10 +113,10 @@ function fb_WidthDev FBCALL ( dev as FBSTRING ptr, _width as long ) as long
     else
         /' unknown device '/
     end if
-    
-	deallocate(device)
 	
-	FB_UNLOCK()
+    FB_UNLOCK()
+
+    deallocate(device)
 
     if ( _width = -1 ) then
         return cur
