@@ -2,7 +2,8 @@
 
 #include "fb.bi"
 
-dim shared as ubyte ptr pszDefaultQuestion = sadd("? ")
+'' This already exists in the non-wstr version
+extern as zString ptr pszDefaultQuestion
 
 extern "C"
 #if defined( HOST_WIN32 ) or defined( HOST_DOS )

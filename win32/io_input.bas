@@ -7,6 +7,7 @@
 #include "../fb.bi"
 #include "fb_private_console.bi"
 #include "crt/ctype.bi"
+#include "crt/stdlib.bi"
 
 #define KEY_BUFFER_LEN 512
 
@@ -240,6 +241,7 @@ sub fb_hConsolePutBackEvents( )
 
 	FB_UNLOCK()
 end sub
+end extern
 
 private sub fb_hConsoleProcessKeyEvent( event as const KEY_EVENT_RECORD ptr )
 	dim as long KeyCode
@@ -324,7 +326,7 @@ private function fb_hConsoleHandlerRoutine ( dwCtrlType as DWORD  ) as BOOL
 	return FALSE
 end function
 
-private sub fb_hExitControlHandler( )
+private sub fb_hExitControlHandler cdecl( )
 	if ( control_handler_inited ) then
 		SetConsoleCtrlHandler( cast(PHANDLER_ROUTINE, @fb_hConsoleHandlerRoutine), FALSE )
 	end if
@@ -334,13 +336,13 @@ private sub fb_hInitControlHandler( )
 	FB_LOCK()
 	if( control_handler_inited = NULL ) then
 		control_handler_inited = TRUE
-		'atexit( fb_hExitControlHandler )
-		'TODO: Needs to be called by destructor, but only if initialized?
-		SetConsoleCtrlHandler( cast(PHANDLER_ROUTINE, @fb_hConsoleHandlerRoutine), TRUE )
+		atexit( @fb_hExitControlHandler )
+		SetConsoleCtrlHandler( @fb_hConsoleHandlerRoutine, TRUE )
 	end if
 	FB_UNLOCK()
 end sub
 
+extern "c"
 function fb_ConsoleProcessEvents( ) as long
 	dim as long got_event = FALSE
 	dim as INPUT_RECORD ir
@@ -362,15 +364,15 @@ function fb_ConsoleProcessEvents( ) as long
 				case KEY_EVENT:
 					if ( ir.Event.KeyEvent.bKeyDown <> NULL and ir.Event.KeyEvent.wRepeatCount <> 0 ) then
 						dim as size_t i
-						for i = 0 to ir.Event.KeyEvent.wRepeatCount
+						for i = 0 to ir.Event.KeyEvent.wRepeatCount - 1
 							fb_hConsoleProcessKeyEvent( @ir.Event.KeyEvent )
 						next
-					elseif ( not(ir.Event.KeyEvent.bKeyDown) ) then
+					elseif ( ir.Event.KeyEvent.bKeyDown = 0 ) then
 						fb_hConsoleProcessKeyEvent( @ir.Event.KeyEvent )
 					end if
 
 				case MOUSE_EVENT_:
-					if ( __fb_con.mouseEventHook <> cast(fb_FnProcessMouseEvent, NULL) ) then
+					if ( __fb_con.mouseEventHook <> NULL ) then
 						__fb_con.mouseEventHook( @ir.Event.MouseEvent )
 						got_event = TRUE
 					end if
@@ -394,7 +396,7 @@ function fb_hConsoleTranslateKey ( AsciiChar as ubyte, wVsCode as WORD, wVkCode 
 	dim as long is_ext_code = AsciiChar = 0
 
 	/' Process ENHANCED_KEY's in a different way '/
-	if ( (dwControlKeyState and ENHANCED_KEY) <> 0 and is_ext_code <> NULL) then
+	if ( (dwControlKeyState and ENHANCED_KEY) <> 0 andalso ( is_ext_code <> 0 ) ) then
 		dim as size_t i
 		for i = 0 to FB_KEY_LIST_SIZE - 1
 			dim as FB_KEY_LIST_ENTRY entry = fb_ext_key_entries(i)
@@ -452,11 +454,11 @@ function fb_hConsoleTranslateKey ( AsciiChar as ubyte, wVsCode as WORD, wVkCode 
 			 *    "normal" character - this test is required to allow
 			 *    AltGr+character combinations that are language-specific
 			 *    and therefore quite hard to detect ... '/
-			AddKeyCode = (KeyCode > 255) and ((uiAsciiChar = uiNormalKey) or (uiAsciiChar = uiNormalKeyOtherCase))
+			AddKeyCode = (KeyCode > 255) andalso ((uiAsciiChar = uiNormalKey) orelse (uiAsciiChar = uiNormalKeyOtherCase))
 		end if
 
-		if ( AddKeyCode = NULL and bEnhancedKeysOnly = NULL) then
-			if ( is_ext_code = NULL ) then
+		if ( AddKeyCode = 0 andalso bEnhancedKeysOnly = 0) then
+			if ( is_ext_code = 0 ) then
 				/' The key code is simply the returned ASCII character '/
 				KeyCode = uiAsciiChar
 				AddKeyCode = TRUE

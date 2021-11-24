@@ -162,7 +162,7 @@ function fb_hDateParse( text as const ubyte ptr, text_len as size_t, pDay as lon
         /' The string has the form: (MMMM|MMM) (d|dd)"," (yy|yyyy)  '/
         dim as ubyte ptr endptr
         text = end_month
-        _day = strtol( text, @endptr, 10 )
+        _day = strtol( cast(ubyte ptr, text), @endptr, 10 )
         if ( _day > 0 ) then
 
             /' skip white spaces '/
@@ -173,7 +173,7 @@ function fb_hDateParse( text as const ubyte ptr, text_len as size_t, pDay as lon
 
             if ( *text = asc(",") ) then
                 dim as size_t year_size
-                _year = strtol( text + 1, @endptr, 10 )
+                _year = strtol( cast(ubyte ptr, text + 1), @endptr, 10 )
                 year_size = endptr - text
                 if ( year_size > 0 ) then
                     if ( year_size = 2 ) then
@@ -198,7 +198,7 @@ function fb_hDateParse( text as const ubyte ptr, text_len as size_t, pDay as lon
         dim as size_t day_size
         dim as ubyte ptr endptr
         dim as long valid_divider
-        _day = strtol( text, @endptr, 10 )
+        _day = strtol( cast(ubyte ptr, text), @endptr, 10 )
         day_size = endptr - text
         if ( day_size <> 0 ) then
             dim as size_t month_size = 0
@@ -238,7 +238,7 @@ function fb_hDateParse( text as const ubyte ptr, text_len as size_t, pDay as lon
                 while ( isspace( *text ) <> 0 )
                     text += 1
 				wend
-                _month = strtol( text, @endptr, 10 )
+                _month = strtol( cast(ubyte ptr, text), @endptr, 10 )
                 month_size = endptr - text
                 if ( month_size <> 0 ) then
                     text = endptr
@@ -275,7 +275,7 @@ function fb_hDateParse( text as const ubyte ptr, text_len as size_t, pDay as lon
                 while ( isspace( *text ) <> 0 )
                     text += 1
 				wend
-                _year = strtol( text, @endptr, 10 )
+                _year = strtol( cast(ubyte ptr, text), @endptr, 10 )
                 year_size = endptr - text
                 if ( year_size > 0 ) then
                     /' adjust short form according to the date format '/

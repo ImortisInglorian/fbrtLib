@@ -17,15 +17,15 @@ function fb_WstrLTrimAny FBCALL ( src as const FB_WCHAR ptr, pattern as const FB
         dim as ssize_t len_pattern = fb_wstr_Len( pattern )
         pachText = src
         if( len_pattern <> 0 ) then
-			while ( _len <> 0 )
+            while ( _len <> 0 )
                 if ( wcschr( pattern, *pachText ) = NULL ) then
                     exit while
                 end if
-	            _len -= 1
-	            pachText += 1
+	        _len -= 1
+	        pachText += 1
             wend
-		end if
-	end scope
+        end if
+    end scope
 
 	if ( _len > 0 ) then
 		/' alloc temp string '/

@@ -8,23 +8,29 @@ extern "C"
 function fb_CrtFileCopy FBCALL ( source as const ubyte ptr, destination as const ubyte ptr ) as long
 	dim as FILE ptr src, dst
 	dim as ubyte buffer(0 to BUFFER_SIZE - 1)
+	dim as ubyte ptr bufferPtr
 	dim as size_t bytesread
 
 	dst = NULL
-	src = fopen(source, "rb")
+	src = fopen(cast(ubyte ptr, source), "rb")
 	if (src = 0) then
 		goto _err
 	end if
 
-	dst = fopen(destination, "wb")
+	dst = fopen(cast(ubyte ptr, destination), "wb")
 	if (dst = 0) then
 		goto _err
 	end if
 	
-	bytesread = fread( @buffer(0), 1, BUFFER_SIZE, src )
-	while ( bytesread > 0 )
-		if (fwrite( @buffer(0), 1, bytesread, dst ) <> bytesread) then
-			goto _err
+	bufferPtr = @buffer(0)
+	While True
+		bytesread = fread( bufferPtr, 1, BUFFER_SIZE, src )
+		if ( bytesread > 0 ) Then
+			if (fwrite( bufferPtr, 1, bytesread, dst ) <> bytesread) then
+				goto _err
+			end if
+		else
+			exit while
 		end if
 	wend
 

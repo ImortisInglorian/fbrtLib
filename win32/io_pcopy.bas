@@ -41,18 +41,18 @@ function fb_ConsolePageCopy( src as long, dst as long ) as long
 		end if
 	end if
 
-	/' do the copy '/
-	static as COORD _pos = ( 0, 0 )
-
 	dim as CONSOLE_SCREEN_BUFFER_INFO csbi
 	GetConsoleScreenBufferInfo( __fb_con.pgHandleTb(src), @csbi )
-	dim as PCHAR_INFO buff = malloc( csbi.dwSize.X * csbi.dwSize.Y * sizeof( CHAR_INFO ) )
+	dim as PCHAR_INFO buff = allocate( csbi.dwSize.X * csbi.dwSize.Y * sizeof( CHAR_INFO ) )
+	if( buff <> NULL ) then
+		dim as COORD _pos = ( 0, 0 )
+		ReadConsoleOutput( __fb_con.pgHandleTb(src), buff, csbi.dwSize, _pos, @csbi.srWindow )
 
-	ReadConsoleOutput( __fb_con.pgHandleTb(src), buff, csbi.dwSize, _pos, @csbi.srWindow )
+		GetConsoleScreenBufferInfo( __fb_con.pgHandleTb(dst), @csbi )
+		WriteConsoleOutput( __fb_con.pgHandleTb(dst), buff, csbi.dwSize, _pos, @csbi.srWindow )
+		deallocate( buff )
+	end if
 
-	GetConsoleScreenBufferInfo( __fb_con.pgHandleTb(dst), @csbi )
-	WriteConsoleOutput( __fb_con.pgHandleTb(dst), buff, csbi.dwSize, _pos, @csbi.srWindow )
-
-	return fb_ErrorSetNum( FB_RTERROR_OK )
+	return fb_ErrorSetNum( iif( buff <> NULL, FB_RTERROR_OK, FB_RTERROR_OUTOFMEM ) )
 end function
 end extern

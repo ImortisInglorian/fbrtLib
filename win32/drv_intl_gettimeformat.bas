@@ -4,7 +4,7 @@
 #include "fb_private_intl.bi"
 
 extern "C"
-function fb_DrvIntlGetTimeFormat cdecl ( buffer as ubyte ptr, _len as size_t ) as long
+function fb_DrvIntlGetTimeFormat ( buffer as ubyte ptr, _len as size_t ) as long
 	dim as ubyte achFormat(0 to 89), achHourZero(0 to 7), achTimeMark(0 to 7), achTimeMarkPos(0 to 7)
 	dim as ubyte ptr pszFormat, pszHourZero, pszTimeMark, pszTimeMarkPos
 	dim as long use_timemark, timemark_prefix
@@ -36,7 +36,7 @@ function fb_DrvIntlGetTimeFormat cdecl ( buffer as ubyte ptr, _len as size_t ) a
 	use_timemark = ( pszTimeMark <> NULL andalso atoi( pszTimeMark ) = 1 )
 	timemark_prefix = ( pszTimeMarkPos <> NULL andalso atoi( pszTimeMarkPos ) = 1 )
 
-	if ( use_timemark and timemark_prefix ) then
+	if ( use_timemark andalso timemark_prefix ) then
 		strcpy( @achFormat(0) + i, "AM/PM " )
 		i += 6
 	end if

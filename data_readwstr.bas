@@ -15,8 +15,9 @@ sub fb_DataReadWstr FBCALL ( dst as FB_WCHAR ptr, dst_size as ssize_t )
 			fb_WstrAssignFromA( dst, dst_size, __fb_data_ptr->zstr, __fb_data_ptr->len )
 		end if
 	else
+                dim as FB_WCHAR nullString = 0
 		/' no more DATA, return empty string '/
-		fb_WstrAssign( dst, dst_size, @wstr("") )
+		fb_WstrAssign( dst, dst_size, @nullString )
 	end if
 
 	fb_DataNext( )

@@ -103,7 +103,7 @@ private function hRedim ( array as FBARRAY ptr, element_len as size_t, doclear a
 	end if
 
 	/' realloc.. '/
-	if ( isvarlen <> NULL ) then
+	if ( isvarlen <> 0 ) then
 		dtor_mult = @fb_hArrayDtorStr
 	else
 		dtor_mult = NULL

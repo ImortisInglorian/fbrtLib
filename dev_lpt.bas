@@ -159,31 +159,27 @@ end function
 
 function fb_DevPrinterGetOffset( pszDevice as const ubyte ptr ) as long
 	dim as FB_FILE ptr tmp_handle = NULL
-    dim as long cur = 0
-    dim as ubyte ptr pszDev
+	dim as long cur = 0
+	dim as ubyte ptr pszDev
 	dim as DEV_LPT_PROTOCOL ptr lpt_proto
 
-    if ( fb_DevLptParseProtocol( @lpt_proto, pszDevice, strlen(pszDevice), TRUE) <> 0 ) then
-		if ( lpt_proto <> 0 ) then
-			free( lpt_proto )
-		end if
+	if ( fb_DevLptParseProtocol( @lpt_proto, pszDevice, strlen(pszDevice), TRUE) = 0 ) then
+		free( lpt_proto )
 		return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 	end if
 
 	pszDev = fb_DevLptMakeDeviceName( lpt_proto )
 
-    /' Test all printers. '/
+	/' Test all printers. '/
 	tmp_handle = fb_DevLptFindDeviceByName( lpt_proto->iPort, pszDev, TRUE )
 	if ( tmp_handle <> 0 ) then
 		cur = tmp_handle->line_length
 	end if
 	
-	if ( lpt_proto <> 0 ) then
-		free( lpt_proto )
-	end if
+	free( lpt_proto )
 
-    free(pszDev)
+	free(pszDev)
 
-    return cur
+	return cur
 end function
 end extern

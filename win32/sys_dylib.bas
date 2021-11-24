@@ -7,7 +7,7 @@ extern "C"
 function fb_DylibLoad FBCALL ( library as FBSTRING ptr ) as any ptr
 	dim as any ptr res = NULL
 
-	if( library <> 0 and library->data <> 0 ) then
+	if( library <> 0 andalso library->data <> 0 ) then
 		res = LoadLibrary( library->data )
 	end if
 
@@ -19,20 +19,21 @@ end function
 
 function fb_DylibSymbol FBCALL ( library as any ptr, symbol as FBSTRING ptr ) as any ptr
 	dim as any ptr proc = NULL
-	dim as ubyte ptr procname(0 to 1023)
+	dim as ZString*1024 procname
+        dim as HINSTANCE hInstLibrary = cast(HINSTANCE, library)
 	dim as long i
 
 	if ( library = NULL ) then
-		library = GetModuleHandle( NULL )
+		hInstLibrary = GetModuleHandle( NULL )
 	end if
 
 	if ( symbol <> 0 and symbol->data <> 0 ) then
-		proc = cast(void ptr, GetProcAddress( cast(HINSTANCE, library), symbol->data ))
-		if ( proc <> 0 and strchr( symbol->data, 64 ) <> 0 ) then
-			procname(1023) = 0
+		proc = GetProcAddress( hInstLibrary, symbol->data )
+		if ( ( proc = NULL ) andalso ( strchr( symbol->data, Asc( "@" ) ) = 0 ) ) then
+			procname[1023] = 0
 			for i = 0 to 255 step 4
-				snprintf( procname(0), 1023, "%s@%d", symbol->data, i )
-				proc = cast(any ptr, GetProcAddress( cast(HINSTANCE, library), procname(0) ))
+				snprintf( procname, 1023, "%s@%d", symbol->data, i )
+				proc = GetProcAddress( hInstLibrary, procname )
 				if ( proc ) then
 					exit for
 				end if
@@ -53,7 +54,7 @@ function fb_DylibSymbolByOrd FBCALL ( library as any ptr, symbol as short ) as a
 		library = GetModuleHandle( NULL )
 	end if
 
-	proc = cast(any ptr, GetProcAddress( cast(HINSTANCE, library), MAKEINTRESOURCE(symbol) ))
+	proc = GetProcAddress( cast(HINSTANCE, library), MAKEINTRESOURCE(symbol) )
 
 	return proc
 end function

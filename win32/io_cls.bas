@@ -8,7 +8,7 @@ sub fb_ConsoleClearViewRawEx( hConsole as HANDLE, x1 as long, y1 as long, x2 as 
 	dim as WORD    attr = cast(WORD, fb_ConsoleGetColorAttEx( hConsole ))
 	dim as long wid = x2 - x1 + 1, lines = y2 - y1 + 1
 
-	if ( wid = 0 or lines = 0 ) then
+	if ( wid = 0 orelse lines = 0 ) then
 		exit sub
 	end if
 
@@ -16,11 +16,11 @@ sub fb_ConsoleClearViewRawEx( hConsole as HANDLE, x1 as long, y1 as long, x2 as 
 	DBG_ASSERT(lines > 0)
 
 	while (lines)
+		lines -= 1
 		dim as DWORD written
 		dim as COORD _coord = type( x1, y1 + lines )
 		FillConsoleOutputAttribute( hConsole, attr, wid, _coord, @written)
-		FillConsoleOutputCharacter( hConsole, 32, wid, _coord, @written )
-		lines -= 1
+		FillConsoleOutputCharacter( hConsole, Asc(" "), wid, _coord, @written )
 	wend
 
 	fb_ConsoleLocateRawEx( hConsole, y1, x1, -1 )
@@ -35,7 +35,7 @@ sub fb_ConsoleClear( mode as long )
 
 	fb_InitConsoleWindow()
 
-	if ( FB_CONSOLE_WINDOW_EMPTY() or mode = 1 ) then
+	if ( FB_CONSOLE_WINDOW_EMPTY() orelse mode = 1 ) then
 		exit sub
 	end if
 
@@ -44,7 +44,7 @@ sub fb_ConsoleClear( mode as long )
 	win_right = __fb_con.window.Right
 	win_bottom = __fb_con.window.Bottom
 
-	if ( (mode = 2) or (mode = cast(long, &hFFFF0000)) ) then	/' same as gfxlib's DEFAULT_COLOR '/
+	if ( (mode = 2) orelse (mode = cast(long, &hFFFF0000)) ) then	/' same as gfxlib's DEFAULT_COLOR '/
 		/' Just fill the view '/
 		fb_ConsoleGetView( @view_top, @view_bottom )
 

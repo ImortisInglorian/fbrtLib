@@ -88,19 +88,19 @@ private function hReadUTF16ToChar( fp as FILE ptr, dst as ubyte ptr, max_chars a
 	dim as UTF_16 c
 
 	chars = max_chars
-    while( chars > 0 )
-    	if( fread( @c, sizeof( UTF_16 ), 1, fp ) <> 1 ) then
-    		exit while
+	while( chars > 0 )
+    		if( fread( @c, sizeof( UTF_16 ), 1, fp ) <> 1 ) then
+    			exit while
 		end if
 
 		if( c > 255 ) then
 			if( c >= UTF16_SUR_HIGH_START and c <= UTF16_SUR_HIGH_END ) then
-    			if( fread( @c, sizeof( UTF_16 ), 1, fp ) <> 1 ) then
-    				exit while
+    				if( fread( @c, sizeof( UTF_16 ), 1, fp ) <> 1 ) then
+    					exit while
 				end if
-    		end if
-    		c = asc("?")
-    	end if
+    			end if
+    			c = asc("?")
+	    	end if
 		*dst = c
 		dst += 1
 		chars -= 1
@@ -114,9 +114,9 @@ private function hReadUTF32ToChar( fp as FILE ptr, dst as ubyte ptr, max_chars a
 	dim as UTF_32 c
 
 	chars = max_chars
-    while ( chars > 0 )
-    	if ( fread( @c, sizeof( UTF_32 ), 1, fp ) <> 1 ) then
-    		exit while
+	while ( chars > 0 )
+    		if ( fread( @c, sizeof( UTF_32 ), 1, fp ) <> 1 ) then
+    			exit while
 		end if
 
 		if ( c > 255 ) then
@@ -215,7 +215,7 @@ private function hUTF8ToUTF16( fp as FILE ptr, dst as FB_WCHAR ptr, max_chars as
 		else
 			if ( chars > 1 ) then
 				wc -= UTF16_HALFBASE
-				*dst = ((wc shr UTF16_HALFSHIFT) +	UTF16_SUR_HIGH_START)
+				*dst = ((wc shr UTF16_HALFSHIFT) + UTF16_SUR_HIGH_START)
 				dst += 1
 				*dst = ((wc and UTF16_HALFMASK)	+ UTF16_SUR_LOW_START)
 				dst += 1

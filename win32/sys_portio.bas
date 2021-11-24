@@ -31,15 +31,15 @@ end sub
 
 private function install_driver( manager as SC_HANDLE ) as SC_HANDLE
 	dim as SC_HANDLE service = NULL
-	dim as ubyte ptr driver_filename(0 to MAX_PATH - 1)
+	dim as ubyte driver_filename(0 to MAX_PATH - 1)
 
 	remove_driver( )
 
-	if ( GetSystemDirectory( driver_filename(0), MAX_PATH ) <> NULL ) then
-		strncat( driver_filename(0), "\Drivers\fbportio.sys", MAX_PATH - strlen( driver_filename(0) ) - 1 )
+	if ( GetSystemDirectory( @driver_filename(0), MAX_PATH ) <> NULL ) then
+		strncat( @driver_filename(0), "\Drivers\fbportio.sys", MAX_PATH - strlen( @driver_filename(0) ) - 1 )
 		driver_filename(MAX_PATH-1) = 0
 
-		dim as FILE ptr f = fopen( driver_filename(0), "wb" )
+		dim as FILE ptr f = fopen( @driver_filename(0), "wb" )
 		fwrite( @fbportio_driver(0), FBPORTIO_DRIVER_SIZE, 1, f )
 		fclose( f )
 

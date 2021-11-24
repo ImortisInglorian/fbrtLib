@@ -13,12 +13,12 @@
 extern "C"
 function fb_FileDateTime FBCALL ( filename as const ubyte ptr ) as double
 	dim as stat buf
-	if ( _stat( filename, @buf ) <> 0 ) then
+	if ( _stat( cast(ubyte ptr, filename), @buf ) <> 0 ) then
 		return 0.0
 	end if
 
 	dim as tm ptr _tm = localtime( @buf.st_mtime )
-	if ( @_tm = NULL ) then
+	if ( _tm = NULL ) then
 		return 0.0
 	end if
 

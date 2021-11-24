@@ -12,7 +12,7 @@ function fb_WstrToDouble FBCALL ( src as const FB_WCHAR ptr, _len as ssize_t ) a
 	dim as double ret
 
 	/' skip white spc '/
-	p = fb_wstr_SkipChar( src, _len, 32 )
+	p = fb_wstr_SkipChar( src, _len, asc(" ") )
 
 	_len -= fb_wstr_CalcDiff( src, p )
 	if ( _len < 1 ) then
@@ -20,17 +20,17 @@ function fb_WstrToDouble FBCALL ( src as const FB_WCHAR ptr, _len as ssize_t ) a
 	end if
 
 	r = p
-	if ( (_len >= 2) andalso (*r = 38) ) then /' 38 = & '/
+	if ( (_len >= 2) andalso (*r = asc("&")) ) then
 		r += 1
 		radix = 0
 		select case *r
-			case 104, 72: /' h H '/
+			case asc("h"), asc("H"):
 				r += 1
 				radix = 16
-			case 111, 79: /' o O '/
+			case asc("o"), asc("O"):
 				r += 1
 				radix = 8
-			case 98, 66: /' b B '/
+			case asc("b"), asc("B"):
 				r += 1
 				radix = 2
 			case else: /' assume octal '/
@@ -46,11 +46,11 @@ function fb_WstrToDouble FBCALL ( src as const FB_WCHAR ptr, _len as ssize_t ) a
 	 * non-win32 platforms, so create a temporary buffer and replace any 
 	 * 'd's with 'e'
 	 '/
-	q = malloc( (_len + 1) * sizeof(FB_WCHAR) )
+	q = New FB_WCHAR[_len + 1]
 	i = 0
 	while( i < _len )
 		c = p[i]
-		if ( c = 100 or c = 68 ) then /' d D '/
+		if ( c = asc("d") orelse c = asc("D") ) then /' d D '/
 			c += 1
 		end if
 		q[i]= c
@@ -58,7 +58,7 @@ function fb_WstrToDouble FBCALL ( src as const FB_WCHAR ptr, _len as ssize_t ) a
 	wend
 	q[_len] = 0
 	ret = wcstod( q, NULL )
-	free( q )
+	Delete [] q
 
 	return ret
 end function

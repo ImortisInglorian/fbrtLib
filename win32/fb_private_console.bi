@@ -55,5 +55,5 @@ end extern
 #endmacro
 
 #macro FB_CONSOLE_WINDOW_EMPTY()
-	((__fb_con.window.Left = __fb_con.window.Right) or (__fb_con.window.Top = __fb_con.window.Bottom))
+	((__fb_con.window.Left = __fb_con.window.Right) orelse (__fb_con.window.Top = __fb_con.window.Bottom))
 #endmacro

@@ -2,7 +2,7 @@
 
 #include "fb.bi"
 
-dim shared as ubyte ptr pszDefaultQuestion = sadd("? ")
+dim shared as ZString Ptr pszDefaultQuestion = sadd("? ")
 
 extern "C"
 #if defined( HOST_WIN32 ) or defined( HOST_DOS ) or defined( HOST_LINUX )

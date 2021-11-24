@@ -113,7 +113,7 @@ dim shared as FB_FILE_HOOKS hooks_dev_com = ( _
 
 function fb_DevComOpen( handle as FB_FILE ptr, filename as const ubyte ptr, filename_len as size_t ) as long
     dim as DEV_COM_INFO ptr info
-    dim as ubyte ptr achDev(0 to 127)
+    dim as ZString*128 achDev
     dim as const ubyte ptr pchPos
     dim as ubyte ptr pchPosTmp
     dim as size_t i, port, uiOption
@@ -125,12 +125,12 @@ function fb_DevComOpen( handle as FB_FILE ptr, filename as const ubyte ptr, file
 	end if
 
     if ( port > NULL ) then
-    	i = sprintf( achDev(0), sadd("COM%u:"), cast(long, port) )
+    	i = sprintf( achDev, "COM%u:", cast(long, port) )
     else
     	i = strchr( filename, asc(":") ) - cast(zstring ptr, filename)
-    	strncpy( achDev(0), filename, i )
+    	strncpy( achDev, filename, i )
     end if
-    achDev(i) = 0
+    achDev[i] = 0
 
     FB_LOCK()
 
@@ -140,9 +140,9 @@ function fb_DevComOpen( handle as FB_FILE ptr, filename as const ubyte ptr, file
     end if
 
     /' Determine the port number and a normalized device name '/
-    info = cast(DEV_COM_INFO ptr, calloc(1, sizeof(DEV_COM_INFO)))
+    info = cast( DEV_COM_INFO ptr, calloc(1, SizeOf( DEV_COM_INFO ) ) )
     info->iPort = port
-    info->pszDevice = strdup( achDev(0) )
+    info->pszDevice = strdup( achDev )
 
     /' Set defaults '/
     info->Options.uiSpeed = 300
@@ -346,7 +346,7 @@ function fb_DevComOpen( handle as FB_FILE ptr, filename as const ubyte ptr, file
         if ( info->pszDevice ) then
             free( info->pszDevice )
 		end if
-        free(info)
+        free( info )
     end if
 
     FB_UNLOCK()
@@ -357,21 +357,21 @@ end function
 function fb_DevSerialSetWidth( pszDevice as const ubyte ptr, _width as long, default_width as long ) as long
     dim as long cur = iif((default_width = -1), 0, default_width)
     dim as size_t i, port
-    dim as ubyte ptr achDev(0 to 127)
+    dim as ZString*128 achDev
 
     if ( fb_DevComTestProtocolEx( NULL, pszDevice, strlen(pszDevice), @port ) <> 0 ) then
         return 0
 	end if
 
-    i = sprintf( achDev(0), sadd("COM%u:"), cast(long, port) )
-    achDev(i) = 0
+    i = sprintf( achDev, "COM%u:", cast(long, port) )
+    achDev[i] = 0
 
     /' Test all printers. '/
     for i = 0 to FB_MAX_FILES - 1
         dim as FB_FILE ptr tmp_handle = @__fb_ctx.fileTB(0) + i
         if ( tmp_handle->hooks = @hooks_dev_com and tmp_handle->redirection_to = NULL ) then
             dim as DEV_COM_INFO ptr tmp_info = cast(DEV_COM_INFO ptr, tmp_handle->opaque)
-            if ( strcmp(tmp_info->pszDevice, achDev(0)) = 0 ) then
+            if ( strcmp(tmp_info->pszDevice, achDev) = 0 ) then
                 if ( _width <> -1 ) then
                     tmp_handle->width = _width
 				end if

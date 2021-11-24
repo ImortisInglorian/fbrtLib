@@ -4,24 +4,21 @@
 
 extern "C"
 function fb_DevFileFlush( handle as FB_FILE ptr ) as long
-    dim as FILE ptr fp
+	dim as FILE ptr fp
+	dim as long errorRet = FB_RTERROR_OK
 
-    FB_LOCK()
+	FB_LOCK()
 
-    fp = cast(FILE ptr, handle->opaque)
+	fp = cast(FILE ptr, handle->opaque)
 
 	if ( fp = NULL ) then
-		FB_UNLOCK()
-		return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
-	end if
-
-	if( fflush( fp ) <> 0 ) then
-		FB_UNLOCK()
-		return fb_ErrorSetNum( FB_RTERROR_FILEIO )
+		errorRet = FB_RTERROR_ILLEGALFUNCTIONCALL
+        elseif( fflush( fp ) <> 0 ) then
+		errorRet = FB_RTERROR_FILEIO
 	end if
 
 	FB_UNLOCK()
 
-	return fb_ErrorSetNum( FB_RTERROR_OK )
+	return fb_ErrorSetNum( errorRet )
 end function
 end extern

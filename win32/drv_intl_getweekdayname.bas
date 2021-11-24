@@ -4,7 +4,7 @@
 #include "fb_private_intl.bi"
 
 extern "C"
-function fb_DrvIntlGetWeekdayName cdecl ( _weekday as long, short_names as long ) as FBSTRING ptr
+function fb_DrvIntlGetWeekdayName ( _weekday as long, short_names as long ) as FBSTRING ptr
 	dim as ubyte ptr pszName = NULL
 	dim as size_t name_len
 	dim as LCTYPE _lctype

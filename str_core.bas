@@ -71,12 +71,12 @@ end function
 function fb_hStrAlloc FBCALL ( _str as FBSTRING ptr, size as ssize_t ) as FBSTRING ptr
 	dim as ssize_t newsize = hStrRoundSize( size )
 
-	_str->data = cast(ubyte ptr, malloc( newsize + 1 ))
+	_str->data = Allocate( newsize + 1 )
 	/' failed? try the original request '/
 	if ( _str->data = NULL ) then
-		_str->data = cast(ubyte ptr, malloc( size + 1 ))
+		_str->data = Allocate( size + 1 )
 		if ( _str->data = NULL ) then
-            _str->len = 0 
+			_str->len = 0 
 			_str->size = 0
 			return NULL
 		end if
@@ -99,7 +99,7 @@ function fb_hStrRealloc FBCALL ( _str as FBSTRING ptr, size as ssize_t, _preserv
 		if ( _preserve = FB_FALSE ) then
 			fb_StrDelete( _str )
 
-			_str->data = cast(ubyte ptr, malloc( newsize + 1 ))
+			_str->data = Allocate( newsize + 1 )
 			/' failed? try the original request '/
 			if ( _str->data = NULL ) then
 				_str->data = cast(ubyte ptr, malloc( size + 1 ))
@@ -107,10 +107,10 @@ function fb_hStrRealloc FBCALL ( _str as FBSTRING ptr, size as ssize_t, _preserv
 			end if
 		else
             dim as ubyte ptr pszOld = _str->data
-			_str->data = cast(ubyte ptr, realloc( pszOld, newsize + 1 ))
+			_str->data = ReAllocate( pszOld, newsize + 1 )
 			/' failed? try the original request '/
 			if ( _str->data = NULL ) then
-				_str->data = cast(ubyte ptr, realloc( pszOld, size + 1 ))
+				_str->data = ReAllocate( pszOld, size + 1 )
 				newsize = size
                 if ( _str->data = NULL ) then
                     /' restore the old memory block '/

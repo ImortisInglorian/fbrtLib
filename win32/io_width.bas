@@ -71,7 +71,7 @@ function fb_ConsoleWidth( cols as long, rows as long ) as long
 
 	if ( do_resize <> NULL ) then
 		dim as long i
-		for i = 0 to FB_CONSOLE_MAXPAGES
+		for i = 0 to FB_CONSOLE_MAXPAGES - 1
 			if ( __fb_con.pgHandleTb(i) <> NULL ) then
 				SetConsoleWindowInfo( __fb_con.pgHandleTb(i), TRUE, @rectRes )
 			end if
@@ -81,7 +81,7 @@ function fb_ConsoleWidth( cols as long, rows as long ) as long
 	/' Now set the screen buffer size and ensure that the window is
 	* large enough to show the whole buffer '/
 	dim as long i
-	for i = 0 to FB_CONSOLE_MAXPAGES
+	for i = 0 to FB_CONSOLE_MAXPAGES - 1
 		if ( __fb_con.pgHandleTb(i) <> NULL ) then
 			SetConsoleScreenBufferSize( __fb_con.pgHandleTb(i), size )
 			SetConsoleWindowInfo( __fb_con.pgHandleTb(i), TRUE, @rect )

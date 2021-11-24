@@ -29,16 +29,14 @@ sub fb_DevScrnInit_Screen( )
 end sub
 
 sub fb_DevScrnEnd( handle as FB_FILE ptr )
-	if ( handle->opaque <> 0 ) then
-		free( handle->opaque )
-		handle->opaque = NULL
-	end if
+	free( handle->opaque )
+	handle->opaque = NULL
 end sub
 
 sub fb_DevScrnInit_NoOpen( )
 	FB_LOCK()
 	if ( FB_HANDLE_SCREEN->hooks = NULL ) then
-		memset(FB_HANDLE_SCREEN, 0, sizeof(FB_HANDLE_SCREEN))
+		Clear(FB_HANDLE_SCREEN, 0, sizeof(*FB_HANDLE_SCREEN))
 
 		FB_HANDLE_SCREEN->mode = FB_FILE_MODE_APPEND
 		FB_HANDLE_SCREEN->type = FB_FILE_TYPE_VFS

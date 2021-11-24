@@ -32,7 +32,7 @@ function fb_StrLcase2 FBCALL ( src as FBSTRING ptr, mode as long ) as FBSTRING p
 			for  i = 0 to _len - 1
 				c = *s
 				s += 1
-				if ( (c >= 65) and (c <= 90) ) then
+				if ( (c >= asc("A")) and (c <= asc("Z")) ) then
 					c += 97 - 65
 				end if
 				*d = c

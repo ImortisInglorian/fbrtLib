@@ -22,12 +22,12 @@ function fb_Width FBCALL ( cols as long, rows as long ) as long
 	end if
 
     /' Reset VIEW PRINT '/
-    if ( (cols > 0) or (rows > 0) ) then
+    if ( (cols > 0) orelse (rows > 0) ) then
     	fb_ConsoleView( 0, 0 )
 	end if
 
 	FB_UNLOCK()
 
-    return iif((cols < 1 and rows < 1), cur, 0)
+    return iif((cols < 1 andalso rows < 1), cur, 0)
 end function
 end extern

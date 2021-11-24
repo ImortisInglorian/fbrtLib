@@ -79,8 +79,8 @@ function fb_hFindBM cdecl ( start as ssize_t, pachText as const ubyte ptr, len_t
 	dim as ssize_t ptr bm_gc, suffixes
 	dim as ssize_t ret
 
-	bm_gc = cast(ssize_t ptr, malloc(sizeof(ssize_t) * (len_pattern + 1)))
-	suffixes = cast(ssize_t ptr, malloc(sizeof(ssize_t) * (len_pattern + 1)))
+	bm_gc = New ssize_t[len_pattern + 1]
+	suffixes = New ssize_t[len_pattern + 1]
 
 	memset( bm_gc, 0, sizeof(ssize_t) * (len_pattern+1) )
 	memset( suffixes, 0, sizeof(ssize_t) * (len_pattern+1) )
@@ -98,7 +98,7 @@ function fb_hFindBM cdecl ( start as ssize_t, pachText as const ubyte ptr, len_t
 
 	while ( i <> 0 )
 		dim as ubyte ch1 = pachPattern[i - 1]
-		while ( j <= len_pattern and ch1 <> pachPattern[j-1] )
+		while ( j <= len_pattern andalso ch1 <> pachPattern[j-1] )
 			if ( bm_gc[j] = 0 ) then
 				bm_gc[j] = j - i
 			end if
@@ -111,7 +111,7 @@ function fb_hFindBM cdecl ( start as ssize_t, pachText as const ubyte ptr, len_t
 
 	/' preprocessing for "good end strategy" case 2 '/
 	j = suffixes[0]
-	for  i=0 to len_pattern - 1
+	for  i=0 to len_pattern
 		if ( bm_gc[i] = 0 ) then
 			bm_gc[i] = j
 		end if
@@ -141,8 +141,8 @@ function fb_hFindBM cdecl ( start as ssize_t, pachText as const ubyte ptr, len_t
 		end if
 	wend
 
-	free( bm_gc )
-	free( suffixes )
+	Delete [] bm_gc
+	Delete [] suffixes
 
 	return ret
 end function
