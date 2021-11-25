@@ -8,7 +8,7 @@ sub fb_MemSwap FBCALL ( dst as ubyte ptr, src as ubyte ptr, bytes as ssize_t )
 	dim as ulong ti
 	dim as ubyte tb
 
-	if ( (dst = NULL) or (src = NULL) or (bytes <= 0) ) then
+	if ( (dst = NULL) orelse (src = NULL) orelse (bytes <= 0) ) then
 		exit sub
 	end if
 

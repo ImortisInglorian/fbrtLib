@@ -51,13 +51,12 @@ private function fb_hFindMonth( text as const ubyte ptr, text_len as size_t, end
     dim as long short_name = 0
     while( short_name <> 2 )
         dim as long localized = 2
-        localized -= 1
         while( localized )
+            localized -= 1
             dim as long _month = fb_hIsMonth( text, text_len, end_text, short_name, localized )
             if ( _month <> 0 ) then
                 return _month
             end if
-	        localized -= 1
         wend
         short_name += 1
     wend
@@ -101,10 +100,10 @@ private function fb_hDateOrder( pOrderDay as long ptr, pOrderMonth as long ptr, 
         tmp += 1
     wend
 
-    if ( order_day = order_month or order_day = order_year or order_month = order_year ) then
+    if ( order_day = order_month orelse order_day = order_year orelse order_month = order_year ) then
         return FALSE
 	end if
-    if ( order_day > 2 or order_month > 2 or order_year > 2 ) then
+    if ( order_day > 2 orelse order_month > 2 orelse order_year > 2 ) then
         return FALSE
 	end if
 

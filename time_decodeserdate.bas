@@ -26,7 +26,7 @@ sub fb_hDateDecodeSerial FBCALL ( serial as double, pYear as long ptr, pMonth as
         tmp_days = fb_hTimeDaysInYear( cur_year )
     wend
 
-    if ( pMonth <> 0 or pDay <> 0 ) then
+    if ( pMonth <> 0 orelse pDay <> 0 ) then
 		tmp_days = fb_hTimeDaysInMonth( cur_month, cur_year )
         while( serial >= tmp_days )
             serial -= tmp_days
@@ -71,7 +71,7 @@ end function
  * @return 1 = Sunday, ... 7 = Saturday
  '/
 function fb_Weekday FBCALL ( serial as double, first_day_of_week as long ) as long
-    dim as long dow = cast(long, (floor(serial) - 1) mod 7) + 1
+    dim as long dow = ( cast(long, (floor(serial) - 1) ) mod 7) + 1
 
     if ( first_day_of_week = FB_WEEK_DAY_SYSTEM ) then
         /' FIXME: query system default '/
