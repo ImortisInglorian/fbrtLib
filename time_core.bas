@@ -17,7 +17,7 @@ end function
 /':::::'/
 function fb_hTimeDaysInMonth( _month as long, _year as long ) as long
     static as long days(0 to 11) = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 }
-    DBG_ASSERT(_month >= 1 and _month <= 12 )
+    DBG_ASSERT(_month >= 1 andalso _month <= 12 )
     if ( _month = 2 ) then
         return days(_month-1) + fb_hTimeLeap( _year )
 	end if

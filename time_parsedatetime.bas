@@ -11,11 +11,11 @@ function fb_DateTimeParse FBCALL ( s as FBSTRING ptr, pDay as long ptr, pMonth a
     dim as size_t length, text_len
 
     text = s->data
-    text_len = FB_STRSIZE( s )
+    if ( text = NULL ) then
+        return result
+    end if
 
-	if ( text = NULL ) then
-		return result
-	end if
+    text_len = FB_STRSIZE( s )
 
     if ( fb_hDateParse( text, text_len, pDay, pMonth, pYear, @length ) ) then
         text += length
@@ -66,7 +66,9 @@ function fb_DateTimeParse FBCALL ( s as FBSTRING ptr, pDay as long ptr, pMonth a
     if ( result <> 0 ) then
         /' the rest of the text must consist of white spaces '/
         while ( *text <> 0 )
-            if ( isspace( *text + 1 ) = 0 ) then
+            dim ch as ubyte = *text
+            text += 1
+            if ( isspace( ch ) = 0 ) then
                 result = FALSE
                 exit while
             end if
