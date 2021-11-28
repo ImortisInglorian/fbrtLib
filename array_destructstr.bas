@@ -3,31 +3,20 @@
 #include "fb.bi"
 
 extern "C"
-sub fb_hArrayDtorStr ( array as FBARRAY ptr, dtor as FB_DEFCTOR, base_idx as size_t )
-	dim as size_t i
-	dim as ssize_t elements
-	dim as FBARRAYDIM ptr _dim
+sub fb_hArrayDtorStr ( array as FBARRAY ptr, dtor as FB_DEFCTOR, keep_idx as size_t )
+	dim as size_t elements
 	dim as FBSTRING ptr this_
 
 	if ( array->_ptr = NULL ) then
 		exit sub
 	end if
 
-	_dim = @array->dimTB(0)
-	elements = _dim->elements - base_idx
-	_dim += 1
-
-	i = 1
-	while( i < array->dimensions )
-		elements *= _dim->elements
-		i += 1
-		_dim += 1
-	wend
+	elements = fb_ArrayLen( array )
 
 	/' call dtors in the inverse order '/
-	this_ = cast(FBSTRING ptr, array->_ptr) + (base_idx + (elements-1))
+	this_ = cast(FBSTRING ptr, array->_ptr) + (elements-1)
 
-	while( elements > 0 )
+	while( elements > keep_idx )
 		if ( this_->data <> NULL ) then
 			fb_StrDelete( this_ )
 		end if
