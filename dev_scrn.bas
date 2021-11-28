@@ -47,7 +47,7 @@ end function
 sub fb_DevScrnInit( )
     FB_LOCK( )
     if ( FB_HANDLE_SCREEN->hooks = NULL ) then
-        Clear(FB_HANDLE_SCREEN, 0, sizeof(*FB_HANDLE_SCREEN))
+        memset(FB_HANDLE_SCREEN, 0, sizeof(*FB_HANDLE_SCREEN))
 
         FB_HANDLE_SCREEN->mode = FB_FILE_MODE_APPEND
         FB_HANDLE_SCREEN->encod = FB_FILE_ENCOD_DEFAULT

@@ -17,7 +17,7 @@ end sub
 sub fb_DevScrnMaybeUpdateWidth( )
 	/' Only if it was initialized (i.e. used) yet, otherwise we don't need
 	   to bother '/
-	if ( FB_HANDLE_SCREEN->hooks <> 0 ) then
+	if ( FB_HANDLE_SCREEN->hooks ) then
 		fb_DevScrnUpdateWidth( )
 	end if
 end sub
@@ -29,14 +29,16 @@ sub fb_DevScrnInit_Screen( )
 end sub
 
 sub fb_DevScrnEnd( handle as FB_FILE ptr )
-	free( handle->opaque )
-	handle->opaque = NULL
+	if( handle->opaque ) then
+		free( handle->opaque )
+		handle->opaque = NULL
+	end if
 end sub
 
 sub fb_DevScrnInit_NoOpen( )
 	FB_LOCK()
 	if ( FB_HANDLE_SCREEN->hooks = NULL ) then
-		Clear(FB_HANDLE_SCREEN, 0, sizeof(*FB_HANDLE_SCREEN))
+		memset(FB_HANDLE_SCREEN, 0, sizeof(*FB_HANDLE_SCREEN))
 
 		FB_HANDLE_SCREEN->mode = FB_FILE_MODE_APPEND
 		FB_HANDLE_SCREEN->type = FB_FILE_TYPE_VFS
