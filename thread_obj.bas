@@ -20,12 +20,12 @@ Destructor _FBTHREAD( )
 End Destructor
 
 Function _FBTHREAD.GetData ( ByVal key as Ulong ) As Any Ptr
-    Assert( key < UBound( this.tlsData ) )
+    Assert( key <= UBound( this.tlsData ) ) '' alternate: (key < FB_TLSKEYS)
     Return this.tlsData( key ).slotData
 End Function
 
 Sub _FBTHREAD.SetData ( ByVal key As Ulong, ByVal slotData As Any Ptr, ByVal destroyer As FBTlsDestroyer )
-    Assert( key < UBound(this.tlsData) )
+    Assert( key <= UBound(this.tlsData) ) '' alternate: (key < FB_TLSKEYS)
     Dim cell As FBTlsDataCell Ptr = @this.tlsData(key)
     If( cell->destroyer <> 0 ) Then
         cell->destroyer( cell->slotData )
