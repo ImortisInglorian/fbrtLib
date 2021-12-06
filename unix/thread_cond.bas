@@ -33,13 +33,13 @@ End Sub
 Sub fb_CondBroadcast FBCALL( ByVal cond As FBCOND Ptr )
 
 	If( cond <> Null ) Then
-		pthread_cond_broadcast( &cond->id )
+		pthread_cond_broadcast( @cond->id )
 	End If
 End Sub
 
 Sub fb_CondWait FBCALL( ByVal cond As FBCOND Ptr, ByVal mutex As FBMUTEX Ptr )
 
-	If( ( cond <> Null ) AndAlso (mutex <> Null) ) {
+	If( ( cond <> Null ) AndAlso (mutex <> Null) ) then
 		pthread_cond_wait( @cond->id, @mutex->id )
 	End If
 End Sub

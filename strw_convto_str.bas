@@ -81,8 +81,8 @@ function fb_WstrToStr FBCALL ( src as const FB_WCHAR ptr ) as FBSTRING ptr
 	end if
 
 #if defined(HOST_DOS)
-	/* on DOS, wcstombs() simply calls memcpy() and won't compute
-       length  see fb_unicode.h */
+	/' on DOS, wcstombs() simply calls memcpy() and won't compute
+       length  see fb_unicode.h '/
 	chars = fb_wstr_Len( src )
 #else
 	chars = wcstombs( NULL, cast(FB_WCHAR ptr, src), 0 )

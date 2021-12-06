@@ -21,7 +21,7 @@ function fb_FileAttr FBCALL ( handle as long, returntype as long ) as ssize_t
 
 	file = FB_FILE_TO_HANDLE( handle )
 
-	if ( file <> NULL ) then
+	if ( file = NULL ) then
 		ret = 0
 		_err = FB_RTERROR_ILLEGALFUNCTIONCALL
 	else
