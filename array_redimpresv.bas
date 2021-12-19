@@ -33,19 +33,18 @@ function fb_hArrayRealloc ( array as FBARRAY ptr, element_len as size_t, doclear
 		i += 1
 	wend
 
-	/' shrinking the array? free unused elements '/
-	if ( dtor_mult <> NULL ) then
-		dim as size_t new_lb = (ubTB(0) - lbTB(0)) + 1
-		if ( new_lb < array->dimTB(0).elements ) then
-			/' !!!FIXME!!! check exceptions (only if rewritten in C++) '/
-			dtor_mult( array, dtor, new_lb )
-		end if
-	end if
-
 	/' calc size '/
 	elements = fb_hArrayCalcElements( dimensions, @lbTB(0), @ubTB(0) )
 	diff = fb_hArrayCalcDiff( dimensions, @lbTB(0), @ubTB(0) ) * element_len
 	size = elements * element_len
+
+	/' shrinking the array? free unused elements '/
+	if ( dtor_mult <> NULL ) then
+		if ( elements < fb_ArrayLen( array ) ) then
+			/' !!!FIXME!!! check exceptions (only if rewritten in C++) '/
+			dtor_mult( array, dtor, elements )
+		end if
+	end if
 
 	/' realloc '/
 	array->_ptr = realloc( array->_ptr, size )
