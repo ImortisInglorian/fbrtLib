@@ -1,27 +1,25 @@
 /' misc string routines '/
 
 #include "fb.bi"
+#include "destruct_string.bi"
 
 extern "C"
-function fb_SPACE FBCALL ( _len as ssize_t ) as FBSTRING ptr
-	dim as FBSTRING ptr dst
+function fb_SPACE FBCALL ( _len as ssize_t, result as FBSTRING ptr ) as FBSTRING ptr
+	dim as destructable_string dst
+
+	DBG_ASSERT( result <> NULL )
 
 	if ( _len > 0 ) then
-		/' alloc temp string '/
-        dst = fb_hStrAllocTemp( NULL, _len )
-		if ( dst <> NULL ) then
+		if ( fb_hStrAlloc( @dst, _len ) <> NULL ) then
 			/' fill it '/
-			memset( dst->data, 32, _len )
+			memset( dst.data, asc(" "), _len )
 
 			/' null char '/
-			dst->data[_len] = 0
-		else
-			dst = @__fb_ctx.null_desc
+			dst.data[_len] = 0
 		end if
-	else
-		dst = @__fb_ctx.null_desc
 	end if
 
-	return dst
+	fb_StrSwapDesc( @dst, result )
+	return result
 end function
 end extern

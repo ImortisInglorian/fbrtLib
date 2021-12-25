@@ -1,40 +1,29 @@
 /' environ$ function and setenviron stmt '/
 
 #include "fb.bi"
+#include "destruct_string.bi"
 #include "crt/stdlib.bi"
 
 extern "C"
-function fb_GetEnviron FBCALL ( varname as FBSTRING ptr ) as FBSTRING ptr
-	dim as FBSTRING ptr dst
+function fb_GetEnviron FBCALL ( varname as FBSTRING ptr, result as FBSTRING ptr ) as FBSTRING ptr
+	dim as destructable_string dst
 	dim as ubyte ptr tmp
 	dim as ssize_t _len
 
+	DBG_ASSERT( result <> NULL )
+
 	if ( (varname <> NULL) andalso (varname->data <> NULL) ) then
 		tmp = getenv( varname->data )
-	else
-		tmp = NULL
-	end if
-
-	FB_STRLOCK()
-
-	if ( tmp <> NULL ) then
-        _len = strlen( tmp )
-        dst = fb_hStrAllocTemp_NoLock( NULL, _len )
-		if ( dst <> NULL ) then
-			fb_hStrCopy( dst->data, tmp, _len )
-		else
-			dst = @__fb_ctx.null_desc
+		if ( tmp <> NULL ) then
+			_len = strlen( tmp )
+			if ( fb_hStrAlloc( @dst, _len ) <> NULL ) then
+				fb_hStrCopy( dst.data, tmp, _len )
+			end if
 		end if
-	else
-		dst = @__fb_ctx.null_desc
 	end if
 
-	/' del if temp '/
-	fb_hStrDelTemp_NoLock( varname )
-
-	FB_STRUNLOCK()
-
-	return dst
+	fb_StrSwapDesc( @dst, result )
+	return result
 end function
 
 function fb_SetEnviron FBCALL ( _str as FBSTRING ptr ) as long
@@ -43,9 +32,6 @@ function fb_SetEnviron FBCALL ( _str as FBSTRING ptr ) as long
 	if ( (_str <> NULL) andalso (_str->data <> NULL) ) then
 		res = _putenv( _str->data )
 	end if
-
-	/' del if temp '/
-	fb_hStrDelTemp( _str )
 
 	return res
 end function

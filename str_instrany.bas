@@ -38,14 +38,6 @@ function fb_StrInstrAny FBCALL ( start as ssize_t, src as FBSTRING ptr, patt as 
 		end if
 	end if
 
-	FB_STRLOCK()
-
-	/' del if temp '/
-	fb_hStrDelTemp_NoLock( src )
-	fb_hStrDelTemp_NoLock( patt )
-
-	FB_STRUNLOCK()
-
 	return r
 end function
 end extern

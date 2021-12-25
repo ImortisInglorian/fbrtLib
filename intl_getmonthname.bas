@@ -1,6 +1,7 @@
 /' get month name '/
 
 #include "fb.bi"
+#include "destruct_string.bi"
 
 dim shared as ubyte ptr pszMonthNamesLong(0 to 11) = { _
     @"January", _
@@ -34,27 +35,28 @@ dim shared as ubyte ptr pszMonthNamesShort(0 to 11) = { _
 
 extern "C"
 /':::::'/
-function fb_IntlGetMonthName( _month as long, short_names as long, disallow_localized as long ) as FBSTRING ptr
-    dim as FBSTRING ptr res
+function fb_IntlGetMonthName( _month as long, short_names as long, disallow_localized as long, result as FBSTRING ptr ) as FBSTRING ptr
+    dim as destructable_string res
+    dim as ubyte ptr ptr months_array
+    dim as ubyte ptr month_name
 
-    if ( _month < 1 or _month > 12 ) then
-        return NULL
-	end if
+    DBG_ASSERT( result <> NULL )
 
-    if ( fb_I18nGet() <> NULL and disallow_localized = 0 ) then
-        res = fb_DrvIntlGetMonthName( _month, short_names )
-        if ( res <> NULL ) then
-            return res
-		end if
-    end if
-    if ( short_names <> NULL ) then
-        res = fb_StrAllocTempDescZ( pszMonthNamesShort(_month-1) )
-    else
-        res = fb_StrAllocTempDescZ( pszMonthNamesLong(_month-1) )
-    end if
-    if ( res = @__fb_ctx.null_desc ) then
+    if ( _month < 1 orelse _month > 12 ) then
         return NULL
-	end if
-    return res
+    end if
+
+    if ( fb_I18nGet() <> NULL andalso disallow_localized = 0 ) then
+        if ( fb_DrvIntlGetMonthName( _month, short_names, @res ) <> Null ) then
+            Goto goodExit
+        end if
+    end if
+    months_array = Iif( short_names <> 0, @pszMonthNamesShort(0), @pszMonthNamesLong(0))
+    month_name = months_array[_month - 1]
+    fb_StrAllocDescZEx( month_name, strlen(month_name), @res )
+
+goodExit:
+    fb_StrSwapDesc( @res, result )
+    return result
 end function
 end extern

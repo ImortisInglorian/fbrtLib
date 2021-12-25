@@ -21,11 +21,6 @@ function fb_WstrAssignFromA FBCALL (dst as FB_WCHAR ptr, dst_chars as ssize_t, s
 		fb_wstr_ConvFromA( dst, dst_chars, src_ptr )
 	end if
 
-	/' delete temp? '/
-	if ( src_size = -1 ) then
-		fb_hStrDelTemp( cast(FBSTRING ptr, src) )
-	end if
-
 	return dst
 end function
 

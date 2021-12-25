@@ -47,19 +47,6 @@ function fb_StrCompare FBCALL ( str1 as any ptr, str1_size as ssize_t, str2 as a
 		end if
 	end if
 
-
-	FB_STRLOCK()
-
-	/' delete temps? '/
-	if ( str1_size = -1 ) then
-		fb_hStrDelTemp_NoLock( cast(FBSTRING ptr, str1) )
-	end if
-	if ( str2_size = -1 ) then
-		fb_hStrDelTemp_NoLock( cast(FBSTRING ptr, str2) )
-	end if
-
-	FB_STRUNLOCK()
-
 	return res
 end function
 end extern

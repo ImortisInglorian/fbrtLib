@@ -15,7 +15,7 @@ private function fb_hIsMonth( text as const ubyte ptr, text_len as size_t, end_t
             dim as size_t month_len = FB_STRSIZE( sMonthName )
             dim as size_t _len = iif((text_len < month_len), text_len, month_len )
             dim as long is_same = (FB_MEMCMP( text, sMonthName->data, _len ) = 0)
-            fb_hStrDelTemp( sMonthName )
+
             if ( is_same <> 0 ) then
                 if ( text_len > _len ) then
                     if ( isalpha( FB_CHAR_TO_INT(text[_len]) ) = 0 ) then

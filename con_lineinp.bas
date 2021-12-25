@@ -17,9 +17,6 @@ function fb_ConsoleLineInput( text as FBSTRING ptr, dst as any ptr, dst_len as s
     if ( text <> NULL ) then
         if ( text->data <> NULL ) then
             fb_PrintString( 0, text, 0 )
-    	/' del if temp '/
-    	else
-    		fb_hStrDelTemp( text )
     	end if
 
         if ( addquestion <> FB_FALSE ) then
@@ -61,9 +58,6 @@ function fb_ConsoleLineInput( text as FBSTRING ptr, dst as any ptr, dst_len as s
     if ( text <> NULL ) then
         if( text->data <> NULL ) then
             fb_PrintString( 0, text, 0 )
-    	/' del if temp '/
-    	else
-    		fb_hStrDelTemp( text )
     	end if
 
         if ( addquestion <> FB_FALSE ) then

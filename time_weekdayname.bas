@@ -4,32 +4,33 @@
 
 extern "C"
 /':::::'/
-function fb_WeekdayName FBCALL ( _weekday as long, abbreviation as long, first_day_of_week as long ) as FBSTRING ptr
-    dim as FBSTRING ptr res
+function fb_WeekdayName FBCALL ( _weekday as long, abbreviation as long, first_day_of_week as long, result as FBSTRING ptr ) as FBSTRING ptr
+    dim as destructable_string tmp_str
+    dim as long err = FB_RTERROR_ILLEGALFUNCTIONCALL
 
-    if ( _weekday < 1 or _weekday > 7 or first_day_of_week < 0 or first_day_of_week > 7 ) then
-        fb_ErrorSetNum(FB_RTERROR_ILLEGALFUNCTIONCALL)
-        return @__fb_ctx.null_desc
-    end if
+    DBG_ASSERT( result <> NULL )
 
-    fb_ErrorSetNum( FB_RTERROR_OK )
+    if ( _weekday >= 1 andalso _weekday <= 7 andalso first_day_of_week >= 0 andalso first_day_of_week <= 7 ) then
 
-    if ( first_day_of_week = FB_WEEK_DAY_SYSTEM ) then
-        /' FIXME: Add query of system default '/
-        first_day_of_week = FB_WEEK_DAY_DEFAULT
-    end if
+        err = FB_RTERROR_OK
 
-    _weekday += first_day_of_week - 1
-    if ( _weekday > 7 ) then
-        _weekday -= 7
+        if ( first_day_of_week = FB_WEEK_DAY_SYSTEM ) then
+            /' FIXME: Add query of system default '/
+            first_day_of_week = FB_WEEK_DAY_DEFAULT
+        end if
+
+        _weekday += first_day_of_week - 1
+        if ( _weekday > 7 ) then
+            _weekday -= 7
 	end if
 
-    res = fb_IntlGetWeekdayName( _weekday, abbreviation, FALSE )
-    if( res = NULL ) then
-        fb_ErrorSetNum(FB_RTERROR_ILLEGALFUNCTIONCALL)
-        res = @__fb_ctx.null_desc
+        if( fb_IntlGetWeekdayName( _weekday, abbreviation, FALSE, @tmp_str ) = NULL ) then
+            err = FB_RTERROR_ILLEGALFUNCTIONCALL
+        end if
     end if
 
-    return res
+    fb_StrSwapDesc( @tmp_str, result )
+    fb_ErrorSetNum( err )
+    return result
 end function
 end extern

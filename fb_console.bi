@@ -93,7 +93,7 @@ declare function fb_ConsoleIsRedirected			( is_input as long ) as long
 declare function fb_ConsolePageCopy 			( src as long, dst as long ) as long
 declare function fb_ConsolePageSet 				( active as long, visible as long ) as long
 
-declare function fb_ConReadLine 		 FBCALL ( soft_cursor as long ) as FBSTRING ptr
+declare function fb_ConReadLine 		 FBCALL ( soft_cursor as long, line_read as FBSTRING ptr ) as FBSTRING ptr
 
 declare function fb_ConsoleInput 		 FBCALL ( text as FBSTRING ptr, addquestion as long, addnewline as long ) as long
 declare function fb_ConsoleLineInput 			( text as FBSTRING ptr, dst as any ptr, dst_len as ssize_t, fillrem as long, addquestion as long, addnewline as long ) as long

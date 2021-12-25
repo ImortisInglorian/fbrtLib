@@ -9,10 +9,6 @@ function fb_StrConcatAssign FBCALL ( dst as any ptr, dst_size as ssize_t, src as
 	dim as ssize_t src_len, dst_len
 
 	if ( dst = NULL ) then
-		/' delete temp? '/
-		if ( src_size = -1 ) then
-			fb_hStrDelTemp( cast(FBSTRING ptr, src) )
-		end if
 		return dst
 	end if
 
@@ -52,11 +48,6 @@ function fb_StrConcatAssign FBCALL ( dst as any ptr, dst_size as ssize_t, src as
 				end if
 			end if
 		end if
-	end if
-
-	/' delete temp? '/
-	if ( src_size = -1 ) then
-		fb_hStrDelTemp( cast(FBSTRING ptr, src) )
 	end if
 	return dst
 end function

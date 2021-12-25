@@ -1,11 +1,10 @@
 #include "fb.bi"
 
 extern "C"
-function fb_DirNext64 FBCALL ( outattrib as longint ptr ) as FBSTRING ptr
+function fb_DirNext64 FBCALL ( outattrib as longint ptr, result as FBSTRING ptr ) as FBSTRING ptr
 	dim as long ioutattrib
-	dim as FBSTRING ptr res
-
-	res = fb_DirNext( @ioutattrib )
+	DBG_ASSERT( result <> NULL )
+	dim as FBSTRING ptr res = fb_DirNext( @ioutattrib, result )
 
 	*outattrib = ioutattrib
 	return res

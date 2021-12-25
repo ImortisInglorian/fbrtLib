@@ -15,8 +15,6 @@ function fb_ExecEx FBCALL ( program as FBSTRING ptr, args as FBSTRING ptr, do_fo
 	dim as Boolean got_program = (program <> NULL) andalso (program->data <> NULL)
 
 	if ( got_program = False ) then
-		fb_hStrDelTemp( args )
-		fb_hStrDelTemp( program )
 		return -1
 	end if
 
@@ -34,13 +32,6 @@ function fb_ExecEx FBCALL ( program as FBSTRING ptr, args as FBSTRING ptr, do_fo
 		FB_MEMCPY( arguments + len_program + 1, args->data, len_arguments )
 	end if
 	arguments[len_program + len_arguments + 1] = 0
-
-	FB_STRLOCK()
-
-	fb_hStrDelTemp_NoLock( args )
-	fb_hStrDelTemp_NoLock( program )
-
-	FB_STRUNLOCK()
 
 	FB_CON_CORRECT_POSITION()
 

@@ -15,8 +15,6 @@ sub fb_DevScrnFillInput( info as DEV_SCRN_INFO ptr )
 			/' copy null-term too '/
 			memcpy( @info->buffer(0), _str->data, _len+1 )
 		end if
-
-		fb_hStrDelTemp( _str )
 	end if
 
 	info->length = _len

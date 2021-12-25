@@ -47,9 +47,6 @@ sub fb_WriteString FBCALL ( fnum as long, s as FBSTRING ptr, mask as long )
 			fb_hFilePrintBufferEx( handle, @(!"\"\","), 1+1+1 )
 		end if
 	end if
-
-	/' del if temp '/
-	fb_hStrDelTemp( s )
 end sub
 
 sub fb_WriteFixString FBCALL ( fnum as long, s as ubyte ptr, mask as long )

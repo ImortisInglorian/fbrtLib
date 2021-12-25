@@ -56,14 +56,11 @@ declare function pthread_mutexattr_settype(attr as pthread_mutexattr_t ptr, kind
 End Extern
 
 static shared __fb_global_mutex as pthread_mutex_t
-static shared __fb_string_mutex as pthread_mutex_t
 static shared __fb_graphics_mutex as pthread_mutex_t
 static shared __fb_math_mutex as pthread_mutex_t
 
 Sub fb_Lock FBCALL ( ) pthread_mutex_lock  ( @__fb_global_mutex ) End Sub
 Sub fb_Unlock FBCALL ( )  pthread_mutex_unlock( @__fb_global_mutex ) End Sub
-Sub fb_StrLock FBCALL ( ) pthread_mutex_lock  ( @__fb_string_mutex ) End Sub
-Sub fb_StrUnlock FBCALL ( ) pthread_mutex_unlock( @__fb_string_mutex ) End Sub
 Sub fb_GraphicsLock FBCALL ( ) pthread_mutex_lock  ( @__fb_graphics_mutex ) End Sub
 Sub fb_GraphicsUnlock FBCALL ( ) pthread_mutex_unlock( @__fb_graphics_mutex ) End Sub
 Sub fb_MathLock FBCALL ( ) pthread_mutex_lock  ( @__fb_math_mutex ) End Sub

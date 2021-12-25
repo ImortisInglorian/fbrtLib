@@ -14,9 +14,6 @@ function  fb_RmDir FBCALL ( path as FBSTRING ptr ) as long
 	res = rmdir_( path->data )
 #endif
 
-	/' del if temp '/
-	fb_hStrDelTemp( path )
-
 	return res
 end function
 end extern

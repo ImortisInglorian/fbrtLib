@@ -24,12 +24,6 @@ sub fb_StrLset FBCALL ( dst as FBSTRING ptr, src as FBSTRING ptr )
 			end if
 		end if
 	end if
-
-	/' del if temp '/
-	fb_hStrDelTemp( src )
-
-	/' del if temp '/
-	fb_hStrDelTemp( dst )
 end sub
 
 sub fb_StrRset FBCALL ( dst as FBSTRING ptr, src as FBSTRING ptr )
@@ -52,11 +46,5 @@ sub fb_StrRset FBCALL ( dst as FBSTRING ptr, src as FBSTRING ptr )
 			fb_hStrCopy( @dst->data[padlen], src->data, _len )
 		end if
 	end if
-
-	/' del if temp '/
-	fb_hStrDelTemp( src )
-
-	/' del if temp '/
-	fb_hStrDelTemp( dst )
 end sub
 end extern

@@ -1,6 +1,7 @@
 /' comfortable INPUT function '/
 
 #include "fb.bi"
+#include "destruct_string.bi"
 
 extern "C"
 private sub DoAdjust( x as long ptr, y as long ptr, dx as long, dy as long, cols as long , rows as long )
@@ -33,8 +34,7 @@ private sub DoMove( x as long ptr, y as long ptr, dx as long, dy as long, cols a
     end if
 end sub
 
-function fb_ConReadLine FBCALL ( soft_cursor as long ) as FBSTRING ptr
-	dim as FBSTRING result = ( 0, 0, 0 )
+function fb_ConReadLine FBCALL ( soft_cursor as long, line_read as FBSTRING ptr ) as FBSTRING ptr
 
     dim as long current_x, current_y
     dim as long cols, rows
@@ -42,14 +42,18 @@ function fb_ConReadLine FBCALL ( soft_cursor as long ) as FBSTRING ptr
     dim as long cursor_visible
     dim as long k
     dim as ubyte tmp_buffer(0 to 11)
+    dim as ubyte ptr tmp_buffer_ptr = @tmp_buffer(0)
+    '' No need for these to be constantly con and destructed in the loop
+    dim as destructable_string str_add, str_left, str_right, str_fill, str_inkey, result
 
+    DBG_ASSERT(line_read <> NULL)
     fb_GetSize(@cols, @rows)
 
     cursor_visible = (fb_Locate( 0, 0, -1, 0, 0 ) and &h10000) <> 0
     fb_Locate( 0, 0, FALSE, 0, 0 )
 
     _pos = 0
-	_len = 0
+    _len = 0
     fb_PrintBufferEx( NULL, 0, 0 )
 
     /' Ensure that the cursor is visible during INPUT '/
@@ -57,7 +61,6 @@ function fb_ConReadLine FBCALL ( soft_cursor as long ) as FBSTRING ptr
 
 	do
 		dim as size_t delete_char_count = 0, add_char = FALSE
-		dim as FBSTRING ptr s
 
 		fb_GetXY( @current_x, @current_y )
 
@@ -70,15 +73,13 @@ function fb_ConReadLine FBCALL ( soft_cursor as long ) as FBSTRING ptr
 			fb_Delay( 25 )				/' release time slice '/
 		wend
 
-		s = fb_Inkey( )
-		if ( s->data <> NULL ) then
-			if ( FB_STRSIZE( s ) = 2 ) then
-				k = FB_MAKE_EXT_KEY( FB_CHAR_TO_INT( s->data[1] ) )
+		fb_Inkey( @str_inkey )
+		if ( str_inkey.data <> NULL ) then
+			if ( FB_STRSIZE( @str_inkey ) = 2 ) then
+				k = FB_MAKE_EXT_KEY( FB_CHAR_TO_INT( str_inkey.data[1] ) )
 			else
-				k = FB_CHAR_TO_INT( s->data[0] )
+				k = FB_CHAR_TO_INT( str_inkey.data[0] )
 			end if
-
-			fb_hStrDelTemp( s )
 		else
 			k = 0
 			continue do
@@ -100,7 +101,7 @@ function fb_ConReadLine FBCALL ( soft_cursor as long ) as FBSTRING ptr
 
 			case 9:  /' TAB '/
 				tmp_buffer_len = ((_pos + 8) / 8 * 8) - _pos
-				memset( @tmp_buffer(0), 32, tmp_buffer_len )
+				memset( tmp_buffer_ptr, 32, tmp_buffer_len )
 				add_char = TRUE
 
 			case 27:  /' ESC '/
@@ -152,7 +153,7 @@ function fb_ConReadLine FBCALL ( soft_cursor as long ) as FBSTRING ptr
 
 			case else:
 				if ( (k >= 32) and (k <= 255) ) then
-					tmp_buffer(0) = cast(ubyte, k)
+					tmp_buffer_ptr[0] = cast(ubyte, k)
 					tmp_buffer_len = 1
 					add_char = TRUE
 					/' DoMove( &current_x, &current_y, 1, 0, cols ); '/
@@ -165,11 +166,10 @@ function fb_ConReadLine FBCALL ( soft_cursor as long ) as FBSTRING ptr
 		end if
 
         if ( delete_char_count <> 0 ) then
-            dim as FBSTRING ptr str_fill
-            dim as FBSTRING ptr str_left = fb_StrMid( @result, 1, _pos )
-            dim as FBSTRING ptr str_right = fb_StrMid( @result, _pos + 1 + delete_char_count, _len - _pos - delete_char_count)
-            fb_StrAssign( @result, -1, str_left, -1, FALSE )
-            fb_StrConcatAssign( @result, -1, str_right, -1, FALSE )
+            fb_StrMid( @result, 1, _pos, @str_left )
+            fb_StrMid( @result, _pos + 1 + delete_char_count, _len - _pos - delete_char_count, @str_right)
+            fb_StrAssign( @result, -1, @str_left, -1, FALSE )
+            fb_StrConcatAssign( @result, -1, @str_right, -1, FALSE )
             _len -= delete_char_count
 
             FB_LOCK()
@@ -177,9 +177,8 @@ function fb_ConReadLine FBCALL ( soft_cursor as long ) as FBSTRING ptr
             fb_PrintBufferEx( result.data + _pos, _len - _pos, 0 )
 
             /' Overwrite all deleted characters with SPC's '/
-            str_fill = fb_StrFill1 ( delete_char_count, 32 )
-            fb_PrintBufferEx( str_fill->data, delete_char_count, 0 )
-            fb_hStrDelTemp( str_fill )
+            fb_StrFill1 ( delete_char_count, 32, @str_fill )
+            fb_PrintBufferEx( str_fill.data, delete_char_count, 0 )
 
             fb_Locate( current_y, current_x, -1, 0, 0 )
 
@@ -187,17 +186,17 @@ function fb_ConReadLine FBCALL ( soft_cursor as long ) as FBSTRING ptr
         end if
 
         if ( add_char <> 0 ) then
-            tmp_buffer(tmp_buffer_len) = 0
+            tmp_buffer_ptr[tmp_buffer_len] = 0
         end if
 
         if ( add_char <> 0 ) then
             dim as long old_x = current_x, old_y = current_y
-            dim as FBSTRING ptr str_add = fb_StrAllocTempDescF( cast(ubyte ptr, @tmp_buffer(0)), tmp_buffer_len + 1 )
-            dim as FBSTRING ptr str_left = fb_StrMid( @result, 1, _pos )
-            dim as FBSTRING ptr str_right = fb_StrMid( @result, _pos + 1, _len - _pos)
-            fb_StrAssign( @result, -1, str_left, -1, FALSE )
-            fb_StrConcatAssign( @result, -1, str_add, -1, FALSE )
-            fb_StrConcatAssign( @result, -1, str_right, -1, FALSE )
+            fb_StrAllocDescZEx( tmp_buffer_ptr, tmp_buffer_len + 1, @str_add )
+            fb_StrMid( @result, 1, _pos, @str_left )
+            fb_StrMid( @result, _pos + 1, _len - _pos, @str_right)
+            fb_StrAssign( @result, -1, @str_left, -1, FALSE )
+            fb_StrConcatAssign( @result, -1, @str_add, -1, FALSE )
+            fb_StrConcatAssign( @result, -1, @str_right, -1, FALSE )
             _len += tmp_buffer_len
 
             FB_LOCK()
@@ -241,6 +240,7 @@ function fb_ConReadLine FBCALL ( soft_cursor as long ) as FBSTRING ptr
 
     FB_UNLOCK()
 
-	return fb_StrAllocTempResult( @result )
+    fb_StrSwapDesc(@result, line_read)
+    return line_read
 end function
 end extern

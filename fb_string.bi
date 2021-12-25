@@ -2,7 +2,6 @@
 
 'These undefs will not be needed once this replaces the current RTLIB
 #ifdef fb_hStrDelTemp
-	#undef fb_hStrDelTemp
 	#undef fb_StrInit 
 	#undef fb_StrAssign
 	#undef fb_StrDelete
@@ -10,10 +9,10 @@
 	#undef fb_StrConcatAssign
 	#undef fb_StrConcatByref
 	#undef fb_StrCompare
-	#undef fb_StrAllocTempResult
-	#undef fb_StrAllocTempDescF
-	#undef fb_StrAllocTempDescZEx 
-	#undef fb_StrAllocTempDescZ
+	#undef fb_StrAllocResult
+	#undef fb_StrAllocDescF
+	#undef fb_StrAllocDescZEx 
+	#undef fb_StrAllocDescZ
 	#undef fb_StrLen
 	#undef fb_BoolToStr
 	#undef fb_IntToStr
@@ -103,24 +102,9 @@
 
 extern "C"
 
-/' Flag to identify a string as a temporary string.
- *
- * This flag is stored in struct _FBSTRING::len so it's absolutely required
- * to use FB_STRSIZE(s) to query a strings length.
- '/
-#ifdef HOST_64BIT
-	#define FB_TEMPSTRBIT (cast(longint, &h8000000000000000ll))
-#else
-	#define FB_TEMPSTRBIT (cast(long, &h80000000))
-#endif
-
-/' Returns if the string is a temporary string.
- '/
-#define FB_ISTEMP(s) ((cast(FBSTRING ptr, s)->len and FB_TEMPSTRBIT) <> 0)
-
 /' Returns a string length.
  '/
-#define FB_STRSIZE(s) (Cast(ssize_t, (cast(FBSTRING ptr, s)->len and not(FB_TEMPSTRBIT))))
+#define FB_STRSIZE(s) (cast(FBSTRING ptr, s)->len)
 
 /' Returns the string data.
  '/
@@ -164,21 +148,22 @@ extern "C"
 
 /' Structure containing information about a specific string.
  *
- * This structure hols all informations about a specific string. This is
+ * This structure holds all informations about a specific string. This is
  * required to allow BASIC-style strings that may contain NUL characters.
+ *
+ * Conditions for the string:
+ * If size = 0 and data <> Null, this string didn't allocate the data pointer
+ * so it won't be deallocate() in fb_StrDelete.
+ * These pointers can be for
+ * - data that is owned elsewhere
+ * - stack based zstring which the descrptor won't outlive
+ * - global or other static ZStrings or ubyte ptr
  '/
 type FBSTRING
 	as ubyte ptr data    /'< pointer to the real string data '/
 	as ssize_t len     /'< String length. '/
 	as ssize_t size    /'< Size of allocated memory block. '/
 end type
-
-
-type FB_STR_TMPDESC
-	as FB_LISTELEM     elem
-	as FBSTRING        desc
-end type
-
 
 /' protos '/
 
@@ -190,17 +175,12 @@ end type
 
 
 private sub fb_hStrSetLength( _str as FBSTRING ptr, size as size_t )
-	_str->len = size or (_str->len and FB_TEMPSTRBIT)
+	_str->len = size
 end sub
 
-declare function fb_hStrAllocTmpDesc 		FBCALL ( ) as FBSTRING ptr
-declare function fb_hStrDelTempDesc 		FBCALL ( str as FBSTRING ptr ) as long
 declare function fb_hStrAlloc 				FBCALL ( str as FBSTRING ptr, size as ssize_t ) as FBSTRING ptr
 declare function fb_hStrRealloc 			FBCALL ( str as FBSTRING ptr, size as ssize_t, _preserve as long ) as FBSTRING ptr
-declare function fb_hStrAllocTemp 			FBCALL ( str as FBSTRING ptr, size as ssize_t ) as FBSTRING ptr
-declare function fb_hStrAllocTemp_NoLock 	FBCALL ( str as FBSTRING ptr, size as ssize_t ) as FBSTRING ptr
-declare function fb_hStrDelTemp 			FBCALL ( str as FBSTRING ptr ) as long
-declare function fb_hStrDelTemp_NoLock  	FBCALL ( str as FBSTRING ptr ) as long
+declare sub	 fb_hStrStaticAlloc			FBCALL ( str as FBSTRING ptr, tempstr as ubyte ptr, bufferlen as ssize_t)
 declare sub 	 fb_hStrCopy 				FBCALL ( dst as ubyte ptr, src as const ubyte ptr , bytes as ssize_t )
 declare function fb_hStrSkipChar 			FBCALL ( s as ubyte ptr, len as ssize_t, c as long ) as ubyte ptr
 declare function fb_hStrSkipCharRev 		FBCALL ( s as ubyte ptr, len as ssize_t, c as long ) as ubyte ptr
@@ -211,32 +191,32 @@ declare function fb_hStrSkipCharRev 		FBCALL ( s as ubyte ptr, len as ssize_t, c
 declare function fb_StrInit 				FBCALL ( dst as any ptr, dst_size as ssize_t, src as any ptr,  src_size as ssize_t, fill_rem as long ) as any ptr
 declare function fb_StrAssign				FBCALL ( dst as any ptr, dst_size as ssize_t, src as any ptr,  src_size as ssize_t, fill_rem as long ) as any ptr
 declare function fb_StrAssignEx 			FBCALL ( dst as any ptr, dst_size as ssize_t, src as any ptr,  src_size as ssize_t, fill_rem as long, is_init as long )as any ptr
+declare sub 	 fb_StrSwapDesc 			FBCALL ( str1 as FBSTRING ptr, str2 as FBSTRING ptr)
 declare sub 	 fb_StrDelete 				FBCALL ( str as FBSTRING ptr )
 declare function fb_StrConcat 				FBCALL ( dst as FBSTRING ptr, str1 as any ptr, str1_size as ssize_t, str2 as any ptr, str2_size as ssize_t ) as FBSTRING ptr
 declare function fb_StrConcatAssign 		FBCALL ( dst as any ptr, dst_size as ssize_t, src as any ptr,  src_size as ssize_t, fill_rem as long ) as any ptr
 declare function fb_StrConcatByref			FBCALL ( dst as any ptr, dst_size as ssize_t, src as any ptr,  src_size as ssize_t, fill_rem as long ) as any ptr
 declare function fb_StrCompare 				FBCALL ( str1 as any ptr, str1_size as ssize_t, str2 as any ptr, str2_size as ssize_t ) as long
-declare function fb_StrAllocTempResult 		FBCALL ( src as FBSTRING ptr ) as FBSTRING ptr
-declare function fb_StrAllocTempDescF		FBCALL ( str as ubyte ptr, str_size as ssize_t ) as FBSTRING ptr
-declare function fb_StrAllocTempDescV		FBCALL ( str as FBSTRING ptr ) as FBSTRING ptr
-declare function fb_StrAllocTempDescZEx 	FBCALL ( str as const ubyte ptr, len as ssize_t ) as FBSTRING ptr
-declare function fb_StrAllocTempDescZ 		FBCALL ( str as const ubyte ptr ) as FBSTRING ptr
+declare function fb_StrAllocDescF		FBCALL ( str as ubyte ptr, str_size as ssize_t, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_StrAllocDescV		FBCALL ( str as FBSTRING ptr, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_StrAllocDescZEx 	FBCALL ( str as const ubyte ptr, len as ssize_t, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_StrAllocDescZ 		FBCALL ( str as const ubyte ptr, result as FBSTRING ptr ) as FBSTRING ptr
 declare function fb_StrLen 					FBCALL ( str as any ptr, str_size as ssize_t ) as ssize_t
 
 declare function fb_hBoolToStr 				FBCALL ( num as ubyte ) as ubyte ptr
-declare function fb_BoolToStr 				FBCALL ( num as ubyte ) as FBSTRING ptr
-declare function fb_IntToStr 				FBCALL ( num as long ) as FBSTRING ptr
-declare function fb_IntToStrQB 				FBCALL ( num as long ) as FBSTRING ptr
-declare function fb_UIntToStr 				FBCALL ( num as ulong ) as FBSTRING ptr
-declare function fb_UIntToStrQB 			FBCALL ( num as ulong ) as FBSTRING ptr
-declare function fb_LongintToStr 			FBCALL ( num as longint ) as FBSTRING ptr
-declare function fb_LongintToStrQB 			FBCALL ( num as longint ) as FBSTRING ptr
-declare function fb_ULongintToStr 			FBCALL ( num as ulongint ) as FBSTRING ptr
-declare function fb_ULongintToStrQB 		FBCALL ( num as ulongint ) as FBSTRING ptr
-declare function fb_FloatToStr 				FBCALL ( num as single ) as FBSTRING ptr
-declare function fb_FloatToStrQB 			FBCALL ( num as single ) as FBSTRING ptr
-declare function fb_DoubleToStr 			FBCALL ( num as double ) as FBSTRING ptr
-declare function fb_DoubleToStrQB 			FBCALL ( num as double ) as FBSTRING ptr
+declare function fb_BoolToStr 				FBCALL ( num as ubyte, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_IntToStr 				FBCALL ( num as long, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_IntToStrQB 				FBCALL ( num as long, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_UIntToStr 				FBCALL ( num as ulong, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_UIntToStrQB 			FBCALL ( num as ulong, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_LongintToStr 			FBCALL ( num as longint, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_LongintToStrQB 			FBCALL ( num as longint, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_ULongintToStr 			FBCALL ( num as ulongint, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_ULongintToStrQB 			FBCALL ( num as ulongint, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_FloatToStr 				FBCALL ( num as single, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_FloatToStrQB 			FBCALL ( num as single, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_DoubleToStr 			FBCALL ( num as double, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_DoubleToStrQB 			FBCALL ( num as double, result as FBSTRING ptr ) as FBSTRING ptr
 
 #define FB_F2A_ADDBLANK     &h00000001
 
@@ -250,7 +230,7 @@ declare function fb_hStrRadix2Int 			FBCALL ( src as ubyte ptr, len as ssize_t, 
 declare function fb_hStrRadix2Longint 		FBCALL ( s as ubyte ptr, len as ssize_t, radix as long ) as longint
 declare function fb_hFloat2Str       		cdecl	( val as double, buffer as ubyte ptr, digits as long, mask as long ) as ubyte ptr
 
-declare function fb_CHR              		cdecl	( args as long, ... ) as FBSTRING ptr
+declare function fb_CHR              		cdecl	( result as FBSTRING ptr, args as long, ... ) as FBSTRING ptr
 declare function fb_ASC 					FBCALL ( str as FBSTRING ptr, _pos as ssize_t ) as ulong
 declare function fb_VAL 					FBCALL ( str as FBSTRING ptr ) as double
 declare function fb_CVD 					FBCALL ( str as FBSTRING ptr ) as double
@@ -259,42 +239,42 @@ declare function fb_CVSHORT 				FBCALL ( str as FBSTRING ptr ) as short
 declare function fb_CVI 					FBCALL ( str as FBSTRING ptr ) as long /' 32bit legacy '/
 declare function fb_CVL 					FBCALL ( str as FBSTRING ptr ) as long
 declare function fb_CVLONGINT 				FBCALL ( str as FBSTRING ptr ) as longint
-declare function fb_HEX 					FBCALL ( num as long ) as FBSTRING ptr
-declare function fb_OCT 					FBCALL ( num as long) as FBSTRING ptr
-declare function fb_BIN 					FBCALL ( num as long ) as FBSTRING ptr
+declare function fb_HEX 					FBCALL ( num as long, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_OCT 					FBCALL ( num as long, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_BIN 					FBCALL ( num as long, result as FBSTRING ptr ) as FBSTRING ptr
 
-declare function fb_BIN_b 					FBCALL ( num as ubyte ) as FBSTRING ptr
-declare function fb_BIN_s 					FBCALL ( num as ushort ) as FBSTRING ptr
-declare function fb_BIN_i 					FBCALL ( num as ulong ) as FBSTRING ptr
-declare function fb_BIN_l 					FBCALL ( num as ulongint ) as FBSTRING ptr
-declare function fb_BIN_p 					FBCALL ( p as const any ptr ) as FBSTRING ptr
-declare function fb_BINEx_b 				FBCALL ( num as ubyte, digits as long ) as FBSTRING ptr
-declare function fb_BINEx_s 				FBCALL ( num as ushort, digits as long ) as FBSTRING ptr
-declare function fb_BINEx_i 				FBCALL ( num as ulong, digits as long ) as FBSTRING ptr
-declare function fb_BINEx_l 				FBCALL ( num as ulongint, digits as long ) as FBSTRING ptr
-declare function fb_BINEx_p 				FBCALL ( p as const any ptr, digits as long ) as FBSTRING ptr
+declare function fb_BIN_b 					FBCALL ( num as ubyte, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_BIN_s 					FBCALL ( num as ushort, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_BIN_i 					FBCALL ( num as ulong, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_BIN_l 					FBCALL ( num as ulongint, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_BIN_p 					FBCALL ( p as const any ptr, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_BINEx_b 				FBCALL ( num as ubyte, digits as long, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_BINEx_s 				FBCALL ( num as ushort, digits as long, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_BINEx_i 				FBCALL ( num as ulong, digits as long, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_BINEx_l 				FBCALL ( num as ulongint, digits as long, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_BINEx_p 				FBCALL ( p as const any ptr, digits as long, result as FBSTRING ptr ) as FBSTRING ptr
 
-declare function fb_OCT_b 					FBCALL ( num as ubyte ) as FBSTRING ptr
-declare function fb_OCT_s 					FBCALL ( num as ushort ) as FBSTRING ptr
-declare function fb_OCT_i 					FBCALL ( num as ulong ) as FBSTRING ptr
-declare function fb_OCT_l 					FBCALL ( num as ulongint ) as FBSTRING ptr
-declare function fb_OCT_p 					FBCALL ( p as const any ptr ) as FBSTRING ptr
-declare function fb_OCTEx_b 				FBCALL ( num as ubyte, digits as long ) as FBSTRING ptr
-declare function fb_OCTEx_s 				FBCALL ( num as ushort, digits as long ) as FBSTRING ptr
-declare function fb_OCTEx_i 				FBCALL ( num as ulong, digits as long ) as FBSTRING ptr
-declare function fb_OCTEx_l 				FBCALL ( num as ulongint, digits as long ) as FBSTRING ptr
-declare function fb_OCTEx_p 				FBCALL ( p as const any ptr, digits as long ) as FBSTRING ptr
+declare function fb_OCT_b 					FBCALL ( num as ubyte, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_OCT_s 					FBCALL ( num as ushort, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_OCT_i 					FBCALL ( num as ulong, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_OCT_l 					FBCALL ( num as ulongint, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_OCT_p 					FBCALL ( p as const any ptr, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_OCTEx_b 				FBCALL ( num as ubyte, digits as long, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_OCTEx_s 				FBCALL ( num as ushort, digits as long, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_OCTEx_i 				FBCALL ( num as ulong, digits as long, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_OCTEx_l 				FBCALL ( num as ulongint, digits as long, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_OCTEx_p 				FBCALL ( p as const any ptr, digits as long, result as FBSTRING ptr ) as FBSTRING ptr
 
-declare function fb_HEX_b 					FBCALL ( num as ubyte ) as FBSTRING ptr
-declare function fb_HEX_s 					FBCALL ( num as ushort ) as FBSTRING ptr
-declare function fb_HEX_i 					FBCALL ( num as ulong ) as FBSTRING ptr
-declare function fb_HEX_l 					FBCALL ( num as ulongint ) as FBSTRING ptr
-declare function fb_HEX_p 					FBCALL ( p as const any ptr ) as FBSTRING ptr
-declare function fb_HEXEx_b 				FBCALL ( num as ubyte, digits as long ) as FBSTRING ptr
-declare function fb_HEXEx_s 				FBCALL ( num as ushort, digits as long ) as FBSTRING ptr
-declare function fb_HEXEx_i 				FBCALL ( num as ulong, digits as long ) as FBSTRING ptr
-declare function fb_HEXEx_l 				FBCALL ( num as ulongint, digits as long ) as FBSTRING ptr
-declare function fb_HEXEx_p 				FBCALL ( p as const any ptr, digits as long ) as FBSTRING ptr
+declare function fb_HEX_b 					FBCALL ( num as ubyte, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_HEX_s 					FBCALL ( num as ushort, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_HEX_i 					FBCALL ( num as ulong, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_HEX_l 					FBCALL ( num as ulongint, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_HEX_p 					FBCALL ( p as const any ptr, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_HEXEx_b 				FBCALL ( num as ubyte, digits as long, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_HEXEx_s 				FBCALL ( num as ushort, digits as long, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_HEXEx_i 				FBCALL ( num as ulong, digits as long, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_HEXEx_l 				FBCALL ( num as ulongint, digits as long, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_HEXEx_p 				FBCALL ( p as const any ptr, digits as long, result as FBSTRING ptr ) as FBSTRING ptr
 
 declare function fb_WstrBin_b 				FBCALL ( num as ubyte ) as FB_WCHAR ptr
 declare function fb_WstrBin_s 				FBCALL ( num as ushort ) as FB_WCHAR ptr
@@ -329,35 +309,35 @@ declare function fb_WstrOctEx_i 			FBCALL ( num as ulong, digits as long ) as FB
 declare function fb_WstrOctEx_l 			FBCALL ( num as ulongint, digits as long ) as FB_WCHAR ptr
 declare function fb_WstrOctEx_p 			FBCALL ( p as const any ptr, digits as long ) as FB_WCHAR ptr
 
-declare function fb_MKD 					FBCALL ( num as double ) as FBSTRING ptr
-declare function fb_MKS 					FBCALL ( num as single ) as FBSTRING ptr
-declare function fb_MKSHORT 				FBCALL ( num as short ) as FBSTRING ptr
-declare function fb_MKI 					FBCALL ( num as ssize_t ) as FBSTRING ptr
-declare function fb_MKL 					FBCALL ( num as long ) as FBSTRING ptr
-declare function fb_MKLONGINT 				FBCALL ( num as longint ) as FBSTRING ptr
-declare function fb_LEFT 					FBCALL ( str as FBSTRING ptr, chars as ssize_t ) as FBSTRING ptr
-declare function fb_RIGHT 					FBCALL ( str as FBSTRING ptr, chars as ssize_t ) as FBSTRING ptr
-declare function fb_SPACE 					FBCALL ( chars as ssize_t ) as FBSTRING ptr
-declare function fb_LTRIM 					FBCALL ( str as FBSTRING ptr ) as FBSTRING ptr
-declare function fb_LTrimEx 				FBCALL ( str as FBSTRING ptr, pattern as FBSTRING ptr ) as FBSTRING ptr
-declare function fb_LTrimAny 				FBCALL ( str as FBSTRING ptr, pattern as FBSTRING ptr ) as FBSTRING ptr
-declare function fb_RTRIM 					FBCALL ( str as FBSTRING ptr ) as FBSTRING ptr
-declare function fb_RTrimEx 				FBCALL ( str as FBSTRING ptr, pattern as FBSTRING ptr ) as FBSTRING ptr
-declare function fb_RTrimAny 				FBCALL ( str as FBSTRING ptr, pattern as FBSTRING ptr ) as FBSTRING ptr
-declare function fb_TRIM 					FBCALL ( src as FBSTRING ptr ) as FBSTRING ptr
-declare function fb_TrimEx 					FBCALL ( str as FBSTRING ptr, pattern as FBSTRING ptr ) as FBSTRING ptr
-declare function fb_TrimAny 				FBCALL ( str as FBSTRING ptr, pattern as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_MKD 					FBCALL ( num as double, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_MKS 					FBCALL ( num as single, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_MKSHORT 				FBCALL ( num as short, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_MKI 					FBCALL ( num as ssize_t, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_MKL 					FBCALL ( num as long, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_MKLONGINT 				FBCALL ( num as longint, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_LEFT 					FBCALL ( str as FBSTRING ptr, chars as ssize_t, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_RIGHT 					FBCALL ( str as FBSTRING ptr, chars as ssize_t, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_SPACE 					FBCALL ( chars as ssize_t, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_LTRIM 					FBCALL ( str as FBSTRING ptr, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_LTrimEx 				FBCALL ( str as FBSTRING ptr, pattern as FBSTRING ptr, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_LTrimAny 				FBCALL ( str as FBSTRING ptr, pattern as FBSTRING ptr, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_RTRIM 					FBCALL ( str as FBSTRING ptr, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_RTrimEx 				FBCALL ( str as FBSTRING ptr, pattern as FBSTRING ptr, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_RTrimAny 				FBCALL ( str as FBSTRING ptr, pattern as FBSTRING ptr, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_TRIM 					FBCALL ( src as FBSTRING ptr, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_TrimEx 					FBCALL ( str as FBSTRING ptr, pattern as FBSTRING ptr, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_TrimAny 				FBCALL ( str as FBSTRING ptr, pattern as FBSTRING ptr, result as FBSTRING ptr ) as FBSTRING ptr
 declare sub 	 fb_StrLset 				FBCALL ( dst as FBSTRING ptr, src as FBSTRING ptr )
 declare sub 	 fb_StrRset 				FBCALL ( dst as FBSTRING ptr, src as FBSTRING ptr )
-declare function fb_StrLcase2 				FBCALL ( src as FBSTRING ptr, mode as long ) as FBSTRING ptr
-declare function fb_StrUcase2 				FBCALL ( src as FBSTRING ptr, mode as long ) as FBSTRING ptr
-declare function fb_StrFill1 				FBCALL ( cnt as ssize_t, fchar as long ) as FBSTRING ptr
-declare function fb_StrFill2 				FBCALL ( cnt as ssize_t, src as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_StrLcase2 				FBCALL ( src as FBSTRING ptr, mode as long, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_StrUcase2 				FBCALL ( src as FBSTRING ptr, mode as long, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_StrFill1 				FBCALL ( cnt as ssize_t, fchar as long, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_StrFill2 				FBCALL ( cnt as ssize_t, src as FBSTRING ptr, result as FBSTRING ptr ) as FBSTRING ptr
 declare function fb_StrInstr 				FBCALL ( start as ssize_t, src as FBSTRING ptr, patt as FBSTRING ptr ) as ssize_t
 declare function fb_StrInstrAny 			FBCALL ( start as ssize_t, src as FBSTRING ptr, patt as FBSTRING ptr ) as ssize_t
 declare function fb_StrInstrRev 			FBCALL ( src as FBSTRING ptr, patt as FBSTRING ptr, start as ssize_t ) as ssize_t
 declare function fb_StrInstrRevAny 			FBCALL ( src as FBSTRING ptr, patt as FBSTRING ptr, start as ssize_t ) as ssize_t
-declare function fb_StrMid 					FBCALL ( src as FBSTRING ptr, start as ssize_t, len as ssize_t ) as FBSTRING ptr
+declare function fb_StrMid 					FBCALL ( src as FBSTRING ptr, start as ssize_t, len as ssize_t, result as FBSTRING ptr ) as FBSTRING ptr
 declare sub 	 fb_StrAssignMid 			FBCALL ( dst as FBSTRING ptr, start as ssize_t, len as ssize_t, src as FBSTRING ptr )
 
 /''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -390,7 +370,7 @@ declare function fb_FloatExToWstr    			   ( val as double, buffer as FB_WCHAR p
 declare function fb_DoubleToWstr			FBCALL ( num as double ) as FB_WCHAR ptr
 declare function fb_StrToWstr 				FBCALL ( src as const ubyte ptr ) as FB_WCHAR ptr
 
-declare function fb_WstrToStr 				FBCALL ( src as const FB_WCHAR ptr ) as FBSTRING ptr
+declare function fb_WstrToStr 				FBCALL ( src as const FB_WCHAR ptr, result as FBSTRING ptr ) as FBSTRING ptr
 declare function fb_WstrToDouble 			FBCALL ( src as const FB_WCHAR ptr, len as ssize_t ) as double
 declare function fb_WstrToBool 				FBCALL ( src as const FB_WCHAR ptr, len as ssize_t ) as ubyte
 declare function fb_WstrToInt 				FBCALL ( src as const FB_WCHAR ptr, len as ssize_t ) as long
@@ -437,8 +417,8 @@ declare sub 	 fb_WstrAssignMid 			FBCALL ( dst as FB_WCHAR ptr, dst_len as ssize
  * VB-compatible functions
  *************************************************************************************************'/
 
-declare function fb_StrFormat 				FBCALL ( value as double, mask as FBSTRING ptr ) as FBSTRING ptr
-declare function fb_hStrFormat 				FBCALL ( value as double, mask as const ubyte ptr, mask_length as size_t ) as FBSTRING ptr
+declare function fb_StrFormat 				FBCALL ( value as double, mask as FBSTRING ptr, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_hStrFormat 				FBCALL ( value as double, mask as const ubyte ptr, mask_length as size_t, result as FBSTRING ptr ) as FBSTRING ptr
 
 declare function fb_VALBOOL 				FBCALL ( str as FBSTRING ptr ) as ubyte
 declare function fb_VALINT 					FBCALL ( str as FBSTRING ptr ) as long

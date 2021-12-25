@@ -21,9 +21,6 @@ function fb_ChDir FBCALL ( path as FBSTRING ptr ) as long
 	res = chdir_( path->data )
 #endif
 
-	/' del if temp '/
-	fb_hStrDelTemp( path )
-
 	return res
 end function
 end extern

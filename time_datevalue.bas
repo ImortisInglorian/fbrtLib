@@ -10,8 +10,6 @@ function fb_DateValue FBCALL ( s as FBSTRING ptr ) as long
     dim as long _day
     dim as long succeeded = fb_DateParse( s, @_day, @_month, @_year )
 
-    fb_hStrDelTemp( s )
-
     if ( succeeded = 0 ) then
         fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
         return 0
