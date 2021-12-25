@@ -1,18 +1,19 @@
 /' parse a string date '/
 
 #include "fb.bi"
+#include "destruct_string.bi"
 #include "crt/ctype.bi"
 
-extern "C"
 /':::::'/
 private function fb_hIsMonth( text as const ubyte ptr, text_len as size_t, end_text as const ubyte ptr ptr, short_name as long, localized as long ) as long
     dim as const ubyte ptr txt_end = text
     dim as long _month
+    dim as destructable_string tmp_str
     for _month = 1 to 12
-        dim as FBSTRING ptr sMonthName = fb_IntlGetMonthName( _month, short_name, not(localized) )
+        dim as FBSTRING ptr sMonthName = fb_IntlGetMonthName( _month, short_name, not(localized), @tmp_str )
         DBG_ASSERT( sMonthName <> NULL )
         scope
-            dim as size_t month_len = FB_STRSIZE( sMonthName )
+            dim as size_t month_len = sMonthName->len
             dim as size_t _len = iif((text_len < month_len), text_len, month_len )
             dim as long is_same = (FB_MEMCMP( text, sMonthName->data, _len ) = 0)
 
@@ -134,6 +135,7 @@ private function InlineSelect( index as long, num1 as long, num2 as long, num3 a
     return 0
 end function
 
+extern "C"
 /':::::'/
 function fb_hDateParse( text as const ubyte ptr, text_len as size_t, pDay as long ptr, pMonth as long ptr, pYear as long ptr, pLength as size_t ptr ) as long
     dim as size_t length = 0, _len = text_len

@@ -11,10 +11,6 @@
 #include "fb.bi"
 #include "crt\stddef.bi"
 
-/''''''''''
- * internal helper routines
- *********'/
-
 /' alloc every 32-bytes '/
 #define hStrRoundSize( size ) (((size) + 31) and Not(31))
 
@@ -95,4 +91,3 @@ sub fb_hStrCopy FBCALL ( dst as ubyte ptr, src as const ubyte ptr, bytes as ssiz
 	/' add the null-term '/
 	*dst = asc(!"\000") '' NUL CHAR
 end sub
-end extern

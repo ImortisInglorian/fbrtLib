@@ -17,6 +17,6 @@ function fb_DrvIntlGetMonthName ( _month as long, short_names as long, result as
 		_lctype = cast(LCTYPE, (LOCALE_SMONTHNAME1 + _month - 1))
 	end if
 
-	Return GetLocaleString( _lctype, result )
+	Return _GetLocaleString( _lctype, result )
 end function
 end extern

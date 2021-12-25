@@ -1,19 +1,19 @@
 /' detects EOF for file device '/
 
 #include "fb.bi"
+#include "destruct_string.bi"
 
 extern "C"
 sub fb_DevScrnFillInput( info as DEV_SCRN_INFO ptr )
-	dim as FBSTRING ptr _str
+	dim as destructable_string _str
 	dim as size_t _len = 0
 
-	_str = fb_Inkey( )
-	if ( _str <> NULL ) then
-		_len = FB_STRSIZE( _str )
-		if ( (_str->data <> NULL) and (_len > 0) ) then
+	if ( fb_Inkey( @_str ) <> NULL ) then
+		_len = _str.len
+		if ( (_str.data <> NULL) and (_len > 0) ) then
 			DBG_ASSERT(_len < sizeof( ARRAY_SIZEOF( info->buffer ) ))
 			/' copy null-term too '/
-			memcpy( @info->buffer(0), _str->data, _len+1 )
+			memcpy( @info->buffer(0), _str.data, _len+1 )
 		end if
 	end if
 

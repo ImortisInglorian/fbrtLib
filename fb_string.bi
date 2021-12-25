@@ -100,8 +100,6 @@
 	#undef fb_WstrAssignMid
 #endif
 
-extern "C"
-
 /' Returns a string length.
  '/
 #define FB_STRSIZE(s) (cast(FBSTRING ptr, s)->len)
@@ -187,6 +185,7 @@ declare function fb_hStrSkipCharRev 		FBCALL ( s as ubyte ptr, len as ssize_t, c
 
 
 /' public '/
+extern "C"
 
 declare function fb_StrInit 				FBCALL ( dst as any ptr, dst_size as ssize_t, src as any ptr,  src_size as ssize_t, fill_rem as long ) as any ptr
 declare function fb_StrAssign				FBCALL ( dst as any ptr, dst_size as ssize_t, src as any ptr,  src_size as ssize_t, fill_rem as long ) as any ptr

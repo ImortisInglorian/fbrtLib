@@ -1,6 +1,7 @@
 /' QB compatible OPEN '/
 
 #include "fb.bi"
+#include "destruct_string.bi"
 
 extern "C"
 function fb_FileOpenQB FBCALL ( _str as FBSTRING ptr, mode as ulong, access_ as ulong, _lock as ulong, fnum as long, _len as long ) as long
@@ -83,8 +84,9 @@ function fb_FileOpenQB FBCALL ( _str as FBSTRING ptr, mode as ulong, access_ as 
 								 @fb_DevScrnOpen )
 	/' pipe? '/
 	elseif ( (str_len >= 5) and (strncasecmp( _str->data, "PIPE:", 5 ) = 0) ) then
+		dim as destructable_string tmp
 		return fb_FileOpenVfsEx( FB_FILE_TO_HANDLE(fnum), _
-								 fb_StrMid( _str, 6, str_len - 5 ), _
+								 fb_StrMid( _str, 6, str_len - 5, @tmp ), _
 								 mode, _
 								 access_, _
 								 _lock, _

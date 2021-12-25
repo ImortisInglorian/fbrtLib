@@ -22,7 +22,7 @@ function fb_DrvIntlGetWeekdayName ( _weekday as long, short_names as long, resul
 		_lctype = cast(LCTYPE, (LOCALE_SDAYNAME1 + _weekday - 2))
 	end if
 
-	Return GetLocaleString ( _lctype, result )
+	Return _GetLocaleString ( _lctype, result )
 end function
 end extern
 

@@ -1,6 +1,7 @@
 /' console line input function for wstrings '/
 
 #include "fb.bi"
+#include "destruct_string.bi"
 
 '' This already exists in the non-wstr version
 extern as zString ptr pszDefaultQuestion
@@ -9,7 +10,7 @@ extern "C"
 #if defined( HOST_WIN32 ) or defined( HOST_DOS )
 
 function fb_ConsoleLineInputWstr( text as const FB_WCHAR ptr, dst as FB_WCHAR ptr, max_chars as ssize_t, addquestion as long, addnewline as long ) as long
-    dim as FBSTRING ptr tmp_result
+    dim as destructable_string tmp_result
 
     /' !!!FIXME!!! no support for unicode input '/
 
@@ -22,24 +23,20 @@ function fb_ConsoleLineInputWstr( text as const FB_WCHAR ptr, dst as FB_WCHAR pt
 
         if ( addquestion <> FB_FALSE ) then
             fb_PrintFixString( 0, pszDefaultQuestion, 0 )
-		end if
+        end if
     end if
 
     FB_UNLOCK()
 
-    tmp_result = fb_ConReadLine( FALSE )
+    fb_ConReadLine( FALSE, @tmp_result )
 
     if ( addnewline <> NULL ) then
-		fb_PrintVoid( 0, FB_PRINT_NEWLINE )
-	end if
+        fb_PrintVoid( 0, FB_PRINT_NEWLINE )
+    end if
 
-    if ( tmp_result = NULL ) then
-    	return fb_ErrorSetNum( FB_RTERROR_OUTOFMEM )
-	end if
+    fb_WstrAssignFromA( dst, max_chars, @tmp_result, -1 )
 
-	fb_WstrAssignFromA( dst, max_chars, tmp_result, -1 )
-
-	return fb_ErrorSetNum( FB_RTERROR_OK )
+    return fb_ErrorSetNum( FB_RTERROR_OK )
 end function
 
 #else

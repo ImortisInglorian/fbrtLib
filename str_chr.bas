@@ -8,7 +8,7 @@ function fb_CHR cdecl ( dst as FBSTRING ptr, args as long, ... ) as FBSTRING ptr
 	dim ap as any ptr
 	dim num as ulong
 	dim i as long
-	dim as destructable_string as tmp_str
+	dim as destructable_string tmp_str
 
 	DBG_ASSERT( dst <> NULL )
 

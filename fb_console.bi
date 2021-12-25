@@ -68,7 +68,7 @@ declare sub 	 fb_ConsoleViewUpdate			( )
 declare sub 	 fb_ConsoleScroll    			( nrows as long )
 
 declare function fb_ConsoleGetkey    			( ) as long
-declare function fb_ConsoleInkey     			( ) as FBSTRING ptr
+declare function fb_ConsoleInkey     			( result as FBSTRING ptr ) as FBSTRING ptr
 declare function fb_ConsoleKeyHit    			( ) as long
 
 declare function fb_ConsoleMultikey  			( scancode as long ) as long
