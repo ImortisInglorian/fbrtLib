@@ -4,8 +4,9 @@
 
 extern "C"
 /':::::'/
-function fb_InkeyQB FBCALL ( ) as FBSTRING ptr
-	dim as FBSTRING ptr res = fb_Inkey()
+function fb_InkeyQB FBCALL ( result as FBSTRING ptr ) as FBSTRING ptr
+	DBG_ASSERT( result <> NULL )
+	dim as FBSTRING ptr res = fb_Inkey( result )
 	
 	FB_LOCK()
 	

@@ -16,9 +16,6 @@ Function fb_ExecEx FBCALL( program as FBSTRING ptr, args as FBSTRING ptr, do_for
 	dim allocated as Boolean = False
 
 	if( (program = NULL) OrElse (program->data = NULL) ) then
-	
-		fb_hStrDelTemp( args )
-		fb_hStrDelTemp( program )
 		return -1
 	end if
 
@@ -39,13 +36,6 @@ Function fb_ExecEx FBCALL( program as FBSTRING ptr, args as FBSTRING ptr, do_for
 			argc = fb_hParseArgs( arguments, args->data, len_arguments )
 		end if
 	end if
-
-	FB_STRLOCK()
-
-	fb_hStrDelTemp_NoLock( args )
-	fb_hStrDelTemp_NoLock( program )
-
-	FB_STRUNLOCK()
 
 	if( argc = -1 ) then
 		If( allocated ) then DeAllocate(arguments) end if

@@ -3,15 +3,14 @@
 #include "fb.bi"
 
 extern "C"
-function fb_Inkey FBCALL ( ) as FBSTRING ptr
-	dim as FBSTRING ptr res
+function fb_Inkey FBCALL ( res as FBSTRING ptr ) as FBSTRING ptr
 
 	FB_LOCK()
 
 	if ( __fb_ctx.hooks.inkeyproc <> NULL ) then
-		res = __fb_ctx.hooks.inkeyproc( )
+		__fb_ctx.hooks.inkeyproc( res )
 	else
-		res = fb_ConsoleInkey( )
+		fb_ConsoleInkey( res )
 	end if
 
 	FB_UNLOCK()

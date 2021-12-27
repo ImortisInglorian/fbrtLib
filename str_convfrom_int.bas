@@ -50,9 +50,6 @@ function fb_VALINT FBCALL ( _str as FBSTRING ptr ) as long
 		_val = fb_hStr2Int( _str->data, FB_STRSIZE( _str ) )
 	end if
 
-	/' del if temp '/
-	fb_hStrDelTemp( _str )
-
 	return _val
 end function
 end extern

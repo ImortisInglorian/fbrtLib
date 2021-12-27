@@ -11,8 +11,6 @@ function fb_ConsoleInput FBCALL ( text as FBSTRING ptr, addquestion as long, add
 	fb_DevScrnInit_Read( )
 
 	if ( fb_IsRedirected( TRUE ) <> NULL ) then
-		/' del if temp '/
-		fb_hStrDelTemp( text )
 
 		return fb_FileInput( 0 )
 	end if

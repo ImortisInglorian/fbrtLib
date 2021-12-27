@@ -1,20 +1,16 @@
 /' rtrim$ function '/
 
 #include "fb.bi"
+#include "destruct_string.bi"
 
 extern "C"
-function fb_RTRIM FBCALL( src as FBSTRING ptr ) as FBSTRING ptr
-	dim as FBSTRING ptr dst
-	dim as ssize_t _len
+function fb_RTRIM FBCALL( src as FBSTRING ptr, result as FBSTRING ptr ) as FBSTRING ptr
+	dim as destructable_string dst
+	dim as ssize_t _len = 0
 
-	if ( src = NULL ) then
-		return @__fb_ctx.null_desc
-	end if
-	
-   FB_STRLOCK()
-	
-	_len = 0
-	if ( src->data <> NULL ) then
+	DBG_ASSERT( result <> NULL )
+
+	if ( src <> NULL andalso src->data <> NULL) then
 		_len = FB_STRSIZE( src )
 		if ( _len > 0 ) then
 			dim as ubyte ptr src_ptr = fb_hStrSkipCharRev( src->data, _len, 32 )
@@ -23,23 +19,13 @@ function fb_RTRIM FBCALL( src as FBSTRING ptr ) as FBSTRING ptr
 	end if
 
 	if ( _len > 0 ) then
-		/' alloc temp string '/
-      dst = fb_hStrAllocTemp_NoLock( NULL, _len )
-		if ( dst <> NULL ) then
+		if ( fb_hStrAlloc( @dst, _len ) <> NULL ) then
 			/' simple copy '/
-			fb_hStrCopy( dst->data, src->data, _len )
-		else
-			dst = @__fb_ctx.null_desc
+			fb_hStrCopy( dst.data, src->data, _len )
 		end if
-	else
-		dst = @__fb_ctx.null_desc
 	end if
 
-	/' del if temp '/
-	fb_hStrDelTemp_NoLock( src )
-
-	FB_STRUNLOCK()
-
-	return dst
+	fb_StrSwapDesc( @dst, result )
+	return result
 end function
 end extern

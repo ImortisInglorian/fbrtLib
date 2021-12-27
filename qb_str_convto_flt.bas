@@ -5,64 +5,63 @@
  '/
 
 #include "fb.bi"
+#include "destruct_string.bi"
 
 
 /':::::'/
 extern "C"
-function fb_FloatToStrQB FBCALL ( num as single ) as FBSTRING ptr
-	dim as FBSTRING ptr dst
+function fb_FloatToStrQB FBCALL ( num as single, result as FBSTRING ptr ) as FBSTRING ptr
+	dim tmp_str as destructable_string
 
-	/' alloc temp string '/
-	dst = fb_hStrAllocTemp( NULL, 7+8 )
-	if dst <> NULL then
+	DBG_ASSERT( result <> NULL )
+
+	if ( fb_hStrAlloc( @tmp_str, 7+8 ) <> NULL ) then
 		dim as size_t tmp_len
+		dim as ubyte ptr str_data = tmp_str.data
 
 		/' convert '/
-		sprintf( dst->data, "% .7g", num )
+		sprintf( str_data, "% .7g", num )
 
-		tmp_len = strlen( dst->data )				/' fake len '/
+		tmp_len = strlen( str_data ) /' fake len '/
 
 		/' skip the dot at end if any '/
 		if tmp_len > 0 then
-			if dst->data[tmp_len-1] = asc(".") then
-				dst->data[tmp_len-1] = asc(!"\000")
+			if str_data[tmp_len-1] = asc(".") then
+				str_data[tmp_len-1] = asc(!"\000")
 				tmp_len -= 1
 			end if
 		end if
-		fb_hStrSetLength( dst, tmp_len )
-	else
-		dst = @__fb_ctx.null_desc
+		fb_hStrSetLength( @tmp_str, tmp_len )
 	end if
 	
-	return dst
+	fb_StrSwapDesc( result, @tmp_str )
+	return result
 end function
 
 /':::::'/
-function fb_DoubleToStrQB FBCALL ( num as double ) as FBSTRING ptr
-	dim as FBSTRING ptr dst
+function fb_DoubleToStrQB FBCALL ( num as double, result as FBSTRING ptr ) as FBSTRING ptr
+	dim tmp_str as destructable_string
 
-	/' alloc temp string '/
-	dst = fb_hStrAllocTemp( NULL, 16+8 )
-	if dst <> NULL then
+	if ( fb_hStrAlloc( @tmp_str, 16+8 ) <> NULL ) then
 		dim as size_t tmp_len
+		dim as ubyte ptr str_data = tmp_str.data
 
 		/' convert '/
-		sprintf( dst->data, "% .16g", num )
+		sprintf( str_data, "% .16g", num )
 
-		tmp_len = strlen( dst->data )				/' fake len '/
+		tmp_len = strlen( str_data ) /' fake len '/
 
 		/' skip the dot at end if any '/
 		if tmp_len > 0 then
-			if dst->data[tmp_len-1] = asc(".") then
-				dst->data[tmp_len-1] = asc(!"\000")
+			if str_data[tmp_len-1] = asc(".") then
+				str_data[tmp_len-1] = asc(!"\000")
 				tmp_len -= 1
 			end if
 		end if
-		fb_hStrSetLength( dst, tmp_len )
-	else
-		dst = @__fb_ctx.null_desc
+		fb_hStrSetLength( @tmp_str, tmp_len )
 	end if
 
-	return dst
+	fb_StrSwapDesc( result, @tmp_str )
+	return result
 end function
 end extern

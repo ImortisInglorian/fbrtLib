@@ -2,70 +2,56 @@
 
 #include "fb.bi"
 #include "crt/ctype.bi"
+#include "destruct_string.bi"
 
 extern "C"
-function fb_StrUcase2 FBCALL ( src as FBSTRING ptr, mode as long ) as FBSTRING ptr
-	dim as FBSTRING ptr dst
+function fb_StrUcase2 FBCALL ( src as FBSTRING ptr, mode as long, result as FBSTRING ptr ) as FBSTRING ptr
+	dim as destructable_string dst
 	dim as ssize_t i = any, _len = 0
 	dim as long c
 	dim as ubyte ptr s, d
 
-	if ( src = NULL ) then
-		return @__fb_ctx.null_desc
-	end if
-	
-	FB_STRLOCK()
+	DBG_ASSERT( result <> NULL )
 
-	if ( src->data <> NULL ) then
+	if ( src <> NULL andalso src->data <> NULL ) then
 		_len = FB_STRSIZE( src )
 
-		/' alloc temp string '/
-		dst = fb_hStrAllocTemp_NoLock( NULL, _len )
-	else
-		dst = NULL
-	end if
+		if ( fb_hStrAlloc( @dst, _len ) <> NULL) then
+			s = src->data
+			d = dst.data
 
-	if ( dst ) then
-		s = src->data
-		d = dst->data
+			if ( mode = 1 ) then
+				i = 0
+				while( i < _len )
+					c = *s
+					s += 1
+					if ( (c >= asc("a")) and (c <= asc("z")) ) then
+						c -= 97 - 65
+					end if
+					*d = c
+					d += 1
+					i += 1				
+				wend
+			else
+				i = 0
+				while( i < _len )
+					c = *s
+					s += 1
+					if ( islower( c ) ) then
+						c = toupper( c )
+					end if
+					*d = c
+					d += 1
+					i += 1				
+				wend
+			end if
 
-		if ( mode = 1 ) then
-			i = 0
-			while( i < _len )
-				c = *s
-				s += 1
-				if ( (c >= asc("a")) and (c <= asc("z")) ) then
-					c -= 97 - 65
-				end if
-				*d = c
-				d += 1
-				i += 1				
-			wend
-		else
-			i = 0
-			while( i < _len )
-				c = *s
-				s += 1
-				if ( islower( c ) ) then
-					c = toupper( c )
-				end if
-				*d = c
-				d += 1
-				i += 1				
-			wend
+			/' null char '/
+			*d = 0
 		end if
-
-		/' null char '/
-		*d = 0
-	else
-		dst = @__fb_ctx.null_desc
 	end if
 
-	/' del if temp '/
-	fb_hStrDelTemp_NoLock( src )
-
-	FB_STRUNLOCK()
-
-	return dst
+	fb_StrSwapDesc( @dst, result )
+	return result
 end function
 end extern

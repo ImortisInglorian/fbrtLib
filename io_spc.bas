@@ -1,6 +1,7 @@
 /' spc and tab functions '/
 
 #include "fb.bi"
+#include "destruct_string.bi"
 
 extern "C"
 sub fb_PrintTab FBCALL ( fnum as long, newcol as long )
@@ -47,17 +48,18 @@ sub fb_PrintTab FBCALL ( fnum as long, newcol as long )
         if ( handle->type = FB_FILE_TYPE_PIPE ) then
             fb_PrintPadEx ( handle, 0 )
         else
+            dim as destructable_string tmp
             if ( (newcol >= 0) and (cast(ulong, newcol) > handle->line_length) ) then
-                fb_PrintStringEx( handle, fb_StrFill1( newcol - handle->line_length - 1, asc(" ") ), 0 )
+                fb_PrintStringEx( handle, fb_StrFill1( newcol - handle->line_length - 1, asc(" "), @tmp ), 0 )
             else
                 if ( handle->mode = FB_FILE_MODE_BINARY ) then
-                    fb_PrintStringEx( handle, fb_StrAllocTempDescF( @FB_BINARY_NEWLINE, sizeof( FB_BINARY_NEWLINE ) ), 0 )
+                    fb_PrintStringEx( handle, fb_StrAllocDescF( @FB_BINARY_NEWLINE, sizeof( FB_BINARY_NEWLINE ), @tmp ), 0 )
                 else
-                    fb_PrintStringEx( handle, fb_StrAllocTempDescF( @FB_NEWLINE, sizeof( FB_NEWLINE ) ), 0 )
+                    fb_PrintStringEx( handle, fb_StrAllocDescF( @FB_NEWLINE, sizeof( FB_NEWLINE ), @tmp ), 0 )
                 end if
 
                 if ( newcol > 0 ) then
-                    fb_PrintStringEx( handle, fb_StrFill1( newcol - 1, asc(" ") ), 0 )
+                    fb_PrintStringEx( handle, fb_StrFill1( newcol - 1, asc(" "), @tmp ), 0 )
                 end if
 
             end if
@@ -109,7 +111,8 @@ sub fb_PrintSPC FBCALL ( fnum as long, n as ssize_t )
 
         fb_Locate( 0, newcol, -1, 0, 0 )
     else
-        fb_PrintStringEx( handle, fb_StrFill1( n, asc(" ") ), 0 )
+        dim as destructable_string tmp
+        fb_PrintStringEx( handle, fb_StrFill1( n, asc(" "), @tmp ), 0 )
     end if
 
     FB_UNLOCK()

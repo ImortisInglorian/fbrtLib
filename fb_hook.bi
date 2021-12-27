@@ -11,12 +11,12 @@
 
 
 extern "C"
-type FB_INKEYPROC as function ( ) as FBSTRING ptr
+type FB_INKEYPROC as function ( res as FBSTRING ptr ) as FBSTRING ptr
 type FB_GETKEYPROC as function ( ) as long
 type FB_KEYHITPROC as function ( ) as long
 
-declare function fb_Inkey           FBCALL ( ) as FBSTRING ptr
-declare function fb_InkeyQB         FBCALL ( ) as FBSTRING ptr
+declare function fb_Inkey           FBCALL ( res as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_InkeyQB         FBCALL ( res as FBSTRING ptr ) as FBSTRING ptr
 declare function fb_Getkey          FBCALL ( ) as long
 declare function fb_KeyHit          FBCALL ( ) as long
 

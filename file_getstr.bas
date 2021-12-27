@@ -32,11 +32,6 @@ function fb_FileGetStrEx( handle as FB_FILE ptr, _pos as fb_off_t, _str as any p
 		*bytesread = _len
 	end if
 
-	/' del if temp '/
-	if ( str_len = -1 ) then
-		fb_hStrDelTemp( cast(FBSTRING ptr, _str) )		/' will free the temp desc if fix-len passed '/
-	end if
-
 	return res
 end function
 

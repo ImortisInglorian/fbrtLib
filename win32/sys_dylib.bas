@@ -11,9 +11,6 @@ function fb_DylibLoad FBCALL ( library as FBSTRING ptr ) as any ptr
 		res = LoadLibrary( library->data )
 	end if
 
-	/' del if temp '/
-	fb_hStrDelTemp( library )
-
 	return res
 end function
 
@@ -40,9 +37,6 @@ function fb_DylibSymbol FBCALL ( library as any ptr, symbol as FBSTRING ptr ) as
 			next
 		end if
 	end if
-
-	/' del if temp '/
-	fb_hStrDelTemp( symbol )
 
 	return proc
 end function

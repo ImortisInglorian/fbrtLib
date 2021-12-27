@@ -30,11 +30,11 @@ declare sub 	 fb_hEnd 						   ( errlevel as long )
 
 declare sub 	 fb_Beep 					FBCALL ( )
 
-declare function fb_Command 				FBCALL ( argc as long ) as FBSTRING ptr
-declare function fb_GetEnviron 				FBCALL ( varname as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_Command 				FBCALL ( argc as long, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_GetEnviron 				FBCALL ( varname as FBSTRING ptr, result as FBSTRING ptr ) as FBSTRING ptr
 declare function fb_SetEnviron 				FBCALL ( str as FBSTRING ptr ) as long
-declare function fb_CurDir 					FBCALL ( ) as FBSTRING ptr
-declare function fb_ExePath 				FBCALL ( ) as FBSTRING ptr
+declare function fb_CurDir 					FBCALL ( result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_ExePath 				FBCALL ( result as FBSTRING ptr ) as FBSTRING ptr
 declare function fb_Shell 					FBCALL ( program as FBSTRING ptr ) as long
 declare function fb_hShell 				    	   ( program as ubyte ptr ) as long
 declare function fb_Run 					FBCALL ( program as FBSTRING ptr, args as FBSTRING ptr ) as long

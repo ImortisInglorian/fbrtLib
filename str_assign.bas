@@ -8,15 +8,7 @@ function fb_StrAssignEx FBCALL ( dst as any ptr, dst_size as ssize_t, src as any
 	dim src_ptr as ubyte ptr
 	dim src_len as ssize_t
 
-	FB_STRLOCK()
-
-	if ( dst = NULL ) then
-		if( src_size = -1 ) then
-			fb_hStrDelTemp_NoLock( cast(FBSTRING ptr, src) )
-		end if
-      
-		FB_STRUNLOCK()
-      
+	if ( dst = NULL ) then      
 		return dst
 	end if
 
@@ -38,7 +30,7 @@ function fb_StrAssignEx FBCALL ( dst as any ptr, dst_size as ssize_t, src as any
 			end if
 		else
 			/' if src is a temp, just copy the descriptor '/
-			if ( (src_size = -1) andalso FB_ISTEMP(src) ) then
+			if ( (src_size = -1) ) then
 				if ( is_init = FB_FALSE ) then
 					fb_StrDelete( dstr )
 				end if
@@ -50,10 +42,6 @@ function fb_StrAssignEx FBCALL ( dst as any ptr, dst_size as ssize_t, src as any
 				cast(FBSTRING ptr, src)->data = NULL
 				cast(FBSTRING ptr, src)->len = 0
 				cast(FBSTRING ptr, src)->size = 0
-            
-				fb_hStrDelTempDesc( cast(FBSTRING ptr, src) )
-            
-				FB_STRUNLOCK()
             
 				return dst
 			end if
@@ -96,13 +84,6 @@ function fb_StrAssignEx FBCALL ( dst as any ptr, dst_size as ssize_t, src as any
 			end if
 		end if
 	end if
-
-
-	/' delete temp? '/
-	if ( src_size = -1 ) then
-		fb_hStrDelTemp_NoLock( cast(FBSTRING ptr, src) )
-	end if
-	FB_STRUNLOCK()
 
 	return dst
 end function

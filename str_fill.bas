@@ -1,42 +1,35 @@
 /' string$ function '/
 
 #include "fb.bi"
+#include "destruct_string.bi"
 
 extern "C"
-function fb_StrFill1 FBCALL ( cnt as ssize_t, fchar as long ) as FBSTRING ptr
-	dim as FBSTRING ptr dst
+function fb_StrFill1 FBCALL ( cnt as ssize_t, fchar as long, result as FBSTRING ptr ) as FBSTRING ptr
+	dim as destructable_string dst
+
+	DBG_ASSERT( result <> NULL )
 
 	if ( cnt > 0 ) then
-		/' alloc temp string '/
-        dst = fb_hStrAllocTemp( NULL, cnt )
-		if ( dst <> NULL ) then
+		if ( fb_hStrAlloc( @dst, cnt ) <> NULL ) then
 			/' fill it '/
-			memset( dst->data, fchar, cnt )
+			memset( dst.data, fchar, cnt )
 			/' null char '/
-			dst->data[cnt] = asc( !"\000" ) '' NUL CHAR
-		else
-			dst = @__fb_ctx.null_desc
+			dst.data[cnt] = 0
 		end if
-	else
-		dst = @__fb_ctx.null_desc
 	end if
-	
-	return dst
+
+	fb_StrSwapDesc( @dst, result )
+	return result
 end function
 
-function fb_StrFill2 FBCALL ( cnt as ssize_t, src as FBSTRING ptr ) as FBSTRING ptr
-	dim as FBSTRING ptr dst
+function fb_StrFill2 FBCALL ( cnt as ssize_t, src as FBSTRING ptr, result as FBSTRING ptr ) as FBSTRING ptr
 	dim as long fchar
 
 	if ( (cnt > 0) and (src <> NULL) andalso (src->data <> NULL) andalso (FB_STRSIZE( src ) > 0) ) then
 		fchar = src->data[0]
-		dst = fb_StrFill1( cnt, fchar )
-	else
-		dst = @__fb_ctx.null_desc
+		fb_StrFill1( cnt, fchar, result )
 	end if
-	/' del if temp '/
-	fb_hStrDelTemp( src )
 
-	return dst
+	return result
 end function
 end extern

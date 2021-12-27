@@ -10,8 +10,6 @@ function fb_IsDate FBCALL ( s as FBSTRING ptr ) as long
     dim as long _day
     dim as long succeeded = fb_DateParse( s, @_day, @_month, @_year )
 
-    fb_hStrDelTemp( s )
-
     if ( succeeded = 0 ) then
 		return 0
 	end if
