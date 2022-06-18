@@ -56,8 +56,8 @@ declare sub 	 fb_ConsoleGetSize 		 FBCALL ( cols as long ptr, rows as long ptr )
 declare sub 	 fb_ConsoleGetXY   		 FBCALL ( col as long ptr, row as long ptr )
 
 declare function fb_ConsoleReadXY 		 FBCALL ( col as long, row as long, colorflag as long ) as ulong
-declare function fb_ConsoleColor     			( fc as long, bc as long, flags as long ) as long
-declare function fb_ConsoleGetColorAtt			( ) as long
+declare function fb_ConsoleColor     			( fc as ulong, bc as ulong, flags as long ) as ulong
+declare function fb_ConsoleGetColorAtt			( ) as ulong
 
 declare function fb_ConsoleView 		 FBCALL ( toprow as long, botrow as long ) as long
 declare function fb_ConsoleViewEx    			( toprow as long, botrow as long, set_cursor as long ) as long

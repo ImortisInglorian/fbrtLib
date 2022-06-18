@@ -4,7 +4,7 @@
 #include "fb_private_console.bi"
 
 Extern "c"
-Function fb_ConsoleColor( fc as long, bc as long, flags as long ) As Long
+Function fb_ConsoleColor( fc as ulong, bc as ulong, flags as long ) As uLong
 
 	dim map(0 to 7) as ubyte = { 0, 4, 2, 6, 1, 5, 3, 7 }
 	dim old_fg as long = __fb_con.fg_color
@@ -51,7 +51,7 @@ Function fb_ConsoleColor( fc as long, bc as long, flags as long ) As Long
 	return old_fg or (old_bg shl 16)
 End Function
 
-Function fb_ConsoleGetColorAtt( ) As Long
+Function fb_ConsoleGetColorAtt( ) As uLong
 
 	return Iif(__fb_con.inited, (__fb_con.fg_color Or (__fb_con.bg_color shl 4)), &h7)
 End Function
