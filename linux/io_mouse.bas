@@ -163,9 +163,12 @@ End Sub
 Extern "c"
 Function fb_ConsoleGetMouse(x as long ptr, y as long ptr, z as long ptr, buttons as long ptr, clip as long ptr) as long
 
-	dim as long temp_z, temp_buttons
-
 	if (__fb_con.inited = 0) then
+		if (x) then *x = -1
+		if (y) then *y = -1
+		if (z) then *z = -1
+		if (buttons) then *buttons = -1
+		if (clip) then *clip = -1
 		return fb_ErrorSetNum(FB_RTERROR_ILLEGALFUNCTIONCALL)
 	end if
 
@@ -182,7 +185,11 @@ Function fb_ConsoleGetMouse(x as long ptr, y as long ptr, z as long ptr, buttons
 			__fb_con.mouse_exit = mouse_exit
 			__fb_con.mouse_handler = mouse_handler
 		else
-			*x = -1 : *y = -1 : *z = -1 : *buttons = -1
+			if (x) then *x = -1
+			if (y) then *y = -1
+			if (z) then *z = -1
+			if (buttons) then *buttons = -1
+			if (clip) then *clip = -1			
 			BG_UNLOCK()
 			return fb_ErrorSetNum(FB_RTERROR_ILLEGALFUNCTIONCALL)
 		end if
@@ -192,11 +199,11 @@ Function fb_ConsoleGetMouse(x as long ptr, y as long ptr, z as long ptr, buttons
 		fb_hGetCh(FALSE)
 	end if
 
-	*x = mouse_x
-	*y = mouse_y
-	*z = mouse_z
-	*buttons = mouse_buttons
-	*clip = 0
+	if (x) then *x = mouse_x
+	if (y) then *y = mouse_y
+	if (z) then *z = mouse_z
+	if (buttons) then *buttons = mouse_buttons
+	if (clip) then *clip = 0
 
 	BG_UNLOCK()
 

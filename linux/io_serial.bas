@@ -18,7 +18,8 @@
 #define SERIAL_TIMEOUT	3	/' seconds  for write on open'/
 #define SREAD_TIMEOUT	70	/' if not receive any character in less 50 millisecs finish read process '/
 
-Private Sub alrm()
+Extern "c"
+Private Sub alrm( byval signal_number as long )
 	/' signal callback, do nothing '/
 End Sub
 
@@ -99,7 +100,6 @@ Private Function get_speed( speed as long ) as speed_t
 	Return Iif(curspeed = ENDSPD, BADSPEED, sp(n)(1))
 End function
 
-Extern "c"
 Function fb_SerialOpen
 	(
 		FB_FILE *handle,
