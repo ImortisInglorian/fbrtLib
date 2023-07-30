@@ -11,7 +11,7 @@ sub FB_CONPRINTRAW_( handle as fb_ConHooks ptr, pachText as const FB_TCHAR ptr, 
 
         fb_hConCheckScroll( handle )
 
-        if ( handle->FB_CON_HOOK_TWRITE( handle, cast(const ubyte ptr, pachText), copySize ) <> TRUE ) then
+        if ( handle->FB_CON_HOOK_TWRITE( handle, cast(const ubyte ptr, pachText), copySize ) = FALSE ) then
             exit while
 		end if
 
