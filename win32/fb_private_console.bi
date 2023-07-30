@@ -30,8 +30,7 @@ declare function fb_ConsoleGetRawYEx 				   ( hConsole as HANDLE ) as long
 declare function fb_ConsoleGetRawXEx 				   ( hConsole as HANDLE ) as long
 declare sub 	 fb_ConsoleGetRawXYEx 				   ( hConsole as HANDLE, col as long ptr, row as long ptr )
 declare sub 	 fb_ConsoleLocateRawEx 			   	   ( hConsole as HANDLE, row as long, col as long, cursor as long )
-declare function fb_ConsoleGetColorAttEx 			   ( hConsole as HANDLE ) as long
-declare sub 	 fb_ConsoleColorEx 				   	   ( hConsole as HANDLE, fc as long, bc as long )
+declare function fb_ConsoleGetColorAttEx 			   ( hConsole as HANDLE ) as ulong
 declare sub 	 fb_ConsoleClearViewRawEx 		 	   ( hConsole as HANDLE, x1 as long, y1 as long, x2 as long, y2 as long )
 declare sub 	 fb_hConsoleGetWindow 				   ( _left as long ptr, top as long ptr, cols as long ptr, rows as long ptr )
 declare function fb_ConsoleProcessEvents 			   ( ) as long

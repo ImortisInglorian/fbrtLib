@@ -24,9 +24,9 @@ type FB_CLSPROC as sub ( mode as long )
 
 declare sub 	 fb_Cls				FBCALL ( mode as long )
 
-type FB_COLORPROC as function ( fc as long, bc as long, flags as long ) as long
+type FB_COLORPROC as function ( fc as ulong, bc as ulong, flags as long ) as ulong
 
-declare function fb_Color			FBCALL ( fc as long, bc as long, flags as long ) as long
+declare function fb_Color			FBCALL ( fc as ulong, bc as ulong, flags as long ) as ulong
 
 type FB_LOCATEPROC as function ( row as long, col as long, cursor as long ) as long
 

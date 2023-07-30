@@ -31,7 +31,7 @@ function fb_DevFileOpen( handle as FB_FILE ptr, filename as const ubyte ptr, fna
 	dim as FILE ptr fp = NULL
 	dim as ubyte ptr openmask = NULL
 	dim as ubyte ptr fname
-	dim as long errorRet
+	dim as long errorRet = FB_RTERROR_OK
 
 	FB_LOCK()
 

@@ -41,10 +41,11 @@ function fb_ConsoleGetMouse( x as long ptr, y as long ptr, z as long ptr, button
 	end if
 
 	if ( inited = 0 ) then
-		*x = -1
-		*y = -1
-		*z = -1
-		*buttons = -1
+		if (x) then *x = -1
+		if (y) then *y = -1
+		if (z) then *z = -1
+		if (buttons) then *buttons = -1
+		if (clip) then *clip = -1
 		return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 	end if
 
@@ -69,11 +70,11 @@ function fb_ConsoleGetMouse( x as long ptr, y as long ptr, z as long ptr, button
 	fb_ConsoleProcessEvents( )
 	#endif
 
-	*x = last_x - 1
-	*y = last_y - 1
-	*z = last_z
-	*buttons = last_buttons
-	*clip = 0
+	if (x) then  *x = last_x - 1
+	if (y) then *y = last_y - 1
+	if (z) then *z = last_z
+	if (buttons) then *buttons = last_buttons
+	if (clip) then *clip = 0
 
 	fb_hConvertFromConsole( x, y, NULL, NULL )
 

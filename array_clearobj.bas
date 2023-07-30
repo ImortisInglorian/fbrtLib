@@ -3,25 +3,15 @@
 #include "fb.bi"
 
 extern "C"
-sub fb_hArrayCtorObj( array as FBARRAY ptr, ctor as FB_DEFCTOR, base_idx as size_t )
-	dim as size_t i, elements, element_len
-	dim as FBARRAYDIM ptr _dim
+sub fb_hArrayCtorObj( array as FBARRAY ptr, ctor as FB_DEFCTOR )
+	dim as size_t elements, element_len
 	dim as ubyte ptr this_
 
 	if ( array->_ptr = NULL ) then
 		exit sub
 	end if
 	
-	_dim = @array->dimTB(0)
-	elements = _dim->elements - base_idx
-	_dim += 1
-
-	i = 1
-	while( i < array->dimensions )
-		elements *= _dim->elements
-		i += 1
-		_dim += 1
-	wend
+	elements = fb_ArrayLen( array )
 
 	/' call ctors '/
 	element_len = array->element_len
@@ -45,7 +35,7 @@ function fb_ArrayClearObj FBCALL ( array as FBARRAY ptr, ctor as FB_DEFCTOR, dto
 	/' re-initialize (ctor can be NULL if there only is a dtor) '/
 	if( ctor <> 0) then
 		/' if a ctor exists, it should handle the whole initialization '/
-		fb_hArrayCtorObj( array, ctor, 0 )
+		fb_hArrayCtorObj( array, ctor )
 	else
 		/' otherwise, just clear '/
 		fb_ArrayClear( array )

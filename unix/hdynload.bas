@@ -8,7 +8,7 @@
 #define hDylibSymbol( lib, sym ) dlsym( lib, sym )
 
 Extern "c"
-Function fb_hDynLoad(libname as const ubyte ptr, funcname as const ubyte ptr ptr, funcptr as any ptr ptr) As FB_DYLIB
+Function fb_hDynLoad(libname as const ubyte ptr, funcname as const ubyte const ptr ptr, funcptr as any ptr ptr) As FB_DYLIB
 
 	dim lib as FB_DYLIB
 	dim i as ssize_t
@@ -40,7 +40,7 @@ Function fb_hDynLoad(libname as const ubyte ptr, funcname as const ubyte ptr ptr
 	return lib
 End Function
 
-Function fb_hDynLoadAlso( lib As FB_DYLIB, funcname as const ubyte ptr ptr, funcptr as any ptr ptr, count as ssize_t ) As Long
+Function fb_hDynLoadAlso( lib As FB_DYLIB, funcname as const ubyte const ptr ptr, funcptr as any ptr ptr, count as ssize_t ) As Long
 
 	/' Load functions '/
 	for i As ssize_t = 0 to count - 1

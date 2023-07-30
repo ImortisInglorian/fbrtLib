@@ -19,15 +19,10 @@ dim shared as FB_FILE_HOOKS hooks_dev_file = ( _
     @fb_DevFileFlush)
 
 extern "C"
-private function hCheckBOM( handle as FB_FILE ptr ) as long
+private function hCheckBOM( byval fp as FILE ptr, byval encod as FB_FILE_ENCOD ) as long
     dim as long res, bom = 0
-    dim as FILE ptr fp = cast(FILE ptr, handle->opaque)
 
-    if ( handle->mode = FB_FILE_MODE_APPEND ) then
-    	fseek( fp, 0, SEEK_SET )
-	end if
-
-    select case ( handle->encod )
+    select case ( encod )
 		case FB_FILE_ENCOD_UTF8:
 			if ( fread( @bom, 3, 1, fp ) <> 1 ) then
 				return 0
@@ -55,18 +50,13 @@ private function hCheckBOM( handle as FB_FILE ptr ) as long
 			res = 0
     end select
 
-    if ( handle->mode = FB_FILE_MODE_APPEND ) then
-    	fseek( fp, 0, SEEK_END )
-	end if
-
 	return res
 end function
 
-private function hWriteBOM( handle as FB_FILE ptr ) as long
+private function hWriteBOM( byval fp as FILE ptr, byval encod as FB_FILE_ENCOD ) as long
     dim as long bom
-    dim as FILE ptr fp = cast(FILE ptr, handle->opaque)
 
-    select case ( handle->encod )
+    select case ( encod )
 		case FB_FILE_ENCOD_UTF8:
 			bom = &h00BFBBEF
 			if ( fwrite( @bom, 3, 1, fp ) <> 1 ) then
@@ -99,6 +89,7 @@ function fb_DevFileOpenEncod ( handle as FB_FILE ptr, filename as const ubyte pt
 	dim as ubyte ptr openmask
 	dim as ubyte ptr fname
 	dim as long errorRet = FB_RTERROR_OK
+	dim as long effective_mode
 
 	FB_LOCK()
 
@@ -108,14 +99,13 @@ function fb_DevFileOpenEncod ( handle as FB_FILE ptr, filename as const ubyte pt
 	fb_hConvertPath( fname )
 
 	handle->hooks = @hooks_dev_file
+	effective_mode = handle->mode
 
 	select case ( handle->mode )
-		case FB_FILE_MODE_APPEND:
-			/' will create the file if it doesn't exist '/
-			openmask = sadd("ab")
-
-		case FB_FILE_MODE_INPUT:
-			/' will fail if file doesn't exist '/
+		case FB_FILE_MODE_INPUT, FB_FILE_MODE_APPEND:
+			/'	Even in append mode, try and open for reading first 
+				because trying to read the BOM in "ab" mode will fail 
+			'/
 			openmask = sadd("rb")
 
 		case FB_FILE_MODE_OUTPUT:
@@ -129,6 +119,31 @@ function fb_DevFileOpenEncod ( handle as FB_FILE ptr, filename as const ubyte pt
 
 	/' try opening '/
 	fp = fopen( fname, openmask )
+
+	if( handle->mode = FB_FILE_MODE_APPEND ) then
+		/'	if we weren't able to open an existing file for
+			append, then try writing instead 
+		'/
+		if( fp = NULL ) then
+			/' not found? handle mode as if output was specified '/
+			effective_mode = FB_FILE_MODE_OUTPUT
+			openmask = sadd("ab")
+			fp = fopen( fname, openmask )
+		else
+			fb_hSetFileBufSize( fp )
+
+			if( hCheckBOM( fp, handle->encod ) = 0 ) then
+				errorRet = FB_RTERROR_FILEIO
+				Goto fileCloseExit
+			else
+				/' if we have the correct BOM, then reopen the file for append ''/
+				openmask = sadd("ab")
+				fp = freopen( fname, openmask, fp )
+			end if
+		end if
+	end if
+
+	/' not opened '/
 	if ( fp = NULL ) then
 		errorRet = FB_RTERROR_FILENOTFOUND
 		Goto unlockExit
@@ -143,15 +158,15 @@ function fb_DevFileOpenEncod ( handle as FB_FILE ptr, filename as const ubyte pt
 	end if
 
 	/' handle BOM '/
-	select case ( handle->mode )
-		case FB_FILE_MODE_APPEND, FB_FILE_MODE_INPUT:
-			if ( hCheckBOM( handle ) = 0 ) then
+	select case ( effective_mode )
+		case FB_FILE_MODE_INPUT:
+			if ( hCheckBOM( fp, handle->encod ) = 0 ) then
 				errorRet = FB_RTERROR_FILENOTFOUND
 				Goto fileCloseExit
 			end if
 
 		case FB_FILE_MODE_OUTPUT:
-			if ( hWriteBOM( handle ) = 0 ) then
+			if ( hWriteBOM( fp, handle->encod ) = 0 ) then
 				errorRet = FB_RTERROR_FILENOTFOUND
 				Goto fileCloseExit
 			end if

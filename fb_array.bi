@@ -49,9 +49,11 @@ declare function fb_ArrayBoundChk 		FBCALL ( idx as ssize_t, lbound as ssize_t, 
 
 declare function fb_ArraySngBoundChk 	FBCALL ( sidx as size_t, ubound as size_t,linenum as long, fname as const ubyte ptr ) as any ptr
 
-declare sub 	 fb_hArrayCtorObj 			   ( array as FBARRAY ptr, ctor as FB_DEFCTOR, base_idx as size_t )
-declare sub 	 fb_hArrayDtorObj 			   ( array as FBARRAY ptr, dtor as FB_DEFCTOR, base_idx as size_t )
-declare sub 	 fb_hArrayDtorStr 			   ( array as FBARRAY ptr, dtor as FB_DEFCTOR, base_idx as size_t )
+declare function fb_ArrayLen            FBCALL ( array as FBARRAY ptr ) as size_t
+declare function fb_ArraySize           FBCALL ( array as FBARRAY ptr ) as size_t
+declare sub 	 fb_hArrayCtorObj 			   ( array as FBARRAY ptr, ctor as FB_DEFCTOR )
+declare sub 	 fb_hArrayDtorObj 			   ( array as FBARRAY ptr, dtor as FB_DEFCTOR, keep_idx as size_t )
+declare sub 	 fb_hArrayDtorStr 			   ( array as FBARRAY ptr, dtor as FB_DEFCTOR, heep_idx as size_t )
 declare sub 	 fb_ArrayDestructObj 	FBCALL ( array as FBARRAY ptr, dtor as FB_DEFCTOR )
 declare sub 	 fb_ArrayDestructStr 	FBCALL ( array as FBARRAY ptr )
 declare function fb_ArrayClear 			FBCALL ( array as FBARRAY ptr ) as long
