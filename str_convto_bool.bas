@@ -3,9 +3,10 @@
  '/
 
 #include "fb.bi"
-#include "destruct_string.bi"
 
 extern "C"
+
+/':::::'/
 function fb_hBoolToStr FBCALL ( num as ubyte ) as ubyte ptr
 	static false_string as zstring ptr = @"false"
 	static true_string as zstring ptr = @"true"
@@ -14,18 +15,18 @@ function fb_hBoolToStr FBCALL ( num as ubyte ) as ubyte ptr
 end function
 
 /':::::'/
-function fb_BoolToStr FBCALL ( num as ubyte, result as FBSTRING ptr ) as FBSTRING ptr
-	dim as destructable_string dst
-	dim as ubyte ptr src = fb_hBoolToStr( num )
-	dim as size_t src_len = strlen(src)
+function fb_BoolToStr FBCALL ( num as ubyte ) as FBSTRING ptr
+	dim as FBSTRING ptr dst
 
-	DBG_ASSERT( result <> NULL )
-
-	if ( fb_hStrAlloc( @dst, src_len ) <> NULL ) then
-		fb_hStrCopy( dst.data, src, src_len )
+	dst = fb_hStrAllocTemp( NULL, 8 )
+	if ( dst <> NULL ) then
+		dim as ubyte ptr src = fb_hBoolToStr( num )
+		fb_hStrCopy( dst->data, src, strlen(src) )
+		fb_hStrSetLength( dst, strlen(src) )
+	else
+		dst = @__fb_ctx.null_desc
 	end if
 
-	fb_StrSwapDesc( @dst, result )
-	return result
+	return dst
 end function
 end extern

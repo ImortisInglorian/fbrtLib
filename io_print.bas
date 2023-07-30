@@ -26,6 +26,9 @@ sub fb_PrintStringEx( handle as FB_FILE ptr, s as FBSTRING ptr, mask as long )
     else
     	fb_hPrintStrEx( handle, s->data, FB_STRSIZE(s), mask )
 	end if
+
+	/' del if temp '/
+	fb_hStrDelTemp( s )
 end sub
 
 /':::::'/

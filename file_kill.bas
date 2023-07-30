@@ -12,6 +12,9 @@ function fb_FileKill FBCALL ( _str as FBSTRING ptr ) as long
 		res = remove( _str->data )
 		_err = errno
 	end if
+
+	/' del if temp '/
+	fb_hStrDelTemp( _str )
 	
 	if ( res = 0 ) then
 		res = FB_RTERROR_OK

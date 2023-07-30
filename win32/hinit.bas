@@ -7,6 +7,7 @@ extern "C"
 
 #ifdef ENABLE_MT
 dim shared as CRITICAL_SECTION __fb_global_mutex
+dim shared as CRITICAL_SECTION __fb_string_mutex
 dim shared as CRITICAL_SECTION __fb_mtcore_mutex
 dim shared as CRITICAL_SECTION __fb_graphics_mutex
 dim shared as CRITICAL_SECTION __fb_math_mutex
@@ -17,6 +18,14 @@ end sub
 
 sub fb_Unlock FBCALL ( )
 	LeaveCriticalSection( @__fb_global_mutex )
+end sub
+
+sub fb_StrLock FBCALL ( )
+	EnterCriticalSection( @__fb_string_mutex )
+end sub
+
+sub fb_StrUnlock FBCALL ( )
+	LeaveCriticalSection( @__fb_string_mutex )
 end sub
 
 sub fb_MtLock FBCALL ( )
@@ -68,6 +77,7 @@ sub fb_hInit( )
 
 #ifdef ENABLE_MT
 	InitializeCriticalSection(@__fb_global_mutex)
+	InitializeCriticalSection(@__fb_string_mutex)
 	InitializeCriticalSection(@__fb_mtcore_mutex)
 	InitializeCriticalSection(@__fb_graphics_mutex)
 	InitializeCriticalSection(@__fb_math_mutex)
@@ -79,6 +89,7 @@ end sub
 sub fb_hEnd( unused as long )
 #ifdef ENABLE_MT
 	DeleteCriticalSection(@__fb_global_mutex)
+	DeleteCriticalSection(@__fb_string_mutex)
 	DeleteCriticalSection(@__fb_mtcore_mutex)
 	DeleteCriticalSection(@__fb_graphics_mutex)
 	DeleteCriticalSection(@__fb_math_mutex)

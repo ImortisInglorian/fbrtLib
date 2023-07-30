@@ -1,7 +1,6 @@
 /' unicode to ascii string convertion function '/
 
 #include "fb.bi"
-#include "destruct_string.bi"
 
 extern "C"
 /' dst_chars == room in dst buffer without null terminator. Thus, the dst buffer
@@ -73,14 +72,12 @@ function fb_wstr_ConvToA( dst as ubyte ptr, dst_chars as ssize_t, src as const F
 #endif
 end function
 
-function fb_WstrToStr FBCALL ( src as const FB_WCHAR ptr, result as FBSTRING ptr ) as FBSTRING ptr
-	dim as destructable_string tmp_str
+function fb_WstrToStr FBCALL ( src as const FB_WCHAR ptr ) as FBSTRING ptr
+	dim as FBSTRING ptr dst
 	dim as ssize_t chars
 
-	DBG_ASSERT( result <> NULL )
-
-	if ( src = NULL ) then
-		Goto swapExit
+    if ( src = NULL ) then
+    	return @__fb_ctx.null_desc
 	end if
 
 #if defined(HOST_DOS)
@@ -90,16 +87,17 @@ function fb_WstrToStr FBCALL ( src as const FB_WCHAR ptr, result as FBSTRING ptr
 #else
 	chars = wcstombs( NULL, cast(FB_WCHAR ptr, src), 0 )
 #endif
-	if ( chars = 0 ) then
-		Goto swapExit
+    if ( chars = 0 ) then
+    	return @__fb_ctx.null_desc
 	end if
 
-	if ( fb_hStrAlloc( @tmp_str, chars ) <> NULL ) then
-		fb_wstr_ConvToA( tmp_str.data, chars, src )
+    dst = fb_hStrAllocTemp( NULL, chars )
+	if ( dst = NULL ) then
+		return @__fb_ctx.null_desc
 	end if
 
-swapExit:
-	fb_StrSwapDesc( result, @tmp_str )
-	return result
+	fb_wstr_ConvToA( dst->data, chars, src )
+
+	return dst
 end function
 end extern

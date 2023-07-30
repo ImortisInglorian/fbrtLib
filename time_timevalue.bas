@@ -10,6 +10,8 @@ function fb_TimeValue FBCALL ( s as FBSTRING ptr ) as double
     dim as long _second
     dim as long succeeded = fb_TimeParse( s, @_hour, @_minute, @_second )
 
+    fb_hStrDelTemp( s )
+
     if ( succeeded = 0 ) then
         fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
         return 0

@@ -1,11 +1,11 @@
 #include "fb.bi"
 
 extern "C"
-function fb_Dir64 FBCALL ( filespec as FBSTRING ptr, attrib as long, outattrib as longint ptr, res as FBSTRING ptr ) as FBSTRING ptr
+function fb_Dir64 FBCALL ( filespec as FBSTRING ptr, attrib as long, outattrib as longint ptr ) as FBSTRING ptr
 	dim as long ioutattrib
-	DBG_ASSERT(res <> NULL)
+	dim as FBSTRING ptr res
 
-	fb_Dir( filespec, attrib, @ioutattrib, res )
+	res = fb_Dir( filespec, attrib, @ioutattrib )
 
 	*outattrib = ioutattrib
 	return res

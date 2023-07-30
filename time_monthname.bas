@@ -1,27 +1,25 @@
 /' returns the month name '/
 
 #include "fb.bi"
-#include "destruct_string.bi"
 
 extern "C"
 /':::::'/
-function fb_MonthName FBCALL ( _month as long, abbreviation as long, result as FBSTRING ptr ) as FBSTRING ptr
-    dim as destructable_string tmp_str
-    dim as long _err = FB_RTERROR_ILLEGALFUNCTIONCALL
+function fb_MonthName FBCALL ( _month as long, abbreviation as long ) as FBSTRING ptr
+    dim as FBSTRING ptr res
 
-    DBG_ASSERT( result <> NULL )
-
-    if ( _month >= 1 andalso _month <= 12 ) then
-
-        _err = FB_RTERROR_OK
-
-        if ( fb_IntlGetMonthName( _month, abbreviation, FALSE, @tmp_str ) = NULL ) then
-            _err = FB_RTERROR_ILLEGALFUNCTIONCALL
-        end if
+    if ( _month < 1 or _month > 12 ) then
+        fb_ErrorSetNum(FB_RTERROR_ILLEGALFUNCTIONCALL)
+        return @__fb_ctx.null_desc
     end if
 
-    fb_StrSwapDesc( @tmp_str, result )
-    fb_ErrorSetNum( _err )
-    return result
+    fb_ErrorSetNum( FB_RTERROR_OK )
+
+    res = fb_IntlGetMonthName( _month, abbreviation, FALSE )
+    if ( res = NULL ) then
+		fb_ErrorSetNum(FB_RTERROR_ILLEGALFUNCTIONCALL)
+		res = @__fb_ctx.null_desc
+    end if
+
+    return res
 end function
 end extern

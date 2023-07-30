@@ -5,42 +5,48 @@
  '/
 
 #include "fb.bi"
-#include "destruct_string.bi"
 
 extern "C"
 /':::::'/
-function fb_IntToStr FBCALL ( num as long, result as FBSTRING ptr ) as FBSTRING ptr
-	dim as destructable_string dst
+function fb_IntToStr FBCALL ( num as long ) as FBSTRING ptr
+	dim as FBSTRING ptr dst
 
-	DBG_ASSERT( result <> NULL )
-
-	if ( fb_hStrAlloc( @dst, sizeof( long ) * 3 ) <> NULL ) then
+	/' alloc temp string '/
+	dst = fb_hStrAllocTemp( NULL, sizeof( long ) * 3 )
+	if ( dst <> NULL ) then
 		/' convert '/
-		sprintf( dst.data, "%d", num )
-		fb_hStrSetLength( @dst, strlen( dst.data ) )
+#ifdef HOST_WIN32
+		_itoa( num, dst->data, 10 )
+#else
+		sprintf( dst->data, "%d", num )
+#endif
+
+		fb_hStrSetLength( dst, strlen( dst->data ) )
+	else
+		dst = @__fb_ctx.null_desc
 	end if
 	
-	fb_StrSwapDesc( @dst, result )
-	return result
+	return dst
 end function
 
 /':::::'/
-function fb_UIntToStr FBCALL ( num as ulong, result as FBSTRING ptr ) as FBSTRING ptr
-	dim as destructable_string dst
+function fb_UIntToStr FBCALL ( num as ulong ) as FBSTRING ptr
+	dim as FBSTRING ptr dst
 
-	DBG_ASSERT( result <> NULL )
-
-	if ( fb_hStrAlloc( @dst, sizeof( ulong ) * 3 ) <> NULL ) then
+	/' alloc temp string '/
+	dst = fb_hStrAllocTemp( NULL, sizeof( long ) * 3 )
+	if ( dst <> NULL ) then
 		/' convert '/
 #ifdef HOST_WIN32
-		_ultoa( num, dst.data, 10 )
+		_ultoa( num, dst->data, 10 )
 #else
 		sprintf( dst->data, "%u", num )
 #endif
-		fb_hStrSetLength( @dst, strlen( dst.data ) )
+		fb_hStrSetLength( dst, strlen( dst->data ) )
+	else
+		dst = @__fb_ctx.null_desc
 	end if
 
-	fb_StrSwapDesc( @dst, result )
-	return result
+	return dst
 end function
 end extern

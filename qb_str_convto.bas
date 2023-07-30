@@ -5,38 +5,39 @@
  '/
 
 #include "fb.bi"
-#include "destruct_string.bi"
 
 extern "C"
 /':::::'/
-function fb_IntToStrQB FBCALL ( num as long, result as FBSTRING ptr ) as FBSTRING ptr
-	dim tmp_str as destructable_string
+function fb_IntToStrQB FBCALL ( num as long ) as FBSTRING ptr
+	dim as FBSTRING ptr dst
 
-	DBG_ASSERT( result <> NULL )
-
-	if ( fb_hStrAlloc( @tmp_str, sizeof( long ) * 3 ) <> NULL ) then
+	/' alloc temp string '/
+	dst = fb_hStrAllocTemp( NULL, sizeof( long ) * 3 )
+	if ( dst <> NULL ) then
 		/' convert '/
-		sprintf( tmp_str.data, "% d", num )
-		fb_hStrSetLength( @tmp_str, strlen( tmp_str.data ) )
+		sprintf( dst->data, "% d", num )
+		fb_hStrSetLength( dst, strlen( dst->data ) )
+	else
+		dst = @__fb_ctx.null_desc
 	end if
 
-	fb_StrSwapDesc( result, @tmp_str )
-	return result
+	return dst
 end function
 
 /':::::'/
-function fb_UIntToStrQB FBCALL ( num as ulong, result as FBSTRING ptr ) as FBSTRING ptr
-	dim tmp_str as destructable_string
+function fb_UIntToStrQB FBCALL ( num as ulong ) as FBSTRING ptr
+	dim as FBSTRING ptr dst
 
-	DBG_ASSERT( result <> NULL )
-
-	if ( fb_hStrAlloc( @tmp_str, sizeof( ulong ) * 3 ) <> NULL ) then
+	/' alloc temp string '/
+	dst = fb_hStrAllocTemp( NULL, sizeof( long ) * 3 )
+	if ( dst <> NULL ) then
 		/' convert '/
-		sprintf( tmp_str.data, " %u", num )
-		fb_hStrSetLength( @tmp_str, strlen( tmp_str.data ) )
+		sprintf( dst->data, " %u", num )
+		fb_hStrSetLength( dst, strlen( dst->data ) )
+	else
+		dst = @__fb_ctx.null_desc
 	end if
 
-	fb_StrSwapDesc( result, @tmp_str )
-	return result
+	return dst
 end function
 end extern

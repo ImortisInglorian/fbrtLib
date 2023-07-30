@@ -31,6 +31,14 @@ function fb_StrInstrRevAny FBCALL ( src as FBSTRING ptr, patt as FBSTRING ptr, s
 		end if
 	end if
 
+	FB_STRLOCK()
+
+	/' del if temp '/
+	fb_hStrDelTemp_NoLock( src )
+	fb_hStrDelTemp_NoLock( patt )
+
+	FB_STRUNLOCK()
+
 	return r
 end function
 end extern

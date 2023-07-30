@@ -13,6 +13,9 @@ function fb_StrLen FBCALL ( _str as any ptr, str_size as ssize_t ) as ssize_t
 	/' is dst var-len? '/
 	if ( str_size = -1 ) then
 		_len = FB_STRSIZE( _str )
+
+		/' delete temp? '/
+		fb_hStrDelTemp( cast(FBSTRING ptr, _str) )
 	else
 		/' this routine will never be called for fixed-len strings, as
 		   their sizes are known at compiler-time, as such, this must be

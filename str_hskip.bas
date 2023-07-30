@@ -1,5 +1,6 @@
 #include "fb.bi"
 
+extern "C"
 function fb_hStrSkipChar FBCALL ( s as ubyte ptr, _len as ssize_t, c as long ) as ubyte ptr
 	dim as ubyte ptr p = s
 
@@ -31,3 +32,4 @@ function fb_hStrSkipCharRev FBCALL ( s as ubyte ptr, _len as ssize_t, c as long 
 
 	return p
 end function
+end extern

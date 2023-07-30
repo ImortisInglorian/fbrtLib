@@ -2,22 +2,22 @@
 
 #include "../fb.bi"
 #include "fb_private_console.bi"
-#include "../destruct_string.bi"
 
 extern "C"
 /' Caller is expected to hold FB_LOCK() '/
-function fb_ConsoleInkey( result as FBSTRING ptr ) as FBSTRING ptr
-	dim as destructable_string dst
+function fb_ConsoleInkey( ) as FBSTRING ptr
+	dim as FBSTRING ptr res
 	dim as long key
 
 	key = fb_hConsoleGetKey( TRUE )
 
-	if ( key <> -1 ) then
-		fb_hMakeInkeyStr( key, @dst )
+	if ( key = -1 ) then
+		res = @__fb_ctx.null_desc
+	else
+		res = fb_hMakeInkeyStr( key )
 	end if
 
-	fb_StrSwapDesc( result, @dst )
-	return result
+	return res
 end function
 
 /' Doing synchronization manually here because getkey() is blocking '/

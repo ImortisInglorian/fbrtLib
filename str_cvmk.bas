@@ -1,9 +1,9 @@
 /' CV# and MK#$ routines '/
 
 #include "fb.bi"
-#include "destruct_string.bi"
 
-sub hCV ( _str as FBSTRING ptr, _len as ssize_t, num as any ptr )
+extern "C"
+sub hCV cdecl ( _str as FBSTRING ptr, _len as ssize_t, num as any ptr )
 	dim as ssize_t i
 
 	if ( _str = NULL ) then
@@ -15,29 +15,11 @@ sub hCV ( _str as FBSTRING ptr, _len as ssize_t, num as any ptr )
 			(cast(ubyte ptr, num)[i]) = _str->data[i]
 		next
 	end if
+
+	/' del if temp '/
+	fb_hStrDelTemp( _str )
 end sub
 
-function hMK ( _len as ssize_t, num as any ptr, result as FBSTRING ptr ) as FBSTRING ptr
-	dim as ssize_t i
-	dim as destructable_string dst
-
-	DBG_ASSERT( result <> NULL )
-
-	if ( fb_hStrAlloc( @dst, _len ) <> NULL ) then
-		dim as ubyte ptr dst_data = dst.data
-		/' convert '/
-		for i = 0 to _len - 1
-			dst_data[i] = (cast(ubyte ptr, num))[i]
-		next
-		
-		dst_data[_len] = 0
-	end if
-
-	fb_StrSwapDesc( @dst, result )
-	return result
-end function
-
-extern "C"
 function fb_CVD FBCALL ( _str as FBSTRING ptr ) as double
 	dim as double num = 0.0
 	hCV( _str, sizeof( double ), @num )
@@ -75,27 +57,47 @@ function fb_CVLONGINT FBCALL ( _str as FBSTRING ptr ) as longint
 	return num
 end function
 
-function fb_MKD FBCALL ( num as double, result as FBSTRING ptr ) as FBSTRING ptr
-	return hMK( sizeof( double ), @num, result )
+function hMK cdecl ( _len as ssize_t, num as any ptr ) as FBSTRING ptr
+	dim as ssize_t i
+	dim as FBSTRING ptr dst
+
+	/' alloc temp string '/
+    dst = fb_hStrAllocTemp( NULL, _len )
+	if ( dst <> NULL ) then
+		/' convert '/
+		for i = 0 to _len - 1
+			dst->data[i] = (cast(ubyte ptr, num))[i]
+		next
+		
+		dst->data[_len] = 0
+	else
+		dst = @__fb_ctx.null_desc
+	end if
+	
+	return dst
 end function
 
-function fb_MKS FBCALL ( num as single, result as FBSTRING ptr ) as FBSTRING ptr
-	return hMK( sizeof( single ), @num, result )
+function fb_MKD FBCALL ( num as double ) as FBSTRING ptr
+	return hMK( sizeof( double ), @num )
 end function
 
-function fb_MKSHORT FBCALL ( num as short, result as FBSTRING ptr ) as FBSTRING ptr
-	return hMK( sizeof( short ), @num, result )
+function fb_MKS FBCALL ( num as single ) as FBSTRING ptr
+	return hMK( sizeof( single ), @num )
 end function
 
-function fb_MKI FBCALL ( num as ssize_t, result as FBSTRING ptr ) as FBSTRING ptr
-	return hMK( sizeof( ssize_t ), @num, result )
+function fb_MKSHORT FBCALL ( num as short ) as FBSTRING ptr
+	return hMK( sizeof( short ), @num )
 end function
 
-function fb_MKL FBCALL ( num as long, result as FBSTRING ptr ) as FBSTRING ptr
-	return hMK( sizeof( long ), @num, result )
+function fb_MKI FBCALL ( num as ssize_t ) as FBSTRING ptr
+	return hMK( sizeof( ssize_t ), @num )
 end function
 
-function fb_MKLONGINT FBCALL ( num as longint, result as FBSTRING ptr ) as FBSTRING ptr
-	return hMK( sizeof( longint ), @num, result )
+function fb_MKL FBCALL ( num as long ) as FBSTRING ptr
+	return hMK( sizeof( long ), @num )
+end function
+
+function fb_MKLONGINT FBCALL ( num as longint ) as FBSTRING ptr
+	return hMK( sizeof( longint ), @num )
 end function
 end extern

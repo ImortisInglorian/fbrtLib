@@ -1,16 +1,20 @@
 /' enhanced rtrim$ function '/
 
 #include "fb.bi"
-#include "destruct_string.bi"
 
 extern"C"
-function fb_RTrimEx FBCALL ( src as FBSTRING ptr, pattern as FBSTRING ptr, result as FBSTRING ptr ) as FBSTRING ptr
-	dim as destructable_string dst
-	dim as ssize_t _len = 0
+function fb_RTrimEx FBCALL ( src as FBSTRING ptr, pattern as FBSTRING ptr ) as FBSTRING ptr
+	dim as FBSTRING ptr dst
+	dim as ssize_t _len
 
-	DBG_ASSERT( result <> NULL )
+	if ( src = NULL ) then
+		fb_hStrDelTemp( pattern )
+		return @__fb_ctx.null_desc
+	end if
 
-	if ( src <> NULL andalso src->data <> NULL ) then
+	FB_STRLOCK()
+
+	if ( src->data <> NULL ) then
 		dim as ssize_t len_pattern = iif((pattern <> NULL) andalso (pattern->data <> NULL), FB_STRSIZE( pattern ), 0)
 		_len = FB_STRSIZE( src )
 		if ( _len >= len_pattern ) then
@@ -29,16 +33,29 @@ function fb_RTrimEx FBCALL ( src as FBSTRING ptr, pattern as FBSTRING ptr, resul
 				_len = test_index + len_pattern
 			end if
 		end if
+	else 
+		_len = 0
 	end if
 
 	if ( _len > 0 ) then
-		if ( fb_hStrAlloc( @dst, _len ) <> NULL ) then
+		/' alloc temp string '/
+		dst = fb_hStrAllocTemp_NoLock( NULL, _len )
+		if ( dst <> NULL ) then
 			/' simple copy '/
-			fb_hStrCopy( dst.data, src->data, _len )
+			fb_hStrCopy( dst->data, src->data, _len )
+		else
+			dst = @__fb_ctx.null_desc
 		end if
+	else
+		dst = @__fb_ctx.null_desc
 	end if
 
-	fb_StrSwapDesc( @dst, result )
-	return result
+	/' del if temp '/
+	fb_hStrDelTemp_NoLock( src )
+	fb_hStrDelTemp_NoLock( pattern )
+
+	FB_STRUNLOCK()
+
+	return dst
 end function
 end extern

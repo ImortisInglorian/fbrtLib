@@ -1,33 +1,33 @@
 /' chr$ routine '/
 
 #include "fb.bi"
-#include "destruct_string.bi"
 
 extern "C"
-function fb_CHR cdecl ( dst as FBSTRING ptr, args as long, ... ) as FBSTRING ptr
+function fb_CHR cdecl ( args as long, ... ) as FBSTRING ptr
+	dim dst as FBSTRING ptr
 	dim ap as any ptr
 	dim num as ulong
 	dim i as long
-	dim as destructable_string tmp_str
 
-	DBG_ASSERT( dst <> NULL )
-
-	if ( args > 0) then
-		cva_start( ap, args )
-
-		if ( fb_hStrAlloc( @tmp_str, args ) <> NULL ) then
-			dim as ubyte ptr str_data = tmp_str.data
-			/' convert '/
-			for i = 0 to args - 1
-				num = cva_arg( ap, ulong )
-				str_data[i] = cast(ubyte, num)
-			next
-			str_data[args] = 0
-		end if
-		cva_end( ap )
+	if ( args <= 0 ) then
+		return @__fb_ctx.null_desc
 	end if
-	
-	fb_StrSwapDesc( dst, @tmp_str )
+	cva_start( ap, args )
+
+	/' alloc temp string '/
+   dst = fb_hStrAllocTemp( NULL, args )
+	if ( dst <> NULL ) then
+		/' convert '/
+		for i = 0 to args - 1
+			num = cva_arg( ap, ulong )
+			dst->data[i] = cast(ubyte, num)
+		next
+		dst->data[args] = 0
+	else
+		dst = @__fb_ctx.null_desc
+	end if
+	cva_end( ap )
+
 	return dst
 end function
 end extern

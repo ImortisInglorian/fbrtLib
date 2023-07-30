@@ -1,15 +1,12 @@
 /' oct$ routine for long long's '/
 
 #include "fb.bi"
-#include "destruct_string.bi"
 
 extern "C"
-function fb_OCTEx_l FBCALL ( num as ulongint, digits as long, result as FBSTRING ptr ) as FBSTRING ptr
-	dim as destructable_string s
+function fb_OCTEx_l FBCALL ( num as ulongint, digits as long ) as FBSTRING ptr
+	dim as FBSTRING ptr s
 	dim as long i
 	dim as ulongint num2
-
-	DBG_ASSERT( result <> NULL )
 
 	if ( digits <= 0 ) then
 		/' Only use the minimum amount of digits needed; need to count
@@ -26,23 +23,23 @@ function fb_OCTEx_l FBCALL ( num as ulongint, digits as long, result as FBSTRING
 		end if
 	end if
 
-	if ( fb_hStrAlloc( @s, digits ) <> NULL ) then
-		dim as ubyte ptr s_data = s.data
-		i = digits - 1
-		while ( i >= 0 )
-			s_data[i] = asc( "0" ) + (num and 7) /' '0'..'7' '/
-			num shr= 3
-			i -= 1
-		wend
-
-		s_data[digits] = asc( !"\000" ) '' NUL CHAR
+	s = fb_hStrAllocTemp( NULL, digits )
+	if ( s = NULL ) then
+		return @__fb_ctx.null_desc
 	end if
 
-	fb_StrSwapDesc( @s, result )
-	return result
+	i = digits - 1
+	while ( i >= 0 )
+		s->data[i] = asc( "0" ) + (num and 7) /' '0'..'7' '/
+		num shr= 3
+		i -= 1
+	wend
+
+	s->data[digits] = asc( !"\000" ) '' NUL CHAR
+	return s
 end function
 
-function fb_OCT_l FBCALL ( num as ulongint, result as FBSTRING ptr ) as FBSTRING ptr
-	return fb_OCTEx_l( num, 0, result )
+function fb_OCT_l FBCALL ( num as ulongint ) as FBSTRING ptr
+	return fb_OCTEx_l( num, 0 )
 end function
 end extern

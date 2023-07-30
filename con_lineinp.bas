@@ -1,7 +1,6 @@
 /' console line input function '/
 
 #include "fb.bi"
-#include "destruct_string.bi"
 
 dim shared as ZString Ptr pszDefaultQuestion = sadd("? ")
 
@@ -9,7 +8,7 @@ extern "C"
 #if defined( HOST_WIN32 ) or defined( HOST_DOS ) or defined( HOST_LINUX )
 
 function fb_ConsoleLineInput( text as FBSTRING ptr, dst as any ptr, dst_len as ssize_t, fillrem as long, addquestion as long, addnewline as long ) as long
-    dim as destructable_string tmp_result
+    dim as FBSTRING ptr tmp_result
 
     FB_LOCK()
 
@@ -18,6 +17,9 @@ function fb_ConsoleLineInput( text as FBSTRING ptr, dst as any ptr, dst_len as s
     if ( text <> NULL ) then
         if ( text->data <> NULL ) then
             fb_PrintString( 0, text, 0 )
+    	/' del if temp '/
+    	else
+    		fb_hStrDelTemp( text )
     	end if
 
         if ( addquestion <> FB_FALSE ) then
@@ -27,14 +29,18 @@ function fb_ConsoleLineInput( text as FBSTRING ptr, dst as any ptr, dst_len as s
 
     FB_UNLOCK()
 
-    fb_ConReadLine( FALSE, @tmp_result )
+    tmp_result = fb_ConReadLine( FALSE )
 
     if ( addnewline <> NULL ) then
 		fb_PrintVoid( 0, FB_PRINT_NEWLINE )
     end if
 
-    fb_StrAssign( dst, dst_len, @tmp_result, -1, fillrem )
-    return fb_ErrorSetNum( FB_RTERROR_OK )
+    if ( tmp_result <> NULL ) then
+        fb_StrAssign( dst, dst_len, tmp_result, -1, fillrem )
+        return fb_ErrorSetNum( FB_RTERROR_OK )
+    end if
+
+    return fb_ErrorSetNum( FB_RTERROR_OUTOFMEM )
 end function
 
 #else
@@ -55,6 +61,9 @@ function fb_ConsoleLineInput( text as FBSTRING ptr, dst as any ptr, dst_len as s
     if ( text <> NULL ) then
         if( text->data <> NULL ) then
             fb_PrintString( 0, text, 0 )
+    	/' del if temp '/
+    	else
+    		fb_hStrDelTemp( text )
     	end if
 
         if ( addquestion <> FB_FALSE ) then

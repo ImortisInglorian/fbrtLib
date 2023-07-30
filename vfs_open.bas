@@ -103,6 +103,9 @@ function fb_FileOpenVfsEx( handle as FB_FILE ptr, str_filename as FBSTRING ptr, 
     fb_hStrCopy( filename, str_filename->data, filename_length )
     filename[filename_length] = 0
 
+	/' del if temp '/
+	fb_hStrDelTemp( str_filename )
+
     return fb_FileOpenVfsRawEx( handle, filename, filename_length, mode, access_, _lock, _len, _encoding, pfnOpen )
 end function
 end extern

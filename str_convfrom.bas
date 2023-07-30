@@ -73,6 +73,8 @@ function fb_VAL FBCALL ( _str as FBSTRING ptr ) as double
 	else
 		_val = fb_hStr2Double( _str->data, FB_STRSIZE( _str ) )
 	end if
+	/' del if temp '/
+	fb_hStrDelTemp( _str )
 
 	return _val
 end function

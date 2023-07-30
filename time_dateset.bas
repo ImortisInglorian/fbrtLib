@@ -64,6 +64,9 @@ function fb_SetDate FBCALL ( _date as FBSTRING ptr ) as long
 		end if
 	end if
 
+	/' del if temp '/
+	fb_hStrDelTemp( _date )
+
 	return fb_ErrorSetNum( FB_RTERROR_OK )
 end function
 end extern
