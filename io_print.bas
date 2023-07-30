@@ -21,7 +21,7 @@ end sub
 
 /':::::'/
 sub fb_PrintStringEx( handle as FB_FILE ptr, s as FBSTRING ptr, mask as long )
-    if ( (s = NULL) or (s->data = NULL) ) then
+    if ( (s = NULL) orelse (s->data = NULL) ) then
     	fb_PrintVoidEx( handle, mask )
     else
     	fb_hPrintStrEx( handle, s->data, FB_STRSIZE(s), mask )

@@ -150,8 +150,8 @@ function fb_DevFileOpen( handle as FB_FILE ptr, filename as const ubyte ptr, fna
 		/' calc file size '/
 		handle->size = fb_DevFileGetSize( fp, handle->mode, handle->encod, TRUE )
 		if ( handle->size = -1 ) then
-		errorRet = FB_RTERROR_ILLEGALFUNCTIONCALL 
-		goto fileCloseExit
+			errorRet = FB_RTERROR_ILLEGALFUNCTIONCALL 
+			goto fileCloseExit
 		end if
 	end if
 
@@ -166,7 +166,10 @@ function fb_DevFileOpen( handle as FB_FILE ptr, filename as const ubyte ptr, fna
 	end if
 
 fileCloseExit:
-	fclose( fp )
+	/' close the file if there was any error '/
+	if( errorRet <> FB_RTERROR_OK ) then
+		fclose( fp )
+	end if
 unlockExit:
 	FB_UNLOCK()
 	free( fname )

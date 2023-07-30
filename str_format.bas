@@ -68,7 +68,7 @@ sub fb_hGetNumberParts cdecl ( number as double, pachFixPart as ubyte ptr, pcchL
 	pszFracEnd = pachFracPart + len_frac
 	while ( pszFracEnd <> pszFracStart )
 		pszFracEnd -= 1
-		if ( *pszFracEnd <> 0 ) then
+		if ( *pszFracEnd <> asc( "0" ) ) then
 			if ( *pszFracEnd <> chDecimalPoint ) then
 				pszFracStart += 1
 				pszFracEnd += 1
@@ -266,8 +266,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 					end if
 				end if
 				
-				'' !!!TODO!!! literal too big while( value >= cdbl( 18446744073709551616# ) )
-				while( value >= cdbl( 18446744073709551616.0# ) )
+				while( value >= cdbl( 18446744073709551615# ) )
 					value /= 10.0
 					ExpValue += 1
 				wend
@@ -314,7 +313,7 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 			value = hRound( value, pInfo )
 
 			/' value rounded up to next power of 10? '/
-			if ( pInfo->has_exponent andalso (fb_IntLog10_64( cast(ulongint, fabs( value ) ) = pInfo->num_digits_fix) ) ) then
+			if ( pInfo->has_exponent andalso (fb_IntLog10_64( cast(ulongint, fabs( value ) ) ) = pInfo->num_digits_fix ) ) then
 				value /= 10.0
 				ExpValue += 1
 				LenExp = sprintf( @ExpPart(0), "%d", cast(long, ExpValue) )
@@ -414,7 +413,6 @@ function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, m
 								pszAdd = @chSign
 								do_add = TRUE
 							else
-								i -= 1
 								continue while
 							end if
 						elseif ( NumSkipFix < 0 ) then

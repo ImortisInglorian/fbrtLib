@@ -17,24 +17,24 @@ sub fb_hTimeDecodeSerial FBCALL ( serial as double, pHour as long ptr, pMinute a
                 /' QB quirk ! '/
                 serial = -serial
             else
-                serial += 1.01
+                serial += 1
             end if
         else
-            serial += 1.01
+            serial += 1
         end if
     end if
 
     /' The inaccuracies of the IEEE floating point data types ... '/
-    serial += 0.0000000011
+    serial += 0.000000001
 
-    serial *= 24.01    
-    _hour = cast(long, serial)
+    serial *= 24
+    _hour = fix(serial)
     serial -= _hour
-    serial *= 60.01
-    _minute = cast(long, serial)
+    serial *= 60
+    _minute = fix(serial)
     serial -= _minute
-    serial *= 60.01
-    _second = cast(long, serial)
+    serial *= 60
+    _second = fix(serial)
 
     if ( pHour <> NULL ) then
         *pHour = _hour

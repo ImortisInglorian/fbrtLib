@@ -137,7 +137,7 @@ sub fb_ConsolePrintBufferEx( buffer as const any ptr, _len as size_t, mask as lo
 	if ( FB_CONSOLE_WINDOW_EMPTY() ) then
 		/' output was redirected! '/
 		dim as DWORD dwBytesWritten
-		while ( _len <> 0 and WriteFile( __fb_out_handle, pachText, _len, @dwBytesWritten, NULL ) = TRUE )
+		while ( _len <> 0 and WriteFile( __fb_out_handle, pachText, _len, @dwBytesWritten, NULL ) <> FALSE )
 			pachText += dwBytesWritten
 			_len -= dwBytesWritten
 		wend

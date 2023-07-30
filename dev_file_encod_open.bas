@@ -165,7 +165,10 @@ function fb_DevFileOpenEncod ( handle as FB_FILE ptr, filename as const ubyte pt
 	end if
 
 fileCloseExit:
-	fclose( fp )
+	/' close the file if there was any error '/
+	if( errorRet <> FB_RTERROR_OK ) then
+		fclose( fp )
+	end if
 unlockExit:
 	FB_UNLOCK()
 deallocExit:
