@@ -52,6 +52,8 @@ function fb_StrConcatByref FBCALL _
 	/' Are dst & src same same data? '/
 	if( dst = src orelse dst_ptr = src_ptr ) then
 		dim as FBSTRING ptr str_ = dst
+
+		FB_STRLOCK()
 		
 		if( fb_hStrRealloc( str_, dst_len + src_len, FB_TRUE ) ) then
 			/' recalculate dst '/
@@ -64,6 +66,16 @@ function fb_StrConcatByref FBCALL _
 
 			str_->data[dst_len + dst_len] = asc( !"\000" ) '' NUL CHAR
 		end if
+
+		/' delete temps? '/
+		if( dst_size = -1 ) then
+			fb_hStrDelTemp_NoLock( cast( FBSTRING ptr, dst ) )
+		end if
+		if( src_size = -1 ) then
+			fb_hStrDelTemp_NoLock( cast( FBSTRING ptr, src ) )
+		end if
+
+		FB_STRUNLOCK()
 
 		return dst
 	end if

@@ -18,6 +18,11 @@ function fb_FilePutStrEx( handle as FB_FILE ptr, _pos as fb_off_t, _str as any p
     	res = fb_ErrorSetNum( FB_RTERROR_OK )
 	end if
 
+    /' del if temp '/
+    if ( str_len = -1 ) then
+        fb_hStrDelTemp( cast(FBSTRING ptr, _str) )
+	end if
+
 	return res
 end function
 

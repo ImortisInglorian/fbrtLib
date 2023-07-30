@@ -410,6 +410,9 @@ function fb_PrintUsingStr FBCALL ( fnum as long, s as FBSTRING ptr, mask as long
 		fb_StrDelete( @ctx->fmtstr )
 	end if
 
+	/' del if temp '/
+	fb_hStrDelTemp( s )
+
 	return fb_ErrorSetNum( FB_RTERROR_OK )
 end function
 

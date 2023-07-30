@@ -53,6 +53,8 @@ function fb_VALLNG FBCALL ( _str as FBSTRING ptr ) as longint
 	else
 		_val = fb_hStr2Longint( _str->data, FB_STRSIZE( _str ) )
 	end if
+	/' del if temp '/
+	fb_hStrDelTemp( _str )
 
 	return _val
 end function

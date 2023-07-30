@@ -1,33 +1,35 @@
 /' input$ function '/
 
 #include "fb.bi"
-#include "destruct_string.bi"
 
 extern "C"
-function fb_FileStrInput FBCALL ( bytes as ssize_t, fnum as long, result as FBSTRING ptr ) as FBSTRING ptr
+function fb_FileStrInput FBCALL ( bytes as ssize_t, fnum as long ) as FBSTRING ptr
     dim as FB_FILE ptr handle
-    dim as destructable_string dst
+	dim as FBSTRING ptr dst
     dim as size_t _len
     dim as long res = FB_RTERROR_OK
 
-    DBG_ASSERT(result <> NULL)
+	fb_DevScrnInit_Read( )
 
-    fb_DevScrnInit_Read( )
-
-    FB_LOCK()
+	FB_LOCK()
 
     handle = FB_FILE_TO_HANDLE(fnum)
-    if ( ( FB_HANDLE_USED(handle) <> 0 ) AndAlso ( fb_hStrAlloc(@dst, bytes) <> NULL ) ) then
+    if ( FB_HANDLE_USED(handle) = 0 ) then
+		FB_UNLOCK()
+		return @__fb_ctx.null_desc
+	end if
 
+    dst = fb_hStrAllocTemp( NULL, bytes )
+    if ( dst <> NULL ) then
         dim as ssize_t read_count = 0
         if ( FB_HANDLE_IS_SCREEN(handle) <> NULL ) then
-            dst.data[0] = 0
+            dst->data[0] = 0
             while ( read_count <> bytes )
                 res = fb_FileGetDataEx( handle, _
                                         0, _
-                                        @dst.data[read_count], _
+                                        @dst->data[read_count], _
                                         bytes - read_count, _
-                                        @_len, _
+										@_len, _
                                         TRUE, _
                                         FALSE )
                 if( res <> FB_RTERROR_OK ) then
@@ -36,13 +38,13 @@ function fb_FileStrInput FBCALL ( bytes as ssize_t, fnum as long, result as FBST
                 read_count += _len
 
                 /' add the null-term '/
-                dst.data[read_count] = 0
+                dst->data[read_count] = 0
             wend
         else
             res = fb_FileGetDataEx( handle, _
                                     0, _
-                                    dst.data, _
-                                    bytes, _
+                                    dst->data, _
+									bytes, _
                                     @_len, _
                                     TRUE, _
                                     FALSE )
@@ -52,17 +54,25 @@ function fb_FileStrInput FBCALL ( bytes as ssize_t, fnum as long, result as FBST
         end if
 
         /' add the null-term '/
-        dst.data[read_count] = 0
+        dst->data[read_count] = 0
 
         if ( read_count <> bytes ) then
-            fb_hStrSetLength( @dst, read_count )
+            fb_hStrSetLength( dst, read_count )
         end if
+    else
+        res = FB_RTERROR_OUTOFMEM
+    end if
+
+    if ( res <> FB_RTERROR_OK ) then
+        if( dst <> NULL ) then
+            fb_hStrDelTemp( dst )
+		end if
+
+        dst = @__fb_ctx.null_desc
     end if
 
     FB_UNLOCK()
 
-SwapExit:
-    fb_StrSwapDesc( @dst, result )
-    return result
+    return dst
 end function
 end extern

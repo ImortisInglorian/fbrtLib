@@ -277,7 +277,7 @@ declare function fb_FilePutBackEx 				   ( handle as FB_FILE ptr, _data as const
 declare function fb_FilePutBackWstrEx 			   ( handle as FB_FILE ptr, src as const FB_WCHAR ptr, chars as size_t ) as long
 
 declare function fb_FileInput 				FBCALL ( fnum as long ) as long
-declare function fb_FileStrInput 			FBCALL ( bytes as ssize_t, fnum as long, result as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_FileStrInput 			FBCALL ( bytes as ssize_t, fnum as long ) as FBSTRING ptr
 declare function fb_FileWstrInput 			FBCALL ( chars as ssize_t, fnum as long ) as FB_WCHAR ptr
 declare function fb_FileLineInput 			FBCALL ( fnum as long, dst as any ptr, dst_len as ssize_t, fillrem as long ) as long
 declare function fb_FileLineInputWstr 		FBCALL ( fnum as long, dst as FB_WCHAR ptr, max_chars as ssize_t ) as long
@@ -317,10 +317,10 @@ declare function fb_SetPos 					FBCALL ( handle as FB_FILE ptr, line_length as l
 declare function fb_FileInputNextToken 			   ( buffer as ubyte ptr, maxlen as ssize_t, isstring as long, isfp as long ptr ) as long
 declare sub 	 fb_FileInputNextTokenWstr 		   ( buffer as FB_WCHAR ptr, max_chars as ssize_t, is_string as long )
 
-declare function fb_Dir 					FBCALL ( filespec as FBSTRING ptr, attrib as long, out_attrib as long ptr, ret_str as FBSTRING ptr ) as FBSTRING ptr
-declare function fb_Dir64 					FBCALL ( filespec as FBSTRING ptr, attrib as long, outattrib as longint ptr, ret_str as FBSTRING ptr ) as FBSTRING ptr
-declare function fb_DirNext 				FBCALL ( outattrib as long ptr, ret_str as FBSTRING ptr ) as FBSTRING ptr
-declare function fb_DirNext64 				FBCALL ( outattrib as longint ptr, ret_str as FBSTRING ptr ) as FBSTRING ptr
+declare function fb_Dir 					FBCALL ( filespec as FBSTRING ptr, attrib as long, out_attrib as long ptr ) as FBSTRING ptr
+declare function fb_Dir64 					FBCALL ( filespec as FBSTRING ptr, attrib as long, outattrib as longint ptr ) as FBSTRING ptr
+declare function fb_DirNext 				FBCALL ( outattrib as long ptr ) as FBSTRING ptr
+declare function fb_DirNext64 				FBCALL ( outattrib as longint ptr ) as FBSTRING ptr
 
  /' Maximum length that can safely be parsed as INTEGER '/
 #define FB_INPUT_MAXINTLEN 9

@@ -5,67 +5,65 @@
  '/
 
 #include "fb.bi"
-#include "destruct_string.bi"
 
 extern "C"
 /':::::'/
-function fb_FloatToStr FBCALL ( num as single, result as FBSTRING ptr ) as FBSTRING ptr
-	dim as destructable_string dst
-
-	DBG_ASSERT( result <> NULL )
+function fb_FloatToStr FBCALL ( num as single ) as FBSTRING ptr
+	dim as FBSTRING ptr dst
 
 	/' alloc temp string '/
-	if ( fb_hStrAlloc( @dst, 7 + 8 ) <> NULL ) then
+	dst = fb_hStrAllocTemp( NULL, 7 + 8 )
+	if ( dst <> NULL ) then
 		dim as size_t tmp_len
-		dim as ubyte ptr dst_data = dst.data
 
 		/' convert '/
-		sprintf( dst_data, "%.7g", num )
+		sprintf( dst->data, "%.7g", num )
 
-		tmp_len = strlen( dst_data ) /' fake len '/
+		tmp_len = strlen( dst->data )				/' fake len '/
 
 		/' skip the dot at end if any '/
 		if ( tmp_len > 0 ) then
-			if ( dst_data[tmp_len-1] = asc(".") ) then
-				dst_data[tmp_len-1] = 0
+			if ( dst->data[tmp_len-1] = asc(".") ) then
+				dst->data[tmp_len-1] = 0
 				tmp_len -= 1
 			end if
 		end if
 		
-		fb_hStrSetLength( @dst, tmp_len )
+		fb_hStrSetLength( dst, tmp_len )
+	else
+		dst = @__fb_ctx.null_desc
 	end if
-
-	fb_StrSwapDesc( @dst, result )
-	return result
+	
+	return dst
 end function
 
 /':::::'/
-function fb_DoubleToStr FBCALL ( num as double, result as FBSTRING ptr ) as FBSTRING ptr
-	dim as destructable_string dst
+function fb_DoubleToStr FBCALL ( num as double) as FBSTRING ptr
+	dim as FBSTRING ptr dst
 
-	DBG_ASSERT( result <> NULL )
-
-	if ( fb_hStrAlloc( @dst, 16 + 8 ) <> NULL ) then
+	/' alloc temp string '/
+	dst = fb_hStrAllocTemp( NULL, 16 + 8 )
+	if ( dst <> NULL ) then
 		dim as size_t tmp_len
-		dim as ubyte ptr dst_data = dst.data
 
 		/' convert '/
-		sprintf( dst_data, "%.16g", num )
+		sprintf( dst->data, "%.16g", num )
 
-		tmp_len = strlen( dst_data )				/' fake len '/
+		tmp_len = strlen( dst->data )				/' fake len '/
 
 		/' skip the dot at end if any '/
 		if ( tmp_len > 0 ) then
-			if ( dst_data[tmp_len-1] = asc(".") ) then
-				dst_data[tmp_len-1] = 0
+			if ( dst->data[tmp_len-1] = asc(".") ) then
+				dst->data[tmp_len-1] = 0
 				tmp_len -= 1
 			end if
 		end if
 		
-		fb_hStrSetLength( @dst, tmp_len )
+		fb_hStrSetLength( dst, tmp_len )
+	else
+		dst = @__fb_ctx.null_desc
 	end if
-
-	fb_StrSwapDesc( @dst, result )
-	return result
+	
+	return dst
 end function
 end extern

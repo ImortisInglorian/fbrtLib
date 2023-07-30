@@ -73,7 +73,7 @@ static ssize_t fb_hFindQS
  * http://www.iti.fh-flensburg.de/lang/algorithmen/pattern/bm.htm
  '/
 
-function fb_hFindBM ( start as ssize_t, pachText as const ubyte ptr, len_text as ssize_t, pachPattern as const ubyte ptr, len_pattern as ssize_t ) as ssize_t
+function fb_hFindBM cdecl ( start as ssize_t, pachText as const ubyte ptr, len_text as ssize_t, pachPattern as const ubyte ptr, len_pattern as ssize_t ) as ssize_t
 	dim as ssize_t i, j, len_max = len_text - len_pattern
 	dim as ssize_t bm_bc(0 to 255)
 	dim as ssize_t ptr bm_gc, suffixes
@@ -199,6 +199,14 @@ function fb_StrInstr FBCALL ( start as ssize_t, src as FBSTRING ptr, patt as FBS
 			r = fb_hFindBM( start - 1, src->data, size_src, patt->data, size_patt )
 		end if
 	end if
+
+	FB_STRLOCK()
+
+	/' del if temp '/
+	fb_hStrDelTemp_NoLock( src )
+	fb_hStrDelTemp_NoLock( patt )
+
+	FB_STRUNLOCK()
 
 	return r
 end function

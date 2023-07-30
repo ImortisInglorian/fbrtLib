@@ -1,32 +1,43 @@
 /' right$ function '/
 
 #include "fb.bi"
-#include "destruct_string.bi"
 
 extern "C"
-function fb_RIGHT FBCALL ( src as FBSTRING ptr, chars as ssize_t, result as FBSTRING ptr ) as FBSTRING ptr
-	dim as destructable_string dst
+function fb_RIGHT FBCALL ( src as FBSTRING ptr, chars as ssize_t ) as FBSTRING ptr
+	dim as FBSTRING ptr dst
 	dim as ssize_t _len, src_len
 
-	DBG_ASSERT( result <> NULL )
-
-	if ( src <> NULL ) then
-		src_len = FB_STRSIZE( src )
-		if ( (src->data <> NULL) andalso (chars > 0) andalso (src_len > 0) ) then
-			if ( chars > src_len ) then
-				_len = src_len
-			else
-				_len = chars
-			end if
-		
-			if ( fb_hStrAlloc( @dst, _len ) <> NULL ) then
-				/' simple rev copy '/
-				fb_hStrCopy( dst.data, src->data + src_len - _len, _len )
-			end if
-		end if
+	if ( src = NULL ) then
+		return @__fb_ctx.null_desc
 	end if
 
-	fb_StrSwapDesc( @dst, result )
-	return result
+   FB_STRLOCK()
+	
+	src_len = FB_STRSIZE( src )
+	if ( (src->data <> NULL) and (chars > 0) and (src_len > 0) ) then
+		if ( chars > src_len ) then
+			_len = src_len
+		else
+			_len = chars
+		end if
+		
+		/' alloc temp string '/
+      dst = fb_hStrAllocTemp_NoLock( NULL, _len )
+		if ( dst <> NULL ) then
+			/' simple rev copy '/
+			fb_hStrCopy( dst->data, src->data + src_len - _len, _len )
+		else
+			dst = @__fb_ctx.null_desc
+		end if
+	else
+      dst = @__fb_ctx.null_desc
+	end if
+	
+	/' del if temp '/
+	fb_hStrDelTemp_NoLock( src )
+	
+   FB_STRUNLOCK()
+	
+	return dst
 end function
 end extern

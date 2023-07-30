@@ -1,14 +1,14 @@
 /' get localized month name '/
 
 #include "../fb.bi"
-#include "../destruct_string.bi"
 #include "langinfo.bi"
 
-Function fb_DrvIntlGetMonthName( month as long, short_names as long, result as FBSTRING ptr ) as FBSTRING ptr
+Function fb_DrvIntlGetMonthName( month as long, short_names as long ) as FBSTRING ptr
 
-    dim index as nl_item
-
-    DBG_ASSERT( result <> NULL )
+    dim pszName as const ubyte ptr
+    dim result as FBSTRING ptr
+    dim name_len as size_t
+    dim index as nl_item 
 
     if( month < 1 OrElse month > 12 ) then
         return NULL
@@ -20,29 +20,22 @@ Function fb_DrvIntlGetMonthName( month as long, short_names as long, result as F
         index = (nl_item) (MON_1 + month - 1)
     end if
 
-    return GetLocalString( index, result )
-End Function
-
-Private Function _GetLocaleString ( index as nl_item, result as FBSTRING ptr ) as FBSTRING ptr
-    dim as destructable_string tmp_str
-    dim pszName as const ubyte ptr
-    dim name_len as size_t
-
-    '' For nl_langinfo which mightn't be threadsafe
     FB_LOCK()
 
     pszName = nl_langinfo( index )
-    if( pszName <> NULL ) then
+    if( pszName = NULL ) then
+        FB_UNLOCK()
+        return NULL
+    end if
 
-        name_len = strlen( pszName )
+    name_len = strlen( pszName )
 
-        if( fb_hStrAlloc( @tmp_str, name_len ) <> NULL ) then
-            FB_MEMCPY( tmp_str.data, pszName, name_len + 1 )
-        end if
+    result = fb_hStrAllocTemp( NULL, name_len )
+    if( result <> NULL ) then
+        FB_MEMCPY( result->data, pszName, name_len + 1 )
     end if
 
     FB_UNLOCK()
 
-    fb_StrSwapDesc( @tmp_str, result )
     return result
 End Function

@@ -69,6 +69,12 @@ function fb_FileOpenShort FBCALL ( str_file_mode as FBSTRING ptr, _
         end if
     end if
 
+    FB_LOCK()
+    fb_hStrDelTemp_NoLock( str_file_mode )
+    fb_hStrDelTemp_NoLock( str_access_mode )
+    fb_hStrDelTemp_NoLock( str_lock_mode )
+    FB_UNLOCK()
+
     if( error_code <> FB_RTERROR_OK ) then
         return error_code
 	end if

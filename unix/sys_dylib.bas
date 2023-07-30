@@ -46,6 +46,9 @@ Function fb_DylibLoad FBCALL( library as FBSTRING ptr ) As Any Ptr
 		Wend
 	end if
 
+	/' del if temp '/
+	fb_hStrDelTemp( library )
+
 	FB_LOCK( )
 	fb_hInitConsole()
 	FB_UNLOCK( )
@@ -64,6 +67,9 @@ Function fb_DylibSymbol FBCALL( library as Any ptr, symbol as FBSTRING ptr ) as 
 	if( (symbol <> Null ) AndAlso ( symbol->data <> Null ) ) then
 		proc = dlsym( library, symbol->data )
 	end if
+
+	/' del if temp '/
+	fb_hStrDelTemp( symbol )
 
 	return proc
 End Function

@@ -49,6 +49,9 @@ function fb_VALUINT FBCALL ( _str as FBSTRING ptr ) as ulong
 	else
 		_val = fb_hStr2UInt( _str->data, FB_STRSIZE( _str ) )
 	end if
+	
+	/' del if temp '/
+	fb_hStrDelTemp( _str )
 
 	return _val
 end function

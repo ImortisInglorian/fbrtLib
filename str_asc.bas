@@ -19,6 +19,9 @@ function fb_ASC FBCALL ( _str as FBSTRING ptr, _pos as ssize_t ) as ulong
 		a = cast(ubyte, _str->data[_pos-1])
 	end if
 
+	/' del if temp '/
+	fb_hStrDelTemp( _str )
+
 	return a
 end function
 end extern

@@ -115,6 +115,8 @@
 	#if defined (ENABLE_MT) And Not(defined (HOST_DOS)) And Not(defined (HOST_XBOX))
 		Declare Sub fb_Lock FBCALL ()
 		Declare Sub fb_Unlock FBCALL ()
+		Declare Sub fb_StrLock FBCALL ()
+		Declare Sub fb_StrUnlock FBCALL ()
 		Declare Sub fb_GraphicsLock FBCALL ()
 		Declare Sub fb_GraphicsUnlock FBCALL ()
 		Declare Sub fb_MathLock FBCALL ()
@@ -126,6 +128,8 @@
 	#else
 		#define FB_LOCK()
 		#define FB_UNLOCK()
+		#define FB_STRLOCK()
+		#define FB_STRUNLOCK()
 		#define FB_GRAPHICS_LOCK()
 		#define FB_GRAPHICS_UNLOCK()
 		#define FB_MATH_LOCK()
@@ -326,7 +330,7 @@
 	#define KEY_QUIT        FB_MAKE_EXT_KEY( ASC("k") )
 
 	extern "C"
-	declare function fb_hMakeInkeyStr( ch as long, result as FBSTRING ptr ) as FBSTRING ptr
+	declare function fb_hMakeInkeyStr( ch as long ) as FBSTRING ptr
 	declare function fb_hScancodeToExtendedKey( scancode as long ) as long
 
 	/' This should match fbc's lang enum '/

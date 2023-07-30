@@ -3,19 +3,19 @@
 #include "fb.bi"
 
 extern "C"
-function fb_OCT_p FBCALL ( p as const any ptr, result as FBSTRING ptr ) as FBSTRING ptr
+function fb_OCT_p FBCALL ( p as const any ptr ) as FBSTRING ptr
 	#ifdef HOST_64BIT
-	return fb_OCT_l( cast(ulongint, p), result )
+	return fb_OCT_l( cast(ulongint, p) )
 	#else
-	return fb_OCT_i( cast(ulong, p), result )
+	return fb_OCT_i( cast(ulong, p) )
 	#endif
 end function
 
-function fb_OCTEx_p FBCALL ( p as const any ptr, digits as long, result as FBSTRING ptr ) as FBSTRING ptr
+function fb_OCTEx_p FBCALL ( p as const any ptr, digits as long ) as FBSTRING ptr
 	#ifdef HOST_64BIT
-	return fb_OCTEx_l( cast(ulongint, p), digits, result )
+	return fb_OCTEx_l( cast(ulongint, p), digits )
 	#else
-	return fb_OCTEx_i( cast(ulong, p), digits, result )
+	return fb_OCTEx_i( cast(ulong, p), digits )
 	#endif
 end function
 end extern

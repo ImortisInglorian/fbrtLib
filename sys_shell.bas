@@ -10,6 +10,9 @@ function fb_Shell FBCALL ( program as FBSTRING ptr ) as long
 		errcode = fb_hShell( program->data )
 	end if
 
+	/' del if temp '/
+	fb_hStrDelTemp( program )
+
 	return errcode
 end function
 end extern

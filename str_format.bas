@@ -1,7 +1,6 @@
 /' format function '/
 
 #include "fb.bi"
-#include "destruct_string.bi"
 #include "crt/math.bi"
 
 enum eMaskType
@@ -41,7 +40,8 @@ end type
  * 16               Precision when the user specified a mask
  '/
  
-sub fb_hGetNumberParts ( number as double, pachFixPart as ubyte ptr, pcchLenFix as ssize_t ptr, pachFracPart as ubyte ptr, pcchLenFrac as ssize_t ptr, pchSign as ubyte ptr, chDecimalPoint as ubyte, precision as long )
+ extern "C"
+sub fb_hGetNumberParts cdecl ( number as double, pachFixPart as ubyte ptr, pcchLenFix as ssize_t ptr, pachFracPart as ubyte ptr, pcchLenFrac as ssize_t ptr, pchSign as ubyte ptr, chDecimalPoint as ubyte, precision as long )
 	dim as ubyte ptr pszFracStart, pszFracEnd
 	dim as ubyte chSign
 	dim as double dblFix
@@ -115,19 +115,16 @@ sub fb_hGetNumberParts ( number as double, pachFixPart as ubyte ptr, pcchLenFix 
 	end if
 end sub
 
-function fb_hBuildDouble _
+function fb_hBuildDouble cdecl _
 	( _
 		num as double, _
 		decimal_point as ubyte, _
-		thousands_separator as ubyte, _
-		result as FBSTRING ptr _
+		thousands_separator as ubyte _
 	) as FBSTRING ptr
 
 	dim as ubyte FixPart(0 to 127), FracPart(0 to 127), chSign
 	dim as ssize_t LenFix, LenFrac, LenSign, LenDecPoint, LenTotal
-	dim as destructable_string dst
-
-	DBG_ASSERT( result <> NULL )
+	dim as FBSTRING ptr dst
 
 	fb_hGetNumberParts( num, @FixPart(0), @LenFix, @FracPart(0), @LenFrac, @chSign, asc("."), 11 )
 
@@ -135,24 +132,26 @@ function fb_hBuildDouble _
 	LenDecPoint = iif( LenFrac <> 0, 1, 0 )
 	LenTotal = LenSign + LenFix + LenDecPoint + LenFrac
 
-	if ( fb_hStrAlloc( @dst, LenTotal ) <> NULL ) then
-		dim as ubyte ptr dst_data = dst.data
+	/' alloc temp string '/
+	dst = fb_hStrAllocTemp_NoLock( NULL, LenTotal )
+	if ( dst <> NULL ) then
 		if ( LenSign <> 0 ) then
-			dst_data[0] = chSign
+			dst->data[0] = chSign
 		end if
-		FB_MEMCPY( dst_data + LenSign, @FixPart(0), LenFix )
+		FB_MEMCPY( dst->data + LenSign, @FixPart(0), LenFix )
 		if ( LenDecPoint <> 0 ) then
-			dst_data[LenSign + LenFix] = decimal_point
+			dst->data[LenSign + LenFix] = decimal_point
 		end if
-		FB_MEMCPY( dst_data + LenSign + LenFix + LenDecPoint, @FracPart(0), LenFrac )
-		dst_data[LenTotal] = 0
+		FB_MEMCPY( dst->data + LenSign + LenFix + LenDecPoint, @FracPart(0), LenFrac )
+		dst->data[LenTotal] = 0
+	else
+		dst = @__fb_ctx.null_desc
 	end if
 
-	fb_StrSwapDesc( @dst, result )
-	return result
+	return dst
 end function
 
-function hRound ( value as double, pInfo as const FormatMaskInfo ptr ) as double
+function hRound cdecl ( value as double, pInfo as const FormatMaskInfo ptr ) as double
 	dim as double _fix, _frac = modf( value, @_fix )
 
     if ( pInfo->num_digits_frac = 0 ) then
@@ -204,7 +203,7 @@ end function
  * When I've too much time, I'll simplify this function so that almost all
  * queries of do_output will be removed.
  '/
-function fb_hProcessMask ( dst as FBSTRING ptr, mask as const ubyte ptr, mask_length as ssize_t, value as double, pInfo as FormatMaskInfo ptr, chThousandsSep as ubyte, chDecimalPoint as ubyte, chDateSep as ubyte, chTimeSep as ubyte ) as long
+function fb_hProcessMask cdecl ( dst as FBSTRING ptr, mask as const ubyte ptr, mask_length as ssize_t, value as double, pInfo as FormatMaskInfo ptr, chThousandsSep as ubyte, chDecimalPoint as ubyte, chDateSep as ubyte, chTimeSep as ubyte ) as long
 	dim as ubyte FixPart(0 to 127), FracPart(0 to 127), ExpPart(0 to 127), chSign = 0
 	dim as ssize_t LenFix, LenFrac, LenExp = 0, IndexFix, IndexFrac, IndexExp = 0
 	dim as ssize_t ExpValue, ExpAdjust = 0, NumSkipFix = 0, NumSkipExp = 0, NonZero = 0
@@ -686,17 +685,18 @@ function fb_hProcessMask ( dst as FBSTRING ptr, mask as const ubyte ptr, mask_le
 								end if
 							end if
 							if ( chCurrent = asc("t") andalso count = 5 ) then
-								dim as destructable_string tmp
+								dim as FBSTRING ptr tmp
 								i += (count-1)
 								fb_IntlGetTimeFormat( @FixPart(0), ARRAY_SIZEOF(FixPart), FALSE )
-								fb_hStrFormat ( value, @FixPart(0), strlen(@FixPart(0)), @tmp )
+								tmp = fb_hStrFormat ( value, @FixPart(0), strlen(@FixPart(0)) )
 								if ( do_output = FALSE ) then
-									pInfo->length_min += FB_STRSIZE(@tmp)
+									pInfo->length_min += FB_STRSIZE(tmp)
 								else
-									pszAddFree = strdup( tmp.data )
-									LenAdd = FB_STRSIZE( @tmp )
+									pszAddFree = strdup( tmp->data )
+									LenAdd = FB_STRSIZE( tmp )
 									do_add = TRUE
 								end if
+								fb_hStrDelTemp( tmp )
 							elseif ( chCurrent = asc("t") andalso (count = 1 orelse count = 2) ) then
 								i += count-1
 								if ( do_output = FALSE ) then
@@ -713,17 +713,18 @@ function fb_hProcessMask ( dst as FBSTRING ptr, mask as const ubyte ptr, mask_le
 									do_add = TRUE
 								end if
 							elseif ( chCurrent = asc("d") andalso count = 5 ) then
-								dim as destructable_string tmp
+								dim as FBSTRING ptr tmp
 								i += count-1
 								fb_IntlGetDateFormat( @FixPart(0), ARRAY_SIZEOF(FixPart), FALSE )
-								fb_hStrFormat ( value, @FixPart(0), strlen(@FixPart(0)), @tmp )
+								tmp = fb_hStrFormat ( value, @FixPart(0), strlen(@FixPart(0)) )
 								if ( do_output = FALSE ) then
-									pInfo->length_min += FB_STRSIZE(@tmp)
+									pInfo->length_min += FB_STRSIZE(tmp)
 								else
-									pszAddFree = strdup( tmp.data )
-									LenAdd = FB_STRSIZE( @tmp )
+									pszAddFree = strdup( tmp->data )
+									LenAdd = FB_STRSIZE( tmp )
 									do_add = TRUE
 								end if
+								fb_hStrDelTemp( tmp )
 							elseif ( chCurrent = asc("d") andalso count = 1 ) then
 								i += count-1
 								if ( do_output = FALSE ) then
@@ -745,16 +746,16 @@ function fb_hProcessMask ( dst as FBSTRING ptr, mask as const ubyte ptr, mask_le
 								end if
 							elseif ( chCurrent = asc("d") andalso (count = 3 orelse count = 4) ) then
 								dim as long _weekday = fb_Weekday( value, FB_WEEK_DAY_SUNDAY )
-								dim as destructable_string tmp
-								fb_WeekdayName( _weekday, (count = 3), FB_WEEK_DAY_SUNDAY, @tmp )
+								dim as FBSTRING ptr tmp = fb_WeekdayName( _weekday, (count = 3), FB_WEEK_DAY_SUNDAY )
 								i += count - 1
 								if ( do_output = FALSE ) then
-									pInfo->length_min += FB_STRSIZE( @tmp )
+									pInfo->length_min += FB_STRSIZE( tmp )
 								else
-									pszAddFree = strdup( tmp.data )
+									pszAddFree = strdup( tmp->data )
 									LenAdd = 0
 									do_add = TRUE
 								end if
+								fb_hStrDelTemp( tmp )
 							elseif ( (chCurrent = asc("m") orelse chCurrent = asc("n") ) andalso count = 1 ) then
 								i += count - 1
 								if ( do_output = FALSE ) then
@@ -851,16 +852,16 @@ function fb_hProcessMask ( dst as FBSTRING ptr, mask as const ubyte ptr, mask_le
 								end if
 							elseif( chCurrent = asc("M") andalso (count = 3 orelse count = 4) ) then
 								dim as long _month = fb_Month( value )
-								dim as destructable_string tmp
-								fb_MonthName( _month, (count = 3), @tmp )
+								dim as FBSTRING ptr tmp = fb_MonthName( _month, (count = 3) )
 								i += count-1
 								if ( do_output = FALSE ) then
-									pInfo->length_min += FB_STRSIZE( @tmp )
+									pInfo->length_min += FB_STRSIZE( tmp )
 								else
-									pszAddFree = strdup( tmp.data )
+									pszAddFree = strdup( tmp->data )
 									LenAdd = 0
 									do_add = TRUE
 								end if
+								fb_hStrDelTemp( tmp )
 							elseif ( chCurrent = asc("y") andalso count < 3 ) then
 								i += count-1
 								if( do_output = FALSE ) then
@@ -1017,13 +1018,10 @@ function fb_hProcessMask ( dst as FBSTRING ptr, mask as const ubyte ptr, mask_le
 	return TRUE
 end function
 
-extern "C"
-function fb_hStrFormat FBCALL ( value as double, mask as const ubyte ptr, mask_length as size_t, result as FBSTRING ptr ) as FBSTRING ptr
-	dim as destructable_string dst
+function fb_hStrFormat FBCALL ( value as double, mask as const ubyte ptr, mask_length as size_t ) as FBSTRING ptr
+	dim as FBSTRING ptr dst = @__fb_ctx.null_desc
 	dim as const ubyte ptr pszIntlResult
 	dim as ubyte chDecimalPoint, chThousandsSep, chDateSep, chTimeSep
-
-	DBG_ASSERT( result <> NULL )
 
 	fb_ErrorSetNum( FB_RTERROR_OK )
 
@@ -1045,27 +1043,39 @@ function fb_hStrFormat FBCALL ( value as double, mask as const ubyte ptr, mask_l
 		chThousandsSep = asc(",")
 	end if
 
+	FB_STRLOCK()
+
 	if ( mask = NULL orelse mask_length = 0 ) then
-		fb_hBuildDouble( value, chDecimalPoint, 0, @dst )
+		dst = fb_hBuildDouble( value, chDecimalPoint, 0 )
 	else 
 		dim as FormatMaskInfo info
 
 		/' Extract all information from the mask string '/
 		if ( fb_hProcessMask( NULL, mask, mask_length, value, @info, chThousandsSep, chDecimalPoint, chDateSep, chTimeSep ) ) then
-			if ( fb_hStrAlloc( @dst, info.length_min + info.length_opt ) = NULL ) then
+			dst = fb_hStrAllocTemp_NoLock( NULL, info.length_min + info.length_opt )
+			if ( dst = NULL ) then
 				fb_ErrorSetNum( FB_RTERROR_OUTOFMEM )
+				dst = @__fb_ctx.null_desc
 			else
 				/' Build the new string according to the mask '/
-				fb_hProcessMask( @dst, mask, mask_length, value, @info, chThousandsSep, chDecimalPoint, chDateSep, chTimeSep )
+				fb_hProcessMask( dst, mask, mask_length, value, @info, chThousandsSep, chDecimalPoint, chDateSep, chTimeSep )
 			end if
 		end if
 	end if
 
-	fb_StrSwapDesc( @dst, result )
-	return result
+	FB_STRUNLOCK()
+
+	return dst
 end function
 
-function fb_StrFormat FBCALL ( value as double, mask as FBSTRING ptr, result as FBSTRING ptr ) as FBSTRING ptr
-	return fb_hStrFormat( value, mask->data, FB_STRSIZE(mask), result )
+function fb_StrFormat FBCALL ( value as double, mask as FBSTRING ptr ) as FBSTRING ptr
+	dim as FBSTRING ptr dst
+
+	dst = fb_hStrFormat( value, mask->data, FB_STRSIZE(mask) )
+
+	/' del if temp '/
+	fb_hStrDelTemp( mask )
+
+	return dst
 end function
 end extern

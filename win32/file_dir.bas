@@ -2,7 +2,6 @@
 
 #include "../fb.bi"
 #include "../fb_private_thread.bi"
-#include "../destruct_string.bi"
 #include "windows.bi"
 
 type FB_DIRCTX
@@ -54,15 +53,13 @@ private function find_next ( attrib as long ptr, ctx as FB_DIRCTX ptr ) as ubyte
 end function
 
 extern "C"
-function fb_Dir FBCALL ( filespec as FBSTRING ptr, attrib as long, out_attrib as long ptr, result as FBSTRING ptr ) as FBSTRING ptr
+function fb_Dir FBCALL ( filespec as FBSTRING ptr, attrib as long, out_attrib as long ptr ) as FBSTRING ptr
 	dim as FB_DIRCTX ptr ctx
-	dim as destructable_string dst
+	dim as FBSTRING ptr res
 	dim as ssize_t _len
 	dim as long tmp_attrib
 	dim as ubyte ptr _name
 	dim as long handle_ok
-
-	DBG_ASSERT( result <> NULL )
 
 	if ( out_attrib = NULL ) then
 		out_attrib = @tmp_attrib
@@ -108,17 +105,26 @@ function fb_Dir FBCALL ( filespec as FBSTRING ptr, attrib as long, out_attrib as
 		end if
 	end if
 
+	FB_STRLOCK()
+
 	/' store filename if found '/
 	if ( _name ) then
 		_len = strlen( _name )
-		if ( fb_hStrAlloc( @dst, _len ) <> NULL ) then
-			fb_hStrCopy( dst.data, _name, _len )
+		res = fb_hStrAllocTemp_NoLock( NULL, _len )
+		if ( res ) then
+			fb_hStrCopy( res->data, _name, _len )
+		else
+			res = @__fb_ctx.null_desc
 		end if
 	else
+		res = @__fb_ctx.null_desc
 		*out_attrib = 0
 	end if
 
-	fb_StrSwapDesc( @dst, result )
-	return result
+	fb_hStrDelTemp_NoLock( filespec )
+
+	FB_STRUNLOCK()
+
+	return res
 end function
 end extern
