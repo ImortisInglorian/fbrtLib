@@ -13,6 +13,22 @@
 #define FB_BINARY_NEWLINE !"\r\n"
 #define FB_BINARY_NEWLINE_WSTR _LC(!"\r\n")
 
+#if defined( HOST_CYGWIN )
+	#define FB_LL_FMTMOD "ll"
+#else
+	/' ucrt and mingw-w64's implementation of printf format specifers
+	   require that long long use the 'll' specifier instead of 'I64' 
+	'/
+	#ifndef __USE_MINGW_ANSI_STDIO
+		#define __USE_MINGW_ANSI_STDIO 0
+	#endif
+	#if defined(_UCRT) orelse __USE_MINGW_ANSI_STDIO 
+		#define FB_LL_FMTMOD "ll"
+	#else
+		#define FB_LL_FMTMOD "I64"
+	#endif
+#endif
+
 #define FB_LL_FMTMOD "I64"
 
 #define FB_CONSOLE_MAXPAGES 4
