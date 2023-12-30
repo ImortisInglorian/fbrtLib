@@ -1,5 +1,8 @@
 '' signal handlers
 
+'' Emscripten doesn't have signals
+#ifndef HOST_JS
+
 #include "fb.bi"
 #include "crt_extra/signal.bi"
 
@@ -84,3 +87,5 @@ Sub fb_InitSignals FBCALL ( )
 #endif
 End Sub
 End Extern
+
+#endif

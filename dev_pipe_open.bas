@@ -3,7 +3,7 @@
 #include "fb.bi"
 
 extern "C"
-#ifdef HOST_XBOX
+#if defined(HOST_XBOX) or defined(HOST_JS)
 
 function fb_DevPipeOpen( handle as FB_FILE ptr, filename as const ubyte ptr, filename_len ) as long
 	return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
