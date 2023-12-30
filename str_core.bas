@@ -95,7 +95,8 @@ function fb_hStrRealloc FBCALL ( _str as FBSTRING ptr, size as ssize_t, _preserv
 	/' plus 12.5% more '/
 	newsize += (newsize shr 3)
 
-	if ( (_str->data = NULL) orelse (size > _str->size) orelse (newsize < (_str->size - (_str->size shr 3))) ) then
+	if ( (_str->data = NULL) orelse (size > _str->size) orelse _
+	    ((_preserve = 0) andalso (newsize < (_str->size - (_str->size shr 3)))) ) then
 		if ( _preserve = FB_FALSE ) then
 			fb_StrDelete( _str )
 
