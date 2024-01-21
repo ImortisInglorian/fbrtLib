@@ -107,22 +107,22 @@ function fb_hStrRealloc FBCALL ( _str as FBSTRING ptr, size as ssize_t, _preserv
 				newsize = size
 			end if
 		else
-            dim as ubyte ptr pszOld = _str->data
-			_str->data = ReAllocate( pszOld, newsize + 1 )
+			dim as byte ptr newbuffer = any
+			newbuffer = ReAllocate( _str->data, newsize + 1 )
+
 			/' failed? try the original request '/
-			if ( _str->data = NULL ) then
-				_str->data = ReAllocate( pszOld, size + 1 )
+			if ( newbuffer = NULL ) then
 				newsize = size
-                if ( _str->data = NULL ) then
-                    /' restore the old memory block '/
-                    _str->data = pszOld
-                    return NULL
-                end if
-            end if
+				newbuffer = ReAllocate( _str->data, size + 1 )
+				if ( newbuffer = NULL ) then
+					return NULL
+				end if
+			end if
+			_str->data = newbuffer
 		end if
 
 		if ( _str->data = NULL ) then
-            _str->len = 0
+			_str->len = 0
 			_str->size = 0
 			return NULL
 		end if
@@ -132,7 +132,7 @@ function fb_hStrRealloc FBCALL ( _str as FBSTRING ptr, size as ssize_t, _preserv
 
 	fb_hStrSetLength( _str, size )
 
-    return _str
+	return _str
 end function
 
 function fb_hStrAllocTemp_NoLock FBCALL ( _str as FBSTRING ptr, size as ssize_t ) as FBSTRING ptr
