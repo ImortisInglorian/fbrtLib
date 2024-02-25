@@ -20,8 +20,11 @@ function fb_StrAllocTempDescF FBCALL ( _str as ubyte ptr, str_size as ssize_t ) 
 	dsc->data = _str
 
 	/' can't use strlen() if the size is known '/
-	if ( str_size <> 0 ) then
-		dsc->len = str_size - 1			/' less the null-term '/
+	if ( str_size > 0 ) then
+		/' less the null-term '/
+		dsc->len = str_size - 1
+	elseif( str_size and FB_STRISFIXED ) then
+		dsc->len = str_size and FB_STRSIZEMSK
 	else
 		if ( _str <> NULL ) then
 			dsc->len = strlen( _str )

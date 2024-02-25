@@ -110,9 +110,14 @@ extern "C"
  '/
 #ifdef HOST_64BIT
 	#define FB_TEMPSTRBIT (cast(longint, &h8000000000000000ll))
+	#define FB_STRISFIXED (cast(longint, &h8000000000000000ll))
+	#define FB_STRSIZEMSK (cast(longint, &h7fffffffffffffffll))
 #else
 	#define FB_TEMPSTRBIT (cast(long, &h80000000))
+	#define FB_STRISFIXED (cast(long, &h80000000))
+	#define FB_STRSIZEMSK (cast(long, &h7fffffff))
 #endif
+#define FB_STRSIZEVARLEN -1
 
 /' Returns if the string is a temporary string.
  '/
@@ -127,17 +132,25 @@ extern "C"
 #define FB_STRPTR(s,size) ( iif(s = NULL, NULL , ( iif(size = -1, (Cast(FBSTRING ptr, s)->data,  cast(ubyte ptr,s ) )))))
 
 #macro FB_STRSETUP_FIX(s,size,_ptr,_len)
-	if( s = NULL ) then 
+	if( s = NULL ) then
 		_ptr = NULL
 		_len = 0
 	else
-		if( size = -1 ) then
+		if( size = FB_STRSIZEVARLEN ) then
+			/' var-len STRING, descriptor '/
 			_ptr = cast(FBSTRING ptr, s)->data
 			_len = FB_STRSIZE( s )
-		else
+		elseif( size and FB_STRISFIXED ) then
+			/' fix-len STRING*N '/
 			_ptr = cast(ubyte ptr, s)
-			/' always get the real len, as fix-len string '/
-			/' will have garbage at end (nulls or spaces) '/
+			_len = size and FB_STRSIZEMSK
+		elseif( size = 0 ) then
+			/' ZSTRING PTR, unknown length '/
+			_ptr = cast(ubyte ptr, s)
+			_len = strlen( _ptr )
+		else
+			/' fix-len ZSTRING*N '/
+			_ptr = cast(ubyte ptr, s)
 			_len = strlen( cast(ubyte ptr, s) )
 		end if
 	end if
@@ -148,18 +161,25 @@ extern "C"
 		_ptr = NULL
 		_len = 0
 	else
-		select case ( size )
-			case -1:
-				_ptr = cast(FBSTRING ptr, s)->data
-				_len = FB_STRSIZE( s )
-			case 0:
-				_ptr = cast(ubyte ptr, s)
-				_len = strlen( _ptr )
-			case else:
-				_ptr = cast(ubyte ptr, s)
-				_len = size - 1 /' without terminating NUL '/
-		end select
-	end if
+		if( size = FB_STRSIZEVARLEN ) then
+			/' var-len STRING, descriptor '/
+			_ptr = cast(FBSTRING ptr, s)->data
+			_len = FB_STRSIZE( s )
+		elseif( size and FB_STRISFIXED ) then
+			/' fix-len STRING*N '/
+			_ptr = cast(ubyte ptr, s)
+			_len = size and FB_STRSIZEMSK
+		elseif( size = 0 ) then
+			/' ZSTRING PTR, unknown length '/
+			_ptr = cast(ubyte ptr, s)
+			_len = strlen( _ptr )
+		else
+			/' fix-len ZSTRING*N '/
+			_ptr = cast(ubyte ptr, s)
+			/' without terminating NUL '/
+			_len = size - 1
+			end if
+		end if
 #endmacro
 
 /' Structure containing information about a specific string.
@@ -201,7 +221,8 @@ declare function fb_hStrAllocTemp 			FBCALL ( str as FBSTRING ptr, size as ssize
 declare function fb_hStrAllocTemp_NoLock 	FBCALL ( str as FBSTRING ptr, size as ssize_t ) as FBSTRING ptr
 declare function fb_hStrDelTemp 			FBCALL ( str as FBSTRING ptr ) as long
 declare function fb_hStrDelTemp_NoLock  	FBCALL ( str as FBSTRING ptr ) as long
-declare sub 	 fb_hStrCopy 				FBCALL ( dst as ubyte ptr, src as const ubyte ptr , bytes as ssize_t )
+declare sub      fb_hStrCopy                FBCALL ( dst as ubyte ptr, src as const ubyte ptr , bytes as ssize_t )
+declare sub      fb_hStrCopyN               FBCALL ( dst as ubyte ptr, src as const ubyte ptr , bytes as ssize_t )
 declare function fb_hStrSkipChar 			FBCALL ( s as ubyte ptr, len as ssize_t, c as long ) as ubyte ptr
 declare function fb_hStrSkipCharRev 		FBCALL ( s as ubyte ptr, len as ssize_t, c as long ) as ubyte ptr
 

@@ -29,7 +29,7 @@ function fb_WstrConcatWA FBCALL ( str1 as const FB_WCHAR ptr, str2 as const any 
     end if
 
 	/' delete temp? '/
-	if ( str2_size = -1 ) then
+	if ( str2_size = FB_STRSIZEVARLEN ) then
 		fb_hStrDelTemp( cast(FBSTRING ptr, str2) )
 	end if
 
@@ -64,7 +64,7 @@ function fb_WstrConcatAW FBCALL ( str1 as const any ptr, str1_size as ssize_t, s
     end if
 
 	/' delete temp? '/
-	if ( str1_size = -1 ) then
+	if ( str1_size = FB_STRSIZEVARLEN ) then
 		fb_hStrDelTemp( cast(FBSTRING ptr, str1) )
 	end if
 

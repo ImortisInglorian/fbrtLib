@@ -202,5 +202,12 @@ sub fb_hStrCopy FBCALL ( dst as ubyte ptr, src as const ubyte ptr, bytes as ssiz
 
 	/' add the null-term '/
 	*dst = asc(!"\000") '' NUL CHAR
+
+end sub
+
+sub fb_hStrCopyN FBCALL ( dst as ubyte ptr, src as const ubyte ptr, bytes as ssize_t )
+	if ( (src <> NULL) and (bytes > 0) ) then
+		dst = cast(ubyte ptr, FB_MEMCPYX( dst, src, bytes ))
+	end if
 end sub
 end extern

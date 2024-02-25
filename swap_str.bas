@@ -12,7 +12,7 @@ sub fb_StrSwap FBCALL ( str1 as any ptr, size1 as ssize_t, fillrem1 as long, str
 	end if
 
 	/' both var-len? '/
-	if ( (size1 = -1) and (size2 = -1) ) then
+	if ( (size1 = FB_STRSIZEVARLEN) and (size2 = FB_STRSIZEVARLEN) ) then
 		dim as FBSTRING td
 
 		/' just swap the descriptors '/
@@ -46,11 +46,11 @@ sub fb_StrSwap FBCALL ( str1 as any ptr, size1 as ssize_t, fillrem1 as long, str
 	/' Note: user-allocated zstrings are assumed to be large enough '/
 
 	/' Is one of them a var-len string? Might need to be (re)allocated '/
-	if ( (size1 = -1) or (size2 = -1) ) then
+	if ( (size1 = FB_STRSIZEVARLEN) or (size2 = FB_STRSIZEVARLEN) ) then
 		dim as FBSTRING td = ( 0, 0, 0 )
-		fb_StrAssign( @td, -1, str1, size1, FALSE )
+		fb_StrAssign( @td, FB_STRSIZEVARLEN, str1, size1, FALSE )
 		fb_StrAssign( str1, size1, str2, size2, fillrem1 )
-		fb_StrAssign( str2, size2, @td, -1, fillrem2 )
+		fb_StrAssign( str2, size2, @td, FB_STRSIZEVARLEN, fillrem2 )
 		fb_StrDelete( @td )
 		exit sub
 	end if
@@ -89,30 +89,59 @@ sub fb_StrSwap FBCALL ( str1 as any ptr, size1 as ssize_t, fillrem1 as long, str
 		fb_MemSwap( cast(ubyte ptr, p1), cast(ubyte ptr, p2), len1 )
 	end if
 
-	/' and copy over the remainder from larger to smaller, unless it's
-	   a fixed-size [z]string that doesn't have enough room left (not even
-	   for the null terminator) '/
-	if ( (size1 > 0) and (len2 >= size1) ) then
-		len2 = len1
-	elseif ( len2 > len1 ) then
-		FB_MEMCPYX( cast(ubyte ptr, (p1 + len1)), cast(ubyte ptr, (p2 + len1)), len2 - len1 )
-	end if
+	/' copy the remainder '/
 
-	/' set null terminators '/
-	p1[len2] = 0
-	p2[len1] = 0
-
-	/' Clear remainder of the larger (now smaller) string with nulls if
-	   requested (see also fb_StrAssign()). We can assume that the strings
-	   were originally cleared properly, because uninitialized strings
-	   mustn't be used in rvalues, FB_STRSETUP_FIX() doesn't handle that.
-	   The smaller (now larger) string doesn't need to be touched, as it's
-	   remainder didn't increase '/
-	if ( fillrem2 <> 0 ) then
-		dim as ssize_t used2 = len1 + 1
-		if ( size2 > used2 ) then
-			memset( p2 + used2, 0, size2 - used2 )
+	/' zstring -> zstring '/
+	if( (size1 >= 0) andalso (size2 >= 0) ) then
+		/' and copy over the remainder from larger to smaller, unless it's
+		   a fixed-size [z]string that doesn't have enough room left (not even
+		   for the null terminator) '/
+		if( (size1 > 0) andalso (len2 >= size1) ) then
+			len2 = len1
+		elseif( len2 > len1 ) then
+			FB_MEMCPYX( cast(ubyte ptr, (p1 + len1)), cast(ubyte ptr, (p2 + len1)), len2 - len1 )
 		end if
+	
+		p1[len2] = 0
+		p2[len1] = 0
+	
+		/' Clear remainder of the larger (now smaller) string with nulls if
+		   requested (see also fb_StrAssign()). We can assume that the strings
+		   were originally cleared properly, because uninitialized strings
+		   mustn't be used in rvalues, FB_STRSETUP_FIX() doesn't handle that.
+		   The smaller (now larger) string doesn't need to be touched, as it's
+		   remainder didn't increase '/
+		if( fillrem2 ) then
+			dim as ssize_t used2 = len1
+			if( size2 > used2 ) then
+				memset( p2 + used2, 0, size2 - used2 )
+			end if
+		end if
+
+	/' string  -> string '/
+	elseif( (size1 and FB_STRISFIXED) andalso (size2 and FB_STRISFIXED) ) then
+		if( (len2 - len1) > 0 ) then
+			memset( cast(ubyte ptr, p2) + len1, 32, len2 - len1 )
+		end if 
+
+	/' string  -> zstring '/
+	elseif ( (size1 and FB_STRISFIXED) andalso (size2 > 0 ) ) then
+		p2[len1] = 0
+
+	/' zstring -> string '/
+	elseif( (size1 >= 0) andalso (size2 and FB_STRISFIXED) ) then
+		if( (size1 > 0) andalso (len2 >= size1) ) then
+			len2 = len1
+		elseif( len2 > len1 ) then
+			FB_MEMCPYX( cast(ubyte ptr, (p1 + len1)), cast(ubyte ptr, (p2 + len1)), len2 - len1 )
+		end if
+
+		p1[len2] = 0
+
+		if( (len2 - size1) > 0 ) then
+			memset( p2 + len1, 32, len2 - size1 )
+		end if 
+
 	end if
 end sub
 end extern
