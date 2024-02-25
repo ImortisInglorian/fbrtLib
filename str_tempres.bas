@@ -10,7 +10,7 @@ function fb_StrAllocTempResult FBCALL ( src as FBSTRING ptr ) as FBSTRING ptr
 	FB_STRLOCK()
 
 	/' alloc a temporary descriptor (the current one at stack will be trashed) '/
-	dsc = fb_hStrAllocTmpDesc( )
+	dsc = fb_hStrAllocTempDesc( )
 	if ( dsc = NULL ) then
 		FB_STRUNLOCK()
 		return @__fb_ctx.null_desc

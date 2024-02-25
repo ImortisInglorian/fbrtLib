@@ -9,7 +9,7 @@ function fb_StrAllocTempDescZEx FBCALL ( _str as const ubyte ptr, _len as ssize_
 	FB_STRLOCK()
 
 	/' alloc a temporary descriptor '/
-	dsc = fb_hStrAllocTmpDesc( )
+	dsc = fb_hStrAllocTempDesc( )
 
 	FB_STRUNLOCK()
 

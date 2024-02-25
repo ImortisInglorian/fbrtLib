@@ -20,7 +20,7 @@ Dim shared as FB_LIST tmpdsList = Type( 0, NULL, NULL, NULL )
 Dim shared as FB_STR_TMPDESC fb_tmpdsTB( 0 to FB_STR_TMPDESCRIPTORS - 1)
 
 extern "C"
-function fb_hStrAllocTmpDesc FBCALL ( ) as FBSTRING ptr
+function fb_hStrAllocTempDesc FBCALL ( ) as FBSTRING ptr
 	dim as FB_STR_TMPDESC ptr dsc
 
 	if ( (tmpdsList.fhead = NULL) andalso (tmpdsList.head = NULL) ) then
@@ -139,7 +139,7 @@ function fb_hStrAllocTemp_NoLock FBCALL ( _str as FBSTRING ptr, size as ssize_t 
 	dim as long try_alloc = (_str = NULL)
 
     if ( try_alloc ) then
-        _str = fb_hStrAllocTmpDesc( )
+        _str = fb_hStrAllocTempDesc( )
         if ( _str=NULL ) then
             return NULL
 		end if

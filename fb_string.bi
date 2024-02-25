@@ -193,7 +193,7 @@ private sub fb_hStrSetLength( _str as FBSTRING ptr, size as size_t )
 	_str->len = size or (_str->len and FB_TEMPSTRBIT)
 end sub
 
-declare function fb_hStrAllocTmpDesc 		FBCALL ( ) as FBSTRING ptr
+declare function fb_hStrAllocTempDesc		FBCALL ( ) as FBSTRING ptr
 declare function fb_hStrDelTempDesc 		FBCALL ( str as FBSTRING ptr ) as long
 declare function fb_hStrAlloc 				FBCALL ( str as FBSTRING ptr, size as ssize_t ) as FBSTRING ptr
 declare function fb_hStrRealloc 			FBCALL ( str as FBSTRING ptr, size as ssize_t, _preserve as long ) as FBSTRING ptr
