@@ -68,6 +68,8 @@ function fb_hArrayRealloc ( array as FBARRAY ptr, element_len as size_t, doclear
 				this_ += element_len
 				objects -= 1
 			wend
+		elseif( doclear = 32 ) then
+			memset( cast(any ptr, this_), 32, size - array->size )
 		elseif ( doclear ) then
 			memset( cast(any ptr, this_), 0, size - array->size )
 		end if

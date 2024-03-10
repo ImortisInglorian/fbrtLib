@@ -70,7 +70,10 @@ function fb_hArrayAlloc ( array as FBARRAY ptr, element_len as size_t, doclear a
 	/' Allocte new buffer '/
 	/' Clearing is not needed if not requested, or if ctors will be called
 	(ctors take care of clearing themselves) '/
-	if ( doclear <> 0 and (ctor = NULL) ) then
+	if ( (doclear = 32) and (ctor = NULL) ) then
+		array->_ptr = malloc( size )
+		memset( array->_ptr, 32, size )  
+	elseif ( (doclear <> 0) and (ctor = NULL) ) then
 		array->_ptr = calloc( size, 1 )
 	else
 		array->_ptr = malloc( size )
