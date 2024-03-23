@@ -110,13 +110,25 @@ extern "C"
  '/
 #ifdef HOST_64BIT
 	#define FB_TEMPSTRBIT (cast(longint, &h8000000000000000ll))
+#else
+	#define FB_TEMPSTRBIT (cast(long, &h80000000))
+#endif
+
+/' Flag to identify a string size as fixed length without a null terminator
+ *
+ * This flag is stored in in the ssize_t size parameter passed in to string 
+ * handling functions, use FB_STRSETUP_FIX)() and FB_STRSETUP_DYN() to query
+ * the string's length.
+ '/
+#ifdef HOST_64BIT
 	#define FB_STRISFIXED (cast(longint, &h8000000000000000ll))
 	#define FB_STRSIZEMSK (cast(longint, &h7fffffffffffffffll))
 #else
-	#define FB_TEMPSTRBIT (cast(long, &h80000000))
 	#define FB_STRISFIXED (cast(long, &h80000000))
 	#define FB_STRSIZEMSK (cast(long, &h7fffffff))
 #endif
+
+'' Value to identify string size as variable length
 #define FB_STRSIZEVARLEN -1
 
 /' Returns if the string is a temporary string.
