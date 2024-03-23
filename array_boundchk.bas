@@ -3,7 +3,7 @@
 #include "fb.bi"
 
 extern "C"
-function hThrowError ( linenum as long, fname as const ubyte ptr ) as any ptr
+private function hThrowError ( linenum as long, fname as const ubyte ptr ) as any ptr
 	/' call user handler if any defined '/
    return cast(any ptr, fb_ErrorThrowEx( FB_RTERROR_OUTOFBOUNDS, linenum, fname, NULL, NULL ))
 end function
