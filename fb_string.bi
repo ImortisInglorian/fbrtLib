@@ -45,6 +45,9 @@
 	#undef fb_TrimEx
 	#undef fb_TrimAny
 	#undef fb_StrLset
+	#undef fb_StrLsetANA
+	#undef fb_StrRset
+	#undef fb_StrRsetANA
 	#undef fb_StrLcase2
 	#undef fb_StrUcase2
 	#undef fb_StrFill1
@@ -88,6 +91,7 @@
 	#undef fb_WstrTrimEx
 	#undef fb_WstrTrimAny
 	#undef fb_WstrLset
+	#undef fb_WstrRset
 	#undef fb_WstrLcase2
 	#undef fb_WstrUcase2
 	#undef fb_WstrFill1
@@ -114,6 +118,23 @@ extern "C"
 	#define FB_TEMPSTRBIT (cast(long, &h80000000))
 #endif
 
+/' Flag to identify a string size as fixed length without a null terminator
+ *
+ * This flag is stored in in the ssize_t size parameter passed in to string 
+ * handling functions, use FB_STRSETUP_FIX)() and FB_STRSETUP_DYN() to query
+ * the string's length.
+ '/
+#ifdef HOST_64BIT
+	#define FB_STRISFIXED (cast(longint, &h8000000000000000ll))
+	#define FB_STRSIZEMSK (cast(longint, &h7fffffffffffffffll))
+#else
+	#define FB_STRISFIXED (cast(long, &h80000000))
+	#define FB_STRSIZEMSK (cast(long, &h7fffffff))
+#endif
+
+'' Value to identify string size as variable length
+#define FB_STRSIZEVARLEN -1
+
 /' Returns if the string is a temporary string.
  '/
 #define FB_ISTEMP(s) ((cast(FBSTRING ptr, s)->len and FB_TEMPSTRBIT) <> 0)
@@ -127,17 +148,25 @@ extern "C"
 #define FB_STRPTR(s,size) ( iif(s = NULL, NULL , ( iif(size = -1, (Cast(FBSTRING ptr, s)->data,  cast(ubyte ptr,s ) )))))
 
 #macro FB_STRSETUP_FIX(s,size,_ptr,_len)
-	if( s = NULL ) then 
+	if( s = NULL ) then
 		_ptr = NULL
 		_len = 0
 	else
-		if( size = -1 ) then
+		if( size = FB_STRSIZEVARLEN ) then
+			/' var-len STRING, descriptor '/
 			_ptr = cast(FBSTRING ptr, s)->data
 			_len = FB_STRSIZE( s )
-		else
+		elseif( size and FB_STRISFIXED ) then
+			/' fix-len STRING*N '/
 			_ptr = cast(ubyte ptr, s)
-			/' always get the real len, as fix-len string '/
-			/' will have garbage at end (nulls or spaces) '/
+			_len = size and FB_STRSIZEMSK
+		elseif( size = 0 ) then
+			/' ZSTRING PTR, unknown length '/
+			_ptr = cast(ubyte ptr, s)
+			_len = strlen( _ptr )
+		else
+			/' fix-len ZSTRING*N '/
+			_ptr = cast(ubyte ptr, s)
 			_len = strlen( cast(ubyte ptr, s) )
 		end if
 	end if
@@ -148,18 +177,25 @@ extern "C"
 		_ptr = NULL
 		_len = 0
 	else
-		select case ( size )
-			case -1:
-				_ptr = cast(FBSTRING ptr, s)->data
-				_len = FB_STRSIZE( s )
-			case 0:
-				_ptr = cast(ubyte ptr, s)
-				_len = strlen( _ptr )
-			case else:
-				_ptr = cast(ubyte ptr, s)
-				_len = size - 1 /' without terminating NUL '/
-		end select
-	end if
+		if( size = FB_STRSIZEVARLEN ) then
+			/' var-len STRING, descriptor '/
+			_ptr = cast(FBSTRING ptr, s)->data
+			_len = FB_STRSIZE( s )
+		elseif( size and FB_STRISFIXED ) then
+			/' fix-len STRING*N '/
+			_ptr = cast(ubyte ptr, s)
+			_len = size and FB_STRSIZEMSK
+		elseif( size = 0 ) then
+			/' ZSTRING PTR, unknown length '/
+			_ptr = cast(ubyte ptr, s)
+			_len = strlen( _ptr )
+		else
+			/' fix-len ZSTRING*N '/
+			_ptr = cast(ubyte ptr, s)
+			/' without terminating NUL '/
+			_len = size - 1
+			end if
+		end if
 #endmacro
 
 /' Structure containing information about a specific string.
@@ -193,7 +229,7 @@ private sub fb_hStrSetLength( _str as FBSTRING ptr, size as size_t )
 	_str->len = size or (_str->len and FB_TEMPSTRBIT)
 end sub
 
-declare function fb_hStrAllocTmpDesc 		FBCALL ( ) as FBSTRING ptr
+declare function fb_hStrAllocTempDesc		FBCALL ( ) as FBSTRING ptr
 declare function fb_hStrDelTempDesc 		FBCALL ( str as FBSTRING ptr ) as long
 declare function fb_hStrAlloc 				FBCALL ( str as FBSTRING ptr, size as ssize_t ) as FBSTRING ptr
 declare function fb_hStrRealloc 			FBCALL ( str as FBSTRING ptr, size as ssize_t, _preserve as long ) as FBSTRING ptr
@@ -201,7 +237,8 @@ declare function fb_hStrAllocTemp 			FBCALL ( str as FBSTRING ptr, size as ssize
 declare function fb_hStrAllocTemp_NoLock 	FBCALL ( str as FBSTRING ptr, size as ssize_t ) as FBSTRING ptr
 declare function fb_hStrDelTemp 			FBCALL ( str as FBSTRING ptr ) as long
 declare function fb_hStrDelTemp_NoLock  	FBCALL ( str as FBSTRING ptr ) as long
-declare sub 	 fb_hStrCopy 				FBCALL ( dst as ubyte ptr, src as const ubyte ptr , bytes as ssize_t )
+declare sub      fb_hStrCopy                FBCALL ( dst as ubyte ptr, src as const ubyte ptr , bytes as ssize_t )
+declare sub      fb_hStrCopyN               FBCALL ( dst as ubyte ptr, src as const ubyte ptr , bytes as ssize_t )
 declare function fb_hStrSkipChar 			FBCALL ( s as ubyte ptr, len as ssize_t, c as long ) as ubyte ptr
 declare function fb_hStrSkipCharRev 		FBCALL ( s as ubyte ptr, len as ssize_t, c as long ) as ubyte ptr
 
@@ -348,7 +385,9 @@ declare function fb_TRIM 					FBCALL ( src as FBSTRING ptr ) as FBSTRING ptr
 declare function fb_TrimEx 					FBCALL ( str as FBSTRING ptr, pattern as FBSTRING ptr ) as FBSTRING ptr
 declare function fb_TrimAny 				FBCALL ( str as FBSTRING ptr, pattern as FBSTRING ptr ) as FBSTRING ptr
 declare sub 	 fb_StrLset 				FBCALL ( dst as FBSTRING ptr, src as FBSTRING ptr )
+declare sub 	 fb_StrLsetANA 				FBCALL ( dst as any ptr, dst_size as ssize_t, src as FBSTRING ptr )
 declare sub 	 fb_StrRset 				FBCALL ( dst as FBSTRING ptr, src as FBSTRING ptr )
+declare sub 	 fb_StrRsetANA 				FBCALL ( dst as any ptr, dst_size as ssize_t, src as FBSTRING ptr )
 declare function fb_StrLcase2 				FBCALL ( src as FBSTRING ptr, mode as long ) as FBSTRING ptr
 declare function fb_StrUcase2 				FBCALL ( src as FBSTRING ptr, mode as long ) as FBSTRING ptr
 declare function fb_StrFill1 				FBCALL ( cnt as ssize_t, fchar as long ) as FBSTRING ptr

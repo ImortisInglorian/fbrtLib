@@ -2,6 +2,7 @@
 
 #include "../fb.bi"
 #include "windows.bi"
+#include "fb_private_console.bi"
 
 extern "C"
 extern as const ubyte __fb_keytable(0 to 86, 0 to 2)
@@ -52,24 +53,6 @@ dim shared as const ubyte __fb_keytable(0 to 86, 0 to 2) = { _
 	{ 0,			0,			0			} _
 }
 
-private function find_window() as HWND
-	dim as TCHAR old_title(0 to MAX_PATH - 1)
-	dim as TCHAR title(0 to MAX_PATH - 1)
-	static as HWND _hwnd = NULL
-
-	if ( _hwnd <> NULL ) then
-		return _hwnd
-	end if
-
-	if ( GetConsoleTitle(@old_title(0), MAX_PATH) <> NULL ) then
-		sprintf(@title(0), "_fb_console_title %f", fb_Timer())
-		SetConsoleTitle(@title(0))
-		_hwnd = FindWindow(NULL, @title(0))
-		SetConsoleTitle(@old_title(0))
-	end if
-	return _hwnd
-end function
-
 function fb_hVirtualToScancode(vkey as long ) as long
 	dim as long i
 	
@@ -85,16 +68,19 @@ end function
 function fb_ConsoleMultikey( scancode as long ) as long
 	dim as long i
 
-	if ( find_window() <> GetForegroundWindow() ) then
-		return FB_FALSE
+	fb_ConsoleProcessEvents()
+
+	if fb_ConsoleHasFocus() then
+		do
+			if ( __fb_keytable(i, 0) = scancode ) then
+				return iif((GetAsyncKeyState(__fb_keytable(i, 1)) _ 
+					or iif(__fb_keytable(i, 2), GetAsyncKeyState(__fb_keytable(i, 2)), 0) _
+					and &h8000), FB_TRUE, FB_FALSE)
+			end if
+			i += 1
+		loop while (__fb_keytable(i,0))
 	end if
-	
-	do
-		if ( __fb_keytable(i, 0) = scancode ) then
-			return iif(((GetAsyncKeyState(__fb_keytable(i, 1)) or GetAsyncKeyState(__fb_keytable(i, 2))) and &h8000), FB_TRUE, FB_FALSE)
-		end if
-		i += 1
-	loop while (__fb_keytable(i,0))
+
 	return FB_FALSE
 end function
 end extern

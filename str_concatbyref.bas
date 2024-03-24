@@ -41,7 +41,7 @@ function fb_StrConcatByref FBCALL _
 	dim as ssize_t dst_len = any, src_len = any
 
 	/' dst should always be var-len string '/
-	DBG_ASSERT( dst_size = -1 )
+	DBG_ASSERT( dst_size = FB_STRSIZEVARLEN )
 
 	/' dst '/
 	FB_STRSETUP_FIX( dst, dst_size, dst_ptr, dst_len )
@@ -68,10 +68,10 @@ function fb_StrConcatByref FBCALL _
 		end if
 
 		/' delete temps? '/
-		if( dst_size = -1 ) then
+		if( dst_size = FB_STRSIZEVARLEN ) then
 			fb_hStrDelTemp_NoLock( cast( FBSTRING ptr, dst ) )
 		end if
-		if( src_size = -1 ) then
+		if( src_size = FB_STRSIZEVARLEN ) then
 			fb_hStrDelTemp_NoLock( cast( FBSTRING ptr, src ) )
 		end if
 

@@ -16,6 +16,7 @@ dim shared as size_t key_head = 0, key_tail = 0
 dim shared as INPUT_RECORD input_events(0 to KEY_BUFFER_LEN - 1)
 dim shared as ulong key_scratch_pad = 0
 dim shared as long key_buffer_changed = FALSE
+dim shared as long console_has_focus = TRUE
 
 type FB_KEY_CODES
 	as ushort value_normal
@@ -343,6 +344,11 @@ private sub fb_hInitControlHandler( )
 end sub
 
 extern "c"
+
+function fb_ConsoleHasFocus( ) as long
+	return console_has_focus
+end function
+
 function fb_ConsoleProcessEvents( ) as long
 	dim as long got_event = FALSE
 	dim as INPUT_RECORD ir
@@ -376,6 +382,10 @@ function fb_ConsoleProcessEvents( ) as long
 						__fb_con.mouseEventHook( @ir.Event.MouseEvent )
 						got_event = TRUE
 					end if
+
+				case FOCUS_EVENT:
+					console_has_focus = ir.Event.FocusEvent.bSetFocus
+
 			end select
 
 			FB_UNLOCK()

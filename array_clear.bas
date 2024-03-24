@@ -12,6 +12,7 @@
    for plain arrays: fbc calls fb_ArrayClear()
    for object arrays: fbc calls fb_ArrayClearObj()
    for FBSTRING arrays: fbc calls fb_ArrayDestructStr()
+...for STRING*N arrays: fbc calls fb_ArrayFill()
 '/
 
 #include "fb.bi"
@@ -20,6 +21,14 @@ extern "C"
 function fb_ArrayClear FBCALL ( array as FBARRAY ptr ) as long
 	if ( array->_ptr ) then
 		memset( array->_ptr, 0, array->size )
+	end if
+
+	return fb_ErrorSetNum( FB_RTERROR_OK )
+end function
+
+function fb_ArrayFill FBCALL ( array as FBARRAY ptr, byval fillchar as long ) as long
+	if ( array->_ptr ) then
+		memset( array->_ptr, fillchar, array->size )
 	end if
 
 	return fb_ErrorSetNum( FB_RTERROR_OK )

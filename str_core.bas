@@ -20,7 +20,7 @@ Dim shared as FB_LIST tmpdsList = Type( 0, NULL, NULL, NULL )
 Dim shared as FB_STR_TMPDESC fb_tmpdsTB( 0 to FB_STR_TMPDESCRIPTORS - 1)
 
 extern "C"
-function fb_hStrAllocTmpDesc FBCALL ( ) as FBSTRING ptr
+function fb_hStrAllocTempDesc FBCALL ( ) as FBSTRING ptr
 	dim as FB_STR_TMPDESC ptr dsc
 
 	if ( (tmpdsList.fhead = NULL) andalso (tmpdsList.head = NULL) ) then
@@ -107,22 +107,22 @@ function fb_hStrRealloc FBCALL ( _str as FBSTRING ptr, size as ssize_t, _preserv
 				newsize = size
 			end if
 		else
-            dim as ubyte ptr pszOld = _str->data
-			_str->data = ReAllocate( pszOld, newsize + 1 )
+			dim as byte ptr newbuffer = any
+			newbuffer = ReAllocate( _str->data, newsize + 1 )
+
 			/' failed? try the original request '/
-			if ( _str->data = NULL ) then
-				_str->data = ReAllocate( pszOld, size + 1 )
+			if ( newbuffer = NULL ) then
 				newsize = size
-                if ( _str->data = NULL ) then
-                    /' restore the old memory block '/
-                    _str->data = pszOld
-                    return NULL
-                end if
-            end if
+				newbuffer = ReAllocate( _str->data, size + 1 )
+				if ( newbuffer = NULL ) then
+					return NULL
+				end if
+			end if
+			_str->data = newbuffer
 		end if
 
 		if ( _str->data = NULL ) then
-            _str->len = 0
+			_str->len = 0
 			_str->size = 0
 			return NULL
 		end if
@@ -132,14 +132,14 @@ function fb_hStrRealloc FBCALL ( _str as FBSTRING ptr, size as ssize_t, _preserv
 
 	fb_hStrSetLength( _str, size )
 
-    return _str
+	return _str
 end function
 
 function fb_hStrAllocTemp_NoLock FBCALL ( _str as FBSTRING ptr, size as ssize_t ) as FBSTRING ptr
 	dim as long try_alloc = (_str = NULL)
 
     if ( try_alloc ) then
-        _str = fb_hStrAllocTmpDesc( )
+        _str = fb_hStrAllocTempDesc( )
         if ( _str=NULL ) then
             return NULL
 		end if
@@ -202,5 +202,12 @@ sub fb_hStrCopy FBCALL ( dst as ubyte ptr, src as const ubyte ptr, bytes as ssiz
 
 	/' add the null-term '/
 	*dst = asc(!"\000") '' NUL CHAR
+
+end sub
+
+sub fb_hStrCopyN FBCALL ( dst as ubyte ptr, src as const ubyte ptr, bytes as ssize_t )
+	if ( (src <> NULL) and (bytes > 0) ) then
+		dst = cast(ubyte ptr, FB_MEMCPYX( dst, src, bytes ))
+	end if
 end sub
 end extern

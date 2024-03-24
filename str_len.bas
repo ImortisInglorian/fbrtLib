@@ -11,7 +11,7 @@ function fb_StrLen FBCALL ( _str as any ptr, str_size as ssize_t ) as ssize_t
 	end if
 
 	/' is dst var-len? '/
-	if ( str_size = -1 ) then
+	if ( str_size = FB_STRSIZEVARLEN ) then
 		_len = FB_STRSIZE( _str )
 
 		/' delete temp? '/

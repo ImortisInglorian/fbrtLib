@@ -7,6 +7,7 @@
 	#undef fb_ArrayClearObj
 	#undef fb_ArrayErase
 	#undef fb_ArrayEraseObj
+	#undef fb_ArrayFill
 	#undef fb_ArrayStrErase
 	#undef fb_ArrayRedimEx
 	#undef fb_ArrayRedimObj
@@ -60,6 +61,7 @@ declare function fb_ArrayClear 			FBCALL ( array as FBARRAY ptr ) as long
 declare function fb_ArrayClearObj 		FBCALL ( array as FBARRAY ptr, ctor as FB_DEFCTOR, dtor as FB_DEFCTOR ) as long
 declare function fb_ArrayErase 			FBCALL ( array as FBARRAY ptr ) as long
 declare function fb_ArrayEraseObj 		FBCALL ( array as FBARRAY ptr, ctor as FB_DEFCTOR, dtor as FB_DEFCTOR ) as long
+declare function fb_ArrayFill           FBCALL ( array as FBARRAY ptr, byval fillchar as long ) as long
 declare function fb_ArrayGetDesc        FBCALL ( array as FBARRAY ptr ) as FBARRAY ptr
 declare sub 	 fb_ArrayStrErase 		FBCALL ( array as FBARRAY ptr )
 declare function fb_ArrayRedim 				   ( array as FBARRAY ptr, element_len as size_t, preserve as long, dimensions as size_t, ... ) as long

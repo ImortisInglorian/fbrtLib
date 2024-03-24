@@ -42,6 +42,7 @@ declare sub 	 fb_hConsoleResetHandles 			   ( )
 declare function fb_ConsoleGetRawX 					   ( ) as long
 declare function fb_ConsoleGetRawY 					   ( ) as long
 declare function fb_hConsoleCreateBuffer 			   ( ) as HANDLE
+declare function fb_ConsoleHasFocus                    ( ) as long
 end extern
 
 #define __fb_in_handle  fb_hConsoleGetHandle( TRUE )

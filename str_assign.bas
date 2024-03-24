@@ -11,7 +11,7 @@ function fb_StrAssignEx FBCALL ( dst as any ptr, dst_size as ssize_t, src as any
 	FB_STRLOCK()
 
 	if ( dst = NULL ) then
-		if( src_size = -1 ) then
+		if( src_size = FB_STRSIZEVARLEN ) then
 			fb_hStrDelTemp_NoLock( cast(FBSTRING ptr, src) )
 		end if
       
@@ -24,7 +24,7 @@ function fb_StrAssignEx FBCALL ( dst as any ptr, dst_size as ssize_t, src as any
 	FB_STRSETUP_FIX( src, src_size, src_ptr, src_len )
 
 	/' is dst var-len? '/
-	if ( dst_size = -1 ) then
+	if ( dst_size = FB_STRSIZEVARLEN ) then
 		dstr = cast(FBSTRING ptr, dst)
       
 		/' src NULL? '/
@@ -38,7 +38,7 @@ function fb_StrAssignEx FBCALL ( dst as any ptr, dst_size as ssize_t, src as any
 			end if
 		else
 			/' if src is a temp, just copy the descriptor '/
-			if ( (src_size = -1) andalso FB_ISTEMP(src) ) then
+			if ( (src_size = FB_STRSIZEVARLEN) andalso FB_ISTEMP(src) ) then
 				if ( is_init = FB_FALSE ) then
 					fb_StrDelete( dstr )
 				end if
@@ -69,7 +69,23 @@ function fb_StrAssignEx FBCALL ( dst as any ptr, dst_size as ssize_t, src as any
            
 			fb_hStrCopy( dstr->data, src_ptr, src_len )
 		end if
-	/' fixed-len or zstring.. '/
+	/' fixed-len string '/
+	elseif( dst_size and FB_STRISFIXED ) then
+		dst_size and= FB_STRSIZEMSK
+
+		if( src_len > 0 ) then
+			if( dst_size < src_len ) then
+				src_len = dst_size
+			end if
+
+			fb_hStrCopyN( dst, src_ptr, src_len )
+		end if
+
+		dst_size -= src_len
+		if( dst_size > 0 ) then
+			memset( cast(ubyte ptr, dst) + src_len, 32, dst_size )
+		end if
+	/' fixed-len zstring or zstring '/
 	else
 		/' src NULL? '/
 		if ( src_len = 0 ) then
@@ -79,15 +95,16 @@ function fb_StrAssignEx FBCALL ( dst as any ptr, dst_size as ssize_t, src as any
 			if ( dst_size = 0 ) then
 				dst_size = src_len
 			else
-				dst_size -= 1 						/' less the null-term '/
+				/' less the null-term '/
+				dst_size -= 1
 				if ( dst_size < src_len ) then
 					src_len = dst_size
 				end if
 			end if
-         
-			fb_hStrCopy( cast(ubyte ptr, dst) , src_ptr, src_len )
+
+			fb_hStrCopy( cast(ubyte ptr, dst), src_ptr, src_len )
 		end if
-      
+
 		/' fill reminder with null's '/
 		if ( fill_rem <> 0 ) then
 			dst_size -= src_len

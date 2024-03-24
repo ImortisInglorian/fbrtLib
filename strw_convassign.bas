@@ -22,7 +22,7 @@ function fb_WstrAssignFromA FBCALL (dst as FB_WCHAR ptr, dst_chars as ssize_t, s
 	end if
 
 	/' delete temp? '/
-	if ( src_size = -1 ) then
+	if ( src_size = FB_STRSIZEVARLEN ) then
 		fb_hStrDelTemp( cast(FBSTRING ptr, src) )
 	end if
 
@@ -50,7 +50,7 @@ function fb_WstrAssignToAEx FBCALL ( dst as any ptr, dst_chars as ssize_t, src a
 	end if
 
 	/' is dst var-len? '/
-	if ( dst_chars = -1 ) then
+	if ( dst_chars = FB_STRSIZEVARLEN ) then
 		/' src NULL? '/
 		if ( src_chars = 0 ) then
 			if ( is_init = FB_FALSE ) then
@@ -74,7 +74,23 @@ function fb_WstrAssignToAEx FBCALL ( dst as any ptr, dst_chars as ssize_t, src a
 			dim as ssize_t writtenchars = fb_wstr_ConvToA( cast(FBSTRING ptr, dst)->data, dst_chars, src )
 			fb_hStrSetLength( dst, writtenchars )
 		end if
-	/' fixed-len or zstring.. '/
+	/' fixed-len string '/
+	elseif( dst_chars and FB_STRISFIXED ) then
+		dim as ssize_t writtenchars = 0
+		dst_chars and= FB_STRSIZEMSK
+
+		if( src_chars > 0 ) then
+			if( dst_chars < src_chars ) then
+				src_chars = dst_chars
+			end if
+
+			writtenchars = fb_wstr_ConvToA( dst, dst_chars, src )
+		end if
+
+		if( dst_chars - writtenchars > 0 ) then
+			memset( cast(ubyte ptr, dst) + writtenchars, 32, dst_chars - writtenchars )
+		end if
+	/' fixed-len zstring or zstring ptr '/
 	else
 		/' src NULL? '/
 		if ( src_chars = 0 ) then
