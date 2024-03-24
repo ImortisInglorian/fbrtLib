@@ -45,6 +45,9 @@
 	#undef fb_TrimEx
 	#undef fb_TrimAny
 	#undef fb_StrLset
+	#undef fb_StrLsetANA
+	#undef fb_StrRset
+	#undef fb_StrRsetANA
 	#undef fb_StrLcase2
 	#undef fb_StrUcase2
 	#undef fb_StrFill1
@@ -88,6 +91,7 @@
 	#undef fb_WstrTrimEx
 	#undef fb_WstrTrimAny
 	#undef fb_WstrLset
+	#undef fb_WstrRset
 	#undef fb_WstrLcase2
 	#undef fb_WstrUcase2
 	#undef fb_WstrFill1
@@ -381,7 +385,9 @@ declare function fb_TRIM 					FBCALL ( src as FBSTRING ptr ) as FBSTRING ptr
 declare function fb_TrimEx 					FBCALL ( str as FBSTRING ptr, pattern as FBSTRING ptr ) as FBSTRING ptr
 declare function fb_TrimAny 				FBCALL ( str as FBSTRING ptr, pattern as FBSTRING ptr ) as FBSTRING ptr
 declare sub 	 fb_StrLset 				FBCALL ( dst as FBSTRING ptr, src as FBSTRING ptr )
+declare sub 	 fb_StrLsetANA 				FBCALL ( dst as any ptr, dst_size as ssize_t, src as FBSTRING ptr )
 declare sub 	 fb_StrRset 				FBCALL ( dst as FBSTRING ptr, src as FBSTRING ptr )
+declare sub 	 fb_StrRsetANA 				FBCALL ( dst as any ptr, dst_size as ssize_t, src as FBSTRING ptr )
 declare function fb_StrLcase2 				FBCALL ( src as FBSTRING ptr, mode as long ) as FBSTRING ptr
 declare function fb_StrUcase2 				FBCALL ( src as FBSTRING ptr, mode as long ) as FBSTRING ptr
 declare function fb_StrFill1 				FBCALL ( cnt as ssize_t, fchar as long ) as FBSTRING ptr
