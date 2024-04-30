@@ -59,6 +59,7 @@ static shared __fb_global_mutex as pthread_mutex_t
 static shared __fb_string_mutex as pthread_mutex_t
 static shared __fb_graphics_mutex as pthread_mutex_t
 static shared __fb_math_mutex as pthread_mutex_t
+static shared __fb_profile_mutex as pthread_mutex_t
 
 Sub fb_Lock FBCALL ( ) pthread_mutex_lock  ( @__fb_global_mutex ) End Sub
 Sub fb_Unlock FBCALL ( )  pthread_mutex_unlock( @__fb_global_mutex ) End Sub
@@ -68,6 +69,8 @@ Sub fb_GraphicsLock FBCALL ( ) pthread_mutex_lock  ( @__fb_graphics_mutex ) End 
 Sub fb_GraphicsUnlock FBCALL ( ) pthread_mutex_unlock( @__fb_graphics_mutex ) End Sub
 Sub fb_MathLock FBCALL ( ) pthread_mutex_lock  ( @__fb_math_mutex ) End Sub
 Sub fb_MathUnlock FBCALL ( ) pthread_mutex_unlock( @__fb_math_mutex ) End Sub
+Sub fb_ProfileLock FBCALL ( ) pthread_mutex_lock  ( @__fb_profile_mutex ) End Sub
+Sub fb_ProfileUnlock FBCALL ( ) pthread_mutex_unlock( @__fb_profile_mutex ) End Sub
 #endif
 
 Sub bg_thread(arg as Any Ptr)
@@ -501,6 +504,7 @@ Private Sub hInit( )
 	pthread_mutex_init(@__fb_string_mutex, @attr)
 	pthread_mutex_init(@__fb_graphics_mutex, @attr)
 	pthread_mutex_init(@__fb_math_mutex, @attr)
+	pthread_mutex_init(@__fb_profile_mutex, @attr)
 #endif
 
 	pthread_mutex_init(@__fb_bg_mutex, @attr)
@@ -614,5 +618,6 @@ Sub fb_hEnd( unused as long )
 	pthread_mutex_destroy(@__fb_string_mutex)
 	pthread_mutex_destroy(@__fb_graphics_mutex)
 	pthread_mutex_destroy(@__fb_math_mutex)
+	pthread_mutex_destroy(@__fb_profile_mutex)
 #endif
 End Sub
