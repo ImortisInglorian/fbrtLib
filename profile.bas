@@ -111,6 +111,15 @@ end type
 
 '' procs
 
+'' extra information about procinfo entry
+enum PROCINFO_FLAGS
+	PROCINFO_FLAGS_NONE     = 0
+	PROCINFO_FLAGS_MAIN     = 1
+	PROCINFO_FLAGS_THREAD   = 2
+	PROCINFO_FLAGS_CALLPTR  = 4
+	PROCINFO_FLAGS_FOREIGN  = 8
+end enum
+
 '' procedure call information, and hash table for child procedures
 type FB_PROCINFO
 	as const zstring ptr name
@@ -122,6 +131,7 @@ type FB_PROCINFO
 	as long proc_id
 	as FB_PROCINFO ptr child(0 to PROC_MAX_CHILDREN-1)
 	as FB_PROCINFO ptr next
+	as long flags
 end type
 
 '' block of memory to store procedure call information records
@@ -888,7 +898,7 @@ end sub
 private sub hProfilerReportCallsProc _
 	( _
 		byval prof as FB_PROFILER_GLOBAL ptr, byval ctx as FB_PROFILER_THREAD ptr, byval f as FILE ptr, _
-		byval parent_proc as FB_PROCINFO ptr, byval col as long, byval isthread as long _
+		byval parent_proc as FB_PROCINFO ptr, byval col as long _
 	)
 	dim as FB_PROCINFO ptr proc = any
 	dim as FB_PROCARRAY proc_list = any
@@ -910,11 +920,13 @@ private sub hProfilerReportCallsProc _
 
 	if( proc_list.length > 0 ) then
 
-		if( isthread ) then
-			len_ = col - (fprintf( f, !"(thread) %s", parent_proc->name ) )
-		else
-			len_ = col - (fprintf( f, !"%s", parent_proc->name ) )
+		if( (prof->options and PROFILE_OPTION_HIDE_TITLES) = 0 ) then
+			if( (parent_proc->flags and PROCINFO_FLAGS_THREAD) <> 0 ) then
+				fprintf( f, !"(thread)\n" )
+			end if
 		end if
+
+		len_ = col - (fprintf( f, !"%s", parent_proc->name ) )
 		pad_spaces( f, len_ )
 
 		if( (prof->options and PROFILE_OPTION_HIDE_COUNTS) = 0 ) then
@@ -1012,7 +1024,7 @@ private sub hProfilerReportCallsFunctions _
 	PROCARRAY_find_unique_procs( @list, ctx->proc_tb )
 	PROCARRAY_sort_by_name( @list )
 	for i = 0 to list.length - 1
-		hProfilerReportCallsProc( prof, ctx, f, list.array[i], col, FALSE )
+		hProfilerReportCallsProc( prof, ctx, f, list.array[i], col )
 	next
 
 	PROCARRAY_destructor( @list )
@@ -1510,6 +1522,11 @@ private sub hInitCall( byval ctx as FB_PROFILER_THREAD ptr, byval proc as FB_PRO
 	proc->local_time = 0.0
 	proc->local_count = 0
 	proc->parent = NULL
+	if( strncmp( proc->name, @"{fbfp}", 6 ) = 0 ) then
+		proc->flags = PROCINFO_FLAGS_CALLPTR
+	else
+		proc->flags = PROCINFO_FLAGS_NONE
+	end if
 end sub
 
 private function hPushCall( byval ctx as FB_PROFILER_THREAD ptr, byval parent_proc as FB_PROCINFO ptr, byval procname as const zstring ptr ) as FB_PROCINFO ptr
@@ -1586,10 +1603,6 @@ public function fb_ProfileBeginProc FBCALL (  byval procname as const zstring pt
 	dim as FB_PROFILER_THREAD ptr ctx = any
 	dim as FB_PROCINFO ptr proc = any
 
-	if( (procname = NULL) orelse (*procname = 0) ) then
-		procname = @THREAD_PROC_NAME
-	end if
-
 	if( tls->ctx = NULL ) then
 		fb_PROFILECTX_Constructor( tls )
 	end if
@@ -1599,32 +1612,38 @@ public function fb_ProfileBeginProc FBCALL (  byval procname as const zstring pt
 
 	'' First function call of a newly spawned thread has no proc set
 	if( proc = NULL ) then
+		if( (procname = NULL) orelse (*procname = 0) ) then
+			procname = @THREAD_PROC_NAME
+		end if
 		proc = FB_PROFILER_THREAD_alloc_proc( ctx )
 		hInitCall( ctx, proc,  procname )
+		proc->flags or= PROCINFO_FLAGS_THREAD
+	end if
+
+	if( (procname = NULL) orelse (*procname = 0) ) then
+		procname = @UNNAMED_PROC_NAME
 	end if
 
 	'' set the current proc pointer to current procedure called
 	ctx->thread_proc = proc
 
-	if( proc ) then
-		if( strncmp( proc->name, @"{fbfp}", 6 ) = 0 ) then
-			proc = hPushCall( ctx, proc, procname )
-			ctx->thread_proc = proc
-		end if
+	if( (proc->flags and PROCINFO_FLAGS_CALLPTR) <> 0 ) then
+		proc = hPushCall( ctx, proc, procname )
+		ctx->thread_proc = proc
 	end if
 
 
 	return cast(FB_PROCINFO ptr, proc)
 end function
 
-public sub fb_ProfileEndProc( byval p as any ptr )
+public sub fb_ProfileEndProc FBCALL ( byval p as any ptr )
 	if( p ) then
 		dim thread As FBThread ptr = fb_GetCurrentThread( )
 		dim as FB_PROFILECTX ptr tls = fb_get_thread_profilectx( )
 		dim as FB_PROFILER_THREAD ptr ctx = tls->ctx
 		dim as FB_PROCINFO ptr proc = ctx->thread_proc
 		if( proc->parent ) then
-			if( strncmp( proc->parent->name, @"{fbfp}", 6 ) = 0 ) then
+			if( (proc->parent->flags and PROCINFO_FLAGS_CALLPTR) <> 0 ) then
 				hPopCall( ctx, proc )
 			end if
 		end if
@@ -1651,8 +1670,16 @@ public function fb_ProfileBeginCall FBCALL ( byval procname as const zstring ptr
 
 	'' First function call of a newly spawned thread has no parent proc set
 	if( parent_proc = NULL ) then
+		if( (procname = NULL) orelse ((*procname) = 0) ) then
+			procname = @THREAD_PROC_NAME
+		end if
 		parent_proc = FB_PROFILER_THREAD_alloc_proc( ctx )
 		hInitCall( ctx, parent_proc, THREAD_PROC_NAME )
+		parent_proc->flags or= PROCINFO_FLAGS_THREAD
+	end if
+
+	if( (procname = NULL) orelse ((*procname) = 0) ) then
+		procname = @UNNAMED_PROC_NAME
 	end if
 
 	return cast( any ptr, hPushCall( ctx, parent_proc, procname ) )
@@ -1692,6 +1719,7 @@ public sub fb_InitProfile FBCALL ( )
 	'' assume we are starting from MAIN procedure
 	ctx->thread_proc = FB_PROFILER_THREAD_alloc_proc( ctx )
 	hInitCall( ctx, ctx->thread_proc, MAIN_PROC_NAME )
+	ctx->thread_proc->flags or= PROCINFO_FLAGS_MAIN
 	ctx->thread_proc->local_count = 1
 
 	'' assume that this must have been called from the main thread
