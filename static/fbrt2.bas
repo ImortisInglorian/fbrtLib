@@ -12,9 +12,11 @@
 extern "C"
 private sub fb_hDoInit( ) constructor 101
 	fb_hRtInit( )
+	fb_InitProfileCycles( )
 end sub
 
 private sub fb_hDoExit( ) destructor 101
+	fb_EndProfileCycles( 0 )
 	fb_hRtExit( )
 end sub
 end extern
