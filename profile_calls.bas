@@ -81,6 +81,7 @@ end type
 '' context for thread local storage
 
 type FB_PROFILER_THREAD
+	as FB_PROCINFO ptr thread_entry
 	as FB_PROCINFO ptr thread_proc
 	as STRING_TABLE strings
 	as STRING_HASH_TABLE strings_hash
@@ -279,6 +280,7 @@ end extern
 
 private sub PROFILER_THREAD_constructor( byval ctx as FB_PROFILER_THREAD ptr )
 	if( ctx ) then
+		ctx->thread_entry = NULL
 		ctx->thread_proc = NULL
 		STRING_TABLE_constructor( @ctx->strings )
 		STRING_HASH_TABLE_constructor( @ctx->strings_hash, @ctx->strings )
@@ -300,9 +302,15 @@ private sub PROFILECTX_Destructor ( byval data_ as any ptr )
 	if( tls ) then
 		dim as FB_PROFILER_THREAD ptr ctx = tls->ctx
 		if( ctx ) then
-			if( ctx->thread_proc ) then
-				ctx->thread_proc->local_time = fb_Timer() - ctx->thread_proc->start_time
-			end if
+			dim as FB_PROCINFO ptr lastproc = any
+
+			'' walk the call stack and update times
+			'' calculate time even if the thread ends from a called procedure
+			lastproc = ctx->thread_proc
+			while( lastproc )
+				lastproc->local_time = fb_Timer() - lastproc->start_time
+				lastproc =  lastproc->parent
+			wend
 
 			'' don't actually delete the data, just
 			'' add it to the main profiler state
@@ -497,7 +505,7 @@ private sub hProfilerReportCallsProc _
 			len_ = 14 - fprintf( f, !"%10.5f", parent_proc->local_time )
 			pad_spaces( f, len_ )
 
-			fprintf( f, !"%6.2f%%", (parent_proc->local_time * 100.0) / ctx->thread_proc->local_time )
+			fprintf( f, !"%6.2f%%", (parent_proc->local_time * 100.0) / ctx->thread_entry->local_time )
 		end if
 
 		fprintf( f, !"\n\n" )
@@ -519,7 +527,7 @@ private sub hProfilerReportCallsProc _
 				len_ = 14 - fprintf( f, !"%10.5f", proc->local_time )
 				pad_spaces( f, len_ )
 
-				len_ = 10 - fprintf( f, !"%6.2f%%", ( proc->local_time * 100.0 ) / ctx->thread_proc->local_time )
+				len_ = 10 - fprintf( f, !"%6.2f%%", ( proc->local_time * 100.0 ) / ctx->thread_entry->local_time )
 				pad_spaces( f, len_ )
 
 				fprintf( f, !"%6.2f%%", iif( parent_proc->local_time > 0.0, _
@@ -654,7 +662,7 @@ private sub hProfilerReportCallsGlobals _
 			len_ = 14 - fprintf( f, !"%10.5f", proc->local_time )
 			pad_spaces( f, len_ )
 
-			len_ = 10 - fprintf( f, !"%6.2f%%", ( proc->local_time * 100.0 ) / ctx->thread_proc->local_time )
+			len_ = 10 - fprintf( f, !"%6.2f%%", ( proc->local_time * 100.0 ) / ctx->thread_entry->local_time )
 		end if
 
 		fprintf( f, !"\n" )
@@ -786,7 +794,7 @@ private sub hProfilerReportCallTree _
 		fprintf( f, !"Call Tree:\n\n" )
 	end if
 
-	hProfilerReportCallTreeProc( prof, ctx, f, ctx->thread_proc, TRUE, TRUE )
+	hProfilerReportCallTreeProc( prof, ctx, f, ctx->thread_entry, TRUE, TRUE )
 
 end sub
 
@@ -1076,10 +1084,6 @@ private sub hProfilerWriteReport( byval prof as FB_PROFILER_CALLS ptr )
 		return
 	end if
 
-	'' fb_PROFILECTX_Destructor() won't be called for the main thread.
-	'' until at least after the report is written, so update time now
-	prof->main_thread->thread_proc->local_time = fb_Timer() - prof->main_thread->thread_proc->start_time
-
 	fb_ProfileGetFileName( filename, PROFILER_MAX_PATH )
 
 	f = fopen( filename, "w" )
@@ -1092,7 +1096,7 @@ private sub hProfilerWriteReport( byval prof as FB_PROFILER_CALLS ptr )
 		fb_hGetExeName( filename, PROFILER_MAX_PATH-1 )
 		fprintf( f, !"Executable name: %s\n", filename )
 		fprintf( f, !"Launched on: %s\n", prof->global->launch_time )
-		fprintf( f, !"Total program execution time: %5.4g seconds\n", prof->main_thread->thread_proc->local_time )
+		fprintf( f, !"Total program execution time: %5.4g seconds\n", prof->main_thread->thread_entry->local_time )
 	end if
 
 	hProfilerReportThread( prof, prof->main_thread, f )
@@ -1168,6 +1172,7 @@ fill_proc:
 	parent_proc->child(hash_index) = proc
 
 update_proc:
+	proc->local_count += 1
 	proc->start_time = fb_Timer()
 
 	'' set the current procedure pointer to the procedure about to be called
@@ -1184,7 +1189,6 @@ private sub hPopCall( byval ctx as FB_PROFILER_THREAD ptr, byval proc as FB_PROC
 	'' accumulated time and call count is for all calls
 	'' with the current parent
 	proc->local_time += ( end_time - proc->start_time )
-	proc->local_count += 1
 
 	'' return to the callee's parent
 	ctx->thread_proc = proc->parent
@@ -1216,6 +1220,8 @@ public function fb_ProfileBeginProc FBCALL (  byval procname as const zstring pt
 		proc = FB_PROFILER_THREAD_alloc_proc( ctx )
 		hInitCall( ctx, proc,  procname )
 		proc->flags or= PROCINFO_FLAGS_THREAD
+		ctx->thread_entry = proc
+		proc->local_count += 1
 	end if
 
 	if( (procname = NULL) orelse (*procname = 0) ) then
@@ -1304,8 +1310,9 @@ public sub fb_InitProfile FBCALL ( )
 	ctx = tls->ctx
 
 	'' assume we are starting from MAIN procedure
-	ctx->thread_proc = FB_PROFILER_THREAD_alloc_proc( ctx )
-	hInitCall( ctx, ctx->thread_proc, MAIN_PROC_NAME )
+	ctx->thread_entry = FB_PROFILER_THREAD_alloc_proc( ctx )
+	hInitCall( ctx, ctx->thread_entry, MAIN_PROC_NAME )
+	ctx->thread_proc = ctx->thread_entry
 	ctx->thread_proc->flags or= PROCINFO_FLAGS_MAIN
 	ctx->thread_proc->local_count = 1
 
@@ -1319,10 +1326,18 @@ public function fb_EndProfile FBCALL ( byval errorlevel as long ) as long
 	dim as FB_PROFILECTX ptr tls = fb_get_thread_profilectx( )
 	dim as FB_PROFILER_THREAD ptr ctx = tls->ctx
 	dim as FB_PROFILER_CALLS ptr prof = fb_profiler
+	dim as FB_PROCINFO ptr lastproc = any
 
 	if( ctx <> prof->main_thread ) then
-		'' TODO: Ending the profile from some other thread?
+		'' TODO: Ending profiling from some other thread?
 	end if
+
+	'' walk up the call stack and update times
+	lastproc = ctx->thread_proc
+	while( lastproc )
+		lastproc->local_time = fb_timer() - lastproc->start_time
+		lastproc = lastproc->parent
+	wend
 
 	hProfilerWriteReport( prof )
 

@@ -363,7 +363,7 @@ public function PROFILER_GLOBAL_create( ) as FB_PROFILER_GLOBAL ptr
 	if( fb_profiler ) then
 		dim as time_t rawtime
 		dim as tm ptr ptm
-	
+
 		STRING_TABLE_constructor( @fb_profiler->strings )
 		STRING_HASH_TABLE_constructor( @fb_profiler->strings_hash, @fb_profiler->strings )
 		STRING_HASH_TABLE_constructor( @fb_profiler->ignores_hash, @fb_profiler->strings )
@@ -382,7 +382,7 @@ public sub PROFILER_GLOBAL_destroy( )
 		STRING_HASH_TABLE_destructor( @fb_profiler->strings_hash )
 		STRING_HASH_TABLE_destructor( @fb_profiler->ignores_hash )
 		STRING_TABLE_destructor( @fb_profiler->strings )
-        PROFILER_free( fb_profiler )
+		PROFILER_free( fb_profiler )
 		fb_profiler = NULL
 	end if
 end sub
@@ -417,7 +417,7 @@ public function fb_ProfileSetFileName FBCALL ( byval filename as const zstring p
 	FB_PROFILE_LOCK()
 
 	if( (fb_profiler <> NULL) andalso (filename <> NULL) ) then
-		ret = hProfileCopyFilename( fb_profiler->filename, filename, PROFILER_MAX_PATH ) 
+		ret = hProfileCopyFilename( fb_profiler->filename, filename, PROFILER_MAX_PATH )
 	else
 		return fb_ErrorSetNum( FB_RTERROR_ILLEGALFUNCTIONCALL )
 	end if
@@ -502,7 +502,7 @@ public sub fb_ProfileIgnore FBCALL ( byval procname as const zstring ptr  )
 end sub
 
 '':::::
-public function fb_ProfileGetGlobalProfiler FBCALL () as FB_PROFILER_GLOBAL ptr 
+public function fb_ProfileGetGlobalProfiler FBCALL () as FB_PROFILER_GLOBAL ptr
 	return fb_profiler
 end function
 

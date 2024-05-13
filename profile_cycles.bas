@@ -251,7 +251,7 @@ private sub hProfilerReport _
 end sub
 
 private sub hProfilerWriteReport( byval prof as FB_PROFILER_CYCLES ptr )
-	dim as zstring * PROFILER_MAX_PATH filename_buffer = any 
+	dim as zstring * PROFILER_MAX_PATH filename_buffer = any
 	dim as zstring ptr filename = @filename_buffer
 	dim as FILE ptr f = any
 	dim as ubyte ptr data_ = any

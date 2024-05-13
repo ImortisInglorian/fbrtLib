@@ -109,7 +109,7 @@ end type
 
 declare function fb_ProfileHashName( byval p as const zstring ptr ) as ulong
 
-declare function STRING_TABLE_alloc( byval strings as STRING_TABLE ptr, byval length as long ) as STRING_INFO ptr 
+declare function STRING_TABLE_alloc( byval strings as STRING_TABLE ptr, byval length as long ) as STRING_INFO ptr
 declare sub          STRING_TABLE_constructor( byval strings as STRING_TABLE ptr )
 declare sub          STRING_TABLE_destructor( byval strings as STRING_TABLE ptr )
 declare function     STRING_TABLE_add( byval strings as STRING_TABLE ptr, byval src as const zstring ptr, byval hashkey as ulong ) as STRING_INFO ptr
@@ -168,7 +168,7 @@ end type
 declare sub      fb_InitProfile FBCALL ( )
 declare function fb_EndProfile FBCALL ( byval errorlevel as long ) as long
 
-declare function fb_ProfileBeginProc FBCALL ( byval procname as const zstring ptr ) as any ptr 
+declare function fb_ProfileBeginProc FBCALL ( byval procname as const zstring ptr ) as any ptr
 declare sub      fb_ProfileEndProc   FBCALL ( byval callid as any ptr )
 declare function fb_ProfileBeginCall FBCALL ( byval procname as const zstring ptr ) as any ptr
 declare sub      fb_ProfileEndCall   FBCALL ( byval callid as any ptr )
