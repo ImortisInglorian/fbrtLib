@@ -23,6 +23,8 @@ messages(14) = @!"\"abnormal termination\" signal"     /' FB_RTERROR_SIGTERM '/
 messages(15) = @!"\"quit request\" signal"             /' FB_RTERROR_SIGABRT '/
 messages(16) = @"return without gosub"                 /' FB_RTERROR_RETURNWITHOUTGOSUB '/
 messages(17) = @"end of file"                          /' FB_RTERROR_ENDOFFILE '/
+messages(18) = @"array not dimensioned"                /' FB_RTERROR_NOTDIMENSIONED '/
+messages(19) = @"wrong number of dimensions"          /' FB_RTERROR_WRONGDIMENSIONS '/
 
 private sub ERRORCTX_destructor( byval data_ as any ptr )
 	Delete cast( FB_ERRORCTX ptr, data_ )

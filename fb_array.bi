@@ -1,6 +1,7 @@
 #ifdef fb_ArrayBoundChkEx
 	#undef fb_ArrayBoundChkEx
 	#undef fb_ArraySngBoundChkEx
+	#undef fb_ArrayDimensionChk
 	#undef fb_ArrayDestructObj
 	#undef fb_ArrayDestructStr
 	#undef fb_ArrayClear
@@ -46,9 +47,33 @@ extern "C"
 type FB_DEFCTOR as sub ( this_ as any ptr )
 type FB_DTORMULT as sub ( array as FBARRAY ptr, dtor as FB_DEFCTOR, base_idx as size_t )
 
-declare function fb_ArrayBoundChkEx     FBCALL ( idx as ssize_t, lbound as ssize_t, ubound as ssize_t, linenum as long, fname as const ubyte ptr, vname as const ubyte ptr ) as any ptr
+declare function fb_ArrayBoundChkEx FBCALL _
+	( _
+		idx as ssize_t, _
+		lbound as ssize_t, _
+		ubound as ssize_t, _
+		linenum as long, _
+		filename as const ubyte ptr, _
+		variablename as const ubyte ptr _
+	) as any ptr
 
-declare function fb_ArraySngBoundChkEx 	FBCALL ( sidx as size_t, ubound as size_t,linenum as long, fname as const ubyte ptr, vname as const ubyte ptr ) as any ptr
+declare function fb_ArraySngBoundChkEx FBCALL _
+	( _
+		sidx as size_t, _
+		ubound as size_t, _
+		linenum as long, _
+		filename as const ubyte ptr, _
+		variablename as const ubyte ptr _
+	) as any ptr
+
+declare function fb_ArrayDimensionChk FBCALL _ 
+	( _
+		idx as ssize_t, _
+		array as FBARRAY ptr, _
+		linenum as long, _
+		filename as const ubyte ptr, _
+		variablename as const ubyte ptr _
+	) as any ptr
 
 declare function fb_ArrayLen            FBCALL ( array as FBARRAY ptr ) as size_t
 declare function fb_ArraySize           FBCALL ( array as FBARRAY ptr ) as size_t
