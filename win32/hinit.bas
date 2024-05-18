@@ -11,6 +11,7 @@ dim shared as CRITICAL_SECTION __fb_string_mutex
 dim shared as CRITICAL_SECTION __fb_mtcore_mutex
 dim shared as CRITICAL_SECTION __fb_graphics_mutex
 dim shared as CRITICAL_SECTION __fb_math_mutex
+dim shared as CRITICAL_SECTION __fb_profile_mutex
 
 sub fb_Lock FBCALL ( )
 	EnterCriticalSection( @__fb_global_mutex )
@@ -52,6 +53,14 @@ sub fb_MathUnlock FBCALL ( )
 	LeaveCriticalSection( @__fb_math_mutex )
 end sub
 
+sub fb_ProfileLock FBCALL ( )
+	EnterCriticalSection( @__fb_profile_mutex )
+end sub
+
+sub fb_ProfileUnlock FBCALL ( )
+	LeaveCriticalSection( @__fb_profile_mutex )
+end sub
+
 #endif
 
 dim shared as FB_CONSOLE_CTX __fb_con /' not initialized '/
@@ -81,6 +90,7 @@ sub fb_hInit( )
 	InitializeCriticalSection(@__fb_mtcore_mutex)
 	InitializeCriticalSection(@__fb_graphics_mutex)
 	InitializeCriticalSection(@__fb_math_mutex)
+	InitializeCriticalSection(@__fb_profile_mutex)
 #endif
 
 	memset( @__fb_con, 0, sizeof( FB_CONSOLE_CTX ) )
@@ -93,6 +103,7 @@ sub fb_hEnd( unused as long )
 	DeleteCriticalSection(@__fb_mtcore_mutex)
 	DeleteCriticalSection(@__fb_graphics_mutex)
 	DeleteCriticalSection(@__fb_math_mutex)
+	DeleteCriticalSection(@__fb_profile_mutex)
 #endif
 end sub
 end extern

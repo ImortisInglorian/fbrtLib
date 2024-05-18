@@ -23,6 +23,8 @@ messages(14) = @!"\"abnormal termination\" signal"     /' FB_RTERROR_SIGTERM '/
 messages(15) = @!"\"quit request\" signal"             /' FB_RTERROR_SIGABRT '/
 messages(16) = @"return without gosub"                 /' FB_RTERROR_RETURNWITHOUTGOSUB '/
 messages(17) = @"end of file"                          /' FB_RTERROR_ENDOFFILE '/
+messages(18) = @"array not dimensioned"                /' FB_RTERROR_NOTDIMENSIONED '/
+messages(19) = @"wrong number of dimensions"          /' FB_RTERROR_WRONGDIMENSIONS '/
 
 private sub ERRORCTX_destructor( byval data_ as any ptr )
 	Delete cast( FB_ERRORCTX ptr, data_ )
@@ -41,27 +43,32 @@ end function
 
 extern "C"
 
-sub fb_Die ( err_num as long, line_num as long, mod_name as const ubyte ptr, fun_name as const ubyte ptr )
+sub fb_Die ( err_num as long, line_num as long, mod_name as const ubyte ptr, fun_name as const ubyte ptr, msg as const ubyte ptr )
 	dim as long _pos = 0
 
-	_pos += snprintf( @__fb_errmsg(_pos), FB_ERRMSG_SIZE - _pos, "\nAborting due to runtime error %d", err_num )
+	_pos += snprintf( @__fb_errmsg(_pos), FB_ERRMSG_SIZE - _pos, !"\nAborting due to runtime error %d", err_num )
 
 	if ( (err_num >= 0) and (err_num < FB_RTERROR_MAX) ) then
-		_pos += snprintf( @__fb_errmsg(_pos), FB_ERRMSG_SIZE - _pos, " (%s)", messages(err_num) )
+		_pos += snprintf( @__fb_errmsg(_pos), FB_ERRMSG_SIZE - _pos, !" (%s)", messages(err_num) )
 	end if
 	if ( line_num > 0 ) then
-		_pos += snprintf( @__fb_errmsg(_pos), FB_ERRMSG_SIZE - _pos, " at line %d", line_num )
+		_pos += snprintf( @__fb_errmsg(_pos), FB_ERRMSG_SIZE - _pos, !" at line %d", line_num )
 	end if
 
 	if ( mod_name <> NULL ) then
 		if( fun_name <> NULL ) then
-			_pos += snprintf( @__fb_errmsg(_pos), FB_ERRMSG_SIZE - _pos, " %s %s::%s()\n\n", iif(line_num > 0, @"of", @"in"), mod_name, fun_name )
+			_pos += snprintf( @__fb_errmsg(_pos), FB_ERRMSG_SIZE - _pos, !" %s %s::%s()", iif(line_num > 0, @"of", @"in"), mod_name, fun_name )
 		else
-			_pos += snprintf( @__fb_errmsg(_pos), FB_ERRMSG_SIZE - _pos, " %s %s()\n\n", iif(line_num > 0, @"of", @"in"), mod_name )
+			_pos += snprintf( @__fb_errmsg(_pos), FB_ERRMSG_SIZE - _pos, !" %s %s()", iif(line_num > 0, @"of", @"in"), mod_name )
 		end if
-	else
-		_pos += snprintf( @__fb_errmsg(_pos), FB_ERRMSG_SIZE - _pos, "\n\n" )
 	end if
+
+	if( msg <> NULL ) then
+		_pos += snprintf( @__fb_errmsg(_pos), FB_ERRMSG_SIZE - _pos, !", %s", msg )
+	end if
+
+	_pos += snprintf( @__fb_errmsg(_pos), FB_ERRMSG_SIZE - _pos, !"\n\n" )
+
 	__fb_errmsg(FB_ERRMSG_SIZE-1) = 0
 
 	/' Let fb_hRtExit() show the message '/
@@ -70,7 +77,7 @@ sub fb_Die ( err_num as long, line_num as long, mod_name as const ubyte ptr, fun
 	fb_End( err_num )
 end sub
 
-function fb_ErrorThrowEx cdecl ( err_num as long, line_num as long, mod_name as const ubyte ptr, res_label as any ptr, resnext_label as any ptr ) as FB_ERRHANDLER
+function fb_ErrorThrowMsg cdecl ( err_num as long, line_num as long, mod_name as const ubyte ptr, msg as const ubyte ptr, res_label as any ptr, resnext_label as any ptr ) as FB_ERRHANDLER
 	dim as FB_ERRORCTX ptr ctx = fb_get_thread_errorctx( )
 
 	if ( ctx->handler ) then
@@ -86,9 +93,13 @@ function fb_ErrorThrowEx cdecl ( err_num as long, line_num as long, mod_name as 
 	end if
 
 	/' if no user handler defined, die '/
-	fb_Die( err_num, line_num, iif(mod_name <> NULL, mod_name, ctx->mod_name), ctx->fun_name )
+	fb_Die( err_num, line_num, iif(mod_name <> NULL, mod_name, ctx->mod_name), ctx->fun_name, msg )
 
 	return NULL
+end function
+
+function fb_ErrorThrowEx cdecl ( err_num as long, line_num as long, mod_name as const ubyte ptr, res_label as any ptr, resnext_label as any ptr ) as FB_ERRHANDLER
+	return fb_ErrorThrowMsg( err_num, line_num, mod_name, NULL, res_label, resnext_label )
 end function
 
 function fb_ErrorThrowAt ( line_num as long, mod_name as const ubyte ptr, res_label as any ptr, resnext_label as any ptr ) as FB_ERRHANDLER
@@ -114,7 +125,7 @@ function fb_ErrorResume( ) as any ptr
 
 	/' not defined? die '/
 	if ( label = NULL ) then
-		fb_Die( FB_RTERROR_ILLEGALRESUME, -1, ctx->mod_name, ctx->fun_name )
+		fb_Die( FB_RTERROR_ILLEGALRESUME, -1, ctx->mod_name, ctx->fun_name, NULL )
 	end if
 
 	/' don't loop forever '/
@@ -130,7 +141,7 @@ function fb_ErrorResumeNext( ) as any ptr
 
 	/' not defined? die '/
 	if ( label = NULL ) then
-		fb_Die( FB_RTERROR_ILLEGALRESUME, -1, ctx->mod_name, ctx->fun_name )
+		fb_Die( FB_RTERROR_ILLEGALRESUME, -1, ctx->mod_name, ctx->fun_name, NULL )
 	end if
 
 	/' don't loop forever '/

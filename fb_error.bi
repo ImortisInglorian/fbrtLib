@@ -2,6 +2,7 @@ extern "C"
 
 #ifdef fb_ErrorThrowEx
 	#undef fb_ErrorThrowEx
+	#undef fb_ErrorThrowMsg
 	#undef fb_ErrorThrowAt
 	#undef fb_ErrorSetHandler
 	#undef fb_ErrorGetNum
@@ -31,6 +32,8 @@ enum FB_RTERROR
 	FB_RTERROR_SIGQUIT
 	FB_RTERROR_RETURNWITHOUTGOSUB
 	FB_RTERROR_ENDOFFILE
+	FB_RTERROR_NOTDIMENSIONED
+	FB_RTERROR_WRONGDIMENSIONS
 	FB_RTERROR_MAX
 end enum
 
@@ -43,6 +46,7 @@ declare sub 	 fb_Assert 				FBCALL ( filename as ubyte ptr, linenum as long, fun
 declare sub 	 fb_AssertWarn 			FBCALL ( filename as ubyte ptr, linenum as long, funcname as ubyte ptr, expression as ubyte ptr )
 declare sub 	 fb_AssertW 			FBCALL ( filename as ubyte ptr, linenum as long, funcname as ubyte ptr, expression as FB_WCHAR ptr )
 declare sub 	 fb_AssertWarnW 		FBCALL ( filename as ubyte ptr, linenum as long, funcname as ubyte ptr, expression as FB_WCHAR ptr )
+declare function fb_ErrorThrowMsg 			   ( errnum as long, linenum as long, fname as const ubyte ptr, msg as const ubyte ptr, res_label as any ptr, resnext_label as any ptr ) as FB_ERRHANDLER
 declare function fb_ErrorThrowEx 			   ( errnum as long, linenum as long, fname as const ubyte ptr, res_label as any ptr, resnext_label as any ptr ) as FB_ERRHANDLER
 declare function fb_ErrorThrowAt 			   ( line_num as long, mod_name as const ubyte ptr, res_label as any ptr, resnext_label as any ptr ) as FB_ERRHANDLER
 declare function fb_ErrorSetHandler 	FBCALL ( newhandler as FB_ERRHANDLER ) as FB_ERRHANDLER
