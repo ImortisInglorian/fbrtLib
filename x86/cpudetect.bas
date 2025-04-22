@@ -2,24 +2,22 @@
 
 #include "../fb_config.bi"
 
+'' Remove fbc's intrinsic definition
+'' of declare function fb_CpuDetect cdecl( ) as ulong
+#undef fb_CpuDetect
+
+extern "c"
+	declare function fb_CpuDetect naked () as ulong
+
+	/' bits  0-27: low 24 bits of feature flags (CPUID eax = 1, edx) '/
+	/' bits 28-31: cpu family (3 = 386, 4 = 486, 5 = 586, 6 = 686) '/
+
+	dim shared detected_cpu as ulong = 0
+end extern
+
+function fb_CpuDetect naked () as ulong
+
 asm
-	.intel_syntax noprefix
-
-.data
-detected_cpu: .long 0  /' bits  0-27: low 24 bits of feature flags (CPUID eax = 1, edx) '/
-                       /' bits 28-31: cpu family (3 = 386, 4 = 486, 5 = 586, 6 = 686) '/
-
-.text
-
-/' unsigned int fb_CpuDetect(void); '/
-#if defined (HOST_DOS) or defined (HOST_WIN32) or defined (HOST_XBOX)
-.globl _fb_CpuDetect
-_fb_CpuDetect:
-#else
-.globl fb_CpuDetect
-fb_CpuDetect:
-#endif
-
 	mov eax, [detected_cpu]
 	or eax, eax
 	jz detect
@@ -86,3 +84,5 @@ cpudetect_exit:
 	pop	ebp
 	ret
 end asm
+
+end function
