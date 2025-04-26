@@ -14,6 +14,17 @@
 
 extern "C"
 
+/' choose a suitable size_t printf specifier '/
+#if not defined(fmtsizet)
+	#if defined(HOST_CYGWIN)
+		#define fmtsizet "%18Iu"
+	#elif defined(HOST_WIN32)
+		#define fmtsizet "%18Iu"
+	#else
+		#define fmtsizet "%18zu"
+	#endif
+#endif
+
 '' profile section data
 extern as ubyte __start_fb_profilecycledata alias "__start_fb_profilecycledata"
 extern as ubyte __stop_fb_profilecycledata alias "__stop_fb_profilecycledata"
@@ -249,7 +260,7 @@ private sub hProfilerReport _
 		end if
 
 		fprintf( f, !"        %s\n", rec->proc_name )
-		fprintf( f, !"                %18zu %18zu %18zu\n", _
+		fprintf( f, !"                " + fmtsizet + " " + fmtsizet + " " + fmtsizet + "\n", _
 			rec->grand_total, _
 			rec->internal_total, _
 			rec->call_count _

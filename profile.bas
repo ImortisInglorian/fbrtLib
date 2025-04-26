@@ -463,7 +463,7 @@ end function
 
 '':::::
 public function fb_ProfileGetOptions FBCALL () as long
-	dim as long options = any
+	dim as long options = 0
 
 	FB_PROFILE_LOCK()
 
@@ -478,7 +478,7 @@ end function
 
 '':::::
 public function fb_ProfileSetOptions FBCALL ( byval options as long ) as long
-	dim as long previous_options = any
+	dim as long previous_options = 0
 
 	FB_PROFILE_LOCK()
 

@@ -26,6 +26,17 @@
 #include "crt/time.bi"
 #include "fb_private_thread.bi"
 
+/' choose a suitable 64-bit decimal printf specifier '/
+#if not defined(fmtlld)
+	#if defined(PRId64)
+		#define fmtlld PRId64
+	#elif defined(FB_LL_FMTMOD) 
+		#define fmtlld ("%12" + FB_LL_FMTMOD + "d")
+	#else
+		#define fmtlld "%12lld"
+	#endif
+#endif
+
 extern "C"
 
 '' procs
@@ -497,7 +508,7 @@ private sub hProfilerReportCallsProc _
 		pad_spaces( f, len_ )
 
 		if( (prof->global->options and PROFILE_OPTION_HIDE_COUNTS) = 0 ) then
-			len_ = 14 - fprintf( f, !"%12lld", parent_proc->local_count )
+			len_ = 14 - fprintf( f, fmtlld, parent_proc->local_count )
 			pad_spaces( f, len_ )
 		end if
 
@@ -519,7 +530,7 @@ private sub hProfilerReportCallsProc _
 			pad_spaces( f, len_ )
 
 			if( (prof->global->options and PROFILE_OPTION_HIDE_COUNTS) = 0 ) then
-				len_ = 14 - fprintf( f, !"%12lld", proc->local_count )
+				len_ = 14 - fprintf( f, fmtlld, proc->local_count )
 				pad_spaces( f, len_ )
 			end if
 
@@ -654,7 +665,7 @@ private sub hProfilerReportCallsGlobals _
 		pad_spaces( f, len_ )
 
 		if( (prof->global->options and PROFILE_OPTION_HIDE_COUNTS) = 0 ) then
-			len_ = 14 - fprintf( f, !"%12lld", proc->local_count )
+			len_ = 14 - fprintf( f, fmtlld, proc->local_count )
 			pad_spaces( f, len_ )
 		end if
 
@@ -853,7 +864,7 @@ private sub hProfilerReportRawList _
 			pad_spaces( f, len_ )
 
 			if( (prof->global->options and PROFILE_OPTION_HIDE_COUNTS) = 0 ) then
-				len_ = 14 - fprintf( f, !"%12lld", proc->local_count )
+				len_ = 14 - fprintf( f, fmtlld, proc->local_count )
 				pad_spaces( f, len_ )
 			end if
 
@@ -901,7 +912,7 @@ private sub hProfilerReportRawDataProc _
 	pad_spaces( f, len_ )
 
 	if( (prof->global->options and PROFILE_OPTION_HIDE_COUNTS) = 0 ) then
-		len_ = 14 - fprintf( f, !"%12lld", proc->local_count )
+		len_ = 14 - fprintf( f, fmtlld, proc->local_count )
 		pad_spaces( f, len_ )
 	end if
 
@@ -1342,7 +1353,6 @@ public function fb_EndProfile FBCALL ( byval errorlevel as long ) as long
 	hProfilerWriteReport( prof )
 
 	PROFILER_CALLS_destroy( )
-	fb_profiler = NULL
 
 	return errorlevel
 end function
