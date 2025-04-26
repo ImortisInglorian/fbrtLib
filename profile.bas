@@ -372,7 +372,11 @@ public function PROFILER_GLOBAL_create( ) as FB_PROFILER_GLOBAL ptr
 
 		time_( @rawtime )
 		ptm = localtime( @rawtime )
-		sprintf( fb_profiler->launch_time, !"%02d-%02d-%04d, %02d:%02d:%02d", 1+ptm->tm_mon, ptm->tm_mday, 1900+ptm->tm_year, ptm->tm_hour, ptm->tm_min, ptm->tm_sec )
+		snprintf( fb_profiler->launch_time, sizeof(fb_profiler->launch_time), _
+			!"%02d-%02d-%04d, %02d:%02d:%02d", _
+			clng((1+ptm->tm_mon)) mod 100u, clng(ptm->tm_mday) mod 100u, clng(1900+ptm->tm_year) mod 100u, _
+			clng(ptm->tm_hour) mod 100u, clng(ptm->tm_min) mod 100u, clng(ptm->tm_sec) mod 100u )
+		fb_profiler->launch_time[sizeof(fb_profiler->launch_time)-1] = 0
 	end if
 	return fb_profiler
 end function

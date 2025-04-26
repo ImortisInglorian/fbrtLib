@@ -15,8 +15,8 @@
 extern "C"
 
 '' profile section data
-extern as long __start_fb_profilecycledata alias "__start_fb_profilecycledata"
-extern as long __stop_fb_profilecycledata alias "__stop_fb_profilecycledata"
+extern as ubyte __start_fb_profilecycledata alias "__start_fb_profilecycledata"
+extern as ubyte __stop_fb_profilecycledata alias "__stop_fb_profilecycledata"
 
 '' profiler record ids - these indicate what the record is
 enum FB_PROFILE_REDORD_ID
@@ -72,6 +72,12 @@ end type
 ''
 
 #if 0
+
+/' FIXME: creating a library with other sections causes dxe3gen to fail
+''        when building the DXE dynamic link library support for DOS
+'/
+#if !defined(HOST_DOS) 
+
 '' make sure there is at least one record in the profile data section
 static FB_PROFILE_RECORD_VERSION
 __attribute__ ((aligned (16))) prof_data_version
@@ -84,6 +90,7 @@ __attribute__((section("fb_profilecycledata"), used)) =
 
 #endif
 
+#endif
 
 dim shared as FB_PROFILER_CYCLES ptr fb_profiler = NULL
 
