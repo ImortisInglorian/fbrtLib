@@ -14,9 +14,20 @@
 
 extern "C"
 
+/' choose a suitable size_t printf specifier '/
+#if not defined(fmtsizet)
+	#if defined(HOST_CYGWIN)
+		#define fmtsizet "%18Iu"
+	#elif defined(HOST_WIN32)
+		#define fmtsizet "%18Iu"
+	#else
+		#define fmtsizet "%18zu"
+	#endif
+#endif
+
 '' profile section data
-extern as long __start_fb_profilecycledata alias "__start_fb_profilecycledata"
-extern as long __stop_fb_profilecycledata alias "__stop_fb_profilecycledata"
+extern as ubyte __start_fb_profilecycledata alias "__start_fb_profilecycledata"
+extern as ubyte __stop_fb_profilecycledata alias "__stop_fb_profilecycledata"
 
 '' profiler record ids - these indicate what the record is
 enum FB_PROFILE_REDORD_ID
@@ -72,6 +83,12 @@ end type
 ''
 
 #if 0
+
+/' FIXME: creating a library with other sections causes dxe3gen to fail
+''        when building the DXE dynamic link library support for DOS
+'/
+#if !defined(HOST_DOS) 
+
 '' make sure there is at least one record in the profile data section
 static FB_PROFILE_RECORD_VERSION
 __attribute__ ((aligned (16))) prof_data_version
@@ -84,6 +101,7 @@ __attribute__((section("fb_profilecycledata"), used)) =
 
 #endif
 
+#endif
 
 dim shared as FB_PROFILER_CYCLES ptr fb_profiler = NULL
 
@@ -242,7 +260,7 @@ private sub hProfilerReport _
 		end if
 
 		fprintf( f, !"        %s\n", rec->proc_name )
-		fprintf( f, !"                %18zu %18zu %18zu\n", _
+		fprintf( f, !"                " + fmtsizet + " " + fmtsizet + " " + fmtsizet + "\n", _
 			rec->grand_total, _
 			rec->internal_total, _
 			rec->call_count _
