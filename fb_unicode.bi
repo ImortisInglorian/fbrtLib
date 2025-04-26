@@ -17,7 +17,7 @@ type UTF_8 as ubyte
 #define UTF16_HALFBASE           (cast(UTF_32,&h0010000UL))
 #define UTF16_HALFMASK           (cast(UTF_32,&h3FFUL))
 
-#if defined (HOST_DOS)
+#if defined (DISABLE_WCHAR)
 	#define FB_WCHAR ubyte
 	#define FB_WEOF (cast(FB_WCHAR, EOF))
 	#define wcslen(s) strlen(s)
@@ -76,6 +76,30 @@ type UTF_8 as ubyte
 	#define FB_WCHAR wchar_t
 	#define FB_WEOF cast(FB_WCHAR, WEOF)
 	#define _LC(c) wstr(c)
+#endif
+
+#ifdef HOST_ANDROID
+#ifndef DISABLE_WCHAR
+/' If you want to target Android 5.0+ (or 2.3+ and don't care that half the wstring functions are
+'' broken you can use this '/
+
+/' Note: old NDKs defined wchar_t as 8 bit in APIs before 9 (Android 2.3), and 32 bit in API 9 and later,
+'' but now NDKs define it as 32 bit everywhere. https://code.google.com/p/android/issues/detail?id=57267 '/
+#ifndef wcstoull
+	/' Not added until Android 5.0 '/
+	#define wcstoull wcstoul
+#endif
+/' Early NDKs (before Android 2.3?) declared mbstowcs and wcstombs in <stdlib.h>, but didn't actually provide an
+'' implementation in libc; however all Android versions have mbsrtowcs and wcsrtombs. '/
+	#define mbstowcs __android_mbstowcs
+	#define wcstombs __android_wcstombs
+	function __android_mbstowcs(byval dst as FB_WCHAR ptr, byval src as ubyte ptr, byval count as size_t) as size_t
+		return mbsrtowcs(dst, @src, count, NULL)
+	end function
+	function __android_wcstombs(byval dst as ubyte ptr, byval src as const FB_WCHAR ptr, byva count as size_t) as size_t
+		return wcsrtombs(dst, @src, count, NULL)
+	end function
+#endif
 #endif
 
 

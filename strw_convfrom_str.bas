@@ -36,13 +36,17 @@ function fb_wstr_ConvFromA( dst as FB_WCHAR ptr, dst_chars as ssize_t, src as co
 		return 0
 	end if
 
-#if defined(HOST_DOS)
+#if defined(DISABLE_WCHAR)
 	dim as ssize_t chars = strlen(src)
 	if (chars > dst_chars) then
 		chars = dst_chars
 	end if
 
 	memcpy(dst, src, chars + 1)
+
+	/* ensure that the null terminator is written, string may have been truncated */
+	dst[chars] = asc(!"\000") '' NUL CHAR
+
 	return chars
 #else
 	/' plus the null-term (note: "n" in chars, not bytes!) '/

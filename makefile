@@ -206,6 +206,10 @@ ifndef FBTARGET
   FBTARGET := $(TARGET_OS)-$(TARGET_ARCH)
 endif
 
+ifeq ($(TARGET_OS),dos)
+  ALLCFLAGS += -DDISABLE_WCHAR
+endif
+
 ifeq ($(TARGET_OS),xbox)
   # Assume no libffi for now (does it work on Xbox?)
   ALLCFLAGS += -DDISABLE_FFI

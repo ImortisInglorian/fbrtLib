@@ -13,7 +13,7 @@ function fb_wstr_ConvToA( dst as ubyte ptr, dst_chars as ssize_t, src as const F
 		return 0
 	end if
 
-#if defined(HOST_DOS)
+#if defined(DISABLE_WCHAR)
 	dim as ssize_t chars = strlen(src)
 	if (chars > dst_chars) then
 		chars = dst_chars
