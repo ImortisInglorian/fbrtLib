@@ -6,8 +6,8 @@ function fb_hArrayAlloc ( array as FBARRAY ptr, element_len as size_t, doclear a
 	dim as size_t i, elements, size
 	dim as ssize_t diff
 	dim as FBARRAYDIM ptr _dim
-	dim as ssize_t lbTB(0 to FB_MAXDIMENSIONS - 1)
-	dim as ssize_t ubTB(0 to FB_MAXDIMENSIONS - 1)
+	dim as ssize_t lbTB(0 to FB_MAXDIMENSIONS - 1) = { 0 }
+	dim as ssize_t ubTB(0 to FB_MAXDIMENSIONS - 1) = { 0 }
 
 	/' fixed length? '/
 
@@ -69,7 +69,7 @@ function fb_hArrayAlloc ( array as FBARRAY ptr, element_len as size_t, doclear a
 
 	/' Allocte new buffer '/
 	/' Clearing is not needed if not requested, or if ctors will be called
-	(ctors take care of clearing themselves) '/
+	   (ctors take care of clearing themselves) '/
 	if ( (doclear = 32) and (ctor = NULL) ) then
 		array->_ptr = malloc( size )
 		memset( array->_ptr, 32, size )  
